@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="CommonDialogs.FilterUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CommonDialogs" xmlns:controls="clr-namespace:CommonDialogs.Common"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+
+        <DockPanel DockPanel.Dock="Top" >
+            <Button x:Name="ClearFilterButton" DockPanel.Dock="Right" Width="70" >Clear</Button>
+            <AdornerDecorator>
+                <TextBox x:Name="SearchTextBox">
+                    <controls:WatermarkService.Watermark>
+                        <TextBox>Search filter, regEx supported</TextBox>
+                    </controls:WatermarkService.Watermark>
+                </TextBox>
+            </AdornerDecorator>
+        </DockPanel>
+
+        <DockPanel DockPanel.Dock="Top">
+            <CheckBox x:Name="ExtraFilterButton">Extra filter button</CheckBox>
+        </DockPanel>
+  
+        <ListView x:Name="ResultList" MouseDoubleClick="ResultList_MouseDoubleClick" MaxHeight="450"/>
+        
+    </DockPanel>
+</UserControl>

@@ -52,8 +52,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGame.Framework.WpfInter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VariantMeshEditor", "VariantMeshEditor\VariantMeshEditor.csproj", "{BA94D15F-2A64-4802-A0C3-86FB6C7333F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoContentPipeline", "MonoContentPipeline\MonoContentPipeline.csproj", "{1A197E50-F0F3-4069-A443-1376769513F5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -278,18 +276,6 @@ Global
 		{BA94D15F-2A64-4802-A0C3-86FB6C7333F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA94D15F-2A64-4802-A0C3-86FB6C7333F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA94D15F-2A64-4802-A0C3-86FB6C7333F2}.Release|x86.Build.0 = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Debug|x86.Build.0 = Debug|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Linux|Any CPU.ActiveCfg = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Linux|Any CPU.Build.0 = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Linux|x86.ActiveCfg = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Linux|x86.Build.0 = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Release|x86.ActiveCfg = Release|Any CPU
-		{1A197E50-F0F3-4069-A443-1376769513F5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -315,7 +301,6 @@ Global
 		{AB737A44-EE52-4979-A385-B275A38457E9} = {760490AD-8443-49C5-86AA-6FAF17A4F737}
 		{809F0D79-AEDC-4754-A213-FDBE97CCD6D6} = {A144169D-F8F2-469D-911F-AC74D91B3EE7}
 		{BA94D15F-2A64-4802-A0C3-86FB6C7333F2} = {760490AD-8443-49C5-86AA-6FAF17A4F737}
-		{1A197E50-F0F3-4069-A443-1376769513F5} = {760490AD-8443-49C5-86AA-6FAF17A4F737}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {94862628-5F00-4811-B75B-77E36BB90B78}

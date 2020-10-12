@@ -73,7 +73,6 @@
     <Compile Include="Util\CaSchemaFileParser.cs" />
     <Compile Include="Controllers\DbSchemaDecoderController.cs" />
     <Compile Include="Controllers\FileListController.cs" />
-    <Compile Include="Util\NotifyPropertyChangedImpl.cs" />
     <Compile Include="Util\TableEntriesParser.cs" />
     <Compile Include="Util\TimedThreadProcess.cs" />
     <Compile Include="Views\DisplayTableDefinitionView\DbParsedEntitiesTableView.xaml.cs">
@@ -187,6 +186,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonDialogs\CommonDialogs.csproj">
+      <Project>{1B2FA4F4-C320-496F-9365-636D9180BE03}</Project>
+      <Name>CommonDialogs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{6D23F5FB-04D4-4D7E-BDFF-FCA718309298}</Project>
       <Name>Common</Name>

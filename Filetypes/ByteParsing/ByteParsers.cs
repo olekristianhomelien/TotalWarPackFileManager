@@ -393,6 +393,8 @@ namespace Filetypes.ByteParsing
         public static StringParser String { get; set; } = new StringParser();
         public static OptionalStringAsciiParser OptStringAscii { get; set; } = new OptionalStringAsciiParser();
         public static StringAsciiParser StringAscii { get; set; } = new StringAsciiParser();
+
+        public static IByteParser[] GetAllParsers() {  return new IByteParser[]{ Byte , Int32 , Int64 , UInt32 ,Single, Float16, Short, UShort, Bool, OptString, String, OptStringAscii, StringAscii}; }
     }
 
     public static class ByteParserFactory
@@ -555,12 +557,43 @@ namespace Filetypes.ByteParsing
         public uint PeakUint32() => Peak(ByteParsers.UInt32);
         public long PeakInt64() => Peak(ByteParsers.Int64);
 
+
+        public UnknownParseResult PeakUnknown()
+        {
+            var parsers = ByteParsers.GetAllParsers();
+            var output = new List<string>();
+            foreach (var parser in parsers)
+            {
+             
+                    var result = parser.TryDecode(_buffer, _currentIndex, out string value, out int bytesRead, out string error);
+                    if (!result)
+                        output.Add($"{parser.TypeName} - Failed:{error}");
+                    else
+                        output.Add($"{parser.TypeName} - {value}");
+
+            }
+
+            return new UnknownParseResult() { Data = output.ToArray()};
+        }
+
         public string ReadFixedLength(int length) => ReadFixedLengthString(ByteParsers.String, length);
         public string ReadZeroTerminatedStr() => ReadZeroTerminatedString(ByteParsers.String);
 
+
+        public class UnknownParseResult
+        {
+            public string[] Data { get; set; }
+            public override string ToString()
+            {
+                var strOuput = "";
+                if (Data != null)
+                {
+                    foreach (var s in Data)
+                        strOuput += s + "\n";
+                }
+                return strOuput;
+
+            }
+        }
     }
-
-
-
-
 }

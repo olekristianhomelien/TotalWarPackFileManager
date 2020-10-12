@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="VariantMeshEditor.Views.EditorViews.AnimationViews.AnimationExplorerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <DockPanel>
+        <DockPanel>
+
+            <Expander    IsExpanded="true">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox x:Name="UseAnimationCheckbox" IsChecked="True" ></CheckBox>
+                        <TextBlock x:Name="AnimationExpanderName" Text="Animation :" />
+                        <TextBlock Text=""/>
+                    </StackPanel>
+                </Expander.Header>
+
+                <DockPanel LastChildFill="False">
+
+                    <DockPanel DockPanel.Dock="Top" >
+                        <Label Width="70">Frame Types</Label>
+                        <Label>:</Label>
+                        <CheckBox Content="Static" x:Name="StaticFramesCheckbox" VerticalAlignment="Center">
+                        </CheckBox>
+                        <CheckBox Content="Dynamic[11]" x:Name="DynamicFrameCheckbox" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                    </DockPanel>
+
+                    <Grid DockPanel.Dock="Top" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                            <ColumnDefinition Width="1*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel Grid.Column="0">
+                            <Label Width="70">Skeleton</Label>
+                            <Label>:</Label>
+                            <Border BorderBrush="{x:Null}" >
+                                <TextBlock x:Name="SkeletonName"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                            </Border>
+                        </DockPanel>
+
+                        <DockPanel  Grid.Column="1">
+                            <Label>Version</Label>
+
+                            <Border BorderBrush="{x:Null}" >
+                                <TextBlock x:Name="AnimationType"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                            </Border>
+                        </DockPanel>
+                    </Grid>
+                    
+                    <DockPanel DockPanel.Dock="Top">
+                        <Label DockPanel.Dock="Left" Width="70" >File</Label>
+                        <Label DockPanel.Dock="Left">:</Label>
+
+                        <Button x:Name="BrowseAnimationButton" DockPanel.Dock="Right" Width="70">Browse</Button>
+                        <Border DockPanel.Dock="Left" BorderBrush="{x:Null}" >
+                            <TextBox  x:Name="AnimationFileNameText"  TextWrapping="NoWrap" VerticalAlignment="Center" IsReadOnly="true"/>
+                        </Border>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top" >
+                        <Grid x:Name="FilterBoxGrid" DockPanel.Dock="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="83"></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <commondialogs:FilterUserControl x:Name="FilterBox" Grid.Column="1"></commondialogs:FilterUserControl>
+                        </Grid>
+                    </DockPanel>
+                    
+                    
+
+
+                    <Button x:Name="RemoveButton" DockPanel.Dock="Bottom" HorizontalAlignment="Center">Remove animation</Button>
+
+                    <DockPanel x:Name="ErrorBar" DockPanel.Dock="Bottom" >
+                        <Label DockPanel.Dock="Left">Error:</Label>
+                        <Border BorderBrush="{x:Null}" >
+                            <TextBox x:Name="ErrorText"  TextWrapping="NoWrap" Text="" VerticalAlignment="Center"/>
+                        </Border>
+                    </DockPanel>
+
+                  
+                    
+                </DockPanel>
+            </Expander>
+        </DockPanel>
+    </DockPanel>
+</UserControl>

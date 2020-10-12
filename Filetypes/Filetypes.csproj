@@ -40,6 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationPack\AnimationFragmentCollection.cs" />
+    <Compile Include="AnimationPack\AnimationFragmentItem.cs" />
+    <Compile Include="AnimationPack\AnimationPackLoader.cs" />
+    <Compile Include="AnimationPack\AnimationTableEntry.cs" />
+    <Compile Include="AnimationPack\MatchedAnimationTableEntry.cs" />
+    <Compile Include="AnimationPack\ParsingUtility.cs" />
     <Compile Include="Atlas\AtlasFile.cs" />
     <Compile Include="Atlas\AtlasObject.cs" />
     <Compile Include="Codecs\GroupformationCodec.cs" />

@@ -110,20 +110,20 @@ namespace Filetypes.RigidModel
             {
                 var staticPosCount = chunk.ReadUInt32();
                 var staticRotCount = chunk.ReadUInt32();
-                if(staticPosCount != 0 && staticRotCount != 0)
+                if(staticPosCount != 0 || staticRotCount != 0)
                     output.StaticFrame = ReadFrame(chunk, staticPosCount, staticRotCount);
             }
 
             // Animation Data
-            var animPosCount = chunk.ReadUInt32();
-            var animRotCount = chunk.ReadUInt32();
-            var frameCount = chunk.ReadUInt32();    // Always 3 when there is no data? Why?
+            var animPosCount = chunk.ReadInt32();
+            var animRotCount = chunk.ReadInt32();
+            var frameCount = chunk.ReadInt32();    // Always 3 when there is no data? Why?
 
             if (animPosCount != 0 || animRotCount != 0)
             {
                 for (int i = 0; i < frameCount; i++)
                 {
-                    var frame = ReadFrame(chunk, animPosCount, animRotCount);
+                    var frame = ReadFrame(chunk, (uint)animPosCount, (uint)animRotCount);
                     output.DynamicFrames.Add(frame);
                 }
             }

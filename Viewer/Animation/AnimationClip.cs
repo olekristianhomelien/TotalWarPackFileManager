@@ -18,6 +18,9 @@ namespace Viewer.Animation
             public int ParentBoneIndex { get; set; }
             public Matrix Transform { get; set; }
 
+            public Quaternion Rotation { get; set; } = new Quaternion();
+            public Vector3 Translation { get; set; } = new Vector3();
+
             public AnimationKeyFrame Clone()
             {
                 var newItem = new AnimationKeyFrame()
@@ -25,12 +28,14 @@ namespace Viewer.Animation
                     BoneIndex = BoneIndex,
                     ParentBoneIndex = ParentBoneIndex,
                     Transform = Transform,
+                    Rotation = Rotation,
+                    Translation = Translation
                 };
                 return newItem;
             }
         }
 
-        AnimationFile _animation;
+        AnimationFile[] _animations;
         Skeleton _skeleton;
 
         public List<AnimationFrame> KeyFrameCollection = new List<AnimationFrame>();
@@ -91,28 +96,31 @@ namespace Viewer.Animation
                 {
                     Transform = (_skeleton.Transform[i]),
                     BoneIndex = i,
-                    ParentBoneIndex = _skeleton.ParentBoneId[i]
+                    ParentBoneIndex = _skeleton.ParentBoneId[i],
+                    Translation = _skeleton.Translation[i],
+                    Rotation = _skeleton.Rotation[i]
                 });
             }
 
             if (applyStaticFrames)
             {
-                ApplyFrame(animateInPlace, _animation.StaticFrame, _animation.StaticTranslationMappingID, _animation.StaticRotationMappingID, defaultFrame);
-
-                if (_animation.DynamicFrames.Count() == 0 || applyDynamicFrames == false)
+                foreach(var animation in _animations)
+                  ApplyFrame(animateInPlace, animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
+            
+                if (_animations[0].DynamicFrames.Count() == 0 || applyDynamicFrames == false)
                 {
-                    KeyFrameCollection.Add(defaultFrame);
+                  KeyFrameCollection.Add(defaultFrame);
                 }
             }
-
+            
             if(applyDynamicFrames)
             {
-                for (int frameIndex = 0; frameIndex < _animation.DynamicFrames.Count(); frameIndex++)
+                for (int frameIndex = 0; frameIndex < _animations[0].DynamicFrames.Count(); frameIndex++)
                 {
-                    var animationKeyFrameData = _animation.DynamicFrames[frameIndex];
-
+                    var animationKeyFrameData = _animations[0].DynamicFrames[frameIndex];
+            
                     var currentFrame = defaultFrame.Clone();
-                    ApplyFrame(animateInPlace, animationKeyFrameData, _animation.DynamicTranslationMappingID, _animation.DynamicRotationMappingID, currentFrame);
+                    ApplyFrame(animateInPlace, animationKeyFrameData, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, currentFrame);
                     KeyFrameCollection.Add(currentFrame);
                 }
             }
@@ -121,19 +129,25 @@ namespace Viewer.Animation
             {
                 var currentFrame = KeyFrameCollection[frameIndex];
 
+
+                // Build transform
+                //for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
+                //{
+                //    currentFrame.BoneTransforms[i].Rotation.Normalize();
+                //    currentFrame.BoneTransforms[i].Transform = Matrix.CreateFromQuaternion(currentFrame.BoneTransforms[i].Rotation) * Matrix.CreateTranslation(currentFrame.BoneTransforms[i].Translation);
+                //}
+                //
+                
                 // Move into world space
                 for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
                 {
                     var parentindex = currentFrame.BoneTransforms[i].ParentBoneIndex;
-
-
                     if (parentindex == -1)
                     {
                         var scale = Matrix.CreateScale(-1, 1, 1); 
                         currentFrame.BoneTransforms[i].Transform = (scale * currentFrame.BoneTransforms[i].Transform);
                         continue;
                     }
-
 
                     currentFrame.BoneTransforms[i].Transform = currentFrame.BoneTransforms[i].Transform * currentFrame.BoneTransforms[parentindex].Transform;
                 }
@@ -147,11 +161,11 @@ namespace Viewer.Animation
             }
         }
 
-        public static AnimationClip Create(AnimationFile animation, AnimationFile skeletonFile, Skeleton skeleton)
+        public static AnimationClip Create(AnimationFile[] animations, AnimationFile skeletonFile, Skeleton skeleton)
         {
             AnimationClip model = new AnimationClip();
             model._skeleton = skeleton;
-            model._animation = animation;
+            model._animations = animations;
             model.ReCreate(false, true, true);
             return model;
         }

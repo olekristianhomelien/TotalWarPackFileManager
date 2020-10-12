@@ -1,15 +1,19 @@
 ﻿using Common;
+using CommonDialogs.FilterDialog;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Media;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.Views.EditorViews;
+using VariantMeshEditor.Views.EditorViews.AnimationViews;
+using VariantMeshEditor.Views.EditorViews.Util;
 using Viewer.Animation;
 using Viewer.Scene;
 
@@ -17,19 +21,25 @@ namespace VariantMeshEditor.Controls.EditorControllers
 {
     class AnimationController
     {
+        ILogger _logger = Logging.Create<AnimationController>();
+
         AnimationEditorView _viewModel;
         ResourceLibary _resourceLibary;
         SkeletonElement _skeletonElement;
         AnimationElement _animationElement;
-        ILogger _logger = Logging.Create<AnimationController>();
+        
         string _currentAnimationName;
 
         List<AnimationListItem> _animationFiles = new List<AnimationListItem>();
+        List<AnimationListItem> _animationsValidForSkeleton = new List<AnimationListItem>();
+
         public AnimationController( ResourceLibary resourceLibary, AnimationElement animationElement, SkeletonElement skeletonElement)
         {
             _resourceLibary = resourceLibary;
             _skeletonElement = skeletonElement;
             _animationElement = animationElement;
+
+            CreateTestData();
         }
 
         public AnimationEditorView GetView()
@@ -37,112 +47,158 @@ namespace VariantMeshEditor.Controls.EditorControllers
             if (_viewModel == null)
             {
                 _viewModel = new AnimationEditorView();
-                _viewModel.CurrentSkeletonName.Text = _skeletonElement.SkeletonFile.Header.SkeletonName;
-                _viewModel.AnimationList.SelectionChanged += OnAnimationChange;
+                _viewModel.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
+
                 _viewModel.PlayPauseButton.Click += (sender, e) => OnPlayButtonPressed();
                 _viewModel.NextFrameButton.Click += (sender, e) => NextFrame();
                 _viewModel.PrivFrameButton.Click += (sender, e) => PrivFrame();
                 _viewModel.AnimateInPlaceCheckBox.Click += (sender, e) => OnAnimationSettingsChanged();
-                _viewModel.DynamicFrameCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
-                _viewModel.StaticFramesCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
-
-                _viewModel.ClearFilterButton.Click += (sender, e) => FindAllAnimations();
-                _viewModel.FilterText.TextChanged += (sender, e) => FilterConditionChanged();
-                _viewModel.FindAllValidAnimations.Click += (sender, e) => FindAllValidAnimations();
 
                 FindAllAnimations();
+                
                 CreateAnimationSpeed();
+                CreateAnimationExplorer(true);
             }
             return _viewModel;
         }
 
-        private void FilterConditionChanged()
+
+        void CreateTestData()
         {
-            _viewModel.FilterText.Background = new System.Windows.Media.SolidColorBrush(Colors.White);
-            _viewModel.AnimationList.Items.Clear();
+            GetView();
 
-            var filterText = _viewModel.FilterText.Text.ToLower();
-            if (string.IsNullOrWhiteSpace(filterText))
+            var idle = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\stand\hu1_sws_stand_idle_05.anim");
+            var hand = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
+
+            var mainAnimation = _viewModel.Explorers[0];
+            LoadAnimation(mainAnimation, idle);
+
+            var handExplorer = CreateAnimationExplorer();
+            LoadAnimation(handExplorer, hand);
+        }
+
+        AnimationExplorerView CreateAnimationExplorer(bool isMainAnimation = false)
+        {
+            var explorer = _viewModel.CreateAnimationExplorer();
+            explorer.SkeletonName.Text = "";
+            explorer.IsMainAnimation = isMainAnimation;
+            if (isMainAnimation)
+                explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
+            else
+                explorer.RemoveButton.Click += (sender, e) => _viewModel.RemoveAnimationExplorer(explorer);
+
+            explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
+            explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
+
+            explorer.FilterBox.OnItemDoubleClicked += (sender, e) => HandleAnimationDoubleClicked(explorer);
+            explorer.FilterBox.OnItemSelected +=(sender, e) => HandleAnimationSelected(explorer);
+            explorer.BrowseAnimationButton.Click += (sender, e) => BrowseForAnimation(explorer);
+            explorer.DynamicFrameCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
+            explorer.StaticFramesCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
+
+            return explorer;
+        }
+
+
+        void HandleAnimationDoubleClicked(AnimationExplorerView explorer)
+        {
+            if (HandleAnimationSelected(explorer))
             {
-                var toolTip = _viewModel.FilterText.ToolTip as ToolTip;
-                if (toolTip != null)
-                    toolTip.IsOpen = false;
-
-                foreach (var item in _animationFiles)
-                    _viewModel.AnimationList.Items.Add(item);
-                return;
-            }
-
-            Regex rx = null;
-            try
-            {
-                rx = new Regex(filterText, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var toolTip = _viewModel.FilterText.ToolTip as ToolTip;
-                if (toolTip != null)
-                    toolTip.IsOpen = false;
-            }
-            catch (Exception e)
-            {
-                _viewModel.FilterText.Background = new System.Windows.Media.SolidColorBrush(Colors.Red);
-                var toolTip = _viewModel.FilterText.ToolTip as ToolTip;
-                if (toolTip == null)
-                {
-                    toolTip = new ToolTip();
-                    _viewModel.FilterText.ToolTip = toolTip;
-                }
-
-                toolTip.IsOpen = true;
-                toolTip.Content = e.Message;
-                toolTip.Content += "\n\nCommon usage:";
-                toolTip.Content += "Value0.*Value1.*Value2 -> for searching for multiple substrings";
-            }
-
-            if (rx == null)
-                return;
-
-            foreach (var item in _animationFiles)
-            {
-                var match = rx.Match(item.File.FullPath);
-                if (match.Success)
-                    _viewModel.AnimationList.Items.Add(item);
+                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
+                explorer.BrowseAnimationButton.Content = "Browse";
             }
         }
 
-        private void OnAnimationChange(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        bool HandleAnimationSelected(AnimationExplorerView explorer)
         {
-            if (e.AddedItems.Count == 1)
+            var selectedItem = explorer.FilterBox.GetSelectedItem() as AnimationListItem;
+            if(selectedItem != null)
+                return LoadAnimation(explorer, selectedItem.File);
+            return false;
+        }
+
+        void BrowseForAnimation(AnimationExplorerView explorer)
+        {
+            if (explorer.FilterBoxGrid.Visibility == System.Windows.Visibility.Visible)
             {
-
-                foreach (AnimationListItem item in e.AddedItems)
-                {
-                    try
-                    {
-                        AnimationFile animationFile = AnimationFile.Create(new ByteChunk(item.File.Data));
-                        AnimationClip clip = AnimationClip.Create(animationFile, _skeletonElement.SkeletonFile, _skeletonElement.Skeleton);
-                        _animationElement.AnimationPlayer.SetAnimation(clip);
-
-                        _currentAnimationName = item.File.Name;
-                        _viewModel.MainAnimationExpander.Header = "Main animation : " + _currentAnimationName;
-                        _viewModel.AnimationType.Text = animationFile.Header.AnimationType.ToString();
-                        _viewModel.NoFramesLabel.Content = "/" + clip.KeyFrameCollection.Count();
-
-                        _viewModel.DynamicFrameCheckbox.IsEnabled = animationFile.DynamicFrames.Count != 0;
-                        _viewModel.DynamicFrameCheckbox.IsChecked = _viewModel.DynamicFrameCheckbox.IsEnabled;
-
-                        _viewModel.StaticFramesCheckbox.IsEnabled = animationFile.StaticFrame != null;
-                        _viewModel.StaticFramesCheckbox.IsChecked = _viewModel.StaticFramesCheckbox.IsEnabled;
-
-                        SyncAllAnimations();
-
-                    }
-                    catch (Exception exception)
-                    {
-                        var error = $"Error loading skeleton {item.File.FullPath}:{exception.Message}";
-                        _viewModel.ErrorText.Text = error;
-                        _logger.Error(error);
-                    }
-                }
+                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
+                explorer.BrowseAnimationButton.Content = "Browse";
             }
+            else
+            {
+                explorer.BrowseAnimationButton.Content = "Hide";
+                FindAllAnimationsForSkeleton();
+                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Visible;
+                explorer.FilterBox.SetItems(_animationsValidForSkeleton, GetAllAnimationsFilter, true, "Only list animations for current skeleton");
+               
+            }
+        }
+
+        bool LoadAnimation(AnimationExplorerView explorer, PackedFile file)
+        {
+            try
+            {
+                explorer.AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
+
+                if (explorer.IsMainAnimation)
+                {
+                    _currentAnimationName = file.Name;
+                    explorer.AnimationExpanderName.Text = "Main animation : " + _currentAnimationName;
+                }
+                else
+                {
+                    explorer.AnimationExpanderName.Text = "Sub animation : " + file.Name;
+                }
+
+                explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
+                explorer.AnimationFileNameText.Text = file.FullPath;
+                explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
+
+                explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;
+                explorer.DynamicFrameCheckbox.IsChecked = explorer.DynamicFrameCheckbox.IsEnabled;
+                explorer.DynamicFrameCheckbox.Content = $"Dynamic[{explorer.AnimationFile.DynamicFrames.Count}]";
+
+                explorer.StaticFramesCheckbox.IsEnabled = explorer.AnimationFile.StaticFrame != null;
+                explorer.StaticFramesCheckbox.IsChecked = explorer.StaticFramesCheckbox.IsEnabled;
+
+                UpdateCurrentAnimation();
+                return true;
+            }
+            catch (Exception exception)
+            {
+                var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
+                explorer.ErrorBar.Visibility = System.Windows.Visibility.Visible;
+                explorer.ErrorText.Background = new SolidColorBrush(Colors.Red);
+                explorer.ErrorText.Text = error;
+                _logger.Error(error);
+                return false;
+            }
+        }
+
+        void UpdateCurrentAnimation()
+        {
+
+            var animationFiles = _viewModel.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
+            if (animationFiles.Length != 0)
+            {
+                AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.SkeletonFile, _skeletonElement.Skeleton);
+                _animationElement.AnimationPlayer.SetAnimation(clip);
+                _viewModel.NoFramesLabel.Content = "/" + clip.KeyFrameCollection.Count();
+            }
+            
+
+           // _animationElement.AnimationPlayer.UpdatCurrentAnimationSettings(
+           //         _viewModel.AnimateInPlaceCheckBox.IsChecked.Value,
+           //         _viewModel.Explorers[0].DynamicFrameCheckbox.IsChecked.Value,
+           //         _viewModel.Explorers[0].StaticFramesCheckbox.IsChecked.Value);
+           //
+            SyncAllAnimations();
+        }
+
+
+        IEnumerable<object> GetAllAnimationsFilter(IEnumerable<object> orgList)
+        {
+            return _animationFiles;
         }
 
         void OnPlayButtonPressed()
@@ -174,10 +230,11 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void OnAnimationSettingsChanged()
         {
+            return;
             _animationElement.AnimationPlayer.UpdatCurrentAnimationSettings(
                 _viewModel.AnimateInPlaceCheckBox.IsChecked.Value, 
-                _viewModel.DynamicFrameCheckbox.IsChecked.Value, 
-                _viewModel.StaticFramesCheckbox.IsChecked.Value);
+                _viewModel.Explorers[0].DynamicFrameCheckbox.IsChecked.Value, 
+                _viewModel.Explorers[0].StaticFramesCheckbox.IsChecked.Value);
         }
 
         void CreateAnimationSpeed()
@@ -203,41 +260,23 @@ namespace VariantMeshEditor.Controls.EditorControllers
         }
 
         void FindAllAnimations()
-        {
-            _viewModel.FilterText.Text = "";
-            _animationFiles.Clear();
+        { 
             var allAnimationFiles = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "anim");
             foreach (var file in allAnimationFiles)
-            {
-                var animationItem = new AnimationListItem() { File = file };
-                _animationFiles.Add(animationItem);
-            }
-
-            FilterConditionChanged();
+                _animationFiles.Add(new AnimationListItem() { File = file });
         }
 
-        void FindAllValidAnimations()
+        void FindAllAnimationsForSkeleton()
         {
-            var filteredList = new List<AnimationListItem>();
-            foreach (var item in _animationFiles)
+            if (_animationsValidForSkeleton.Count == 0)
             {
-                try
+                foreach (var item in _animationFiles)
                 {
                     var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(item.File.Data)).SkeletonName;
                     if (animationSkeletonName == _skeletonElement.SkeletonFile.Header.SkeletonName)
-                        filteredList.Add(new AnimationListItem() { File = item.File });
-                }
-                catch (Exception exception)
-                {
-                    var error = $"Error loading skeleton {item.File.FullPath}:{exception.Message}";
-                    _viewModel.ErrorText.Text = error;
-                    _logger.Error(error);
+                        _animationsValidForSkeleton.Add(new AnimationListItem() { File = item.File });
                 }
             }
-
-            _animationFiles = filteredList;
-            _viewModel.FilterText.Text = "";
-            FilterConditionChanged();
         }
 
         public string GetCurrentAnimationName()

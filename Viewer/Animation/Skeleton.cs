@@ -7,6 +7,8 @@ namespace Viewer.Animation
     public class Skeleton
     {
         public Matrix[] Transform { get; private set; }
+        public Vector3[] Translation { get; private set; }
+        public Quaternion[] Rotation { get; private set; }
         public Matrix[] WorldTransform { get; private set; }
         public int[] ParentBoneId { get; private set; }
         public string[] BoneNames { get; private set; }
@@ -16,6 +18,8 @@ namespace Viewer.Animation
         {
             BoneCount = skeletonFile.Bones.Count();
             Transform = new Matrix[BoneCount];
+            Translation = new Vector3[BoneCount];
+            Rotation = new Quaternion[BoneCount];
             WorldTransform = new Matrix[BoneCount];
             ParentBoneId = new int[BoneCount];
             BoneNames = new string[BoneCount];
@@ -35,11 +39,16 @@ namespace Viewer.Animation
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][2],
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][3]);
                 quat.Normalize();
+
+                Rotation[i] = quat;
+
                 var rotationMatrix = Matrix.CreateFromQuaternion(quat);
                 var translationMatrix =  Matrix.CreateTranslation(
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][0],
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][1],
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][2]);
+
+                Translation[i] = new Vector3(skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][0], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][1], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][2]);
 
                 var scale = Matrix.CreateScale(1);
                 //if(i == 0)
