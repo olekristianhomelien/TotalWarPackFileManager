@@ -16,7 +16,7 @@
                         <animationviews:AnimationExplorer x:Name="AnimationExplorer" ></animationviews:AnimationExplorer>
                     </TabItem>
                     <TabItem Header="Fragment Explorer">
-                        <animationviews:AnimationFragmentExplorer x:Name="AnimationFragmentExplorer" ></animationviews:AnimationFragmentExplorer>
+                        <animationviews:AnimationFragmentExplorerView x:Name="AnimationFragmentExplorer" ></animationviews:AnimationFragmentExplorerView>
                     </TabItem>
                 </TabControl>
             </DockPanel>
