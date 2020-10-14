@@ -50,7 +50,9 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\EditorControllers\AnimationController.cs" />
+    <Compile Include="Controls\EditorControllers\Animation\AnimationController.cs" />
+    <Compile Include="Controls\EditorControllers\Animation\AnimationExplorerController.cs" />
+    <Compile Include="Controls\EditorControllers\Animation\AnimationPlayerController.cs" />
     <Compile Include="Controls\EditorControllers\RigidModelController.cs" />
     <Compile Include="Controls\EditorControllers\RootController.cs" />
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
@@ -66,6 +68,15 @@
     <Compile Include="ViewModels\SlotsElement.cs" />
     <Compile Include="Views\EditorViews\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\AnimationViews\AnimationExplorer.xaml.cs">
+      <DependentUpon>AnimationExplorer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\AnimationViews\AnimationFragmentExplorer.xaml.cs">
+      <DependentUpon>AnimationFragmentExplorer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\AnimationViews\AnimationPlayerView.xaml.cs">
+      <DependentUpon>AnimationPlayerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\EditorPanelView.xaml.cs">
       <DependentUpon>EditorPanelView.xaml</DependentUpon>
@@ -119,6 +130,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditorViews\AnimationEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\AnimationViews\AnimationExplorer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\AnimationViews\AnimationFragmentExplorer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\AnimationViews\AnimationPlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

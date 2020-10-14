@@ -13,7 +13,39 @@ namespace Viewer.Animation
     {
         AnimationClip _currentAnimation;
         int _currentFrame;
+
         bool _animateInPlace = false;
+        public bool AnimateInPlace 
+        { 
+            get { return _animateInPlace; } 
+            set 
+            { 
+                _animateInPlace = value;
+                Recreate();
+            } 
+        }
+
+        bool _applyStaticFrame = true;
+        public bool ApplyStaticFrame
+        {
+            get { return _applyStaticFrame; }
+            set
+            {
+                _applyStaticFrame = value;
+                Recreate();
+            }
+        }
+
+        bool _applyDynamicFrames = true;
+        public bool ApplyDynamicFrames
+        {
+            get { return _applyDynamicFrames; }
+            set
+            {
+                _applyDynamicFrames = value;
+                Recreate();
+            }
+        }
 
         public int CurrentFrame
         {
@@ -84,9 +116,10 @@ namespace Viewer.Animation
             return 0;
         }
 
-        public void UpdatCurrentAnimationSettings(bool animateInPlace, bool applyDynamicFrames, bool applyStaticFrames)
+
+        void Recreate()
         {
-            _currentAnimation.ReCreate(animateInPlace, applyDynamicFrames, applyStaticFrames);
+            _currentAnimation.ReCreate(AnimateInPlace, ApplyDynamicFrames, ApplyStaticFrame);
             var totalFrames = _currentAnimation.KeyFrameCollection.Count();
             if (totalFrames == 1 || totalFrames == 0)
                 _currentFrame = 0;

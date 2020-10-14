@@ -6,11 +6,11 @@ namespace VariantMeshEditor.Views.EditorViews.AnimationViews
     /// <summary>
     /// Interaction logic for AnimationExplorer.xaml
     /// </summary>
-    public partial class AnimationExplorerView : UserControl
+    public partial class AnimationExplorerItemView : UserControl
     {
         public bool IsMainAnimation { get; set; } = false;
         public AnimationFile AnimationFile { get; set; }
-        public AnimationExplorerView()
+        public AnimationExplorerItemView()
         {
             InitializeComponent();
         }

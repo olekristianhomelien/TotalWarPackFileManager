@@ -17,11 +17,13 @@ using VariantMeshEditor.Views.EditorViews.Util;
 using Viewer.Animation;
 using Viewer.Scene;
 
-namespace VariantMeshEditor.Controls.EditorControllers
+namespace VariantMeshEditor.Controls.EditorControllers.Animation
 {
-    class AnimationController
+    class AnimationExplorerController
     {
-        ILogger _logger = Logging.Create<AnimationController>();
+        ILogger _logger = Logging.Create<AnimationExplorerController>();
+
+        AnimationPlayerController _playerController;
 
         AnimationEditorView _viewModel;
         ResourceLibary _resourceLibary;
@@ -33,59 +35,45 @@ namespace VariantMeshEditor.Controls.EditorControllers
         List<AnimationListItem> _animationFiles = new List<AnimationListItem>();
         List<AnimationListItem> _animationsValidForSkeleton = new List<AnimationListItem>();
 
-        public AnimationController( ResourceLibary resourceLibary, AnimationElement animationElement, SkeletonElement skeletonElement)
+        public AnimationExplorerController( ResourceLibary resourceLibary, AnimationElement animationElement, SkeletonElement skeletonElement, AnimationPlayerController playerController)
         {
             _resourceLibary = resourceLibary;
             _skeletonElement = skeletonElement;
             _animationElement = animationElement;
-
-            CreateTestData();
+            _playerController = playerController;
         }
 
-        public AnimationEditorView GetView()
+        public void PopulateExplorerView(AnimationEditorView viewModel)
         {
-            if (_viewModel == null)
-            {
-                _viewModel = new AnimationEditorView();
-                _viewModel.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
+            _viewModel = viewModel;
+            _viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
 
-                _viewModel.PlayPauseButton.Click += (sender, e) => OnPlayButtonPressed();
-                _viewModel.NextFrameButton.Click += (sender, e) => NextFrame();
-                _viewModel.PrivFrameButton.Click += (sender, e) => PrivFrame();
-                _viewModel.AnimateInPlaceCheckBox.Click += (sender, e) => OnAnimationSettingsChanged();
-
-                FindAllAnimations();
-                
-                CreateAnimationSpeed();
-                CreateAnimationExplorer(true);
-            }
-            return _viewModel;
+            FindAllAnimations();
+            CreateAnimationExplorer(true);
         }
 
 
-        void CreateTestData()
+        public void CreateTestData(AnimationEditorView viewModel)
         {
-            GetView();
-
             var idle = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\stand\hu1_sws_stand_idle_05.anim");
             var hand = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
-            var mainAnimation = _viewModel.Explorers[0];
+            var mainAnimation = _viewModel.AnimationExplorer.Explorers[0];
             LoadAnimation(mainAnimation, idle);
 
             var handExplorer = CreateAnimationExplorer();
             LoadAnimation(handExplorer, hand);
         }
 
-        AnimationExplorerView CreateAnimationExplorer(bool isMainAnimation = false)
+        AnimationExplorerItemView CreateAnimationExplorer(bool isMainAnimation = false)
         {
-            var explorer = _viewModel.CreateAnimationExplorer();
+            var explorer = _viewModel.AnimationExplorer.CreateAnimationExplorer();
             explorer.SkeletonName.Text = "";
             explorer.IsMainAnimation = isMainAnimation;
             if (isMainAnimation)
                 explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
             else
-                explorer.RemoveButton.Click += (sender, e) => _viewModel.RemoveAnimationExplorer(explorer);
+                explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
 
             explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
             explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
@@ -93,14 +81,14 @@ namespace VariantMeshEditor.Controls.EditorControllers
             explorer.FilterBox.OnItemDoubleClicked += (sender, e) => HandleAnimationDoubleClicked(explorer);
             explorer.FilterBox.OnItemSelected +=(sender, e) => HandleAnimationSelected(explorer);
             explorer.BrowseAnimationButton.Click += (sender, e) => BrowseForAnimation(explorer);
-            explorer.DynamicFrameCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
-            explorer.StaticFramesCheckbox.Click += (sender, e) => OnAnimationSettingsChanged();
+            explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
+            explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
 
             return explorer;
         }
 
 
-        void HandleAnimationDoubleClicked(AnimationExplorerView explorer)
+        void HandleAnimationDoubleClicked(AnimationExplorerItemView explorer)
         {
             if (HandleAnimationSelected(explorer))
             {
@@ -109,7 +97,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
             }
         }
 
-        bool HandleAnimationSelected(AnimationExplorerView explorer)
+        bool HandleAnimationSelected(AnimationExplorerItemView explorer)
         {
             var selectedItem = explorer.FilterBox.GetSelectedItem() as AnimationListItem;
             if(selectedItem != null)
@@ -117,7 +105,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
             return false;
         }
 
-        void BrowseForAnimation(AnimationExplorerView explorer)
+        void BrowseForAnimation(AnimationExplorerItemView explorer)
         {
             if (explorer.FilterBoxGrid.Visibility == System.Windows.Visibility.Visible)
             {
@@ -129,12 +117,15 @@ namespace VariantMeshEditor.Controls.EditorControllers
                 explorer.BrowseAnimationButton.Content = "Hide";
                 FindAllAnimationsForSkeleton();
                 explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Visible;
-                explorer.FilterBox.SetItems(_animationsValidForSkeleton, GetAllAnimationsFilter, true, "Only list animations for current skeleton");
+                explorer.FilterBox.SetItems(_animationsValidForSkeleton, 
+                    (IEnumerable<object> orgList) => { return _animationFiles; }, 
+                    true, 
+                    "Only list animations for current skeleton");
                
             }
         }
 
-        bool LoadAnimation(AnimationExplorerView explorer, PackedFile file)
+        bool LoadAnimation(AnimationExplorerItemView explorer, PackedFile file)
         {
             try
             {
@@ -177,86 +168,14 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void UpdateCurrentAnimation()
         {
-
-            var animationFiles = _viewModel.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
+            var animationFiles = _viewModel.AnimationExplorer.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
+            animationFiles = animationFiles.Where(x => x != null).ToArray();
             if (animationFiles.Length != 0)
             {
-                AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.SkeletonFile, _skeletonElement.Skeleton);
+                AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.Skeleton);
                 _animationElement.AnimationPlayer.SetAnimation(clip);
-                _viewModel.NoFramesLabel.Content = "/" + clip.KeyFrameCollection.Count();
+                _playerController.SetAnimation(clip);
             }
-            
-
-           // _animationElement.AnimationPlayer.UpdatCurrentAnimationSettings(
-           //         _viewModel.AnimateInPlaceCheckBox.IsChecked.Value,
-           //         _viewModel.Explorers[0].DynamicFrameCheckbox.IsChecked.Value,
-           //         _viewModel.Explorers[0].StaticFramesCheckbox.IsChecked.Value);
-           //
-            SyncAllAnimations();
-        }
-
-
-        IEnumerable<object> GetAllAnimationsFilter(IEnumerable<object> orgList)
-        {
-            return _animationFiles;
-        }
-
-        void OnPlayButtonPressed()
-        {
-            var player = _animationElement.AnimationPlayer;
-            if(player.IsPlaying)
-                player.Pause();
-            else
-                player.Play();
-
-            SyncAllAnimations();
-        }
-
-        void NextFrame()
-        {
-            _animationElement.AnimationPlayer.Pause();
-            _animationElement.AnimationPlayer.CurrentFrame++;
-
-            SyncAllAnimations();
-        }
-
-        void PrivFrame()
-        {
-            _animationElement.AnimationPlayer.Pause();
-            _animationElement.AnimationPlayer.CurrentFrame--;
-
-            SyncAllAnimations();
-        }
-
-        void OnAnimationSettingsChanged()
-        {
-            return;
-            _animationElement.AnimationPlayer.UpdatCurrentAnimationSettings(
-                _viewModel.AnimateInPlaceCheckBox.IsChecked.Value, 
-                _viewModel.Explorers[0].DynamicFrameCheckbox.IsChecked.Value, 
-                _viewModel.Explorers[0].StaticFramesCheckbox.IsChecked.Value);
-        }
-
-        void CreateAnimationSpeed()
-        {
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = 20.0 / 1000.0, DisplayName = "1x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.5) / 1000.0, DisplayName = "0.5x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.1) / 1000.0, DisplayName = "0.1x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.01) / 1000.0, DisplayName = "0.01x" });
-            _viewModel.AnimationSpeedComboBox.SelectedIndex = 0;
-
-            _viewModel.AnimationSpeedComboBox.SelectionChanged += OnAnimationSpeedChanged;
-        }
-
-        private void OnAnimationSpeedChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 1)
-            {
-                foreach (AnimationSpeedItem item in e.AddedItems)
-                    _animationElement.AnimationPlayer.FrameRate = item.FrameRate;
-            }
-
-            SyncAllAnimations();
         }
 
         void FindAllAnimations()
@@ -284,45 +203,12 @@ namespace VariantMeshEditor.Controls.EditorControllers
             return _currentAnimationName;
         }
 
-        public void Update()
-        {
-            if(_viewModel != null)
-                _viewModel.CurretFrameText.Text = (_animationElement.AnimationPlayer.CurrentFrame + 1).ToString();
-        }
-
-        void SyncAllAnimations()
-        {
-            var root = SceneElementHelper.GetRoot(_animationElement);
-            List<AnimationElement> animationItems = new List<AnimationElement>();
-            SceneElementHelper.GetAllChildrenOfType<AnimationElement>(root, animationItems);
-            animationItems.Remove(_animationElement);
-
-            foreach (var animationItem in animationItems)
-            {
-                animationItem.AnimationPlayer.CurrentFrame = _animationElement.AnimationPlayer.CurrentFrame;
-                if (_animationElement.AnimationPlayer.IsPlaying)
-                    animationItem.AnimationPlayer.Play();
-                else
-                    animationItem.AnimationPlayer.Pause();
-            }
-        }
-
         class AnimationListItem
         { 
             public PackedFile File { get; set; }
             public override string ToString()
             {
                 return File.FullPath;
-            }
-        }
-
-        class AnimationSpeedItem
-        {
-            public double FrameRate { get; set; }
-            public string DisplayName { get; set; }
-            public override string ToString()
-            {
-                return DisplayName;
             }
         }
     }

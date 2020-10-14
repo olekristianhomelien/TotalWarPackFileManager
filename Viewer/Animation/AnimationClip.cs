@@ -161,7 +161,7 @@ namespace Viewer.Animation
             }
         }
 
-        public static AnimationClip Create(AnimationFile[] animations, AnimationFile skeletonFile, Skeleton skeleton)
+        public static AnimationClip Create(AnimationFile[] animations, Skeleton skeleton)
         {
             AnimationClip model = new AnimationClip();
             model._skeleton = skeleton;
