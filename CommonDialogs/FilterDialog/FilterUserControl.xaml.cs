@@ -44,20 +44,53 @@ namespace CommonDialogs
             ResultList.SelectionChanged += (sender, e) => OnItemSelected?.Invoke(null, null);
         }
 
+
+
+
+
+
+
+        public string CustomFilterText
+        {
+            get { return (string)GetValue(CustomFilterTextProperty); }
+            set { SetValue(CustomFilterTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty CustomFilterTextProperty =
+            DependencyProperty.Register("CustomFilterText", typeof(string), typeof(FilterUserControl), new PropertyMetadata(null));
+
+        public Visibility CustomFilterVisibility
+        {
+            get { return (Visibility)GetValue(CustomFilterVisibilityProperty); }
+            set { SetValue(CustomFilterVisibilityProperty, value); }
+        }
+
+
+        public static readonly DependencyProperty CustomFilterVisibilityProperty =
+            DependencyProperty.Register("CustomFilterVisibility", typeof(Visibility), typeof(FilterUserControl), new PropertyMetadata(null));
+
+
+        public bool ApplyCustomFilterAsDefault
+        {
+            get { return (bool)GetValue(ApplyCustomFilterAsDefaultProperty); }
+            set { SetValue(ApplyCustomFilterAsDefaultProperty, value); }
+        }
+
+        public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
+            DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(FilterUserControl), new PropertyMetadata(null));
+
         public object GetSelectedItem()
         {
             return ResultList.SelectedItem;
         }
 
-        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null, bool applyFilterAsDefault = true, string externalFilterName = "Apply external Filter")
+        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null)
         {
             _originalList = items;
             if (externalFilter != null)
             {
-                ExtraFilterButton.Content = externalFilterName;
+                //ExtraFilterButton.Content = externalFilterName;
                 _externalFilter = externalFilter;
-                if (applyFilterAsDefault)
-                    ExtraFilterButton.IsChecked = true;
             }
             else
             {

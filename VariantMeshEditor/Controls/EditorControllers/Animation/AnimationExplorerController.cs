@@ -117,10 +117,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
                 explorer.BrowseAnimationButton.Content = "Hide";
                 FindAllAnimationsForSkeleton();
                 explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Visible;
-                explorer.FilterBox.SetItems(_animationsValidForSkeleton, 
-                    (IEnumerable<object> orgList) => { return _animationFiles; }, 
-                    true, 
-                    "Only list animations for current skeleton");
+                explorer.FilterBox.SetItems(_animationsValidForSkeleton, (IEnumerable<object> orgList) => { return _animationFiles; });
                
             }
         }

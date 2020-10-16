@@ -63,6 +63,9 @@
     <Compile Include="FileAlreadyExistsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FilterDialog\CollapsableFilterControl.xaml.cs">
+      <DependentUpon>CollapsableFilterControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FilterDialog\FilterUserControl.xaml.cs">
       <DependentUpon>FilterUserControl.xaml</DependentUpon>
     </Compile>
@@ -130,6 +133,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FilterDialog\CollapsableFilterControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FilterDialog\FilterUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Common="clr-namespace:CommonDialogs.ComboBoxes;assembly=CommonDialogs"
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -75,6 +75,19 @@
 
             </DockPanel>
 
+
+
+            <Label>Animations</Label>
+            <commondialogs:FilterUserControl ></commondialogs:FilterUserControl>
+
+            <animationviews:AnimationPlayerView></animationviews:AnimationPlayerView>
+
+
+            <Label>Selected Animation : Walk_01</Label>
+            <TextBox IsReadOnly="True">Animation fileName</TextBox>
+            <TextBox IsReadOnly="True">Meta fileName</TextBox>
+
+            <Label>Meta content</Label>
 
         </StackPanel>
     </DockPanel>

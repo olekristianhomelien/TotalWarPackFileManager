@@ -28,10 +28,10 @@ namespace CommonDialogs.FilterDialog
             InitializeComponent();
         }
 
-        public FilterWindow(IEnumerable<object> items, FilterUserControl.ExternalFilter externalFilter = null, bool applyFilterAsDefault = true, string externalFilterName = "Apply external Filter")
+        public FilterWindow(IEnumerable<object> items, FilterUserControl.ExternalFilter externalFilter = null)
         {
             InitializeComponent();
-            Filter.SetItems(items, externalFilter, applyFilterAsDefault, externalFilterName);
+            Filter.SetItems(items, externalFilter);
             Filter.OnItemDoubleClicked += (sender, e) => OkButton_Click(null, null);
         }
 

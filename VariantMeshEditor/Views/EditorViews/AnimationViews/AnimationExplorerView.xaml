@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
+             xmlns:commondialogs1="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
@@ -67,8 +68,27 @@
                                 <ColumnDefinition Width="83"></ColumnDefinition>
                                 <ColumnDefinition></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <commondialogs:FilterUserControl x:Name="FilterBox" Grid.Column="1"></commondialogs:FilterUserControl>
+                            <commondialogs:FilterUserControl x:Name="FilterBox" 
+                                                             Grid.Column="1" 
+                                                             CustomFilterVisibility="Visible"  
+                                                             CustomFilterText= "Only list animations for current skeleton" 
+                                                             ApplyCustomFilterAsDefault="True">
+                                
+                            </commondialogs:FilterUserControl>
                         </Grid>
+
+                        <commondialogs1:CollapsableFilterControl
+                            CustomFilterVisibility="Visible"  
+                            CustomFilterText= "Only list animations for current skeleton2" 
+                            ApplyCustomFilterAsDefault="True"
+                            
+                            LabelText="File"
+                            LabelTotalWidth="70"
+                            GridWidth="83"
+                            
+                            ></commondialogs1:CollapsableFilterControl>
+                        
+                        
                     </DockPanel>
                     
                     
