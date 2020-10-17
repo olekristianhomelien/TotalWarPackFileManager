@@ -1,18 +1,8 @@
-﻿using System;
+﻿using CommonDialogs.Common;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static CommonDialogs.FilterUserControl;
+using static CommonDialogs.FilterDialog.FilterUserControl;
 
 namespace CommonDialogs.FilterDialog
 {
@@ -22,16 +12,70 @@ namespace CommonDialogs.FilterDialog
     public partial class CollapsableFilterControl : UserControl
     {
 
-        public EventHandler OnItemDoubleClicked;
-        public EventHandler OnItemSelected;
-        public EventHandler OnOpeningFirstTime;
+        public delegate bool OnItemSelectedDelegate(object sender);
+        public delegate void OnOpeningFirstTimeDelegate(CollapsableFilterControl sender);
+
+        public OnItemSelectedDelegate OnItemSelected;
+        public OnOpeningFirstTimeDelegate OnOpeningFirstTime;
+        bool _firstTimeOpening = true;
 
         public CollapsableFilterControl()
         {
             InitializeComponent();
+            FilterBox.OnItemSelected += (a, b) => HandleOnItemSelected();
+            FilterBox.OnItemDoubleClicked += (a, b) => HandleItemDoubleClicked();
+            BrowseButton.Click += (a, b) => ToggleSearchFiled();
+            FilterBox.Visibility = Visibility.Collapsed;
         }
 
 
+        void HandleItemDoubleClicked()
+        {
+            if (HandleOnItemSelected().Value)
+            {
+                FilterBox.Visibility = Visibility.Collapsed;
+                BrowseButton.Content = "Browse";
+            }
+        }
+
+        bool? HandleOnItemSelected()
+        {
+            var selectedItem = FilterBox.GetSelectedItem();
+            SelectedFileName.Text = selectedItem.ToString();
+            return OnItemSelected?.Invoke(selectedItem);
+        }
+
+        void ToggleSearchFiled()
+        {
+            if (FilterBox.Visibility == Visibility.Visible)
+            {
+                FilterBox.Visibility = Visibility.Collapsed;
+                BrowseButton.Content = "Browse";
+            }
+            else
+            {
+                if (_firstTimeOpening)
+
+                {
+                    using (new WaitCursor())
+                    {
+                        OnOpeningFirstTime?.Invoke(this);
+                        _firstTimeOpening = false;
+                    }
+                }
+                
+                BrowseButton.Content = "Hide";
+                FilterBox.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null)
+        {
+            FilterBox.SetItems(items, externalFilter);
+        }
+
+
+        #region properties
 
         public int LabelTotalWidth
         {
@@ -95,12 +139,6 @@ namespace CommonDialogs.FilterDialog
         public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
             DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
-
-
-
-        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null)
-        {
-            FilterBox.SetItems(items, externalFilter);
-        }
+        #endregion
     }
 }

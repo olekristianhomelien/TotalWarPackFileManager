@@ -30,7 +30,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
                 _animationPlayerController.PopulateExplorerView(_viewModel.Player);
 
                 _animationExplorerController.PopulateExplorerView(_viewModel);
-                _animationExplorerController.CreateTestData(_viewModel);
+                _animationExplorerController.CreateTestData();
             }
             return _viewModel;
         }

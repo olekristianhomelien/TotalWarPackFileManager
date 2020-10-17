@@ -51,48 +51,20 @@
                             </Border>
                         </DockPanel>
                     </Grid>
-                    
-                    <DockPanel DockPanel.Dock="Top">
-                        <Label DockPanel.Dock="Left" Width="70" >File</Label>
-                        <Label DockPanel.Dock="Left">:</Label>
 
-                        <Button x:Name="BrowseAnimationButton" DockPanel.Dock="Right" Width="70">Browse</Button>
-                        <Border DockPanel.Dock="Left" BorderBrush="{x:Null}" >
-                            <TextBox  x:Name="AnimationFileNameText"  TextWrapping="NoWrap" VerticalAlignment="Center" IsReadOnly="true"/>
-                        </Border>
-                    </DockPanel>
-
-                    <DockPanel DockPanel.Dock="Top" >
-                        <Grid x:Name="FilterBoxGrid" DockPanel.Dock="Top">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="83"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <commondialogs:FilterUserControl x:Name="FilterBox" 
-                                                             Grid.Column="1" 
-                                                             CustomFilterVisibility="Visible"  
-                                                             CustomFilterText= "Only list animations for current skeleton" 
-                                                             ApplyCustomFilterAsDefault="True">
-                                
-                            </commondialogs:FilterUserControl>
-                        </Grid>
-
-                        <commondialogs1:CollapsableFilterControl
+                    <commondialogs1:CollapsableFilterControl DockPanel.Dock="top"
+                                                             MaxHeight="400"
                             CustomFilterVisibility="Visible"  
-                            CustomFilterText= "Only list animations for current skeleton2" 
+                            CustomFilterText= "Only list animations for current skeleton" 
                             ApplyCustomFilterAsDefault="True"
                             
                             LabelText="File"
                             LabelTotalWidth="70"
-                            GridWidth="83"
-                            
-                            ></commondialogs1:CollapsableFilterControl>
+                            SearchFieldOffset="83"
+                                                             
+                            x:Name="FilterDialog">
+                    </commondialogs1:CollapsableFilterControl>
                         
-                        
-                    </DockPanel>
-                    
-                    
-
 
                     <Button x:Name="RemoveButton" DockPanel.Dock="Bottom" HorizontalAlignment="Center">Remove animation</Button>
 

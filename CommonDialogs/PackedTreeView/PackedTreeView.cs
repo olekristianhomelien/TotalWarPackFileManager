@@ -10,6 +10,7 @@ using Aga.Controls.Tree.NodeControls;
 using System.Drawing;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace PackFileManager.PackedTreeView
 {
@@ -38,20 +39,33 @@ namespace PackFileManager.PackedTreeView
             InitializeComponent();
             _treeModel = new TreeModel();
 
+
+         
             treeViewAdv1.ItemDrag += new ItemDragEventHandler(this.packTreeView_ItemDrag);
             treeViewAdv1.NodeMouseClick += (sender, args) => treeViewAdv1.SelectedNode = args.Node;
             treeViewAdv1.Expanded += TreeViewAdv1_Expanded;
             treeViewAdv1.Expanding += TreeViewAdv1_Expanding;
 
-
-            treeViewAdv1.Model = _treeModel;
+            var sorted = new SortedTreeModel(_treeModel);
+            sorted.Comparer = new NodeComparer();
+            treeViewAdv1.Model = sorted;
+           
             treeViewAdv1.NodeFilter = filter;
 
             nodeTextBox1.ToolTipProvider = new ToolTipProvider();
             nodeTextBox1.DrawText += new EventHandler<DrawTextEventArgs>(_nodeTextBox_DrawText);
+
         }
 
-
+        class NodeComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                var a = x as TreeNode;
+                var b = y as TreeNode;
+                return a.Text.CompareTo(b.Text);
+            }
+        }
 
         void _nodeTextBox_DrawText(object sender, DrawTextEventArgs e)
         {
@@ -84,6 +98,7 @@ namespace PackFileManager.PackedTreeView
         private void TreeViewAdv1_Expanding(object sender, TreeViewAdvEventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            
         }
 
         private void TreeViewAdv1_Expanded(object sender, TreeViewAdvEventArgs e)
@@ -199,7 +214,7 @@ namespace PackFileManager.PackedTreeView
             if(TreeViewColourHelper != null)
                 TreeViewColourHelper.SetColourBasedOnValidation(_treeModel.Nodes);
             treeViewAdv1.EndUpdate();
-
+          
             var extentions = currentPackFile.Files.Select(x => x.FileExtention).Distinct().ToList();
             extentions.Sort();
             foreach (var extention in extentions)

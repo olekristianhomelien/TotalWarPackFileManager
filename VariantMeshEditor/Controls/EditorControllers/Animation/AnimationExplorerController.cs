@@ -53,7 +53,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         }
 
 
-        public void CreateTestData(AnimationEditorView viewModel)
+        public void CreateTestData()
         {
             var idle = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\stand\hu1_sws_stand_idle_05.anim");
             var hand = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
@@ -75,12 +75,11 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             else
                 explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
 
-            explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
             explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
 
-            explorer.FilterBox.OnItemDoubleClicked += (sender, e) => HandleAnimationDoubleClicked(explorer);
-            explorer.FilterBox.OnItemSelected +=(sender, e) => HandleAnimationSelected(explorer);
-            explorer.BrowseAnimationButton.Click += (sender, e) => BrowseForAnimation(explorer);
+            explorer.FilterDialog.OnOpeningFirstTime += (sender) => OnAnimationExplorerOpeningFirstTime(sender);
+            explorer.FilterDialog.OnItemSelected += (item) => OnAnimationSelected(explorer, item);
+
             explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
             explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
 
@@ -88,38 +87,18 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         }
 
 
-        void HandleAnimationDoubleClicked(AnimationExplorerItemView explorer)
+        void OnAnimationExplorerOpeningFirstTime(CollapsableFilterControl sender)
         {
-            if (HandleAnimationSelected(explorer))
-            {
-                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
-                explorer.BrowseAnimationButton.Content = "Browse";
-            }
+            FindAllAnimationsForSkeleton();
+            sender.SetItems(_animationsValidForSkeleton, (IEnumerable<object> orgList) => { return _animationFiles; });
         }
 
-        bool HandleAnimationSelected(AnimationExplorerItemView explorer)
+        bool OnAnimationSelected(AnimationExplorerItemView explorer, object selectedAnimationFile)
         {
-            var selectedItem = explorer.FilterBox.GetSelectedItem() as AnimationListItem;
-            if(selectedItem != null)
+            var selectedItem = selectedAnimationFile as AnimationListItem;
+            if (selectedItem != null)
                 return LoadAnimation(explorer, selectedItem.File);
             return false;
-        }
-
-        void BrowseForAnimation(AnimationExplorerItemView explorer)
-        {
-            if (explorer.FilterBoxGrid.Visibility == System.Windows.Visibility.Visible)
-            {
-                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Collapsed;
-                explorer.BrowseAnimationButton.Content = "Browse";
-            }
-            else
-            {
-                explorer.BrowseAnimationButton.Content = "Hide";
-                FindAllAnimationsForSkeleton();
-                explorer.FilterBoxGrid.Visibility = System.Windows.Visibility.Visible;
-                explorer.FilterBox.SetItems(_animationsValidForSkeleton, (IEnumerable<object> orgList) => { return _animationFiles; });
-               
-            }
         }
 
         bool LoadAnimation(AnimationExplorerItemView explorer, PackedFile file)
@@ -139,7 +118,6 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
                 }
 
                 explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
-                explorer.AnimationFileNameText.Text = file.FullPath;
                 explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
 
                 explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;

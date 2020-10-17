@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CommonDialogs
+namespace CommonDialogs.FilterDialog
 {
     /// <summary>
     /// Interaction logic for FilterUserControl.xaml

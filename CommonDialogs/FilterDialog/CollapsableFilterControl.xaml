@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CommonDialogs.FilterDialog" 
              xmlns:commondialogs="clr-namespace:CommonDialogs" 
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="self">
@@ -15,9 +14,9 @@
             <Label DockPanel.Dock="Left" Width="{Binding LabelTotalWidth, ElementName=self}"  Content="{Binding LabelText, ElementName=self}" ></Label>
             <Label DockPanel.Dock="Left">:</Label>
             
-            <Button x:Name="BrowseAnimationButton" DockPanel.Dock="Right" Width="70">Browse</Button>
+            <Button x:Name="BrowseButton" DockPanel.Dock="Right" Width="70">Browse</Button>
             <Border DockPanel.Dock="Left" BorderBrush="{x:Null}" >
-                <TextBox  x:Name="AnimationFileNameText"  TextWrapping="NoWrap" VerticalAlignment="Center" IsReadOnly="true"/>
+                <TextBox  x:Name="SelectedFileName"  TextWrapping="NoWrap" VerticalAlignment="Center" IsReadOnly="true"/>
             </Border>
         </DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -25,13 +24,13 @@
                 <ColumnDefinition Width="{Binding SearchFieldOffset, ElementName=self}"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <commondialogs:FilterUserControl x:Name="FilterBox" 
+            <filterdialog:FilterUserControl x:Name="FilterBox" 
                                                              Grid.Column="1" 
                                                              CustomFilterVisibility="{Binding CustomFilterVisibility, ElementName=self}"  
                                                              CustomFilterText= "{Binding CustomFilterText, ElementName=self}" 
                                                              ApplyCustomFilterAsDefault="{Binding ApplyCustomFilterAsDefault, ElementName=self}" >
 
-            </commondialogs:FilterUserControl>
+            </filterdialog:FilterUserControl>
         </Grid>
     </DockPanel>
 </UserControl>

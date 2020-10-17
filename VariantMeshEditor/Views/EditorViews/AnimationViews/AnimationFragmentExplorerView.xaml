@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Common="clr-namespace:CommonDialogs.ComboBoxes;assembly=CommonDialogs"
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -78,7 +78,19 @@
 
 
             <Label>Animations</Label>
-            <commondialogs:FilterUserControl ></commondialogs:FilterUserControl>
+
+            <filterdialog:CollapsableFilterControl DockPanel.Dock="top"
+                                                             MaxHeight="400"
+                            CustomFilterVisibility="Collapsed"  
+                            CustomFilterText= "Only list animations for current skeleton2" 
+                            ApplyCustomFilterAsDefault="True"
+                            
+                            LabelText="File2"
+                            LabelTotalWidth="70"
+                            SearchFieldOffset="83"
+                                                             
+                            x:Name="FilterDialog">
+            </filterdialog:CollapsableFilterControl>
 
             <animationviews:AnimationPlayerView></animationviews:AnimationPlayerView>
 
