@@ -20,14 +20,14 @@ namespace Filetypes.RigidModel
         Diffuse_damage = 17
     }
 
-    public class Material
+    public class RigidModelTexture
     {
         public string Name { get; set; }
         public TexureType Type { get { return (TexureType)TypeRaw; } }
         public int TypeRaw { get; set; }
-        public static Material Create(ByteChunk chunk)
+        public static RigidModelTexture Create(ByteChunk chunk)
         {
-            return new Material()
+            return new RigidModelTexture()
             {
                 TypeRaw = chunk.ReadInt32(),
                 Name = Util.SanatizeFixedString(chunk.ReadFixedLength(256)),

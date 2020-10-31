@@ -14,12 +14,17 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
     {
         AnimationExplorerController _animationExplorerController;
         AnimationPlayerController _animationPlayerController;
+
+        AnimationFragmentExplorerController _animationFragmentExplorerController;
+
         AnimationEditorView _viewModel;
 
         public AnimationController(ResourceLibary resourceLibary, AnimationElement animationElement, SkeletonElement skeletonElement)
         {
             _animationPlayerController = new AnimationPlayerController(animationElement);
             _animationExplorerController = new AnimationExplorerController(resourceLibary, animationElement, skeletonElement, _animationPlayerController);
+
+            _animationFragmentExplorerController = new AnimationFragmentExplorerController(resourceLibary);
         }
 
         public AnimationEditorView GetView()
@@ -31,6 +36,8 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
                 _animationExplorerController.PopulateExplorerView(_viewModel);
                 _animationExplorerController.CreateTestData();
+
+                _animationFragmentExplorerController.PopulateExplorerView(_viewModel);
             }
             return _viewModel;
         }

@@ -199,7 +199,7 @@
       <Name>WpfHexEditorCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Filetypes\Filetypes.csproj">
-      <Project>{2419c2af-48a3-40d2-980b-36ab2d81dc74}</Project>
+      <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
       <Name>Filetypes</Name>
     </ProjectReference>
   </ItemGroup>

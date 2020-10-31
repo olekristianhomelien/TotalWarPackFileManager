@@ -21,12 +21,14 @@ namespace Filetypes.AnimationPack
             }
         }
 
+        public string FileName { get; set; }
         public string[] Skeletons { get; set; }
         public int MinSlotId { get; set; }
         public int MaxSlotId { get; set; }
         public List<AnimationFragmentItem> AnimationFragments { get; set; } = new List<AnimationFragmentItem>();
-        public AnimationFragmentCollection(ByteChunk data)
+        public AnimationFragmentCollection(string fileName, ByteChunk data)
         {
+            FileName = fileName;
             Skeletons = (new StringArrayTable(data)).Data.ToArray();
             MinSlotId = data.ReadInt32();
             MaxSlotId = data.ReadInt32();

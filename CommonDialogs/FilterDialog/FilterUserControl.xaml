@@ -20,7 +20,7 @@
             </AdornerDecorator>
         </DockPanel>
 
-        <DockPanel DockPanel.Dock="Top" Visibility="{Binding CustomFilterVisibilityProperty, ElementName=self}">
+        <DockPanel DockPanel.Dock="Top" Visibility="{Binding CustomFilterVisibility, ElementName=self}">
             <CheckBox x:Name="ExtraFilterButton" 
                       Content="{Binding CustomFilterText, ElementName=self}" 
                       IsChecked="{Binding ApplyCustomFilterAsDefault, ElementName=self}" >  </CheckBox>

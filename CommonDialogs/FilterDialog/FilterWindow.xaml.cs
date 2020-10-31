@@ -28,13 +28,6 @@ namespace CommonDialogs.FilterDialog
             InitializeComponent();
         }
 
-        public FilterWindow(IEnumerable<object> items, FilterUserControl.ExternalFilter externalFilter = null)
-        {
-            InitializeComponent();
-            Filter.SetItems(items, externalFilter);
-            Filter.OnItemDoubleClicked += (sender, e) => OkButton_Click(null, null);
-        }
-
         public object GetSelectedItem()
         {
             return _selectedItem;

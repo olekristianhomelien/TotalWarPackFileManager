@@ -100,9 +100,9 @@ namespace VariantMeshEditor.Controls.EditorControllers
                 var lodStackPanel = new StackPanel();
 
                 LodEditorView lodEditorView = new LodEditorView();
-                lodEditorView.Scale.Text = $"{loadHead.LodZoomFactor}";
-                lodEditorView.MeshCount.Text = $"{loadHead.GroupsCount}";
-                lodEditorView.Debug.Text = "[" + loadHead.Unknown + "]";
+                lodEditorView.Scale.Text = $"{loadHead.LodCameraDistance}";
+                lodEditorView.MeshCount.Text = $"{loadHead.MeshCount}";
+                lodEditorView.Debug.Text = "[" + loadHead.QualityLvl + "]";
 
                 lodStackPanel.Children.Add(lodEditorView);
                 lodContent.Content = lodStackPanel;
@@ -135,7 +135,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
                     meshView.AlphaMode.Items.Add(mesh.AlphaMode);
                     meshView.AlphaMode.SelectedIndex = 0;
 
-                    foreach (var bone in mesh.Bones)
+                    foreach (var bone in mesh.AttachmentPoint)
                         meshView.BoneList.Items.Add(bone.Name);
 
                     meshView.TextureDir.LabelName.Width = 100;
@@ -156,7 +156,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
                     meshStackPanel.Children.Add(meshView);
                     lodStackPanel.Children.Add(meshContnet);
 
-                    if (firstSub)
+                    //if (firstSub)
                         meshContnet.OnClick();
                     firstSub = false;
 
@@ -231,7 +231,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void AddUnknownTexture(RigidModelMeshEditorView view, LodModel model)
         {
-            foreach (var item in model.Materials)
+            foreach (var item in model.Textures)
             {
                 var isDefined = Enum.IsDefined(typeof(TexureType), item.TypeRaw);
                 if (!isDefined)
@@ -246,17 +246,12 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void AddUnknowData(RigidModelMeshEditorView view, LodModel model)
         {
-            view.UnkownDataView0.SetData("Unknown 0", model.Unknown0);
-            view.UnkownDataView1.SetData("Unknown 1", model.Unknown1);
-            view.UnkownDataView2.SetData("Unknown 2", model.Unknown2);
-            view.UnkownDataView3.SetData("Unknown 3", model.Unknown3);
-            view.UnkownDataView4.SetData("Unknown 4", model.Unknown4);
-            view.UnkownDataView5.SetData("Unknown 5", model.AlphaKeyValue);
+            
         }
 
         string GetTextureName(LodModel model, TexureType type)
         {
-            foreach (var material in model.Materials)
+            foreach (var material in model.Textures)
             {
                 if (material.Type == type)
                     return material.Name;

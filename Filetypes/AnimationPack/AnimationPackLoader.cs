@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Filetypes.AnimationPack
 {
-    class AnimationPackLoader
+    public class AnimationPackLoader
     {
         public class File
         {
@@ -21,9 +21,9 @@ namespace Filetypes.AnimationPack
             }
         }
 
-        List<AnimationTableEntry> AnimationTableEntries { get; set; } = new List<AnimationTableEntry>();
-        List<MatchedAnimationTableEntry> MatchedAnimationTableEntries { get; set; } = new List<MatchedAnimationTableEntry>();
-        List<AnimationFragmentCollection> AnimationFragments { get; set; } = new List<AnimationFragmentCollection>();
+        public List<AnimationTableEntry> AnimationTableEntries { get; set; } = new List<AnimationTableEntry>();
+        public List<MatchedAnimationTableEntry> MatchedAnimationTableEntries { get; set; } = new List<MatchedAnimationTableEntry>();
+        public List<AnimationFragmentCollection> AnimationFragments { get; set; } = new List<AnimationFragmentCollection>();
 
 
         delegate void ProcessFileDelegate(File file, ByteChunk data);
@@ -75,7 +75,7 @@ namespace Filetypes.AnimationPack
         void ProcessFragmentFile(File file, ByteChunk data)
         {
             data.Index = file.StartOffset;
-            AnimationFragments.Add(new AnimationFragmentCollection(data));
+            AnimationFragments.Add(new AnimationFragmentCollection(file.Name, data));
         }
 
         void ProcessMatchCombatFile(File file, ByteChunk data)
@@ -108,52 +108,6 @@ namespace Filetypes.AnimationPack
 
         
 
-        class AnimationTableEntry
-        {
-            public class AnimationSet
-            {
-                public string Name { get; set; }
-                public int Unknown { get; set; }
-
-                public override string ToString()
-                {
-                    return $"{Name} - {Unknown}";
-                }
-            }
-
-            public string Name { get; set; }
-            public string SkeletonName { get; set; }
-            public string MountName { get; set; }
-
-            public List<AnimationSet> AnimationSets { get; set; } = new List<AnimationSet>();
-            public short Unknown0 { get; set; }
-            public short Unknown1 { get; set; }
-
-            public AnimationTableEntry(ByteChunk data)
-            {
-                Name = data.ReadString();
-                SkeletonName = data.ReadString();
-                MountName = data.ReadString();
-
-                LoadAnimationSets(data);
-            }
-
-            void LoadAnimationSets(ByteChunk data)
-            {
-                var count = data.ReadShort();
-                Unknown0 = data.ReadShort();
-                for (int i = 0; i < count; i++)
-                {
-                    var animationSet = new AnimationSet()
-                    {
-                        Name = data.ReadString(),
-                        Unknown = data.ReadInt32()
-                    };
-                    AnimationSets.Add(animationSet);
-                }
-                Unknown1 = data.ReadShort();
-            }
-        }
 
 
     }

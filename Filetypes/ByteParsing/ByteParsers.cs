@@ -576,6 +576,12 @@ namespace Filetypes.ByteParsing
             return new UnknownParseResult() { Data = output.ToArray()};
         }
 
+
+        public ByteChunk CreateSub(int size)
+        {
+            var data = ReadBytes(size);
+            return new ByteChunk(data);
+        }
         public string ReadFixedLength(int length) => ReadFixedLengthString(ByteParsers.String, length);
         public string ReadZeroTerminatedStr() => ReadZeroTerminatedString(ByteParsers.String);
 
@@ -594,6 +600,51 @@ namespace Filetypes.ByteParsing
                 return strOuput;
 
             }
+        }
+
+
+       
+        public byte[] Debug_LookForDataAfterFixedStr(int size)
+        {
+            var dataCpy = new ByteChunk(ReadBytes(size));
+            Index -= size;
+
+            var str = dataCpy.ReadFixedLength(size);
+            var strClean = Util.SanatizeFixedString(str);
+
+            dataCpy.Reset();
+            dataCpy.Index = strClean.Length;
+            var bytesAfterClean = dataCpy.ReadBytes(dataCpy.BytesLeft);
+            var nonZeroBytes = bytesAfterClean.Count(x => x != 0);
+            if (nonZeroBytes != 0)
+            {
+                return bytesAfterClean;
+            }
+
+            return null;
+        }
+
+
+        public string Debug_LookForStrAfterFixedStr(int size)
+        {
+            var dataCpy = new ByteChunk(ReadBytes(size));
+            Index -= size;
+
+            var str = dataCpy.ReadFixedLength(size);
+            var strClean = Util.SanatizeFixedString(str);
+
+            dataCpy.Reset();
+            dataCpy.Index = strClean.Length;
+            var bytesAfterClean = dataCpy.ReadBytes(dataCpy.BytesLeft);
+            var nonZeroBytes = bytesAfterClean.Count(x => x != 0);
+            if (nonZeroBytes != 0)
+            {
+                dataCpy.Index = strClean.Length;
+                var strAfterClean = dataCpy.ReadFixedLength(dataCpy.BytesLeft);
+                return strAfterClean;
+            }
+
+            return null;
         }
     }
 }

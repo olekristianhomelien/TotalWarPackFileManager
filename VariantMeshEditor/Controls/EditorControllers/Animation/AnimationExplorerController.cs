@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonDialogs.Common;
 using CommonDialogs.FilterDialog;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.Views.EditorViews;
@@ -90,7 +92,10 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         void OnAnimationExplorerOpeningFirstTime(CollapsableFilterControl sender)
         {
             FindAllAnimationsForSkeleton();
-            sender.SetItems(_animationsValidForSkeleton, (IEnumerable<object> orgList) => { return _animationFiles; });
+
+            GridViewColumn column = new GridViewColumn() { Header = "FileName", DisplayMemberBinding = new Binding("FileName") };
+
+            sender.SetItems(_animationsValidForSkeleton, null, (IEnumerable<object> orgList) => { return _animationFiles; });
         }
 
         bool OnAnimationSelected(AnimationExplorerItemView explorer, object selectedAnimationFile)
@@ -164,11 +169,14 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         {
             if (_animationsValidForSkeleton.Count == 0)
             {
-                foreach (var item in _animationFiles)
+                using (new WaitCursor())
                 {
-                    var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(item.File.Data)).SkeletonName;
-                    if (animationSkeletonName == _skeletonElement.SkeletonFile.Header.SkeletonName)
-                        _animationsValidForSkeleton.Add(new AnimationListItem() { File = item.File });
+                    foreach (var item in _animationFiles)
+                    {
+                        var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(item.File.Data)).SkeletonName;
+                        if (animationSkeletonName == _skeletonElement.SkeletonFile.Header.SkeletonName)
+                            _animationsValidForSkeleton.Add(new AnimationListItem() { File = item.File });
+                    }
                 }
             }
         }
@@ -179,8 +187,10 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         }
 
         class AnimationListItem
-        { 
+        {
             public PackedFile File { get; set; }
+
+            public string FileName { get { return "23" + File.FullPath; } }
             public override string ToString()
             {
                 return File.FullPath;

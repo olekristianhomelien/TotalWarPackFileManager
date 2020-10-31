@@ -32,7 +32,7 @@ namespace Viewer.GraphicModels
         public Dictionary<TexureType, Texture2D> ResolveTextures(ResourceLibary textureLibary, GraphicsDevice device)
         {
             var textures = new Dictionary<TexureType, Texture2D>();
-            foreach (var material in _model.Materials)
+            foreach (var material in _model.Textures)
                 textures[material.Type] = textureLibary.LoadTexture(material.Name, device);
             return textures;
         }

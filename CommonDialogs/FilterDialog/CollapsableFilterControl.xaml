@@ -24,11 +24,12 @@
                 <ColumnDefinition Width="{Binding SearchFieldOffset, ElementName=self}"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <filterdialog:FilterUserControl x:Name="FilterBox" 
+            <filterdialog:FilterUserControl                  x:Name="FilterBox" 
                                                              Grid.Column="1" 
                                                              CustomFilterVisibility="{Binding CustomFilterVisibility, ElementName=self}"  
                                                              CustomFilterText= "{Binding CustomFilterText, ElementName=self}" 
-                                                             ApplyCustomFilterAsDefault="{Binding ApplyCustomFilterAsDefault, ElementName=self}" >
+                                                             ApplyCustomFilterAsDefault="{Binding ApplyCustomFilterAsDefault, ElementName=self}" 
+                                                             OnSearch="{Binding OnSearch, ElementName=self}">
 
             </filterdialog:FilterUserControl>
         </Grid>

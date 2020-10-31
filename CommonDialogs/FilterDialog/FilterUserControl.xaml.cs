@@ -27,8 +27,12 @@ namespace CommonDialogs.FilterDialog
         SolidColorBrush _noErrorBackground;
         SolidColorBrush _errorBackground;
         public delegate IEnumerable<object> ExternalFilter(IEnumerable<object> originalList);
+        public delegate bool OnSeachDelegate(object item);
+
         bool _useExternalFilter = false;
+
         ExternalFilter _externalFilter;
+
 
         public EventHandler OnItemDoubleClicked;
         public EventHandler OnItemSelected;
@@ -79,17 +83,38 @@ namespace CommonDialogs.FilterDialog
         public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
             DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(FilterUserControl), new PropertyMetadata(null));
 
+
+
+
+        public OnSeachDelegate OnSearch
+        {
+            get { return (OnSeachDelegate)GetValue(OnSearchProperty); }
+            set { SetValue(OnSearchProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnSearchProperty =
+            DependencyProperty.Register("OnSearch", typeof(OnSeachDelegate), typeof(FilterUserControl), new PropertyMetadata(null));
+
         public object GetSelectedItem()
         {
             return ResultList.SelectedItem;
         }
 
-        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null)
+        public void SetItems(IEnumerable<object> items, IEnumerable<GridViewColumn> columns, ExternalFilter externalFilter = null)
         {
+            if (columns != null && columns.Any())
+            {
+                var gridView = new GridView();
+                ResultList.View = gridView;
+                foreach (var column in columns)
+                {
+                    gridView.Columns.Add(column);
+                }
+            }
+
             _originalList = items;
             if (externalFilter != null)
             {
-                //ExtraFilterButton.Content = externalFilterName;
                 _externalFilter = externalFilter;
             }
             else
@@ -104,6 +129,11 @@ namespace CommonDialogs.FilterDialog
         {
             using (new WaitCursor())
             {
+
+                var s = OnSearch;
+                if (s != null)
+                    OnSearch("Cat");
+
                 var itemsToFilter = _originalList;
                 if (_useExternalFilter)
                     itemsToFilter = _externalFilter(_originalList);
@@ -151,5 +181,6 @@ namespace CommonDialogs.FilterDialog
         }
 
         
+
     }
 }

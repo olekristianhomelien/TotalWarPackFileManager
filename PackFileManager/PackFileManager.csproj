@@ -231,13 +231,13 @@
       <Project>{2dd7c02c-770f-40ac-9ce9-0f2258c49dc9}</Project>
       <Name>WpfHexEditorCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Filetypes\Filetypes.csproj">
-      <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
-      <Name>Filetypes</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AutoUpdater\AutoUpdater.csproj">
       <Project>{89BF640C-76D4-4A04-A997-98594475D60C}</Project>
       <Name>AutoUpdater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Filetypes\Filetypes.csproj">
+      <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
+      <Name>Filetypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\VariantMeshEditor\VariantMeshEditor.csproj">
       <Project>{ba94d15f-2a64-4802-a0c3-86fb6c7333f2}</Project>

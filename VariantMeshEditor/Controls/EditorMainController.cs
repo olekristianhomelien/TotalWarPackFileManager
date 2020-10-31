@@ -1,17 +1,22 @@
 ﻿
 using Common;
 using Filetypes.ByteParsing;
+using Filetypes.RigidModel;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using Viewer.Scene;
 using WpfTest.Scenes;
 using Game = Common.Game;
+using Panel = System.Windows.Controls.Panel;
 
 namespace VariantMeshEditor.Controls
 {
@@ -24,6 +29,8 @@ namespace VariantMeshEditor.Controls
         ResourceLibary _resourceLibary;
         string _modelToLoad;
 
+
+  
         public EditorMainController(SceneTreeViewController treeViewController, Scene3d scene3d, Panel editorPanel)
         {
             _treeViewController = treeViewController;
@@ -33,10 +40,198 @@ namespace VariantMeshEditor.Controls
             List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
 
             _resourceLibary = new ResourceLibary(loadedContent);
+         //
+      //try
+      //{
+      //
+      //
+      //    var data = File.ReadAllBytes(@"C:\Users\ole_k\Desktop\ModelDecoding\ModelsWithMaterials\foobar.rigid_model_");
+      //    ByteChunk chunk = new ByteChunk(data);
+      //    var model3d = RigidModel.Create(chunk, out string errorMessage);
+      //}
+      //catch (Exception e)
+      //{
+      //
+      //
+      //}
+       
+       // 
+       // 
+       // 
+     //  Dictionary<string, string> errorList = new Dictionary<string, string>();
+     //  List<string> completedList = new List<string>();
+     //  var files = PackFileLoadHelper.GetAllWithExtention(loadedContent, "rigid_model_v2");
+     // 
+     // using (FileStream output = new FileStream(@"c:\temp\allModelDataHeaderInfo_3.csv", FileMode.OpenOrCreate))
+     // {
+     //     CreateHeader(output);
+     // 
+     //     int counter = 0;
+     //     foreach (var file in files)
+     //     {
+     //         var result = Export(file, output);
+     //         if (result.Item1 == false)
+     //             errorList.Add(file.FullPath, result.Item2);
+     //         else
+     //             completedList.Add(file.FullPath);
+     //     
+     //         counter++;
+     // 
+     //     }
+     // }
+     //   
+
 
             _treeViewController.SceneElementSelectedEvent += _treeViewController_SceneElementSelectedEvent;
             _treeViewController.VisabilityChangedEvent += _treeViewController_VisabilityChangedEvent;
             _scene3d.LoadScene += Create3dWorld;
+        }
+
+
+
+        void WriteSeperator(FileStream fileStream)
+        {
+            byte[] info = new UTF8Encoding(true).GetBytes(";");
+            fileStream.Write(info, 0, info.Length);
+        }
+
+        void WriteString(FileStream fileStream, string str, bool seperator = true)
+        {
+            byte[] info = new UTF8Encoding(true).GetBytes(str);
+            fileStream.Write(info, 0, info.Length);
+            if(seperator)
+            WriteSeperator(fileStream);
+        }
+
+        void WriteNewLine(FileStream fileStream)
+        {
+            byte[] info = new UTF8Encoding(true).GetBytes("\n");
+            fileStream.Write(info, 0, info.Length);
+        }
+
+        void Writebool(FileStream fileStream, bool value)
+        {
+            var str = value ? "1" : "0";
+            byte[] info = new UTF8Encoding(true).GetBytes(str);
+            fileStream.Write(info, 0, info.Length);
+            WriteSeperator(fileStream);
+        }
+
+        void WriteArray(FileStream fileStream, byte[] array)
+        {
+            WriteString(fileStream, "\"", false);
+            fileStream.Write(array, 0, array.Length);
+            WriteString(fileStream, "\"", true);
+        }
+
+
+
+        (bool, string) Export(PackedFile file, FileStream stream)
+        {
+            try
+            {
+                ByteChunk chunk = new ByteChunk(file.Data);
+                var model3d = RigidModel.Create(chunk, out string errorMessage);
+                if (model3d == null)
+                    return (false, errorMessage);
+
+                foreach (var lod in model3d.LodHeaders)
+                {
+                    int modelId = 0;
+                    foreach (var model in lod.LodModels)
+                    {
+                        Serialize(stream, model, file.FullPath, modelId, (int)lod.LodLevel);
+                        modelId++;
+                    }
+                }
+
+
+                return (true, "");
+            }
+            catch (Exception e)
+            {
+                return (false, e.Message);
+            }
+        }
+
+        bool CheckIfAllZero(byte[] array, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (array[i] != 0)
+                    return false;
+            }
+            return true;
+        }
+
+        void CreateHeader(FileStream fileStream)
+        {
+            WriteString(fileStream, "Path");
+            WriteString(fileStream, "LodId");
+            WriteString(fileStream, "GroupId");
+            WriteString(fileStream, "ModelName");
+            WriteString(fileStream, "ModelSize");
+            WriteString(fileStream, "MaterialId");
+
+            WriteString(fileStream, "VertexCount");
+            WriteString(fileStream, "IndexCount");
+
+            WriteString(fileStream, "ShaderName");
+            WriteString(fileStream, "ShaderProperties");
+
+            WriteString(fileStream, "VertexFormat");
+
+            WriteString(fileStream, "Unknown2");
+            WriteString(fileStream, "TransformationIdentity");
+            WriteString(fileStream, "Transformation");
+            WriteString(fileStream, "AnimationFrameForDestructableBodies");
+            
+
+            WriteString(fileStream, "MaterialCount");
+            WriteString(fileStream, "BoneCount");
+
+            WriteString(fileStream, "AlphaValue");
+            WriteString(fileStream, "AlphaMode");
+
+            WriteString(fileStream, "Flag_alwaysNegativeOne");
+            WriteString(fileStream, "Flag_alwaysOne");
+
+            WriteNewLine(fileStream);
+        }
+
+        void Serialize(FileStream fileStream, LodModel model, string fillPath, int groupId, int lodLvl)
+        {
+            WriteString(fileStream, fillPath);
+            WriteString(fileStream, lodLvl.ToString());
+            WriteString(fileStream, groupId.ToString());
+            WriteString(fileStream, model.ModelName);
+            WriteString(fileStream, model.ModelSize.ToString());
+            WriteString(fileStream, model.MaterialId.ToString());
+
+            WriteString(fileStream, model.VertexCount.ToString());
+            WriteString(fileStream, model.FaceCount.ToString());
+
+            WriteString(fileStream, model.ShaderName.ToString());
+            var shaderPrmStr = string.Join("\t", model.Unknown_Shaderarameters.Select(x => (int)x));
+            WriteString(fileStream, shaderPrmStr);
+
+            WriteString(fileStream, model.VertexFormat.ToString());
+
+            WriteString(fileStream, model.Unknown2.ToString());
+            WriteString(fileStream, model.Transformation.IsIdentity().ToString());
+            WriteString(fileStream, model.Transformation.GetAsDebugStr());
+            WriteString(fileStream, model.AnimationFrameForDestructableBodies.ToString());
+
+            WriteString(fileStream, model.TextureCount.ToString());
+            WriteString(fileStream, model.AttachmentPointCount.ToString());
+
+            WriteString(fileStream, model.AlphaKeyValue.ToString());
+            WriteString(fileStream, model.AlphaMode.ToString());
+
+            WriteString(fileStream, model.Flag_alwaysNegativeOne.ToString());
+            WriteString(fileStream, model.Flag_alwaysOne.ToString());
+
+            WriteNewLine(fileStream);
         }
 
         public void LoadModel(string path)
@@ -76,7 +271,7 @@ namespace VariantMeshEditor.Controls
 
 
             try
-            {
+            {var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
                 AnimPackLoader loader = new AnimPackLoader();
                 loader.Load(new ByteChunk(file.Data));
             }

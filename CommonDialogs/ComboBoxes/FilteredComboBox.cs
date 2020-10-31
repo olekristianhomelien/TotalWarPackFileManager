@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -101,12 +102,12 @@ namespace CommonDialogs.ComboBoxes
 
         protected override void OnPreviewLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            ClearFilter();
-            var temp = SelectedIndex;
-            SelectedIndex = -1;
-            Text = string.Empty;
-            SelectedIndex = temp;
-            base.OnPreviewLostKeyboardFocus(e);
+            //ClearFilter();
+            //var temp = SelectedIndex;
+            //SelectedIndex = -1;
+            //Text = string.Empty;
+            //SelectedIndex = temp;
+            //base.OnPreviewLostKeyboardFocus(e);
         }
 
         private void RefreshFilter()
@@ -125,10 +126,28 @@ namespace CommonDialogs.ComboBoxes
 
         private bool FilterItem(object value)
         {
-            if (value == null) return false;
-            if (Text.Length == 0) return true;
+            if (Text.Length == 0) 
+                return true;
 
-            return value.ToString().ToLower().Contains(Text.ToLower());
+            if (value == null) 
+                return false;
+
+            //if (CustomFilter != null)
+            //    return CustomFilter(value, Text);
+            //else
+                return value.ToString().ToLower().Contains(Text.ToLower());
         }
+
+
+        public delegate bool FilterItemDelegate(object objectToFilter, string filterText);
+
+        public FilterItemDelegate CustomFilter
+        {
+            get { return (FilterItemDelegate)GetValue(CustomFilterProperty); }
+            set { SetValue(CustomFilterProperty, value); }
+        }
+
+        public static readonly DependencyProperty CustomFilterProperty =
+            DependencyProperty.Register("CustomFilter", typeof(FilterItemDelegate), typeof(FilteredComboBox), new PropertyMetadata(null));
     }
 }

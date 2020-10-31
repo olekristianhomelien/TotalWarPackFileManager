@@ -16,12 +16,33 @@
         <StackPanel DockPanel.Dock="Top">
 
             <DockPanel>
-                <Label Width="{StaticResource theMargin}">Skeleton-ukn2</Label>
+
+
+                <Label Width="{StaticResource theMargin}">Skeleton</Label>
                 <Label>:</Label>
 
-                <Common:FilteredComboBox ItemsSource="{Binding MyItemsSource}"
-                SelectedItem="{Binding MySelectedItem}"
-                DisplayMemberPath="Name" 
+                <Common:FilteredComboBox ItemsSource="{Binding SkeletonNameList}"
+                    SelectedItem="{Binding SelectedSkelton}"
+                
+                    IsEditable="True" 
+                    IsTextSearchEnabled="False" 
+                    StaysOpenOnEdit="True">
+
+                    <Common:FilteredComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel VirtualizationMode="Recycling" />
+                        </ItemsPanelTemplate>
+                    </Common:FilteredComboBox.ItemsPanel>
+                </Common:FilteredComboBox>
+
+            </DockPanel>
+
+            <DockPanel>
+                <Label Width="{StaticResource theMargin}">Mount</Label>
+                <Label>:</Label>
+
+                <Common:FilteredComboBox ItemsSource="{Binding MountNameList}"
+                    SelectedItem="{Binding SelectedMount}"
                 IsEditable="True" 
                 IsTextSearchEnabled="False" 
                 StaysOpenOnEdit="True">
@@ -36,12 +57,12 @@
             </DockPanel>
 
             <DockPanel>
-                <Label Width="{StaticResource theMargin}">Mount-ukn3</Label>
+                <Label Width="{StaticResource theMargin}">Anim Collection</Label>
                 <Label>:</Label>
 
-                <Common:FilteredComboBox ItemsSource="{Binding MyItemsSource}"
-                SelectedItem="{Binding MySelectedItem}"
-                DisplayMemberPath="Name" 
+
+                <Common:FilteredComboBox ItemsSource="{Binding AnimationSetList}"
+                    SelectedItem="{Binding SelectedAnimationSet}"
                 IsEditable="True" 
                 IsTextSearchEnabled="False" 
                 StaysOpenOnEdit="True">
@@ -55,41 +76,28 @@
 
             </DockPanel>
 
-            <DockPanel>
-                <Label Width="{StaticResource theMargin}">Anim Collection-ukn1</Label>
-                <Label>:</Label>
-
-                <Common:FilteredComboBox ItemsSource="{Binding MyItemsSource}"
-                SelectedItem="{Binding MySelectedItem}"
-                DisplayMemberPath="Name" 
-                IsEditable="True" 
-                IsTextSearchEnabled="False" 
-                StaysOpenOnEdit="True">
-
-                    <Common:FilteredComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel VirtualizationMode="Recycling" />
-                        </ItemsPanelTemplate>
-                    </Common:FilteredComboBox.ItemsPanel>
-                </Common:FilteredComboBox>
-
-            </DockPanel>
-
-
-
-            <Label>Animations</Label>
+            <Expander Header="Fragment collections:">
+                <ListBox  DockPanel.Dock="Top"  ItemsSource="{Binding FragmentCollectionList}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            </Expander>
 
             <filterdialog:CollapsableFilterControl DockPanel.Dock="top"
-                                                             MaxHeight="400"
+                                                   MaxHeight="400"
                             CustomFilterVisibility="Collapsed"  
-                            CustomFilterText= "Only list animations for current skeleton2" 
-                            ApplyCustomFilterAsDefault="True"
+ 
+                            ApplyCustomFilterAsDefault="False"
                             
-                            LabelText="File2"
+                            LabelText="Fragments"
                             LabelTotalWidth="70"
-                            SearchFieldOffset="83"
-                                                             
-                            x:Name="FilterDialog">
+                            SearchFieldOffset="83"            
+                            x:Name="FragmentFilterDialog">
             </filterdialog:CollapsableFilterControl>
 
             <animationviews:AnimationPlayerView></animationviews:AnimationPlayerView>

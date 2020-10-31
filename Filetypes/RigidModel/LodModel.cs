@@ -2,17 +2,18 @@
 using Filetypes.ByteParsing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Filetypes.RigidModel
 {
 
 
-    public enum AlphaMode : UInt32
+    public enum AlphaMode : Int32
     {
         Opaque = 0,
         Alpha_Test = 1,
-        Alpha_Blend = 2
+        Alpha_Blend = -1
     };
 
     public enum VertexFormat : UInt32
@@ -27,11 +28,61 @@ namespace Filetypes.RigidModel
     {
         public FileVector3 Pivot { get; set; } = new FileVector3();
         public FileMatrix3x4[] Matrices { get; set; } = new FileMatrix3x4[] { new FileMatrix3x4(), new FileMatrix3x4(), new FileMatrix3x4() };
+
+        public string GetAsDebugStr()
+        {
+            var str = $"Piv:{Pivot.X},{Pivot.Y},{Pivot.Z} ";
+
+            str += $"M00:{Matrices[0].Matrix[0].X},{Matrices[0].Matrix[0].Y},{Matrices[0].Matrix[0].Z},{Matrices[0].Matrix[0].W} ";
+            str += $"M01:{Matrices[0].Matrix[1].X},{Matrices[0].Matrix[1].Y},{Matrices[0].Matrix[1].Z},{Matrices[0].Matrix[1].W} ";
+            str += $"M02:{Matrices[0].Matrix[2].X},{Matrices[0].Matrix[2].Y},{Matrices[0].Matrix[2].Z},{Matrices[0].Matrix[2].W} ";
+
+            str += $"M10:{Matrices[1].Matrix[0].X},{Matrices[1].Matrix[0].Y},{Matrices[1].Matrix[0].Z},{Matrices[1].Matrix[0].W} ";
+            str += $"M11:{Matrices[1].Matrix[1].X},{Matrices[1].Matrix[1].Y},{Matrices[1].Matrix[1].Z},{Matrices[1].Matrix[1].W} ";
+            str += $"M12:{Matrices[1].Matrix[2].X},{Matrices[1].Matrix[2].Y},{Matrices[1].Matrix[2].Z},{Matrices[1].Matrix[2].W} ";
+
+            str += $"M20:{Matrices[2].Matrix[0].X},{Matrices[2].Matrix[0].Y},{Matrices[2].Matrix[0].Z},{Matrices[2].Matrix[0].W} ";
+            str += $"M21:{Matrices[2].Matrix[1].X},{Matrices[2].Matrix[1].Y},{Matrices[2].Matrix[1].Z},{Matrices[2].Matrix[1].W} ";
+            str += $"M22:{Matrices[2].Matrix[2].X},{Matrices[2].Matrix[2].Y},{Matrices[2].Matrix[2].Z},{Matrices[2].Matrix[2].W} ";
+            return str;
+        }
+
+        public bool IsIdentity()
+        {
+            if (!Pivot.IsAllZero())
+                return false;
+            foreach (var matrix in Matrices)
+            {
+                if (!matrix.IsIdentity())
+                    return false;
+            }
+            return true;
+        }
+
     }
 
     public class FileMatrix3x4
     {
         public FileVector4[] Matrix { get; set; } = new FileVector4[3] { new FileVector4(), new FileVector4(), new FileVector4() };
+
+        public bool IsIdentity()
+        {
+            var row0 = Matrix[0];
+            if (row0.X == 1 && row0.Y == 0 && row0.Z == 0 && row0.W == 0)
+            {
+                var row1 = Matrix[1];
+                if (row1.X == 0 && row1.Y == 1 && row1.Z == 0 && row1.W == 0)
+                {
+                    var row2 = Matrix[2];
+                    if (row2.X == 0 && row2.Y == 0 && row2.Z == 1 && row2.W == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
     }
 
@@ -39,30 +90,42 @@ namespace Filetypes.RigidModel
     {
         public GroupTypeEnum MaterialId { get; set; }
 
-        public List<Bone> Bones { get; set; } = new List<Bone>();
-        public uint BoneCount { get; set; }
+        public List<RigidModelAttachmentPoint> AttachmentPoint { get; set; } = new List<RigidModelAttachmentPoint>();
+        public uint AttachmentPointCount { get; set; }
         public uint VertexCount { get; set; }
+        public uint VertexOffset { get; set; }
         public uint FaceCount { get; set; }
+        public uint FaceOffset { get; set; }
         public uint VertexFormatValue { get; set; }
         public VertexFormat VertexFormat { get; set; } = VertexFormat.Unknown;
-        public string MateriaType { get; set; }
+        public string ShaderName { get; set; }
+        public byte[] Unknown_Shaderarameters { get; set; }
+        public byte[] AllZero_Shaderarameters { get; set; }
         public string ModelName { get; set; }
+        
         public string TextureDirectory { get; set; }
 
         public BoundingBox BoundingBox { get; set; }
 
         public Transformation Transformation { get; set; }
 
-        public uint MaterialCount { get; set; }
-        public List<Material> Materials { get; set; } = new List<Material>();
+        public uint TextureCount { get; set; }
+        public List<RigidModelTexture> Textures { get; set; } = new List<RigidModelTexture>();
 
-        public byte[] Unknown0;
-        public byte[] Unknown1;
-        public byte[] Unknown2;
-        public byte[] Unknown3;
-        public byte[] Unknown4;
-        public byte[] AlphaKeyValue;
-        //public byte[] ShaderValues;
+        public byte[] ZeroPadding0;
+        public byte[] ZeroPadding1;
+        public byte Flag_alwaysOne;
+        public byte[] ZeroPadding2;
+
+        public uint ModelSize;
+        public uint Unknown2;
+
+        public uint Unknown2_val0;
+        public uint Unknown2_val1;
+
+        public int AnimationFrameForDestructableBodies;
+        public int Flag_alwaysNegativeOne;
+        public int AlphaKeyValue;
 
         public AlphaMode AlphaMode { get; set; }
 
@@ -71,51 +134,72 @@ namespace Filetypes.RigidModel
 
         public static LodModel Create(ByteChunk chunk)
         {
-            int indexAtStart = chunk.Index;
-            chunk.Index = indexAtStart;
-
-            var offset = chunk.Index;
             var lodModel = new LodModel();
 
             lodModel.MaterialId = (GroupTypeEnum)chunk.ReadUInt32();
-            lodModel.Unknown0 = chunk.ReadBytes(4);
+            lodModel.ModelSize = chunk.ReadUInt32();
 
-            var VertOffset = chunk.ReadUInt32() + offset;
+            lodModel.VertexOffset = chunk.ReadUInt32() ;
             lodModel.VertexCount = chunk.ReadUInt32();
-            var FaceOffset = chunk.ReadUInt32() + offset;
+            lodModel.FaceOffset = chunk.ReadUInt32();
             lodModel.FaceCount = chunk.ReadUInt32();
 
-            // BoundingBox
             lodModel.BoundingBox = BoundingBox.Create(chunk);
 
-            lodModel.MateriaType = Util.SanatizeFixedString(chunk.ReadFixedLength(30));
-            lodModel.Unknown1 = chunk.ReadBytes(2);
+            var materialInfo = chunk.CreateSub(32);
+            lodModel.ShaderName = Util.SanatizeFixedString(materialInfo.ReadFixedLength(12));
+            lodModel.Unknown_Shaderarameters = materialInfo.ReadBytes(10);
+            lodModel.AllZero_Shaderarameters = materialInfo.ReadBytes(10);
+
+
+            materialInfo.Index = 12;
+            var barr = materialInfo.ReadBytes(materialInfo.BytesLeft);
+            var barrStr = string.Join("\t", barr.Select(x => x));
+            materialInfo.Index = 0;
+            var name = materialInfo.ReadFixedLength(12);
+            var floats = new List<float>();
+            while (materialInfo.BytesLeft >= 4)
+            {
+                var ind = materialInfo.Index;
+                floats.Add((materialInfo.ReadShort()/ 127.0f ));
+                //floats.Add(materialInfo.ReadSingle());
+                //floats.Add(chunk.ReadInt32());
+                materialInfo.Index = ind + 1;
+            }
+
+            // ShaderName 12, shader settings 20
+            //lodModel.Unknown1 = chunk.ReadBytes(2);*/
             lodModel.VertexFormatValue = chunk.ReadUShort();
-            lodModel.ModelName = Util.SanatizeFixedString(chunk.ReadFixedLength(32));
-            // lodModel.ShaderValues = chunk.ReadBytes(20);, ModelName is not always 32
+            lodModel.VertexFormat = (VertexFormat)lodModel.VertexFormatValue;
+            lodModel.ModelName = Util.SanatizeFixedString(chunk.ReadFixedLength(32));   
+                                                                                        
+            lodModel.TextureDirectory = Util.SanatizeFixedString(chunk.ReadFixedLength(256));  
+            lodModel.ZeroPadding0 = chunk.ReadBytes(256);
 
-
-            lodModel.TextureDirectory = Util.SanatizeFixedString(chunk.ReadFixedLength(256));
-            lodModel.Unknown2 = chunk.ReadBytes(258); // Unknown data. Almost always 0, appart from 2 last bytes. Only change for values that have a pivot point?
+            lodModel.Unknown2 = chunk.ReadUShort();
             lodModel.Transformation = LoadTransformations(chunk);
-            lodModel.Unknown3 = chunk.ReadBytes(8); 
-            lodModel.BoneCount = chunk.ReadUInt32();
-            lodModel.MaterialCount = chunk.ReadUInt32();
+            lodModel.AnimationFrameForDestructableBodies = chunk.ReadInt32();       // Keep -1 for most stuff. Might not be the frame, but the value is only there for things that can be destroyed
+            lodModel.Flag_alwaysNegativeOne = chunk.ReadInt32();
+            lodModel.AttachmentPointCount = chunk.ReadUInt32();
+            lodModel.TextureCount = chunk.ReadUInt32();
 
-            lodModel.Unknown4 = chunk.ReadBytes(140);
+            // A groupd of data that is all zeroes with a single one
+            lodModel.ZeroPadding1 = chunk.ReadBytes(8);
+            lodModel.Flag_alwaysOne = chunk.ReadByte();
+            lodModel.ZeroPadding2 = chunk.ReadBytes(131);
 
-            for (int i = 0; i < lodModel.BoneCount; i++)
-                lodModel.Bones.Add(Bone.Create(chunk));
+            for (int i = 0; i < lodModel.AttachmentPointCount; i++)
+                lodModel.AttachmentPoint.Add(RigidModelAttachmentPoint.Create(chunk));
 
-            for (int i = 0; i < lodModel.MaterialCount; i++)
-                lodModel.Materials.Add(Material.Create(chunk));
+            for (int i = 0; i < lodModel.TextureCount; i++)
+                lodModel.Textures.Add(RigidModelTexture.Create(chunk));
 
-            lodModel.AlphaKeyValue = chunk.ReadBytes(4);
-            lodModel.AlphaMode = (AlphaMode)chunk.ReadUInt32();
+            lodModel.AlphaKeyValue = chunk.ReadInt32();
+            lodModel.AlphaMode = (AlphaMode)chunk.ReadInt32();
 
             lodModel.VertexArray = CreateVertexArray(lodModel, chunk, lodModel.VertexCount, lodModel.VertexFormatValue);
             lodModel.IndicesBuffer = CreateIndexArray(chunk, (int)lodModel.FaceCount);
-
+     
             return lodModel;
         }
 
@@ -285,32 +369,45 @@ namespace Filetypes.RigidModel
             return output;
         }
 
-        static Vertex[] CreateVertexArray(LodModel model, ByteChunk chunk, uint count,uint vertexType)
+        static Vertex[] CreateVertexArray(LodModel model, ByteChunk chunk, uint count, uint vertexType)
         {
-            
-
-            switch (vertexType)
+            bool loadVertexData = true;
+            if (loadVertexData)
             {
-                case 0:
-                    //chunk.Index += (int)count * 32;
-                    model.VertexFormat = VertexFormat.Default;
-                    return CreateDefaultVertex(chunk, count);
-                    //return null;
-                case 3:
-                    //chunk.Index += (int)count * 28;
-                    model.VertexFormat = VertexFormat.Weighted;
-                    return CreateWeighthedVertex(chunk, count);
-                    //return null;
-                case 4:
-                    //chunk.Index += (int)count * 32;
-                    model.VertexFormat = VertexFormat.Cinematic;
-                    //return null;
-                    return CreateCinematicVertex(chunk, count);
-                default:
-                    throw new NotImplementedException();
+                switch (vertexType)
+                {
+                    case 0:
+                        return CreateDefaultVertex(chunk, count);
+                    case 3:
+                        return CreateWeighthedVertex(chunk, count);
+                    case 4:
+                        return CreateCinematicVertex(chunk, count);
+                    default:
+                        throw new NotImplementedException();
+                }
             }
+            else
+            {
+                switch (vertexType)
+                {
+                    case 0:
+                        chunk.Index += (int)count * 32;
+                        return null;
+                    case 3:
+                        chunk.Index += (int)count * 28;
+                        return null;
+                    case 4:
+                        chunk.Index += (int)count * 32;
+                        return null;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+
+
         }
     }
+
 
     public class FileVector3
     {
@@ -323,6 +420,13 @@ namespace Filetypes.RigidModel
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public bool IsAllZero()
+        {
+            if (X == 0 && Y == 0 && Z == 0)
+                return true;
+            return false;
         }
     }
 
@@ -340,6 +444,13 @@ namespace Filetypes.RigidModel
             Y = y;
             Z = z;
             W = w;
+        }
+
+        public bool IsAllZero()
+        {
+            if (X == 0 &&  Y == 0 && Z == 0 && W == 0)
+                return true;
+            return false;
         }
     }
 

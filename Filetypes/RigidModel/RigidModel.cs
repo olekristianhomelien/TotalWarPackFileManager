@@ -33,11 +33,17 @@ namespace Filetypes.RigidModel
                 BaseSkeleton = Util.SanatizeFixedString(chunk.ReadFixedLength(128))
             };
 
-            for (int i = 0; i < model.LodCount; i++)
-                model.LodHeaders.Add(LodHeader.Create(chunk));
+            if (model.FileType != "RMV2")
+            {
+                errorMessage = "Unsupported model format. Not Rmv2";
+                return null;
+            }
 
             for (int i = 0; i < model.LodCount; i++)
-                for(int j = 0; j < model.LodHeaders[i].GroupsCount; j++)
+                model.LodHeaders.Add(LodHeader.Create(chunk, model.Version));
+
+            for (int i = 0; i < model.LodCount; i++)
+                for(int j = 0; j < model.LodHeaders[i].MeshCount; j++)
                     model.LodHeaders[i].LodModels.Add(LodModel.Create(chunk));
            
             Validate(chunk, out errorMessage);

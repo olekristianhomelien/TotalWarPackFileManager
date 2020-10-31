@@ -31,7 +31,8 @@ namespace CommonDialogs.FilterDialog
 
         void HandleItemDoubleClicked()
         {
-            if (HandleOnItemSelected().Value)
+            var restult = HandleOnItemSelected();
+            if (restult.HasValue && restult.Value)
             {
                 FilterBox.Visibility = Visibility.Collapsed;
                 BrowseButton.Content = "Browse";
@@ -69,9 +70,9 @@ namespace CommonDialogs.FilterDialog
             }
         }
 
-        public void SetItems(IEnumerable<object> items, ExternalFilter externalFilter = null)
+        public void SetItems(IEnumerable<object> items, IEnumerable<GridViewColumn> columns, ExternalFilter externalFilter = null)
         {
-            FilterBox.SetItems(items, externalFilter);
+            FilterBox.SetItems(items, columns, externalFilter);
         }
 
 
@@ -138,6 +139,15 @@ namespace CommonDialogs.FilterDialog
 
         public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
             DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(CollapsableFilterControl), new PropertyMetadata(null));
+
+        public OnSeachDelegate OnSearch
+        {
+            get { return (OnSeachDelegate)GetValue(OnSearchProperty); }
+            set { SetValue(OnSearchProperty, value); }
+        }
+
+        public static readonly DependencyProperty OnSearchProperty =
+            DependencyProperty.Register("OnSearch", typeof(OnSeachDelegate), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
         #endregion
     }
