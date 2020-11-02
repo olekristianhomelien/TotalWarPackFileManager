@@ -49,6 +49,9 @@
     <Compile Include="CheckedComboBox\CheckedComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CollapsableButton.xaml.cs">
+      <DependentUpon>CollapsableButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ComboBoxes\FilteredComboBox.cs" />
     <Compile Include="Common\NotifyPropertyChangedImpl.cs" />
     <Compile Include="Common\WaitCursor.cs" />
@@ -133,6 +136,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CollapsableButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FilterDialog\CollapsableFilterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

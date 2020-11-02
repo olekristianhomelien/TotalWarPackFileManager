@@ -44,7 +44,6 @@ namespace WpfTest.Scenes
         public delegate void LoadSceneCallback(GraphicsDevice device);
         public LoadSceneCallback LoadScene { get; set; }
 
-        CubeModel _cubeModel;
         public ISceneGraphNode SceneGraphRootNode { get; set; }
 
 

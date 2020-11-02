@@ -2,11 +2,29 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
              mc:Ignorable="d" 
+             x:Name="Self"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+
+
+    </UserControl.Resources>
     <Grid>
         <DockPanel>
+
+
+         
+            <commondialogs:CollapsableButton DockPanel.Dock="Top"  LabelText="MyLabel">
+                <StackPanel>
+                    <Button>subBuddon0</Button>
+                    <Button>subBuddon1</Button>
+                    <Button>subBuddon2</Button>
+                    <Button>subBuddon3</Button>
+                </StackPanel>
+            </commondialogs:CollapsableButton>
+
+
             <Label DockPanel.Dock="Top" x:Name="SkeletonName">Skeleton:"SkellyBoi"</Label>
             <Label DockPanel.Dock="Top" x:Name="BoneCount">BoneCount:"123"</Label>
             <TreeView DockPanel.Dock="Top" x:Name="SkeletonBonesView"></TreeView>

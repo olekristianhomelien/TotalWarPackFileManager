@@ -1,4 +1,5 @@
 ﻿using Common;
+using CommonDialogs;
 using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -95,7 +96,10 @@ namespace VariantMeshEditor.Controls.EditorControllers
             int currentLodIndex = 0;
             foreach (var loadHead in element.Model.LodHeaders)
             {
-                var lodContent = new CollapsableButtonControl($"Lod - {loadHead.LodLevel}");
+                var lodContent = new CollapsableButton()
+                {
+                    LabelText = ($"Lod - {loadHead.LodLevel}")
+                };
 
                 var lodStackPanel = new StackPanel();
 
@@ -103,16 +107,20 @@ namespace VariantMeshEditor.Controls.EditorControllers
                 lodEditorView.Scale.Text = $"{loadHead.LodCameraDistance}";
                 lodEditorView.MeshCount.Text = $"{loadHead.MeshCount}";
                 lodEditorView.Debug.Text = "[" + loadHead.QualityLvl + "]";
+                // Version
 
                 lodStackPanel.Children.Add(lodEditorView);
-                lodContent.Content = lodStackPanel;
+                lodContent.InnerContent = lodStackPanel;
 
                 var currentModelIndex = 0;
                 foreach (var mesh in loadHead.LodModels)
                 {
-                    var meshContnet = new CollapsableButtonControl($"{mesh.ModelName}");
+                    var meshContnet = new CollapsableButton()
+                    { 
+                        LabelText = $"{mesh.ModelName}"
+                    };
                     var meshStackPanel = new StackPanel();
-                    meshContnet.Content = meshStackPanel;
+                    meshContnet.InnerContent = meshStackPanel;
 
                     // Create the model
 
@@ -141,8 +149,8 @@ namespace VariantMeshEditor.Controls.EditorControllers
                     meshView.TextureDir.LabelName.Width = 100;
                     meshView.TextureDir.LabelName.Content = "Texture Directory";
                     meshView.TextureDir.PathTextBox.Text = mesh.TextureDirectory;
-                    meshView.TextureDir.RemoveButton.Visibility = System.Windows.Visibility.Hidden;
-                    meshView.TextureDir.PreviewButton.Visibility = System.Windows.Visibility.Hidden;
+                    meshView.TextureDir.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
+                    meshView.TextureDir.PreviewButton.Visibility = System.Windows.Visibility.Collapsed;
 
                     CreateTextureDisplayItem(mesh, meshView.Diffuse, TexureType.Diffuse);
                     CreateTextureDisplayItem(mesh, meshView.Specular, TexureType.Specular);
@@ -157,7 +165,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
                     lodStackPanel.Children.Add(meshContnet);
 
                     //if (firstSub)
-                        meshContnet.OnClick();
+                    //    meshContnet.OnClick();
                     firstSub = false;
 
                     currentModelIndex++;
@@ -167,8 +175,8 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
 
                 view.LodStackPanel.Children.Add(lodContent);
-                if(first)
-                    lodContent.OnClick();
+                //if(first)
+                //    lodContent.OnClick();
                 first = false;
             }
         }

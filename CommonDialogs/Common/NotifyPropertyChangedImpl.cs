@@ -25,10 +25,12 @@ namespace CommonDialogs.Common
 
         protected virtual void SetAndNotify<T>(ref T variable, T newValue, ValueChangedDelegate<T> valueChangedDelegate = null, [CallerMemberName] String propertyName = "")
         {
+            
             variable = newValue;
             NotifyPropertyChanged(propertyName);
             if (DisableCallbacks == false)
                 valueChangedDelegate?.Invoke(newValue);
+            
         }
     }
 

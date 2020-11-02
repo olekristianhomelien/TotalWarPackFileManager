@@ -9,7 +9,6 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
         <DockPanel>
-
             <Expander    IsExpanded="true">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal">

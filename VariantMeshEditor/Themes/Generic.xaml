@@ -1,20 +1,22 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util">
+    xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util"
+    x:Name="Self">
 
 
-    <Style TargetType="{x:Type util:CollapsableButtonControl}">
+
+    <Style TargetType="{x:Type util:CollapsableButtonControl}" >
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type util:CollapsableButtonControl}">
                     <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <StackPanel>
+                            BorderThickness="{TemplateBinding BorderThickness}" DataContext="{Binding RelativeSource={RelativeSource Self}}">
+                        <StackPanel >
 
-                            <StackPanel x:Name="VariantMeshStackPanel">
-                                <Button x:Name="ControllerMainButton" Command="{Binding MyCommand}"  FontSize="16" >
+                            <StackPanel >
+                                <Button Command="{Binding OnButtonPressed}"  FontSize="16" >
                             
                                     <Button.Template>
                                         <ControlTemplate TargetType="{x:Type Button}">
@@ -31,21 +33,19 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding Path=ButtonSymbol, UpdateSourceTrigger=PropertyChanged}" />
-                                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Path=ButtonText, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding CustomFilterText}" />
                                     </Grid>
                                 </Button>
 
 
-                                <Grid Height="{Binding Path=ContentHight, UpdateSourceTrigger=PropertyChanged}">
+                                <Grid Height="{Binding Path=ContentHeight, UpdateSourceTrigger=PropertyChanged}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="10"></ColumnDefinition>
                                         <ColumnDefinition Width="1*"></ColumnDefinition>
                                     </Grid.ColumnDefinitions>
-                                    
-                                    <DockPanel Grid.Column="1" LastChildFill="False">
 
+                                    <DockPanel Grid.Column="1" LastChildFill="False">
                                         <ContentPresenter DockPanel.Dock="Top" Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" />
-     
                                     </DockPanel>
                                     
                                 </Grid>
