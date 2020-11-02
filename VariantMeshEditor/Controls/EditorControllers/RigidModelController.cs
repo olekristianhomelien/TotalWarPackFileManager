@@ -4,6 +4,7 @@ using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Pfim;
+using SharpDX.Direct3D11;
 using SharpDX.DirectWrite;
 using System;
 using System.Collections.Generic;
@@ -88,97 +89,121 @@ namespace VariantMeshEditor.Controls.EditorControllers
             }
         }
 
+        class Lod 
+        {
+            public LodHeader LodHeader { get; set; }
+            public LodEditorView Editor { get; set; }
+            public List<Model> Models { get; set; } = new List<Model>();
+        }
+
+        class Model 
+        {
+            public RigidModelMeshEditorView Editor { get; set; }
+            public MeshRenderItem RenderItem { get; set; }
+        }
+
+        List<Lod> _dataList  = new List<Lod>();
+
+
+
+        void CreateLod(LodHeader loadHead, RigidModelEditorView view)
+        {
+            var lodCollapsableButton = new CollapsableButton()
+            {
+                LabelText = ($"Lod - {loadHead.LodLevel}")
+            };
+
+            
+
+            LodEditorView lodEditorView = new LodEditorView();
+            lodEditorView.LodCameraDistance.Text = $"{loadHead.LodCameraDistance}";
+            lodEditorView.QualityLvl.Text = $"{loadHead.QualityLvl}";
+
+            var lodStackPanel = new StackPanel();
+            lodStackPanel.Children.Add(lodEditorView);
+            lodCollapsableButton.InnerContent = lodStackPanel;
+
+            var lod = new Lod { Editor = lodEditorView, LodHeader = loadHead };
+            lodCollapsableButton.CheckBox.Click += (s, e) => CheckBox_Click(lod);
+
+            foreach (var mesh in loadHead.LodModels)
+            {
+                var lodModelContent = CreateLodModel(mesh, (int)loadHead.LodLevel, 0, lod);
+                lodStackPanel.Children.Add(lodModelContent);
+            }
+
+
+
+            // Add the lod to the veiw
+            view.LodStackPanel.Children.Add(lodCollapsableButton);
+        }
+
+        private void CheckBox_Click(Lod lod)
+        {
+            //throw new NotImplementedException();
+        }
+
+        CollapsableButton CreateLodModel(LodModel mesh, int currentLodIndex, int currentModelIndex, Lod parentLod)
+        {
+            var meshContnet = new CollapsableButton()
+            {
+                LabelText = $"{mesh.ModelName}"
+            };
+            var meshStackPanel = new StackPanel();
+            meshContnet.InnerContent = meshStackPanel;
+
+            // Create the model
+
+            var meshView = new RigidModelMeshEditorView
+            {
+                ModelIndex = currentModelIndex,
+                LodIndex = currentLodIndex
+            };
+            _modelEditors.Add(meshView, null);
+
+            meshView.ModelType.Text = mesh.MaterialId.ToString();
+            meshView.VisibleCheckBox.Click += (sender, arg) => VisibleCheckBox_Click(meshView);
+
+            DisplayTransforms(mesh, meshView);
+
+            meshView.VertexType.Text = mesh.VertexFormat.ToString();
+            meshView.VertexCount.Text = mesh.VertexCount.ToString();
+            meshView.FaceCount.Text = mesh.FaceCount.ToString();
+
+            meshView.AlphaMode.Items.Add(mesh.AlphaMode);
+            meshView.AlphaMode.SelectedIndex = 0;
+
+            foreach (var bone in mesh.AttachmentPoint)
+                meshView.BoneList.Items.Add(bone.Name);
+
+            meshView.TextureDir.LabelName.Width = 100;
+            meshView.TextureDir.LabelName.Content = "Texture Directory";
+            meshView.TextureDir.PathTextBox.Text = mesh.TextureDirectory;
+            meshView.TextureDir.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
+            meshView.TextureDir.PreviewButton.Visibility = System.Windows.Visibility.Collapsed;
+
+            CreateTextureDisplayItem(mesh, meshView.Diffuse, TexureType.Diffuse);
+            CreateTextureDisplayItem(mesh, meshView.Specular, TexureType.Specular);
+            CreateTextureDisplayItem(mesh, meshView.Normal, TexureType.Normal);
+            CreateTextureDisplayItem(mesh, meshView.Mask, TexureType.Mask);
+            CreateTextureDisplayItem(mesh, meshView.Gloss, TexureType.Gloss);
+
+            AddUnknownTexture(meshView, mesh);
+            AddUnknowData(meshView, mesh);
+
+            meshStackPanel.Children.Add(meshView);
+
+            parentLod.Models.Add( new Model() {Editor = meshView,});
+
+            return meshContnet;
+
+        }
 
         private void PopulateUi(RigidModelEditorView view, RigidModelElement element)
         {
-            bool firstSub = true;
-            bool first = true;
-            int currentLodIndex = 0;
             foreach (var loadHead in element.Model.LodHeaders)
-            {
-                var lodContent = new CollapsableButton()
-                {
-                    LabelText = ($"Lod - {loadHead.LodLevel}")
-                };
+                CreateLod(loadHead, view);
 
-                var lodStackPanel = new StackPanel();
-
-                LodEditorView lodEditorView = new LodEditorView();
-                lodEditorView.Scale.Text = $"{loadHead.LodCameraDistance}";
-                lodEditorView.MeshCount.Text = $"{loadHead.MeshCount}";
-                lodEditorView.Debug.Text = "[" + loadHead.QualityLvl + "]";
-                // Version
-
-                lodStackPanel.Children.Add(lodEditorView);
-                lodContent.InnerContent = lodStackPanel;
-
-                var currentModelIndex = 0;
-                foreach (var mesh in loadHead.LodModels)
-                {
-                    var meshContnet = new CollapsableButton()
-                    { 
-                        LabelText = $"{mesh.ModelName}"
-                    };
-                    var meshStackPanel = new StackPanel();
-                    meshContnet.InnerContent = meshStackPanel;
-
-                    // Create the model
-
-                    var meshView = new RigidModelMeshEditorView
-                    {
-                        ModelIndex = currentModelIndex,
-                        LodIndex = currentLodIndex
-                    };
-                    _modelEditors.Add(meshView, null);
-
-                    meshView.ModelType.Text = mesh.MaterialId.ToString();
-                    meshView.VisibleCheckBox.Click += (sender, arg) => VisibleCheckBox_Click(meshView);
-
-                    DisplayTransforms(mesh, meshView);
-
-                    meshView.VertexType.Text = mesh.VertexFormat.ToString();
-                    meshView.VertexCount.Text = mesh.VertexCount.ToString();
-                    meshView.FaceCount.Text = mesh.FaceCount.ToString();
-                    
-                    meshView.AlphaMode.Items.Add(mesh.AlphaMode);
-                    meshView.AlphaMode.SelectedIndex = 0;
-
-                    foreach (var bone in mesh.AttachmentPoint)
-                        meshView.BoneList.Items.Add(bone.Name);
-
-                    meshView.TextureDir.LabelName.Width = 100;
-                    meshView.TextureDir.LabelName.Content = "Texture Directory";
-                    meshView.TextureDir.PathTextBox.Text = mesh.TextureDirectory;
-                    meshView.TextureDir.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
-                    meshView.TextureDir.PreviewButton.Visibility = System.Windows.Visibility.Collapsed;
-
-                    CreateTextureDisplayItem(mesh, meshView.Diffuse, TexureType.Diffuse);
-                    CreateTextureDisplayItem(mesh, meshView.Specular, TexureType.Specular);
-                    CreateTextureDisplayItem(mesh, meshView.Normal, TexureType.Normal);
-                    CreateTextureDisplayItem(mesh, meshView.Mask, TexureType.Mask);
-                    CreateTextureDisplayItem(mesh, meshView.Gloss, TexureType.Gloss);
-
-                    AddUnknownTexture(meshView, mesh);
-                    AddUnknowData(meshView, mesh);
-
-                    meshStackPanel.Children.Add(meshView);
-                    lodStackPanel.Children.Add(meshContnet);
-
-                    //if (firstSub)
-                    //    meshContnet.OnClick();
-                    firstSub = false;
-
-                    currentModelIndex++;
-                }
-
-                currentLodIndex++;
-
-
-                view.LodStackPanel.Children.Add(lodContent);
-                //if(first)
-                //    lodContent.OnClick();
-                first = false;
-            }
         }
 
         void DisplayTransforms(LodModel mesh, RigidModelMeshEditorView view)

@@ -49,7 +49,7 @@
             </Grid>
         </Button>
 
-        <CheckBox Name="CheckBox" Visibility="Visible" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="2,0" />
+        <CheckBox Name="ButtonCheckBox" Visibility="Visible" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="2,0" />
 
         <Grid Visibility="{Binding CustomFilterVisibility, ElementName=self}" Grid.Row="1" Grid.ColumnSpan="2" Name="ContentGrid">
             <Grid.ColumnDefinitions>

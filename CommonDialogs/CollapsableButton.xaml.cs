@@ -19,7 +19,7 @@ namespace CommonDialogs
     /// <summary>
     /// Interaction logic for CollapsableButton.xaml
     /// </summary>
-    
+
     [ContentProperty("InnerContent")]
     public partial class CollapsableButton : UserControl
     {
@@ -70,6 +70,9 @@ namespace CommonDialogs
 
         #endregion
 
+
+
+        public CheckBox CheckBox { get { return ButtonCheckBox; } }
         public CollapsableButton()
         {
             InitializeComponent();

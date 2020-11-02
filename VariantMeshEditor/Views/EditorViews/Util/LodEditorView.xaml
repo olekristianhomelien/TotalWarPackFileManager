@@ -7,29 +7,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel LastChildFill="False">
 
-   
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                    <Label Width="80">Mesh count</Label>
-                    <Label>:</Label>
-                    <Border BorderBrush="{x:Null}" >
-                        <TextBlock x:Name="MeshCount" TextWrapping="NoWrap" Text="3" VerticalAlignment="Center"/>
-                    </Border>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Label Width="80">Scale</Label>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="135">Lod Camera Distance</Label>
             <Label>:</Label>
-            <Border BorderBrush="{x:Null}" >
-                <TextBlock x:Name="Scale" TextWrapping="NoWrap" Text="3" VerticalAlignment="Center"/>
-            </Border>
+            <TextBlock x:Name="LodCameraDistance" TextWrapping="NoWrap" Text="3" VerticalAlignment="Center"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Label Width="80">Debug</Label>
+            <Label Width="135">Quality Lvl</Label>
             <Label>:</Label>
-            <Border BorderBrush="{x:Null}" >
-                <TextBlock x:Name="Debug" TextWrapping="NoWrap" Text="3" VerticalAlignment="Center"/>
-            </Border>
+            <TextBlock x:Name="QualityLvl" TextWrapping="NoWrap" Text="3" VerticalAlignment="Center"/>
         </StackPanel>
+
     </DockPanel>
 </UserControl>
