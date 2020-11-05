@@ -2,22 +2,62 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util"
+             xmlns:viewmodels="clr-namespace:VariantMeshEditor.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel>
-        <TextBlock x:Name="SlotName" TextWrapping="Wrap" Text="Slot Name:" VerticalAlignment="Center"/>
 
-        <DockPanel>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/TestStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+         
+
+        <DataTemplate DataType="{x:Type viewmodels:VariantMeshElement}">
+            <util:BrowsableItemView LabelName="Mesh:">
+                
+            </util:BrowsableItemView>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:WsModelElement}">
+            <util:BrowsableItemView LabelName="Mesh:">
+                
+            </util:BrowsableItemView>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:RigidModelElement}">
+            <util:BrowsableItemView 
+                LabelName="Mesh:" 
+                PathText="{Binding FullPath}"
+                PathTextReadOnly="True"
+                Browse="{Binding BrowseCommand}"
+                Remove="{Binding RemoveCommand}">
+            </util:BrowsableItemView>
+        </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    
+    <DockPanel LastChildFill="False">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SlotName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+
+        <DockPanel DockPanel.Dock="Top">
             <TextBlock DockPanel.Dock="Left" TextWrapping="Wrap" Text="Attachment point:" VerticalAlignment="Center"/>
             <ComboBox x:Name="AttachmentPointComboBox" DockPanel.Dock="Right"></ComboBox>
         </DockPanel>
 
-        <StackPanel x:Name="MeshStackPanel">
-
-        </StackPanel>
+        <ListView 
+            HorizontalContentAlignment="Stretch"
+            DockPanel.Dock="Top" 
+            ItemsSource="{Binding Path=Children}"
+            ItemContainerStyle="{StaticResource LvItemStyle}"
+            Background="Transparent"
+            BorderThickness="0"/>
         
-        <Button x:Name="AddButton">Add new mesh</Button>
+        
+        <Button DockPanel.Dock="Top" x:Name="AddButton">Add new mesh</Button>
 
-    </StackPanel>
+    </DockPanel>
 </UserControl>

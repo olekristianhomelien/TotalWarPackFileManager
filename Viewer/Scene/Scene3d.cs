@@ -308,6 +308,9 @@ namespace WpfTest.Scenes
 
     public class TextureMeshRenderItem : MeshRenderItem
     {
+
+
+
         public Dictionary<TexureType, Texture2D> Textures { get; set; } = new Dictionary<TexureType, Texture2D>();
 
         public TextureMeshRenderItem(MeshModel model, Effect shader) : base(model, shader)

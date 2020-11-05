@@ -151,24 +151,6 @@ namespace Filetypes.RigidModel
             lodModel.Unknown_Shaderarameters = materialInfo.ReadBytes(10);
             lodModel.AllZero_Shaderarameters = materialInfo.ReadBytes(10);
 
-
-            materialInfo.Index = 12;
-            var barr = materialInfo.ReadBytes(materialInfo.BytesLeft);
-            var barrStr = string.Join("\t", barr.Select(x => x));
-            materialInfo.Index = 0;
-            var name = materialInfo.ReadFixedLength(12);
-            var floats = new List<float>();
-            while (materialInfo.BytesLeft >= 4)
-            {
-                var ind = materialInfo.Index;
-                floats.Add((materialInfo.ReadShort()/ 127.0f ));
-                //floats.Add(materialInfo.ReadSingle());
-                //floats.Add(chunk.ReadInt32());
-                materialInfo.Index = ind + 1;
-            }
-
-            // ShaderName 12, shader settings 20
-            //lodModel.Unknown1 = chunk.ReadBytes(2);*/
             lodModel.VertexFormatValue = chunk.ReadUShort();
             lodModel.VertexFormat = (VertexFormat)lodModel.VertexFormatValue;
             lodModel.ModelName = Util.SanatizeFixedString(chunk.ReadFixedLength(32));   
@@ -183,7 +165,7 @@ namespace Filetypes.RigidModel
             lodModel.AttachmentPointCount = chunk.ReadUInt32();
             lodModel.TextureCount = chunk.ReadUInt32();
 
-            // A groupd of data that is all zeroes with a single one
+            // A groupd of data (140 bytes) that is all zeroes with a single one
             lodModel.ZeroPadding1 = chunk.ReadBytes(8);
             lodModel.Flag_alwaysOne = chunk.ReadByte();
             lodModel.ZeroPadding2 = chunk.ReadBytes(131);

@@ -16,8 +16,11 @@
             </Grid.RowDefinitions>
 
             <GridSplitter  Grid.Row="1" Background="Gray"  HorizontalAlignment="Stretch" />
-            <treeviewwithcheckboxes:ImprovedTreeViewWindow x:Name="TreeView" Grid.Row="0" />
-            <Grid x:Name="ToolPanel" Grid.Row="2"></Grid>
+            <treeviewwithcheckboxes:ImprovedTreeViewWindow x:Name="TreeView" Grid.Row="0"  />
+            <local:ToolPanelView Grid.Row="2"></local:ToolPanelView>
+            
+
+
         </Grid>
     </Grid>
 </UserControl>

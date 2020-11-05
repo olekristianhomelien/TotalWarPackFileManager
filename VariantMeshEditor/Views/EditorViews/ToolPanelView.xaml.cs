@@ -13,17 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace VariantMeshEditor.Views.EditorViews.Util
+namespace VariantMeshEditor.Views.EditorViews
 {
     /// <summary>
-    /// Interaction logic for RigidModelMeshEditor.xaml
+    /// Interaction logic for ToolPanelView.xaml
     /// </summary>
-    public partial class RigidModelMeshEditorView : UserControl
+    public partial class ToolPanelView : UserControl
     {
-        public int LodIndex { get; set; }
-        public int ModelIndex { get; set;
-        }
-        public RigidModelMeshEditorView()
+        public ToolPanelView()
         {
             InitializeComponent();
         }

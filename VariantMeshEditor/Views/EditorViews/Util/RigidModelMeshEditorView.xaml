@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="VariantMeshEditor.Views.EditorViews.Util.RigidModelMeshEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Util" 
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="1000">
+
+    <Grid>
+
+
+                <DockPanel LastChildFill="False">
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Model Type</Label>
+                        <Label>:</Label>
+                        <TextBlock Text="ModelType0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Render BBox</Label>
+                        <Label>:</Label>
+                        <CheckBox  HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="True"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Transforms</Label>
+                        <Label>:</Label>
+                        <Expander>
+                            <StackPanel Orientation="Horizontal">
+                                <local:Vector3View ></local:Vector3View>
+                                <local:Matrix3x4View></local:Matrix3x4View>
+                                <local:Matrix3x4View></local:Matrix3x4View>
+                                <local:Matrix3x4View></local:Matrix3x4View>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Vertex Type</Label>
+                        <Label>:</Label>
+                        <TextBlock Text="VertexType0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Vertex Count</Label>
+                        <Label>:</Label>
+                        <TextBlock Text="30" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Index Count</Label>
+                        <Label>:</Label>
+                        <TextBlock Text="100" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Attachments</Label>
+                        <Label>:</Label>
+                        <Expander>
+                            <ListView ></ListView>
+                        </Expander>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Shader Name</Label>
+                        <Label>:</Label>
+                        <TextBlock Text="MaterialType0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Width="100">Alpha Mode</Label>
+                        <Label>:</Label>
+                        <ComboBox  VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <local:BrowsableItemView DisplayPreviewButton="False" DisplayRemoveButton="False" DockPanel.Dock="Top" LabelLength="100" LabelName="Texture Directory"></local:BrowsableItemView>
+                    <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Diffuse"></local:BrowsableItemView>
+                    <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Specular"></local:BrowsableItemView>
+                    <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Gloss"></local:BrowsableItemView>
+                    <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Normal"></local:BrowsableItemView>
+                    <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Mask"></local:BrowsableItemView>
+
+                    <Expander DockPanel.Dock="Top" Header="Debug Info" IsExpanded="False">
+                        <TextBox ></TextBox>
+                    </Expander>
+                </DockPanel>
+
+
+    </Grid>
+</UserControl>

@@ -64,6 +64,7 @@
     <Compile Include="ViewModels\AnimationElement.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModelElement.cs" />
+    <Compile Include="ViewModels\RootViewModel.cs" />
     <Compile Include="ViewModels\SceneElementHelper.cs" />
     <Compile Include="ViewModels\SkeletonElement.cs" />
     <Compile Include="ViewModels\SlotsElement.cs" />
@@ -97,18 +98,20 @@
     <Compile Include="Views\EditorViews\AnimationViews\AnimationExplorerView.xaml.cs">
       <DependentUpon>AnimationExplorerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\ToolPanelView.xaml.cs">
+      <DependentUpon>ToolPanelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditorViews\Util\BrowsableItemView.xaml.cs">
       <DependentUpon>BrowsableItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Util\CollapsableButtonControl.cs" />
-    <Compile Include="Views\EditorViews\Util\LodEditorView.xaml.cs">
-      <DependentUpon>LodEditorView.xaml</DependentUpon>
+    <Compile Include="Views\EditorViews\Util\RigidModelLodEditorView.xaml.cs">
+      <DependentUpon>RigidModelLodEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Util\Matrix3x4View.xaml.cs">
       <DependentUpon>Matrix3x4View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Util\RigidModelMeshEditor.xaml.cs">
-      <DependentUpon>RigidModelMeshEditor.xaml</DependentUpon>
+    <Compile Include="Views\EditorViews\Util\RigidModelMeshEditorView.xaml.cs">
+      <DependentUpon>RigidModelMeshEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Util\UnknownDataView.xaml.cs">
       <DependentUpon>UnknownDataView.xaml</DependentUpon>
@@ -126,10 +129,6 @@
       <DependentUpon>TexturePreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewViewModel.cs" />
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\EditorViews\AnimationEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -170,11 +169,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditorViews\ToolPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditorViews\Util\BrowsableItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Util\LodEditorView.xaml">
+    <Page Include="Views\EditorViews\Util\RigidModelLodEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,7 +185,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Util\RigidModelMeshEditor.xaml">
+    <Page Include="Views\EditorViews\Util\RigidModelMeshEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -206,6 +209,14 @@
       <DependentUpon>VariantMeshEditorControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Styles\TestStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Templates\TestTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TexturePreview\TexturePreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

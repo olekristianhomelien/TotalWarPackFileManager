@@ -24,7 +24,7 @@ namespace PackFileManagerUnitTests.FileTypes
             ByteChunk chunk = new ByteChunk(bytes);
 
 
-            RigidModel model = RigidModel.Create(chunk, out var error);
+            Rmv2RigidModel model = Rmv2RigidModel.Create(chunk, out var error);
         }
     }
 }

@@ -34,24 +34,24 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void CreateMeshList()
         {
-            _viewModel.MeshStackPanel.Children.Clear();
-            foreach (var child in _referenceElements)
-            {
-                if (child.Type == FileSceneElementEnum.VariantMesh ||
-                    child.Type == FileSceneElementEnum.WsModel ||
-                    child.Type == FileSceneElementEnum.RigidModel)
-                {
-                    var meshReference = new BrowsableItemView();
-                    meshReference.LabelName.Content = "Mesh:";
-                    meshReference.PathTextBox.Text = child.FullPath;
-                    meshReference.Tag = child;
-
-                    //meshReference.RemoveButton.Click += RemoveButton_Click;
-                    meshReference.RemoveButton.Tag = child;
-
-                    _viewModel.MeshStackPanel.Children.Add(meshReference);
-                }
-            }
+           //_viewModel.MeshStackPanel.Children.Clear();
+           //foreach (var child in _referenceElements)
+           //{
+           //    if (child.Type == FileSceneElementEnum.VariantMesh ||
+           //        child.Type == FileSceneElementEnum.WsModel ||
+           //        child.Type == FileSceneElementEnum.RigidModel)
+           //    {
+           //        var meshReference = new BrowsableItemView();
+           //        meshReference.LabelName.Content = "Mesh:";
+           //        meshReference.PathTextBox.Text = child.FullPath;
+           //        meshReference.Tag = child;
+           //
+           //        //meshReference.RemoveButton.Click += RemoveButton_Click;
+           //        meshReference.RemoveButton.Tag = child;
+           //
+           //        _viewModel.MeshStackPanel.Children.Add(meshReference);
+           //    }
+           // }
         }
 
         private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)

@@ -1,5 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Xna.Framework;
+using SharpDX.XAudio2;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Documents;
+using System.Windows.Input;
 using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Scene;
@@ -23,14 +28,30 @@ namespace VariantMeshEditor.ViewModels
         public string AttachmentPoint { get; set; }
         public override FileSceneElementEnum Type => FileSceneElementEnum.Slot;
 
+       
+
         public SlotElement(FileSceneElement parent, string slotName, string attachmentPoint) : base(parent, "", "", "")
         {
             SlotName = slotName;
             AttachmentPoint = attachmentPoint;
 
             SetDisplayName(AttachmentPoint);
+
         }
-     
+
+
+
+        void SlotAdded(string path)
+        { 
+        }
+
+        void SlotRemoved()
+        {
+            // Remove all chilrden
+            // remove self
+            Parent.RemoveNode(this);
+        }
+
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
             _animation = SceneElementHelper.GetAllOfTypeInSameVariantMesh<AnimationElement>(this).FirstOrDefault();

@@ -85,7 +85,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RigidModel\AnimationFile.cs" />
     <Compile Include="RigidModel\BoundingBox.cs" />
-    <Compile Include="RigidModel\RigidModel.cs" />
+    <Compile Include="RigidModel\Rmv2RigidModel.cs" />
     <Compile Include="RigidModel\GroupTypeEnum.cs" />
     <Compile Include="RigidModel\LodHeader.cs" />
     <Compile Include="RigidModel\LodModel.cs" />

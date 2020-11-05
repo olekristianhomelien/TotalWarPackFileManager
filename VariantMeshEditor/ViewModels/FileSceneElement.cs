@@ -94,10 +94,20 @@ namespace VariantMeshEditor.ViewModels
         virtual protected void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         { }
 
-        public void AddChild(FileSceneElement child)
+        public FileSceneElement AddChild(FileSceneElement child)
         {
             child.Parent = child;
             Children.Add(child);
+            return child;
+        }
+
+        public void RemoveNode(FileSceneElement node)
+        {
+            // Call destructor in children
+            // call destructor on node
+            
+
+            this.Children.Remove(node);
         }
     }
 

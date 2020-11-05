@@ -33,19 +33,6 @@ namespace CommonDialogs
 
         public static readonly DependencyProperty InnerContentProperty = DependencyProperty.Register("InnerContent", typeof(FrameworkElement), typeof(CollapsableButton), new UIPropertyMetadata(null));
 
-
-
-        public Visibility CustomFilterVisibility
-        {
-            get { return (Visibility)GetValue(CustomFilterVisibilityProperty); }
-            set { SetValue(CustomFilterVisibilityProperty, value); }
-        }
-
-        public static readonly DependencyProperty CustomFilterVisibilityProperty =
-            DependencyProperty.Register("CustomFilterVisibility", typeof(Visibility), typeof(CollapsableButton), new PropertyMetadata(null));
-
-
-
         public string LabelText
         {
             get { return (string)GetValue(LabelTextProperty); }
@@ -55,11 +42,7 @@ namespace CommonDialogs
         public static readonly DependencyProperty LabelTextProperty =
             DependencyProperty.Register("LabelText", typeof(string), typeof(CollapsableButton), new PropertyMetadata(null));
 
-
-
-
-
-        public string LabelSymbol
+        protected string LabelSymbol
         {
             get { return (string)GetValue(LabelSymbolProperty); }
             set { SetValue(LabelSymbolProperty, value); }
@@ -68,22 +51,38 @@ namespace CommonDialogs
         public static readonly DependencyProperty LabelSymbolProperty =
             DependencyProperty.Register("LabelSymbol", typeof(string), typeof(CollapsableButton), new PropertyMetadata(null));
 
+
+        public string LabelLength
+        {
+            get { return (string)GetValue(LabelLengthProperty); }
+            set { SetValue(LabelLengthProperty, value); }
+        }
+
+        public static readonly DependencyProperty LabelLengthProperty =
+            DependencyProperty.Register("LabelLength", typeof(string), typeof(CollapsableButton), new PropertyMetadata(null));
         #endregion
 
 
+        public event RoutedEventHandler OpenStateChanged;
 
-        public CheckBox CheckBox { get { return ButtonCheckBox; } }
+        //public CheckBox CheckBox { get { return ButtonCheckBox; } }
+        public bool IsExpanded { private set; get; } = false;
+
         public CollapsableButton()
         {
-            InitializeComponent();
             LabelSymbol = "🡆";
-            CustomFilterVisibility = Visibility.Visible;
+
+            InitializeComponent();
+            ContentGrid.Height = 0;
+            // ContentGrid.Height = 0;
+            //LabelText = "Example";
+
         }
-        bool _isOpen = true;
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isOpen)
+            if (!IsExpanded)
             {
                 LabelSymbol = "🡇";
                 ContentGrid.Height = double.NaN;
@@ -93,8 +92,9 @@ namespace CommonDialogs
                 LabelSymbol = "🡆";
                 ContentGrid.Height = 0;
             }
-            _isOpen = !_isOpen;
 
+            IsExpanded = !IsExpanded;
+            OpenStateChanged?.Invoke(this, e);
         }
     }
 }

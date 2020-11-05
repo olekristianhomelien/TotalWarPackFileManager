@@ -22,20 +22,20 @@ namespace VariantMeshEditor.Controls
 {
     class EditorMainController
     {
-        FileSceneElement _rootElement;
+        //FileSceneElement _rootElement;
         SceneTreeViewController _treeViewController;
         Scene3d _scene3d;
         Panel _editorPanel;
         ResourceLibary _resourceLibary;
         string _modelToLoad;
 
+        public RootViewModel RootViewModel { get; set; }
 
-  
-        public EditorMainController(SceneTreeViewController treeViewController, Scene3d scene3d, Panel editorPanel)
+        public EditorMainController(SceneTreeViewController treeViewController, Scene3d scene3d, RootViewModel rootViewModel)
         {
             _treeViewController = treeViewController;
             _scene3d = scene3d;
-            _editorPanel = editorPanel;
+            RootViewModel = rootViewModel;
 
             List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
 
@@ -82,8 +82,8 @@ namespace VariantMeshEditor.Controls
      //   
 
 
-            _treeViewController.SceneElementSelectedEvent += _treeViewController_SceneElementSelectedEvent;
-            _treeViewController.VisabilityChangedEvent += _treeViewController_VisabilityChangedEvent;
+            //_treeViewController.SceneElementSelectedEvent += _treeViewController_SceneElementSelectedEvent;
+            //_treeViewController.VisabilityChangedEvent += _treeViewController_VisabilityChangedEvent;
             _scene3d.LoadScene += Create3dWorld;
         }
 
@@ -131,7 +131,7 @@ namespace VariantMeshEditor.Controls
             try
             {
                 ByteChunk chunk = new ByteChunk(file.Data);
-                var model3d = RigidModel.Create(chunk, out string errorMessage);
+                var model3d = Rmv2RigidModel.Create(chunk, out string errorMessage);
                 if (model3d == null)
                     return (false, errorMessage);
 
@@ -281,15 +281,17 @@ namespace VariantMeshEditor.Controls
             }*/
 
 
-
+          
             _scene3d.SetResourceLibary(_resourceLibary);
             SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-            _rootElement = sceneLoader.Load(_modelToLoad, new RootElement());
-            _rootElement.CreateContent(_scene3d, _resourceLibary);
+            var rootElement = sceneLoader.Load(_modelToLoad, new RootElement());
+            rootElement.CreateContent(_scene3d, _resourceLibary);
 
-            _scene3d.SceneGraphRootNode = _rootElement;
-            _treeViewController.SetRootItem(_rootElement);
-            SceneElementHelper.SetInitialVisability(_rootElement, true);
+            _scene3d.SceneGraphRootNode = rootElement;
+            //_treeViewController.SetRootItem(_rootElement);
+            //SceneElementHelper.SetInitialVisability(_rootElement, true);
+
+            RootViewModel.SceneGraph.SceneGraphRootNodes.Add(rootElement);
         }
 
 

@@ -18,9 +18,9 @@ namespace VariantMeshEditor.Views.EditorViews.Util
     /// <summary>
     /// Interaction logic for LodEditorView.xaml
     /// </summary>
-    public partial class LodEditorView : UserControl
+    public partial class RigidModelLodEditorView : UserControl
     {
-        public LodEditorView()
+        public RigidModelLodEditorView()
         {
             InitializeComponent();
         }

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Filetypes.RigidModel
 {
-    public class RigidModel
+    public class Rmv2RigidModel
     {
         public string FileType { get; set; }
         public uint Version { get; set; }
@@ -23,9 +23,9 @@ namespace Filetypes.RigidModel
             return true;
         }
 
-        public static RigidModel Create(ByteChunk chunk, out string errorMessage)
+        public static Rmv2RigidModel Create(ByteChunk chunk, out string errorMessage)
         {
-            RigidModel model = new RigidModel
+            Rmv2RigidModel model = new Rmv2RigidModel
             {
                 FileType = chunk.ReadFixedLength(4),
                 Version = chunk.ReadUInt32(),

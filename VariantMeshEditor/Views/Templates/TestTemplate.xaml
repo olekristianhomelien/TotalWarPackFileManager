@@ -1,0 +1,55 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:VariantMeshEditor.Views.Templates" 
+                    xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Styles/TestStyle.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+
+    <DataTemplate x:Key="MyListTemplate">
+        <StackPanel>
+            <TextBlock Text="{Binding Path=Age}" />
+            <TextBlock Text="{Binding Path=Name}"/>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="myTaskTemplate">
+
+        <commondialogs:CollapsableButton>
+            <commondialogs:CollapsableButton.InnerContent>
+                <StackPanel>
+                    <TextBlock Text="{Binding Path=TaskName}" />
+                    <TextBlock Text="{Binding Path=Description}"/>
+                    <TextBlock Text="{Binding Path=Priority}"/>
+                    <ListView 
+                        ItemsSource="{Binding Path=taskDoerList}"
+                        ItemTemplate="{StaticResource MyListTemplate}"
+                        ItemContainerStyle="{StaticResource LvItemStyle}"/>
+                </StackPanel>
+            </commondialogs:CollapsableButton.InnerContent>
+        </commondialogs:CollapsableButton>
+
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="myTaskTemplateWithButton">
+
+        <commondialogs:CollapsableButton>
+            <commondialogs:CollapsableButton.InnerContent>
+                <StackPanel>
+                    <TextBlock Text="{Binding Path=TaskName}" />
+                    <TextBlock Text="{Binding Path=Description}"/>
+                    <TextBlock Text="{Binding Path=Priority}"/>
+                    <Button>Dogs are cool</Button>
+                    <ListView 
+                        ItemsSource="{Binding Path=taskDoerList}"
+                        ItemTemplate="{StaticResource MyListTemplate}"
+                        ItemContainerStyle="{StaticResource LvItemStyle}"/>
+                </StackPanel>
+            </commondialogs:CollapsableButton.InnerContent>
+        </commondialogs:CollapsableButton>
+
+    </DataTemplate>
+</ResourceDictionary>

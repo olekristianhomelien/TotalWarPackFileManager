@@ -13,7 +13,7 @@ namespace Viewer.GraphicModels
         VertexPositionNormalTexture[] _bufferArray;
         
 
-        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, RigidModel rigidModelData, int lodLevel, int model)
+        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2RigidModel rigidModelData, int lodLevel, int model)
         {
             _animationPlayer = animationPlayer;
             _model = rigidModelData.LodHeaders[lodLevel].LodModels[model];
