@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Xna.Framework;
 using SharpDX.XAudio2;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Documents;
@@ -35,22 +36,15 @@ namespace VariantMeshEditor.ViewModels
             SlotName = slotName;
             AttachmentPoint = attachmentPoint;
 
+
+            CheckBoxGroupingName = "Slot" + Guid.NewGuid().ToString();
+            IsChecked = true;
+
             SetDisplayName(AttachmentPoint);
 
         }
 
 
-
-        void SlotAdded(string path)
-        { 
-        }
-
-        void SlotRemoved()
-        {
-            // Remove all chilrden
-            // remove self
-            Parent.RemoveNode(this);
-        }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {

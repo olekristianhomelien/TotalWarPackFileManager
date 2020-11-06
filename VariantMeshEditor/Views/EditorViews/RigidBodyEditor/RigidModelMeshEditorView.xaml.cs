@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace VariantMeshEditor.Views.EditorViews.Util
+namespace VariantMeshEditor.Views.EditorViews.RigidBodyEditor
 {
     /// <summary>
-    /// Interaction logic for LodEditorView.xaml
+    /// Interaction logic for RigidModelMeshEditor.xaml
     /// </summary>
-    public partial class RigidModelLodEditorView : UserControl
+    public partial class RigidModelMeshEditorView : UserControl
     {
-        public RigidModelLodEditorView()
+        public RigidModelMeshEditorView()
         {
             InitializeComponent();
         }

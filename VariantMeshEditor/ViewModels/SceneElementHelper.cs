@@ -58,12 +58,12 @@ namespace VariantMeshEditor.ViewModels
         public static void SetInitialVisability(FileSceneElement element, bool shouldBeSelected)
         {
             //element.PropertyChanged += Node_PropertyChanged;
-            element.IsChecked = shouldBeSelected;
+            //element.IsChecked = shouldBeSelected;
 
-            if (element as AnimationElement != null)
-                element.Vis = Visibility.Hidden;
-            if (element as SkeletonElement != null)
-                element.IsChecked = false;
+           // if (element as AnimationElement != null)
+           //     element.Vis = Visibility.Hidden;
+           // if (element as SkeletonElement != null)
+           //     element.IsChecked = false;
 
             bool areAllChildrenModels = element.Children.Where(x => (x as RigidModelElement) != null).Count() == element.Children.Count();
             bool firstItem = true;

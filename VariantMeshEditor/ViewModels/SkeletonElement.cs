@@ -28,8 +28,9 @@ namespace VariantMeshEditor.ViewModels
 
         public SkeletonElement(FileSceneElement parent, string fullPath) : base(parent, "", fullPath, "Skeleton")
         {
-           
+            ApplyElementCheckboxVisability = System.Windows.Visibility.Hidden;  
         }
+
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
 

@@ -18,12 +18,22 @@ namespace VariantMeshEditor.ViewModels
     {
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
 
-        public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation") { }
+        public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation") 
+        {
+            ApplyElementCheckboxVisability = System.Windows.Visibility.Hidden; 
+        }
+
+
+        
+
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
+
 
         public override UserControl EditorViewModel { get => _controller.GetView(); protected set => throw new System.Exception(); }
 
         AnimationController _controller;
+
+
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {

@@ -1,14 +1,10 @@
-﻿
+﻿using CommonDialogs.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Serilog.Events;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
-using TreeViewWithCheckBoxes;
 using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Scene;
@@ -29,20 +25,58 @@ namespace VariantMeshEditor.ViewModels
         WsModel
     }
 
-    public abstract class FileSceneElement : TreeViewDataModel, ISceneGraphNode
+    public abstract class FileSceneElement : NotifyPropertyChangedImpl, ISceneGraphNode
     {
+        public Visibility ApplyElementCheckboxVisability { get; set; } = Visibility.Visible;
+
+
+        string _displayName = "";
+        public string DisplayName
+        {
+            get { return _displayName; }
+            set
+            {
+                _displayName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
+
+        bool _isChecked = false;
+        public bool IsChecked
+        {
+            get { return _isChecked; }
+            set
+            {
+                _isChecked = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        string _checkBoxGroupingName = "";
+        public string CheckBoxGroupingName
+        {
+            get { return _checkBoxGroupingName; }
+            set
+            {
+                _checkBoxGroupingName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public FileSceneElement Parent { get; set; }
-        public ObservableCollection<FileSceneElement> Children { get; private set; } = new ObservableCollection<FileSceneElement>();
+        public ObservableCollection<FileSceneElement> Children { get; set; } = new ObservableCollection<FileSceneElement>();
 
         public abstract FileSceneElementEnum Type { get; }
         public string FileName { get; set; }
         public string FullPath { get; set; }
         public virtual UserControl EditorViewModel { get; protected set; }
 
-        public bool Visible { get; set; } = true;
+
 
         public FileSceneElement(FileSceneElement parent, string fileName, string fullPath, string displayName)
-            : base(displayName)
+            : base()
         {
             FileName = fileName;
             FullPath = fullPath;
@@ -70,7 +104,7 @@ namespace VariantMeshEditor.ViewModels
 
         public void Render(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
-            if (Visible == false)
+            if (IsChecked == false)
                 return;
             DrawNode(device, parentTransform, commonShaderParameters);
             var newWorld = parentTransform * WorldTransform;
@@ -114,7 +148,7 @@ namespace VariantMeshEditor.ViewModels
 
     public class RootElement : FileSceneElement
     {
-        public RootElement() : base(null, "", "", "Root") { }
+        public RootElement() : base(null, "", "", "Root") { IsChecked = true; }
         public override FileSceneElementEnum Type => FileSceneElementEnum.Root;
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)

@@ -10,7 +10,7 @@ namespace CommonDialogs.Common
         public event PropertyChangedEventHandler PropertyChanged;
         public delegate void ValueChangedDelegate<T>(T newSelectedSkeleton);
 
-        protected virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

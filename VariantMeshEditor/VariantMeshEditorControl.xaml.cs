@@ -9,41 +9,17 @@ namespace VariantMeshEditor
     /// </summary>
     public partial class VariantMeshEditorControl : UserControl
     {
-
-        SceneTreeViewController _treeViewController;
-
         EditorMainController _mainController;
 
-
-        public RootViewModel RootViewModel { get; set; }
+        public RootViewModel RootViewModel { get; set; } = new RootViewModel();
 
         public VariantMeshEditorControl()
         {
-
-            RootViewModel = new RootViewModel();
-
-            var rootNode = new RootElement();
-            
-            var slots = rootNode.AddChild(new SlotsElement(rootNode));
-            slots.AddChild(new SlotElement(slots, "Test0", "Attach0"));
-            slots.AddChild(new SlotElement(slots, "Test1", "Attach1"));
-
-            rootNode.AddChild(new AnimationElement(rootNode));
-
-
-            RootViewModel.SceneGraph.SceneGraphRootNodes.Add(rootNode);
-
-
-
             InitializeComponent();
             DataContext = RootViewModel;
 
-
-
-            //_treeViewController = new SceneTreeViewController(EditorPanel.TreeView.tree);
-            _mainController = new EditorMainController(_treeViewController, RenderView.Scene, RootViewModel);
+            _mainController = new EditorMainController(RenderView.Scene, RootViewModel);
             _mainController.LoadModel("variantmeshes\\variantmeshdefinitions\\brt_paladin.variantmeshdefinition");
-            //
         }
     }
 }

@@ -12,10 +12,6 @@ namespace VariantMeshEditor.ViewModels
     {
         SceneGraphViewModel _sceneGraph = new SceneGraphViewModel();
         public SceneGraphViewModel SceneGraph { get { return _sceneGraph; } set { SetAndNotify(ref _sceneGraph, value); } }
-
-
-        string _rootDgbData = "RootDgbDataStr";
-        public string RootDgbData { get { return _rootDgbData; } set { SetAndNotify(ref _rootDgbData, value); } }
     }
 
 
@@ -28,8 +24,5 @@ namespace VariantMeshEditor.ViewModels
 
         FileSceneElement _selectedNode;
         public FileSceneElement SelectedNode { get { return _selectedNode; } set { SetAndNotify(ref _selectedNode, value); } }
-
-        string _sceneGraphDgbData = "SceneGraphDgbDataStr";
-        public string SceneGraphDgbData { get { return _sceneGraphDgbData; } set { SetAndNotify(ref _sceneGraphDgbData, value); } }
     }
 }

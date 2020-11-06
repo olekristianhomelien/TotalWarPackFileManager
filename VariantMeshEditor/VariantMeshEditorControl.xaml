@@ -20,6 +20,5 @@
 
         <editorviews:EditorPanelView  Grid.Column="2" x:Name="EditorPanel" DataContext="{Binding Path=SceneGraph, UpdateSourceTrigger=PropertyChanged}"></editorviews:EditorPanelView>
 
-        <TextBlock Text="{Binding Path=RootDgbData, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
     </Grid>
 </UserControl>

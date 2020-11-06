@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Royale" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -59,7 +60,6 @@
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
-    <Compile Include="Controls\SceneTreeViewController.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
     <Compile Include="ViewModels\AnimationElement.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
@@ -83,7 +83,7 @@
     <Compile Include="Views\EditorViews\EditorPanelView.xaml.cs">
       <DependentUpon>EditorPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\RigidModelEditorView.xaml.cs">
+    <Compile Include="Views\EditorViews\RigidBodyEditor\RigidModelEditorView.xaml.cs">
       <DependentUpon>RigidModelEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\RootEditorView.xaml.cs">
@@ -98,19 +98,16 @@
     <Compile Include="Views\EditorViews\AnimationViews\AnimationExplorerView.xaml.cs">
       <DependentUpon>AnimationExplorerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\ToolPanelView.xaml.cs">
-      <DependentUpon>ToolPanelView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\EditorViews\Util\BrowsableItemView.xaml.cs">
       <DependentUpon>BrowsableItemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Util\RigidModelLodEditorView.xaml.cs">
+    <Compile Include="Views\EditorViews\RigidBodyEditor\RigidModelLodEditorView.xaml.cs">
       <DependentUpon>RigidModelLodEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Util\Matrix3x4View.xaml.cs">
       <DependentUpon>Matrix3x4View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Util\RigidModelMeshEditorView.xaml.cs">
+    <Compile Include="Views\EditorViews\RigidBodyEditor\RigidModelMeshEditorView.xaml.cs">
       <DependentUpon>RigidModelMeshEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Util\UnknownDataView.xaml.cs">
@@ -119,10 +116,9 @@
     <Compile Include="Views\EditorViews\Util\Vector3View.xaml.cs">
       <DependentUpon>Vector3View.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ImprovedTreeView\TreeViewDataModel.cs" />
-    <Compile Include="Views\ImprovedTreeView\VirtualToggleButton.cs" />
-    <Compile Include="Views\ImprovedTreeView\ImprovedTreeViewWindow.xaml.cs">
-      <DependentUpon>ImprovedTreeViewWindow.xaml</DependentUpon>
+    <Compile Include="Views\EditorViews\Util\OptionalRadioButton.cs" />
+    <Compile Include="Views\EditorViews\SceneTreeView.xaml.cs">
+      <DependentUpon>SceneTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewController.cs" />
     <Compile Include="Views\TexturePreview\TexturePreviewView.xaml.cs">
@@ -149,7 +145,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\RigidModelEditorView.xaml">
+    <Page Include="Views\EditorViews\RigidBodyEditor\RigidModelEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -169,15 +165,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\ToolPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\EditorViews\Util\BrowsableItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Util\RigidModelLodEditorView.xaml">
+    <Page Include="Views\EditorViews\RigidBodyEditor\RigidModelLodEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -185,7 +177,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Util\RigidModelMeshEditorView.xaml">
+    <Page Include="Views\EditorViews\RigidBodyEditor\RigidModelMeshEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,7 +189,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ImprovedTreeView\ImprovedTreeViewWindow.xaml">
+    <Page Include="Views\EditorViews\SceneTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
