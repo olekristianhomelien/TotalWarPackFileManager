@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using VariantMeshEditor.ViewModels;
 
-namespace VariantMeshEditor.ViewModels
+namespace VariantMeshEditor.Util
 {
     public class SceneElementHelper
     {
@@ -53,30 +54,6 @@ namespace VariantMeshEditor.ViewModels
                 GetAllChildrenOfType(child, output);
             }
         }
-
-
-        public static void SetInitialVisability(FileSceneElement element, bool shouldBeSelected)
-        {
-            //element.PropertyChanged += Node_PropertyChanged;
-            //element.IsChecked = shouldBeSelected;
-
-           // if (element as AnimationElement != null)
-           //     element.Vis = Visibility.Hidden;
-           // if (element as SkeletonElement != null)
-           //     element.IsChecked = false;
-
-            bool areAllChildrenModels = element.Children.Where(x => (x as RigidModelElement) != null).Count() == element.Children.Count();
-            bool firstItem = true;
-            foreach (var item in element.Children)
-            {
-                if (areAllChildrenModels && !firstItem)
-                    shouldBeSelected = false;
-
-                firstItem = false;
-                SetInitialVisability(item, shouldBeSelected);
-            }
-        }
-
 
         public static FileSceneElement GetRoot(FileSceneElement item)
         {

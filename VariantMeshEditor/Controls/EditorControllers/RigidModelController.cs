@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.Views.EditorViews;
 using VariantMeshEditor.Views.EditorViews.RigidBodyEditor;

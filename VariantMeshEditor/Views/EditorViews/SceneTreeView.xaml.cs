@@ -14,36 +14,18 @@ namespace VariantMeshEditor.Views.EditorViews
         public SceneTreeView()
         {
             InitializeComponent();
-      
         }
 
         private void TreeViewItem_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var treeView = sender as TreeView;
-            var item = treeView.SelectedItem as FileSceneElement;
-            if (item != null)
-            {
+            if (treeView.SelectedItem is FileSceneElement item)
                 item.IsChecked = !item.IsChecked;
-                item.DisplayName = "NewDebugName";
-            }
             e.Handled = true;
         }
     }
 
-    public class DebugDummyConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
- 
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-      
-            return value;
-        }
-    }
+  
 
     public class BindableSelectedItemBehavior : Behavior<TreeView>
     {

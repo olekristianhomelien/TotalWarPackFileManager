@@ -45,6 +45,8 @@ namespace VariantMeshEditor.Util
         void LoadVariantMesh(PackedFile file, FileSceneElement parent)
         {
             var variantMeshElement = new VariantMeshElement(parent,file.Name);
+            if (parent.Children.Count == 0)
+                variantMeshElement.IsChecked = true;
             parent.Children.Add(variantMeshElement);
 
             var animationElement = new AnimationElement(variantMeshElement);
@@ -54,6 +56,7 @@ namespace VariantMeshEditor.Util
 
             var slotsElement = new SlotsElement(variantMeshElement);
             variantMeshElement.Children.Add(slotsElement);
+            slotsElement.IsChecked = true;
 
             var content = file.Data;
             var fileContent = Encoding.Default.GetString(content);
@@ -63,6 +66,7 @@ namespace VariantMeshEditor.Util
             {
                 var slotElement = new SlotElement(slotsElement, slot.Name, slot.AttachPoint);
                 slotsElement.Children.Add(slotElement);
+                slotElement.IsChecked = true;
 
                 foreach (var mesh in slot.VariantMeshes)
                     Load(mesh.Name, slotElement);
@@ -97,12 +101,16 @@ namespace VariantMeshEditor.Util
             ByteChunk chunk = new ByteChunk(file.Data);
             var model3d = Rmv2RigidModel.Create(chunk, out string errorMessage);
             var model = new RigidModelElement(parent, model3d, file.FullPath);
+            if (parent.Children.Count == 0)
+                model.IsChecked = true;
             parent.Children.Add(model);
         }
 
         void LoadWsModel(PackedFile file, FileSceneElement parent)
         {
             var model = new WsModelElement(parent,file.FullPath);
+            if (parent.Children.Count == 0)
+                model.IsChecked = true;
             parent.Children.Add(model);
 
             var buffer = file.Data;

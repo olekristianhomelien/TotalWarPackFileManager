@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Documents;
 using System.Windows.Input;
 using VariantMeshEditor.Controls.EditorControllers;
+using VariantMeshEditor.Util;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Scene;
 using WpfTest.Scenes;
@@ -35,13 +36,8 @@ namespace VariantMeshEditor.ViewModels
         {
             SlotName = slotName;
             AttachmentPoint = attachmentPoint;
-
-
             CheckBoxGroupingName = "Slot" + Guid.NewGuid().ToString();
-            IsChecked = true;
-
             SetDisplayName(AttachmentPoint);
-
         }
 
 

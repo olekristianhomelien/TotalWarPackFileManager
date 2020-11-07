@@ -14,8 +14,6 @@
                 <ResourceDictionary Source="../../Styles/TestStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-
-
             <Style x:Key="CustomTreeViewStyle" TargetType="{x:Type TreeViewItem}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -53,7 +51,7 @@
 
 
 
-    <TreeView  ItemsSource="{Binding Path=Lods, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource CustomTreeViewStyle}" Padding="1" BorderThickness="0">
+    <TreeView  ItemsSource="{Binding Path=Lods, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource CustomTreeViewStyle}" Padding="1" BorderThickness="0" >
         <TreeView.ItemTemplate >
 
             <HierarchicalDataTemplate ItemsSource="{Binding Path=Models, UpdateSourceTrigger=PropertyChanged}"  >
@@ -73,7 +71,8 @@
                 </Border>
 
                 <HierarchicalDataTemplate.ItemTemplate>
-                    <HierarchicalDataTemplate  >
+                    
+                    <HierarchicalDataTemplate >
 
                         <commondialogs:CollapsableButton LabelText="Model">
                             <commondialogs:CollapsableButton.InnerContent>

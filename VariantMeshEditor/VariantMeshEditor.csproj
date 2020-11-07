@@ -65,7 +65,7 @@
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModelElement.cs" />
     <Compile Include="ViewModels\RootViewModel.cs" />
-    <Compile Include="ViewModels\SceneElementHelper.cs" />
+    <Compile Include="Util\SceneElementHelper.cs" />
     <Compile Include="ViewModels\SkeletonElement.cs" />
     <Compile Include="ViewModels\SlotsElement.cs" />
     <Compile Include="Views\EditorViews\AnimationEditorView.xaml.cs">

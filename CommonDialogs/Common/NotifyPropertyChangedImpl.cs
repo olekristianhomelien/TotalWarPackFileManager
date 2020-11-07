@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace CommonDialogs.Common
 {
-    public class NotifyPropertyChangedImpl
+    public class NotifyPropertyChangedImpl : INotifyPropertyChanged
     {
         public bool DisableCallbacks { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;

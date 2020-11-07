@@ -167,9 +167,7 @@ namespace VariantMeshEditor.ViewModels
 
         public RigidModelElement(FileSceneElement parent, Rmv2RigidModel model, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
         {
-
             CheckBoxGroupingName = parent.CheckBoxGroupingName + "_RigidModel";
-            IsChecked = parent.Children.Count() == 0;
 
             Model = model;
             DisplayName = $"RigidModel - {FileName}";

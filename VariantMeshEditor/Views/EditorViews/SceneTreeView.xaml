@@ -8,8 +8,7 @@
                  FontSize="13" >
     <UserControl.Resources>
         <ResourceDictionary >
-            <editorviews:DebugDummyConverter x:Key="DebugDummyConverter" />
-            
+
             <Style x:Key="TreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
                 <Setter Property="IsExpanded" Value="True" />
                 <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
@@ -18,7 +17,7 @@
             <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=TwoWay}">
                 <StackPanel Orientation="Horizontal" >
                     <util:OptionalRadioButton Style="{DynamicResource CheckBoxStyle1}" GroupName="{Binding CheckBoxGroupingName}" Focusable="False"  IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Visibility="{Binding ApplyElementCheckboxVisability}" />
-                    <ContentPresenter  Content="{Binding Path=DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged  ,Converter={StaticResource DebugDummyConverter}}" Margin="2,0"/>
+                    <ContentPresenter  Content="{Binding Path=DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2,0"/>
                 </StackPanel>
             </HierarchicalDataTemplate>
 
