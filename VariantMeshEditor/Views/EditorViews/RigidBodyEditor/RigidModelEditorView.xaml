@@ -56,29 +56,22 @@
 
             <HierarchicalDataTemplate ItemsSource="{Binding Path=Models, UpdateSourceTrigger=PropertyChanged}"  >
 
-                <Border >
-                    <Grid HorizontalAlignment="Stretch" >
-
-                        <commondialogs:CollapsableButton OpenStateChanged="OnOpenStateChanged" LabelText="{Binding Path=LodName, UpdateSourceTrigger=PropertyChanged}" >
-                            <commondialogs:CollapsableButton.InnerContent>
-
-                                <rigidbodyeditor:RigidModelLodEditorView></rigidbodyeditor:RigidModelLodEditorView>
-
-                            </commondialogs:CollapsableButton.InnerContent>
-                        </commondialogs:CollapsableButton>
-
-                    </Grid>
-                </Border>
+                    <commondialogs:CollapsableButton OpenStateChanged="OnOpenStateChanged" 
+                                                     LabelText="{Binding Path=LodName, UpdateSourceTrigger=PropertyChanged}">
+                        <commondialogs:CollapsableButton.InnerContent>
+                            <rigidbodyeditor:RigidModelLodEditorView></rigidbodyeditor:RigidModelLodEditorView>
+                        </commondialogs:CollapsableButton.InnerContent>
+                    </commondialogs:CollapsableButton>
 
                 <HierarchicalDataTemplate.ItemTemplate>
                     
                     <HierarchicalDataTemplate >
 
-                        <commondialogs:CollapsableButton LabelText="Model">
+                        <commondialogs:CollapsableButton  
+                            LabelText="{Binding Path=ModelName, UpdateSourceTrigger=PropertyChanged}"
+                            IsExpanded="True">
                             <commondialogs:CollapsableButton.InnerContent>
-
                                 <rigidbodyeditor:RigidModelMeshEditorView></rigidbodyeditor:RigidModelMeshEditorView>
-
                             </commondialogs:CollapsableButton.InnerContent>
                         </commondialogs:CollapsableButton>
 

@@ -106,7 +106,7 @@ namespace VariantMeshEditor.ViewModels
 
 
         //public string Name { get { return LodModelInstance.ModelName; } set { LodModelInstance.ModelName = value; NotifyPropertyChanged(); } }
-        public string Name { get; set; }
+        public string ModelName { get; set; }
         public int VertexCount { get; set; }
 
         public ModelViewModel()
@@ -179,9 +179,9 @@ namespace VariantMeshEditor.ViewModels
                 var modelLodHeader = model.LodHeaders[i];
                 var currentLoad = new LodHeaderViewModel(modelLodHeader, $"Lod {i + 1}");
 
-                currentLoad.Models.Add(new ModelViewModel() { Name = "Mesh0", VertexCount = 1789 });
-                currentLoad.Models.Add(new ModelViewModel() { Name = "Mesh1", VertexCount = 2789 });
-                currentLoad.Models.Add(new ModelViewModel() { Name = "Mesh2", VertexCount = 3789 });
+                currentLoad.Models.Add(new ModelViewModel() { ModelName = "Mesh0", VertexCount = 1789 });
+                currentLoad.Models.Add(new ModelViewModel() { ModelName = "Mesh1", VertexCount = 2789 });
+                currentLoad.Models.Add(new ModelViewModel() { ModelName = "Mesh2", VertexCount = 3789 });
 
                 Lods.Add(currentLoad);
             }

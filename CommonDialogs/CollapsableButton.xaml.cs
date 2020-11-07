@@ -55,48 +55,52 @@ namespace CommonDialogs
         public string LabelLength
         {
             get { return (string)GetValue(LabelLengthProperty); }
-            set { SetValue(LabelLengthProperty, value); }
+            set { SetValue(LabelLengthProperty, value);}
         }
 
         public static readonly DependencyProperty LabelLengthProperty =
             DependencyProperty.Register("LabelLength", typeof(string), typeof(CollapsableButton), new PropertyMetadata(null));
+
+
+        public bool IsExpanded
+        {
+            get { return (bool)GetValue(IsExpandedProperty); }
+            set
+            {
+                SetValue(IsExpandedProperty, value);
+                Expand(value);
+            }
+        }
+
+        public static readonly DependencyProperty IsExpandedProperty =
+            DependencyProperty.Register("IsExpanded", typeof(bool), typeof(CollapsableButton), new PropertyMetadata(null));
         #endregion
 
-
         public event RoutedEventHandler OpenStateChanged;
-
-        //public CheckBox CheckBox { get { return ButtonCheckBox; } }
-        public bool IsExpanded { private set; get; } = false;
 
         public CollapsableButton()
         {
             LabelSymbol = "🡆";
-
             InitializeComponent();
-            ContentGrid.Height = 0;
-            // ContentGrid.Height = 0;
-            //LabelText = "Example";
-
-           
-            
         }
 
-
-        private void Button_Click(object sender, RoutedEventArgs e)
+        void Expand(bool value)
         {
-            if (!IsExpanded)
+            if (value)
             {
                 LabelSymbol = "🡇";
-                ContentGrid.Height = double.NaN;
             }
             else
             {
                 LabelSymbol = "🡆";
-                ContentGrid.Height = 0;
             }
 
+            OpenStateChanged?.Invoke(this, null);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
             IsExpanded = !IsExpanded;
-            OpenStateChanged?.Invoke(this, e);
         }
     }
 }
