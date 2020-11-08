@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:rigidbodyeditor="clr-namespace:VariantMeshEditor.Views.EditorViews.RigidBodyEditor"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" >
     <UserControl.Resources>
 
         <ResourceDictionary>
@@ -20,19 +19,19 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-            <DockPanel>
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                    <Label Width="135">Lod Camera Distance</Label>
-                    <Label>:</Label>
-                    <TextBlock TextWrapping="NoWrap"  VerticalAlignment="Center"  Text="{Binding Path=LodCameraDistance}" />
-                </StackPanel>
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="135">Lod Camera Distance</Label>
+            <Label>:</Label>
+            <TextBlock TextWrapping="NoWrap"  VerticalAlignment="Center"  Text="{Binding Path=LodCameraDistance}" />
+        </StackPanel>
 
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                    <Label Width="135">Quality Lvl</Label>
-                    <Label>:</Label>
-                    <TextBlock TextWrapping="NoWrap" VerticalAlignment="Center"  Text="{Binding Path=QualityLvl}"  />
-                </StackPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="135">Quality Lvl</Label>
+            <Label>:</Label>
+            <TextBlock TextWrapping="NoWrap" VerticalAlignment="Center"  Text="{Binding Path=QualityLvl}"  />
+        </StackPanel>
 
-            </DockPanel>
+    </DockPanel>
 
 </UserControl>

@@ -62,18 +62,21 @@ namespace CommonDialogs
             DependencyProperty.Register("LabelLength", typeof(string), typeof(CollapsableButton), new PropertyMetadata(null));
 
 
-        public bool IsExpanded
-        {
-            get { return (bool)GetValue(IsExpandedProperty); }
-            set
-            {
-                SetValue(IsExpandedProperty, value);
-                Expand(value);
-            }
-        }
+
 
         public static readonly DependencyProperty IsExpandedProperty =
             DependencyProperty.Register("IsExpanded", typeof(bool), typeof(CollapsableButton), new PropertyMetadata(null));
+
+
+
+        public bool IsChecked
+        {
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsCheckedProperty =
+            DependencyProperty.Register("IsChecked", typeof(bool), typeof(CollapsableButton), new PropertyMetadata(null));
         #endregion
 
         public event RoutedEventHandler OpenStateChanged;
@@ -101,6 +104,16 @@ namespace CommonDialogs
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             IsExpanded = !IsExpanded;
+        }
+
+        public bool IsExpanded
+        {
+            get { return (bool)GetValue(IsExpandedProperty); }
+            set
+            {
+                SetValue(IsExpandedProperty, value);
+                Expand(value);
+            }
         }
     }
 }

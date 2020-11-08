@@ -44,7 +44,7 @@ namespace Filetypes.RigidModel
 
             for (int i = 0; i < model.LodCount; i++)
                 for(int j = 0; j < model.LodHeaders[i].MeshCount; j++)
-                    model.LodHeaders[i].LodModels.Add(LodModel.Create(chunk));
+                    model.LodHeaders[i].LodModels.Add(Rmv2LodModel.Create(chunk));
            
             Validate(chunk, out errorMessage);
            

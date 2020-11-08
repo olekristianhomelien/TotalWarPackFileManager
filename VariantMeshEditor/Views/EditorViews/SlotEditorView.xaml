@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util"
              xmlns:viewmodels="clr-namespace:VariantMeshEditor.ViewModels"
+             xmlns:rigidViewmodels="clr-namespace:VariantMeshEditor.ViewModels.RigidModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -27,7 +28,7 @@
             </util:BrowsableItemView>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:RigidModelElement}">
+            <DataTemplate DataType="{x:Type rigidViewmodels:RigidModelElement}">
             <util:BrowsableItemView 
                 LabelName="Mesh:" 
                 PathText="{Binding FullPath}"

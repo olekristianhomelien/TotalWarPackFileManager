@@ -24,7 +24,7 @@ namespace VariantMeshEditor.ViewModels
         public Skeleton Skeleton { get; set; }
 
 
-        public override UserControl EditorViewModel { get => Controller.GetView(); protected set => throw new System.Exception(); }
+
 
         public SkeletonElement(FileSceneElement parent, string fullPath) : base(parent, "", fullPath, "Skeleton")
         {

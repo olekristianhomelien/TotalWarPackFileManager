@@ -88,7 +88,7 @@
     <Compile Include="RigidModel\Rmv2RigidModel.cs" />
     <Compile Include="RigidModel\GroupTypeEnum.cs" />
     <Compile Include="RigidModel\LodHeader.cs" />
-    <Compile Include="RigidModel\LodModel.cs" />
+    <Compile Include="RigidModel\Rmv2LodModel.cs" />
     <Compile Include="RigidModel\RigidModelAttachmentPoint.cs" />
     <Compile Include="RigidModel\RigidModelTexture.cs" />
     <Compile Include="RigidModel\VariantMeshDefinition.cs" />

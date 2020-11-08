@@ -18,9 +18,9 @@ namespace VariantMeshEditor.Views.EditorViews.RigidBodyEditor
 
         private void OnOpenStateChanged(object sender, RoutedEventArgs e)
         {
-            var expander = (sender as CollapsableButton);
-            var treeItem = GetParentOfType<TreeViewItem>(expander);
-            treeItem.IsExpanded = expander.IsExpanded;
+           var expander = (sender as CollapsableButton);
+           var treeItem = GetParentOfType<TreeViewItem>(expander);
+           treeItem.IsExpanded = expander.IsExpanded;
         }
 
         public static T GetParentOfType<T>(CollapsableButton child) where T : DependencyObject

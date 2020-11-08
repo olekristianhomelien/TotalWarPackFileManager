@@ -7,16 +7,16 @@ using Viewer.Scene;
 
 namespace Viewer.GraphicModels
 {
-    public class Rmv2Model : MeshModel
+    public class Rmv2RenderModel : MeshModel
     {
-        LodModel _model;
+        Rmv2LodModel _model;
         VertexPositionNormalTexture[] _bufferArray;
         
 
-        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2RigidModel rigidModelData, int lodLevel, int model)
+        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2LodModel lodModel)
         {
             _animationPlayer = animationPlayer;
-            _model = rigidModelData.LodHeaders[lodLevel].LodModels[model];
+            _model = lodModel;
             _bufferArray = new VertexPositionNormalTexture[_model.VertexArray.Length];
             for (int i = 0; i < _model.VertexArray.Length; i++)
             {

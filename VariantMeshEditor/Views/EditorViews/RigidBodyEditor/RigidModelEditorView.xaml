@@ -52,23 +52,26 @@
 
 
     <TreeView  ItemsSource="{Binding Path=Lods, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource CustomTreeViewStyle}" Padding="1" BorderThickness="0" >
+
         <TreeView.ItemTemplate >
 
-            <HierarchicalDataTemplate ItemsSource="{Binding Path=Models, UpdateSourceTrigger=PropertyChanged}"  >
+            <HierarchicalDataTemplate ItemsSource="{Binding Path=Models, UpdateSourceTrigger=PropertyChanged}">
 
-                    <commondialogs:CollapsableButton OpenStateChanged="OnOpenStateChanged" 
-                                                     LabelText="{Binding Path=LodName, UpdateSourceTrigger=PropertyChanged}">
-                        <commondialogs:CollapsableButton.InnerContent>
-                            <rigidbodyeditor:RigidModelLodEditorView></rigidbodyeditor:RigidModelLodEditorView>
-                        </commondialogs:CollapsableButton.InnerContent>
-                    </commondialogs:CollapsableButton>
+                <commondialogs:CollapsableButton OpenStateChanged="OnOpenStateChanged" 
+                                                 LabelText="{Binding Path=LodName, UpdateSourceTrigger=PropertyChanged}"
+                                                 IsChecked="{Binding Path=IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <commondialogs:CollapsableButton.InnerContent>
+                        <rigidbodyeditor:RigidModelLodEditorView></rigidbodyeditor:RigidModelLodEditorView>
+                    </commondialogs:CollapsableButton.InnerContent>
+                </commondialogs:CollapsableButton>
 
                 <HierarchicalDataTemplate.ItemTemplate>
-                    
+
                     <HierarchicalDataTemplate >
 
                         <commondialogs:CollapsableButton  
                             LabelText="{Binding Path=ModelName, UpdateSourceTrigger=PropertyChanged}"
+                            IsChecked="{Binding Path=IsVisible, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             IsExpanded="True">
                             <commondialogs:CollapsableButton.InnerContent>
                                 <rigidbodyeditor:RigidModelMeshEditorView></rigidbodyeditor:RigidModelMeshEditorView>
@@ -81,10 +84,5 @@
             </HierarchicalDataTemplate>
         </TreeView.ItemTemplate>
     </TreeView>
-
-
-
-
-
-
+    
 </UserControl>

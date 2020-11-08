@@ -11,7 +11,7 @@ namespace VariantMeshEditor
     {
         EditorMainController _mainController;
 
-        public RootViewModel RootViewModel { get; set; } = new RootViewModel();
+        public BaseViewModel RootViewModel { get; set; } = new BaseViewModel();
 
         public VariantMeshEditorControl()
         {

@@ -46,7 +46,7 @@ namespace Filetypes.RigidModel
 
      
 
-        public List<LodModel> LodModels = new List<LodModel>();
+        public List<Rmv2LodModel> LodModels = new List<Rmv2LodModel>();
 
         public static LodHeader Create(ByteChunk chunk, uint version)
         {

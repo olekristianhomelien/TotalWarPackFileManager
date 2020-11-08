@@ -30,7 +30,6 @@ namespace VariantMeshEditor.ViewModels
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
 
 
-        public override UserControl EditorViewModel { get => _controller.GetView(); protected set => throw new System.Exception(); }
 
         AnimationController _controller;
 

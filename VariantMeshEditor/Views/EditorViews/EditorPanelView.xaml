@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews" 
              xmlns:viewmodels="clr-namespace:VariantMeshEditor.ViewModels" 
              xmlns:rmwEditor="clr-namespace:VariantMeshEditor.Views.EditorViews.RigidBodyEditor"
+             xmlns:rigidViewmodels="clr-namespace:VariantMeshEditor.ViewModels.RigidModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -18,7 +19,7 @@
             <local:SlotEditorView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:RigidModelElement}">
+        <DataTemplate DataType="{x:Type rigidViewmodels:RigidModelElement}">
             <rmwEditor:RigidModelEditorView/>
         </DataTemplate>
     </UserControl.Resources>

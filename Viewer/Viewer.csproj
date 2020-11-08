@@ -52,7 +52,7 @@
     <Compile Include="GraphicModels\LineBox.cs" />
     <Compile Include="GraphicModels\LineModel.cs" />
     <Compile Include="GraphicModels\MeshModel.cs" />
-    <Compile Include="GraphicModels\Rmv2Model.cs" />
+    <Compile Include="GraphicModels\Rmv2RenderModel.cs" />
     <Compile Include="GraphicModels\SkeletonModel.cs" />
     <Compile Include="GraphicModels\SkyBox.cs" />
     <Compile Include="Scene\Camera.cs" />

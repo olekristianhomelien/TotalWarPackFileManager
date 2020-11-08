@@ -30,8 +30,6 @@ namespace VariantMeshEditor.ViewModels
         public string AttachmentPoint { get; set; }
         public override FileSceneElementEnum Type => FileSceneElementEnum.Slot;
 
-       
-
         public SlotElement(FileSceneElement parent, string slotName, string attachmentPoint) : base(parent, "", "", "")
         {
             SlotName = slotName;
@@ -48,7 +46,6 @@ namespace VariantMeshEditor.ViewModels
             _skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this).FirstOrDefault();
             SlotEditorView view = new SlotEditorView();
             _controller = new SlotController(view, this, _skeleton);
-            EditorViewModel = view;
         }
 
         protected override void UpdateNode(GameTime time)

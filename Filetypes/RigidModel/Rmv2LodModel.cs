@@ -86,7 +86,7 @@ namespace Filetypes.RigidModel
 
     }
 
-    public class LodModel
+    public class Rmv2LodModel
     {
         public GroupTypeEnum MaterialId { get; set; }
 
@@ -132,9 +132,9 @@ namespace Filetypes.RigidModel
         public Vertex[] VertexArray;
         public ushort[] IndicesBuffer;
 
-        public static LodModel Create(ByteChunk chunk)
+        public static Rmv2LodModel Create(ByteChunk chunk)
         {
-            var lodModel = new LodModel();
+            var lodModel = new Rmv2LodModel();
 
             lodModel.MaterialId = (GroupTypeEnum)chunk.ReadUInt32();
             lodModel.ModelSize = chunk.ReadUInt32();
@@ -351,7 +351,7 @@ namespace Filetypes.RigidModel
             return output;
         }
 
-        static Vertex[] CreateVertexArray(LodModel model, ByteChunk chunk, uint count, uint vertexType)
+        static Vertex[] CreateVertexArray(Rmv2LodModel model, ByteChunk chunk, uint count, uint vertexType)
         {
             bool loadVertexData = true;
             if (loadVertexData)

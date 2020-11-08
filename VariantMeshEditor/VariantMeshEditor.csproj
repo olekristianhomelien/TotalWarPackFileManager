@@ -60,14 +60,21 @@
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
+    <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
     <Compile Include="ViewModels\AnimationElement.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
-    <Compile Include="ViewModels\RigidModelElement.cs" />
-    <Compile Include="ViewModels\RootViewModel.cs" />
+    <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
+    <Compile Include="ViewModels\RigidModel\LodHeaderViewModel.cs" />
+    <Compile Include="ViewModels\RigidModel\ModelViewModel.cs" />
+    <Compile Include="ViewModels\RigidModel\RigidModelViewElement.cs" />
+    <Compile Include="ViewModels\RootElement.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Util\SceneElementHelper.cs" />
     <Compile Include="ViewModels\SkeletonElement.cs" />
     <Compile Include="ViewModels\SlotsElement.cs" />
+    <Compile Include="ViewModels\VariantMeshElement.cs" />
+    <Compile Include="ViewModels\WsModelElement.cs" />
     <Compile Include="Views\EditorViews\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
     </Compile>

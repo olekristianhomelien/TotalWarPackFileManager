@@ -41,8 +41,6 @@ namespace VariantMeshEditor.ViewModels
             }
         }
 
-
-
         bool _isChecked = false;
         public bool IsChecked
         {
@@ -71,7 +69,6 @@ namespace VariantMeshEditor.ViewModels
         public abstract FileSceneElementEnum Type { get; }
         public string FileName { get; set; }
         public string FullPath { get; set; }
-        public virtual UserControl EditorViewModel { get; protected set; }
 
 
 
@@ -106,13 +103,10 @@ namespace VariantMeshEditor.ViewModels
         {
             if (IsChecked == false)
                 return;
+
             DrawNode(device, parentTransform, commonShaderParameters);
-            var newWorld = parentTransform * WorldTransform;
             foreach (var child in Children)
-            {
-                
-                child.Render(device, newWorld, commonShaderParameters);
-            }
+                child.Render(device, parentTransform * WorldTransform, commonShaderParameters);
         }
 
         virtual public void Update(GameTime time)
@@ -134,50 +128,16 @@ namespace VariantMeshEditor.ViewModels
             Children.Add(child);
             return child;
         }
-
-        public void RemoveNode(FileSceneElement node)
-        {
-            // Call destructor in children
-            // call destructor on node
-            
-
-            this.Children.Remove(node);
-        }
-    }
-
-
-    public class RootElement : FileSceneElement
-    {
-        public RootElement() : base(null, "", "", "Root") { IsChecked = true; }
-        public override FileSceneElementEnum Type => FileSceneElementEnum.Root;
-
-        protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
-        {
-         
-            RootEditorView view = new RootEditorView();
-            RootController controller = new RootController(view, this, resourceLibary, virtualWorld);
-            EditorViewModel = view;
-        }
     }
 
 
 
-    public class VariantMeshElement : FileSceneElement
-    {
-        public VariantMeshElement(FileSceneElement parent, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "VariantMesh")
-        {
-            DisplayName = "VariantMesh - " + FileName;
-        }
-        public override FileSceneElementEnum Type => FileSceneElementEnum.VariantMesh;
-    }
 
-    public class WsModelElement : FileSceneElement
-    {
-        public WsModelElement(FileSceneElement parent, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
-        {
-            DisplayName = $"WsModel - {FileName}";
-        }
-        public override FileSceneElementEnum Type => FileSceneElementEnum.WsModel;
-    }
+
+
+
+
+
+
 
 }
