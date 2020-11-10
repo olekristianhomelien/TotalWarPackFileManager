@@ -73,9 +73,6 @@
     <Compile Include="FilterDialog\FilterUserControl.xaml.cs">
       <DependentUpon>FilterUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FilterDialog\FilterWindow.xaml.cs">
-      <DependentUpon>FilterWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="InputBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,10 +143,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FilterDialog\FilterUserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="FilterDialog\FilterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

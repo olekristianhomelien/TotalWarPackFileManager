@@ -48,7 +48,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         public void PopulateExplorerView(AnimationEditorView viewModel)
         {
             _viewModel = viewModel;
-            _viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
+            //_viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
 
             FindAllAnimations();
             CreateAnimationExplorer(true);
@@ -57,35 +57,36 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         public void CreateTestData()
         {
-            var idle = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\stand\hu1_sws_stand_idle_05.anim");
-            var hand = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
-
-            var mainAnimation = _viewModel.AnimationExplorer.Explorers[0];
-            LoadAnimation(mainAnimation, idle);
-
-            var handExplorer = CreateAnimationExplorer();
-            LoadAnimation(handExplorer, hand);
+            //ar idle = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\stand\hu1_sws_stand_idle_05.anim");
+            //ar hand = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
+            //
+            //ar mainAnimation = _viewModel.AnimationExplorer.Explorers[0];
+            //oadAnimation(mainAnimation, idle);
+            //
+            //ar handExplorer = CreateAnimationExplorer();
+            //oadAnimation(handExplorer, hand);
         }
 
         AnimationExplorerItemView CreateAnimationExplorer(bool isMainAnimation = false)
         {
-            var explorer = _viewModel.AnimationExplorer.CreateAnimationExplorer();
-            explorer.SkeletonName.Text = "";
-            explorer.IsMainAnimation = isMainAnimation;
-            if (isMainAnimation)
-                explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
-            else
-                explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
-
-            explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
-
-            explorer.FilterDialog.OnOpeningFirstTime += (sender) => OnAnimationExplorerOpeningFirstTime(sender);
-            explorer.FilterDialog.OnItemSelected += (item) => OnAnimationSelected(explorer, item);
-
-            explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
-            explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
-
-            return explorer;
+            return null;
+            //var explorer = _viewModel.AnimationExplorer.CreateAnimationExplorer();
+            //explorer.SkeletonName.Text = "";
+            //explorer.IsMainAnimation = isMainAnimation;
+            //if (isMainAnimation)
+            //    explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
+            //else
+            //    explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
+            //
+            //explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
+            //
+            //explorer.FilterDialog.OnOpeningFirstTime += (sender) => OnAnimationExplorerOpeningFirstTime(sender);
+            //explorer.FilterDialog.OnItemSelected += (item) => OnAnimationSelected(explorer, item);
+            //
+            //explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
+            //explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
+            //
+            //return explorer;
         }
 
 
@@ -138,9 +139,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             catch (Exception exception)
             {
                 var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
-                explorer.ErrorBar.Visibility = System.Windows.Visibility.Visible;
-                explorer.ErrorText.Background = new SolidColorBrush(Colors.Red);
-                explorer.ErrorText.Text = error;
+                //error
                 _logger.Error(error);
                 return false;
             }
@@ -148,14 +147,14 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         void UpdateCurrentAnimation()
         {
-            var animationFiles = _viewModel.AnimationExplorer.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
-            animationFiles = animationFiles.Where(x => x != null).ToArray();
-            if (animationFiles.Length != 0)
-            {
-                AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.Skeleton);
-                _animationElement.AnimationPlayer.SetAnimation(clip);
-                _playerController.SetAnimation(clip);
-            }
+            //var animationFiles = _viewModel.AnimationExplorer.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
+            //animationFiles = animationFiles.Where(x => x != null).ToArray();
+            //if (animationFiles.Length != 0)
+            //{
+            //    AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.Skeleton);
+            //    _animationElement.AnimationPlayer.SetAnimation(clip);
+            //    _playerController.SetAnimation(clip);
+            //}
         }
 
         void FindAllAnimations()

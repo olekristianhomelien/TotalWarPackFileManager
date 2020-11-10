@@ -4,80 +4,68 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
-             xmlns:commondialogs1="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel>
-        <DockPanel>
-            <Expander    IsExpanded="true">
-                <Expander.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox x:Name="UseAnimationCheckbox" IsChecked="True" ></CheckBox>
-                        <TextBlock x:Name="AnimationExpanderName" Text="Animation :" />
-                        <TextBlock Text=""/>
-                    </StackPanel>
-                </Expander.Header>
+             xmlns:commondialogs1="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs"
+             mc:Ignorable="d" >
+    <UserControl.Resources>
+        <common:BoolToVisibilityConverter x:Key="BoolToHiddenConverter" TrueValue="Visible" FalseValue="Collapsed" />
+    </UserControl.Resources>
 
-                <DockPanel LastChildFill="False">
+    <Expander IsExpanded="true">
+        <Expander.Header>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="UseAnimationCheckbox" IsChecked="True" ></CheckBox>
+                <TextBlock x:Name="AnimationExpanderName" Text="Animation :" />
+                <TextBlock Text="{Binding AnimationName, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </Expander.Header>
 
-                    <DockPanel DockPanel.Dock="Top" >
-                        <Label Width="70">Frame Types</Label>
-                        <Label>:</Label>
-                        <CheckBox Content="Static" x:Name="StaticFramesCheckbox" VerticalAlignment="Center">
-                        </CheckBox>
-                        <CheckBox Content="Dynamic[11]" x:Name="DynamicFrameCheckbox" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                    </DockPanel>
+        <DockPanel LastChildFill="False">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
+                <Label Width="70">Frame Types</Label>
+                <Label>:</Label>
+                <CheckBox Content="Static" x:Name="StaticFramesCheckbox" VerticalAlignment="Center"/>
+                <CheckBox Content="Dynamic[11]" x:Name="DynamicFrameCheckbox" VerticalAlignment="Center" Margin="20,0,0,0"/>
+            </StackPanel>
 
-                    <Grid DockPanel.Dock="Top" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                            <ColumnDefinition Width="1*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
+            <Grid DockPanel.Dock="Top" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
 
-                        <DockPanel Grid.Column="0">
-                            <Label Width="70">Skeleton</Label>
-                            <Label>:</Label>
-                            <Border BorderBrush="{x:Null}" >
-                                <TextBlock x:Name="SkeletonName"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
-                            </Border>
-                        </DockPanel>
-
-                        <DockPanel  Grid.Column="1">
-                            <Label>Version</Label>
-
-                            <Border BorderBrush="{x:Null}" >
-                                <TextBlock x:Name="AnimationType"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
-                            </Border>
-                        </DockPanel>
-                    </Grid>
-
-                    <commondialogs1:CollapsableFilterControl DockPanel.Dock="top"
-                                                             MaxHeight="400"
-                            CustomFilterVisibility="Visible"  
-                            CustomFilterText= "Only list animations for current skeleton" 
-                            ApplyCustomFilterAsDefault="True"
-                            
-                            LabelText="File"
-                            LabelTotalWidth="70"
-                            SearchFieldOffset="83"
-                                                             
-                            x:Name="FilterDialog">
-                    </commondialogs1:CollapsableFilterControl>
-                        
-
-                    <Button x:Name="RemoveButton" DockPanel.Dock="Bottom" HorizontalAlignment="Center">Remove animation</Button>
-
-                    <DockPanel x:Name="ErrorBar" DockPanel.Dock="Bottom" >
-                        <Label DockPanel.Dock="Left">Error:</Label>
-                        <Border BorderBrush="{x:Null}" >
-                            <TextBox x:Name="ErrorText"  TextWrapping="NoWrap" Text="" VerticalAlignment="Center"/>
-                        </Border>
-                    </DockPanel>
-
-                  
-                    
+                <DockPanel Grid.Column="0">
+                    <Label Width="70">Skeleton</Label>
+                    <Label>:</Label>
+                    <TextBlock x:Name="SkeletonName"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
                 </DockPanel>
-            </Expander>
+
+                <DockPanel  Grid.Column="1">
+                    <Label>Version</Label>
+                    <Label>:</Label>
+                    <TextBlock x:Name="AnimationType"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Grid>
+
+            <commondialogs1:CollapsableFilterControl 
+                        DockPanel.Dock="top"
+                        MaxHeight="400"
+                        LabelText="File"
+                        SearchItems="{Binding FilterList, UpdateSourceTrigger=PropertyChanged}"
+                        LabelTotalWidth="70"   
+                        DisplayMemberPath="FullPath"
+                        x:Name="FilterDialog">
+                <commondialogs1:CollapsableFilterControl.InnerContent>
+                    <CheckBox IsChecked="{Binding OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}">Only list animations for current skeleton</CheckBox>
+                </commondialogs1:CollapsableFilterControl.InnerContent>
+            </commondialogs1:CollapsableFilterControl>
+
+            <Button x:Name="RemoveButton" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Command="{Binding RemoveCommand}">Remove animation</Button>
+
+            <DockPanel DockPanel.Dock="Bottom" Visibility="{Binding DisplayErrorMessage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToHiddenConverter}}" >
+                <Label DockPanel.Dock="Left">Error:</Label>
+                <TextBox TextWrapping="NoWrap" Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Background="Red"/>
+            </DockPanel>
+
         </DockPanel>
-    </DockPanel>
+    </Expander>
 </UserControl>

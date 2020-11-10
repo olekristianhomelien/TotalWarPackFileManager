@@ -78,9 +78,6 @@
     <Compile Include="Views\EditorViews\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\AnimationViews\AnimationExplorer.xaml.cs">
-      <DependentUpon>AnimationExplorer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\EditorViews\AnimationViews\AnimationFragmentExplorerView.xaml.cs">
       <DependentUpon>AnimationFragmentExplorerView.xaml</DependentUpon>
     </Compile>
@@ -133,10 +130,6 @@
     </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewViewModel.cs" />
     <Page Include="Views\EditorViews\AnimationEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EditorViews\AnimationViews\AnimationExplorer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

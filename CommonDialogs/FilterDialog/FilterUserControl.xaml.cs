@@ -1,28 +1,26 @@
 ﻿using CommonDialogs.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CommonDialogs.FilterDialog
 {
     /// <summary>
     /// Interaction logic for FilterUserControl.xaml
     /// </summary>
+    [ContentProperty("InnerContent")]
     public partial class FilterUserControl : UserControl
     {
+
+        
+
         IEnumerable<object> _originalList;
         SolidColorBrush _noErrorBackground;
         SolidColorBrush _errorBackground;
@@ -44,7 +42,7 @@ namespace CommonDialogs.FilterDialog
             _errorBackground = new SolidColorBrush(Colors.Red);
             SearchTextBox.TextChanged += (sender, e) => FilterConditionChanged();
             ClearFilterButton.Click += (sender, e) => SearchTextBox.Text = "";
-            ExtraFilterButton.Click += (sender, e) => { _useExternalFilter = !_useExternalFilter; FilterConditionChanged(); };
+            //ExtraFilterButton.Click += (sender, e) => { _useExternalFilter = !_useExternalFilter; FilterConditionChanged(); };
             ResultList.SelectionChanged += (sender, e) => OnItemSelected?.Invoke(null, null);
         }
 
@@ -52,39 +50,23 @@ namespace CommonDialogs.FilterDialog
 
 
 
-
-
-        public string CustomFilterText
+        public FrameworkElement InnerContent
         {
-            get { return (string)GetValue(CustomFilterTextProperty); }
-            set { SetValue(CustomFilterTextProperty, value); }
+            get { return (FrameworkElement)GetValue(InnerContentProperty); }
+            set { SetValue(InnerContentProperty, value); }
         }
 
-        public static readonly DependencyProperty CustomFilterTextProperty =
-            DependencyProperty.Register("CustomFilterText", typeof(string), typeof(FilterUserControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty InnerContentProperty = DependencyProperty.Register("InnerContent", typeof(FrameworkElement), typeof(FilterUserControl), new UIPropertyMetadata(null));
 
-        public Visibility CustomFilterVisibility
+
+        public string DisplayMemberPath
         {
-            get { return (Visibility)GetValue(CustomFilterVisibilityProperty); }
-            set { SetValue(CustomFilterVisibilityProperty, value); }
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
         }
 
-
-        public static readonly DependencyProperty CustomFilterVisibilityProperty =
-            DependencyProperty.Register("CustomFilterVisibility", typeof(Visibility), typeof(FilterUserControl), new PropertyMetadata(null));
-
-
-        public bool ApplyCustomFilterAsDefault
-        {
-            get { return (bool)GetValue(ApplyCustomFilterAsDefaultProperty); }
-            set { SetValue(ApplyCustomFilterAsDefaultProperty, value); }
-        }
-
-        public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
-            DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(FilterUserControl), new PropertyMetadata(null));
-
-
-
+        public static readonly DependencyProperty DisplayMemberPathProperty =
+            DependencyProperty.Register("DisplayMemberPath", typeof(string), typeof(FilterUserControl), new PropertyMetadata(null));
 
         public OnSeachDelegate OnSearch
         {
@@ -95,8 +77,34 @@ namespace CommonDialogs.FilterDialog
         public static readonly DependencyProperty OnSearchProperty =
             DependencyProperty.Register("OnSearch", typeof(OnSeachDelegate), typeof(FilterUserControl), new PropertyMetadata(null));
 
+
+
+
+
+        public IEnumerable SearchItems
+        {
+            get { return (IEnumerable)GetValue(SearchItemsProperty); }
+            set { SetValue(SearchItemsProperty, value); FilterConditionChanged(); }
+        }
+
+        public static readonly DependencyProperty SearchItemsProperty =
+            DependencyProperty.Register("SearchItems", typeof(IEnumerable), typeof(FilterUserControl), 
+                new PropertyMetadata 
+                { 
+                    PropertyChangedCallback = OnSearchItemsChanged
+                });
+
+
+        static private void OnSearchItemsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            (obj as FilterUserControl).FilterConditionChanged();
+        }
+
+
+
         public object GetSelectedItem()
         {
+        
             return ResultList.SelectedItem;
         }
 
@@ -119,7 +127,7 @@ namespace CommonDialogs.FilterDialog
             }
             else
             {
-                ExtraFilterButton.Visibility = Visibility.Hidden;
+                //ExtraFilterButton.Visibility = Visibility.Hidden;
             }
 
             FilterConditionChanged();
@@ -137,8 +145,8 @@ namespace CommonDialogs.FilterDialog
                 var itemsToFilter = _originalList;
                 if (_useExternalFilter)
                     itemsToFilter = _externalFilter(_originalList);
-                ResultList.ItemsSource = itemsToFilter;
-
+                ResultList.ItemsSource = SearchItems;
+                return;
                 SearchTextBox.Background = _noErrorBackground;
                 var toolTip = SearchTextBox.ToolTip as ToolTip;
                 if (toolTip == null)

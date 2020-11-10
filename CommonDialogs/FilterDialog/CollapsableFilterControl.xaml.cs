@@ -1,4 +1,5 @@
 ﻿using CommonDialogs.Common;
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,6 +79,14 @@ namespace CommonDialogs.FilterDialog
 
         #region properties
 
+        public FrameworkElement InnerContent
+        {
+            get { return (FrameworkElement)GetValue(InnerContentProperty); }
+            set { SetValue(InnerContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty InnerContentProperty = DependencyProperty.Register("InnerContent", typeof(FrameworkElement), typeof(CollapsableFilterControl), new UIPropertyMetadata(null));
+
         public int LabelTotalWidth
         {
             get { return (int)GetValue(LabelTotalWidthProperty); }
@@ -86,16 +95,6 @@ namespace CommonDialogs.FilterDialog
 
         public static readonly DependencyProperty LabelTotalWidthProperty =
             DependencyProperty.Register("LabelTotalWidth", typeof(int), typeof(CollapsableFilterControl), new PropertyMetadata(null));
-
-
-        public int SearchFieldOffset
-        {
-            get { return (int)GetValue(SearchFieldOffsetProperty); }
-            set { SetValue(SearchFieldOffsetProperty, value); }
-        }
-
-        public static readonly DependencyProperty SearchFieldOffsetProperty =
-            DependencyProperty.Register("SearchFieldOffset", typeof(int), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
 
         public string LabelText
@@ -107,38 +106,15 @@ namespace CommonDialogs.FilterDialog
         public static readonly DependencyProperty LabelTextProperty =
             DependencyProperty.Register("LabelText", typeof(string), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
-
-
-        public string CustomFilterText
+        public string DisplayMemberPath
         {
-            get { return (string)GetValue(CustomFilterTextProperty); }
-            set { SetValue(CustomFilterTextProperty, value); }
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
         }
 
-        public static readonly DependencyProperty CustomFilterTextProperty =
-            DependencyProperty.Register("CustomFilterText", typeof(string), typeof(CollapsableFilterControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty DisplayMemberPathProperty =
+            DependencyProperty.Register("DisplayMemberPath", typeof(string), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
-
-
-        public Visibility CustomFilterVisibility
-        {
-            get { return (Visibility)GetValue(CustomFilterVisibilityProperty); }
-            set { SetValue(CustomFilterVisibilityProperty, value); }
-        }
-
-
-        public static readonly DependencyProperty CustomFilterVisibilityProperty =
-            DependencyProperty.Register("CustomFilterVisibility", typeof(Visibility), typeof(CollapsableFilterControl), new PropertyMetadata(null));
-
-
-        public bool ApplyCustomFilterAsDefault
-        {
-            get { return (bool)GetValue(ApplyCustomFilterAsDefaultProperty); }
-            set { SetValue(ApplyCustomFilterAsDefaultProperty, value); }
-        }
-
-        public static readonly DependencyProperty ApplyCustomFilterAsDefaultProperty =
-            DependencyProperty.Register("ApplyCustomFilterAsDefault", typeof(bool), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
         public OnSeachDelegate OnSearch
         {
@@ -148,6 +124,22 @@ namespace CommonDialogs.FilterDialog
 
         public static readonly DependencyProperty OnSearchProperty =
             DependencyProperty.Register("OnSearch", typeof(OnSeachDelegate), typeof(CollapsableFilterControl), new PropertyMetadata(null));
+
+
+        public IEnumerable SearchItems
+        {
+            get { return (IEnumerable)GetValue(SearchItemsProperty); }
+            set { SetValue(SearchItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SearchItemsProperty =
+            DependencyProperty.Register("SearchItems", typeof(IEnumerable), typeof(CollapsableFilterControl), new PropertyMetadata(OnCurrentReadingChanged));
+
+        static private void OnCurrentReadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+   
+        }
+
 
         #endregion
     }

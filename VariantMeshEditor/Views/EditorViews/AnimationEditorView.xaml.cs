@@ -12,15 +12,9 @@ namespace VariantMeshEditor.Views.EditorViews
     /// </summary>
     public partial class AnimationEditorView : UserControl
     {
-
         public AnimationEditorView()
         {
             InitializeComponent();
         }
-
-
-
-        
-
     }
 }

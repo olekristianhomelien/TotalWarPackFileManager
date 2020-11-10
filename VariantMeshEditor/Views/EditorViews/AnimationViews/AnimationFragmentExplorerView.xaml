@@ -90,13 +90,10 @@
 
             <filterdialog:CollapsableFilterControl DockPanel.Dock="top"
                                                    MaxHeight="400"
-                            CustomFilterVisibility="Collapsed"  
- 
-                            ApplyCustomFilterAsDefault="False"
-                            
+
+                            DisplayMemberPath="FullPath"
                             LabelText="Fragments"
-                            LabelTotalWidth="70"
-                            SearchFieldOffset="83"            
+                            LabelTotalWidth="70"           
                             x:Name="FragmentFilterDialog">
             </filterdialog:CollapsableFilterControl>
 

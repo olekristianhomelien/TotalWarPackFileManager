@@ -5,22 +5,79 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <DockPanel LastChildFill="true">
-        <ScrollViewer IsTabStop="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" DockPanel.Dock="Top">
-            <DockPanel>
+    <UserControl.Resources>
+        <ResourceDictionary>
 
-                <animationviews:AnimationPlayerView x:Name="Player" DockPanel.Dock="Top"></animationviews:AnimationPlayerView>
-                
-                <TabControl DockPanel.Dock="Top">
-                    <TabItem Header="Animation Explorer">
-                        <animationviews:AnimationExplorer x:Name="AnimationExplorer" ></animationviews:AnimationExplorer>
-                    </TabItem>
-                    <TabItem Header="Fragment Explorer">
-                        <animationviews:AnimationFragmentExplorerView x:Name="AnimationFragmentExplorer" ></animationviews:AnimationFragmentExplorerView>
-                    </TabItem>
-                </TabControl>
-            </DockPanel>
-        </ScrollViewer>
+            <Style x:Key="CustomTreeViewStyle" TargetType="{x:Type TreeViewItem}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <ContentPresenter Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" x:Name="PART_Header"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" ContentSource="Header" />
+                                <ItemsPresenter   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ItemsHost" Margin="0,0,0,5"  />
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsExpanded" Value="false">
+                                    <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <AlternationConverter x:Key="AlternateForegroundConverter">
+                <SolidColorBrush>Transparent</SolidColorBrush>
+                <SolidColorBrush>LightGray</SolidColorBrush>
+            </AlternationConverter>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="true">
+        <animationviews:AnimationPlayerView x:Name="Player" DockPanel.Dock="Top"></animationviews:AnimationPlayerView>
+
+        <TabControl DockPanel.Dock="Top">
+            <TabItem Header="Animation Explorer">
+                <DockPanel>
+                    <Button x:Name="CreateNewAnimationButton" DockPanel.Dock="Bottom">Add Animation</Button>
+                    <DockPanel x:Name="AnimationExplorers" DockPanel.Dock="Top" LastChildFill="False"/>
+
+
+                    <TreeView  AlternationCount="2" ItemsSource="{Binding Path=AnimationExplorer.AnimationsTemp, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource CustomTreeViewStyle}" Padding="1" BorderThickness="0" >
+                        <TreeView.ItemTemplate >
+                            <HierarchicalDataTemplate>
+                                <StackPanel>
+                                    <animationviews:AnimationExplorerItemView 
+                                                Background="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type TreeViewItem}},
+                                                Path=(ItemsControl.AlternationIndex),
+                                                Converter={StaticResource AlternateForegroundConverter}}"/>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                    
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Fragment Explorer">
+                <animationviews:AnimationFragmentExplorerView x:Name="AnimationFragmentExplorer" ></animationviews:AnimationFragmentExplorerView>
+            </TabItem>
+        </TabControl>
+
+
     </DockPanel>
-        
+
 </UserControl>

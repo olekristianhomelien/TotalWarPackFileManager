@@ -20,13 +20,12 @@
             </AdornerDecorator>
         </DockPanel>
 
-        <DockPanel DockPanel.Dock="Top" Visibility="{Binding CustomFilterVisibility, ElementName=self}">
-            <CheckBox x:Name="ExtraFilterButton" 
-                      Content="{Binding CustomFilterText, ElementName=self}" 
-                      IsChecked="{Binding ApplyCustomFilterAsDefault, ElementName=self}" >  </CheckBox>
-        </DockPanel>
-  
-        <ListView x:Name="ResultList" MouseDoubleClick="ResultList_MouseDoubleClick" MaxHeight="450"/>
+        <ContentPresenter DockPanel.Dock="Top" Content="{Binding InnerContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+        <ListView 
+            x:Name="ResultList"
+            MouseDoubleClick="ResultList_MouseDoubleClick" 
+            DisplayMemberPath="{Binding DisplayMemberPath, ElementName=self, UpdateSourceTrigger=PropertyChanged}"
+            MaxHeight="100"/>
         
     </DockPanel>
 </UserControl>

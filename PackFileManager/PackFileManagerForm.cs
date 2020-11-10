@@ -175,6 +175,9 @@ namespace PackFileManager
 
             List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
             CurrentPackFile = loadedContent.FirstOrDefault();
+
+            var file = PackFileLoadHelper.FindFile(loadedContent, @"variantmeshes\variantmeshdefinitions\brt_knights_of_the_realm.variantmeshdefinition");
+            OpenPackedFileEditor(file);
             //
             //var meshEditor = new VariantMeshEditor.VariantMeshEditorControl();
             ////dbDecoder.Show();
