@@ -22,9 +22,8 @@ namespace VariantMeshEditor.Util
             _resourceLibary = resourceLibary;
         }
 
-        public FileSceneElement Load(string filePath, FileSceneElement parent)
+        public FileSceneElement Load(PackedFile file, FileSceneElement parent)
         {
-            var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, filePath);
             switch (file.FileExtention)
             {
                 case "variantmeshdefinition":
@@ -41,6 +40,12 @@ namespace VariantMeshEditor.Util
             }
 
             return parent;
+        }
+
+        FileSceneElement Load(string filePath, FileSceneElement parent)
+        {
+            var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, filePath);
+            return Load(file, parent);
         }
 
         void LoadVariantMesh(PackedFile file, FileSceneElement parent)

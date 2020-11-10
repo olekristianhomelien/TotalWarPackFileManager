@@ -1,22 +1,13 @@
 ﻿
 using Common;
-using Filetypes.ByteParsing;
-using Filetypes.RigidModel;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using System.Windows.Forms;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using Viewer.Scene;
 using WpfTest.Scenes;
 using Game = Common.Game;
-using Panel = System.Windows.Controls.Panel;
 
 namespace VariantMeshEditor.Controls
 {
@@ -24,7 +15,8 @@ namespace VariantMeshEditor.Controls
     {
         Scene3d _scene3d;
         ResourceLibary _resourceLibary;
-        string _modelToLoad;
+        PackedFile _modelToLoad;
+        bool _is3dWorldCreated = false;
 
         public BaseViewModel RootViewModel { get; set; }
 
@@ -39,15 +31,31 @@ namespace VariantMeshEditor.Controls
             _scene3d.LoadScene += Create3dWorld;
         }
 
-        public void LoadModel(string path)
+        public void LoadModel(PackedFile model)
         {
-            _modelToLoad = path;
+            _modelToLoad = model;
+            if(_is3dWorldCreated)
+                LoadModelAfterWorldCreated();
         }
 
         void Create3dWorld(GraphicsDevice device)
         {
             _scene3d.SetResourceLibary(_resourceLibary);
-            SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+            _is3dWorldCreated = true;
+            LoadModelAfterWorldCreated();
+        }
+
+        void LoadModelAfterWorldCreated()
+        {
+            var existingNode = RootViewModel.SceneGraph.SceneGraphRootNodes.FirstOrDefault();
+            if (existingNode != null)
+            {
+                existingNode.Dispose();
+                RootViewModel.SceneGraph.SceneGraphRootNodes.Clear();
+                _scene3d.SceneGraphRootNode = null;
+            }
+
+           SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
             var rootElement = sceneLoader.Load(_modelToLoad, new RootElement());
             rootElement.CreateContent(_scene3d, _resourceLibary);
 

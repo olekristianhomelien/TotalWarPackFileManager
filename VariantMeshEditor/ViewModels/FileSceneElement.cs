@@ -1,6 +1,7 @@
 ﻿using CommonDialogs.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -25,7 +26,7 @@ namespace VariantMeshEditor.ViewModels
         WsModel
     }
 
-    public abstract class FileSceneElement : NotifyPropertyChangedImpl, ISceneGraphNode
+    public abstract class FileSceneElement : NotifyPropertyChangedImpl, ISceneGraphNode, IDisposable
     {
         public Visibility ApplyElementCheckboxVisability { get; set; } = Visibility.Visible;
 
@@ -128,16 +129,11 @@ namespace VariantMeshEditor.ViewModels
             Children.Add(child);
             return child;
         }
+
+        public virtual void Dispose()
+        {
+            foreach (var child in Children)
+                child.Dispose();
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -11,7 +11,7 @@ using WpfTest.Scenes;
 
 namespace VariantMeshEditor.ViewModels.RigidModel
 {
-    public class ModelViewModel : NotifyPropertyChangedImpl
+    public class ModelViewModel : NotifyPropertyChangedImpl, IDisposable
     {
 
         // Actual data
@@ -62,6 +62,11 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         void OnPreviewCommand(RigidModelElement element)
         {
 
+        }
+
+        public void Dispose()
+        {
+            RenderInstance.Dispose();
         }
     }
 }

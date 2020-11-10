@@ -28,9 +28,11 @@ namespace Viewer.GraphicModels
         public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, VertexPositionNormalTexture[] vertexMesh, ushort[] indices)
         {
             _animationPlayer = animationPlayer;
+            _vertexDeclaration = VertexPositionNormalTexture.VertexDeclaration;
+
             _indexBuffer = new IndexBuffer(device, typeof(short), indices.Length, BufferUsage.WriteOnly);
             _indexBuffer.SetData(indices);
-            _vertexDeclaration = VertexPositionNormalTexture.VertexDeclaration;
+
             _vertexBuffer = new VertexBuffer(device, _vertexDeclaration, vertexMesh.Length, BufferUsage.None);
             _vertexBuffer.SetData(vertexMesh);
         }
@@ -46,6 +48,10 @@ namespace Viewer.GraphicModels
         {
             if(_vertexDeclaration != null)
                 _vertexDeclaration.Dispose();
+            if (_indexBuffer != null)
+                _indexBuffer.Dispose();
+            if (_vertexBuffer != null)
+                _vertexBuffer.Dispose();
         }
 
     }

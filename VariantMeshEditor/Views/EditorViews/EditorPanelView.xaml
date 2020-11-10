@@ -22,23 +22,32 @@
         <DataTemplate DataType="{x:Type rigidViewmodels:RigidModelElement}">
             <rmwEditor:RigidModelEditorView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:SkeletonElement}">
+            <local:SkeletonEditorView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.50*" />
-                <RowDefinition Height="5" />
+                <RowDefinition Height="8" />
                 <RowDefinition Height="0.50*" />
             </Grid.RowDefinitions>
 
-            <GridSplitter  Grid.Row="1" Background="Gray"  HorizontalAlignment="Stretch" />
             <local:SceneTreeView x:Name="TreeView" Grid.Row="0"  />
+            <GridSplitter  Grid.Row="1"  HorizontalAlignment="Stretch" >
+                <GridSplitter.Template>
+                    <ControlTemplate TargetType="{x:Type GridSplitter}">
+                        <Grid>
+                            <Button Content="····" />
+                            <Rectangle Fill="#00FFFFFF" />
+                        </Grid>
+                    </ControlTemplate>
+                </GridSplitter.Template>
+            </GridSplitter>
             <ContentControl Grid.Row="2" Content="{Binding Path=SelectedNode, UpdateSourceTrigger=PropertyChanged}" />
-
-            
-
-
         </Grid>
     </Grid>
 </UserControl>

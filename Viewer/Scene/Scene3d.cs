@@ -4,25 +4,31 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Framework.WpfInterop;
 using MonoGame.Framework.WpfInterop.Input;
-using SharpDX.DXGI;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Viewer.Animation;
 using Viewer.GraphicModels;
 using Viewer.NHew;
 using Viewer.Scene;
 
 
-//assimpnet
-
 namespace WpfTest.Scenes
 {
-
-
+    /*
+     ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+    samplerDesc.Filter = D3D11_FILTER::D3D11_FILTER_ANISOTROPIC;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0.0f;
+    samplerDesc.MaxAnisotropy = 16;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    samplerDesc.BorderColor[0] = 0;
+    samplerDesc.BorderColor[1] = 0;
+    samplerDesc.BorderColor[2] = 0;
+    samplerDesc.BorderColor[3] = 0;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+     */
 
     /// <summary>
     /// Displays a spinning cube and an fps counter. Background color defaults to <see cref="Color.CornflowerBlue"/> and changes to <see cref="Color.Black"/> while left mouse button down is registered.
@@ -91,16 +97,6 @@ namespace WpfTest.Scenes
             TextureToTextureRenderer = new TextureToTextureRenderer(GraphicsDevice, _spriteBatch, _resourceLibary);
         }
 
-
-
-
-        //Effect _shader;
-        //Effect _lineShader;
-        //Texture2D _texture;
-        //Skybox skybox;
-        //Model _cube;
-        //TextureCube _skyBoxTexture;
-        //Effect _reflectShader;
         TextureCube textureCube;
         public void CreateScene()
         {
@@ -111,30 +107,6 @@ namespace WpfTest.Scenes
             //cubemapGeneratorHelper.SuperIm();
             textureCube = cubemapGeneratorHelper.SimpleCubeMap();
           
-
-            //var Content = new ContentManager(Services) { RootDirectory = @"C:\Users\ole_k\source\repos\TotalWarPackFileManager\MonoContentPipeline\bin\Windows\AnyCPU\Debug\Content" };
-            //var Content = new ContentManager(Services) 
-            //{ 
-            //    RootDirectory = @"C:\Users\ole_k\source\repos\TotalWarPackFileManager\Viewer\Content\bin\Windows"
-            //};
-            //_shader = Content.Load<Effect>("Shaders\\TestShader");
-            //_lineShader = Content.Load<Effect>("Shaders\\LineShader");
-            //_reflectShader = Content.Load<Effect>("Shaders\\Reflection");
-            //_cube = Content.Load<Model>("DebugModels/UntexturedSphere");
-            //_skyBoxTexture = Content.Load<TextureCube>("Textures//Sunset");
-            //// _texture = Content.Load<Texture2D>("ColorMap");
-            ////  var d  = new PipelineManager("", "", "");
-            ////  d.FindDefaultProcessor()
-            //_cubeModel = new CubeModel();
-            //_cubeModel.Create(GraphicsDevice);
-            //skybox = new Skybox("Textures/Sunset", Content);
-            //_cube0 = new MeshInstance()
-            //{
-            //    Model = _cubeModel,
-            //    World = Matrix.Identity * Matrix.CreateScale(0.05f)
-            //};
-            ////DrawBuffer.Add(_cube0);
-
             LoadScene?.Invoke(GraphicsDevice);
         }
 
@@ -183,29 +155,6 @@ namespace WpfTest.Scenes
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-
-            /**/
-
-            //RasterizerState originalRasterizerState = GraphicsDevice.RasterizerState;
-            //RasterizerState rasterizerState = new RasterizerState();
-            //rasterizerState.CullMode = CullMode.None;
-            //GraphicsDevice.RasterizerState = rasterizerState;
-
-            //skybox.Draw(_camera.ViewMatrix, _projectionMatrix, _camera.Position);
-
-            //     GraphicsDevice.RasterizerState = originalRasterizerState;
-
-            //DrawModelWithEffect(_reflectShader, _camera.Position, _cube, Matrix.Identity, _camera.ViewMatrix, _projectionMatrix);
-
-            /*GraphicsDevice.RasterizerState.CullMode = CullMode.CullClockwiseFace;
-            skybox.Draw(_camera.ViewMatrix, _projectionMatrix, _camera.Position);
-            GraphicsDevice.RasterizerState.CullMode = CullMode.CullCounterClockwiseFace;*/
-
-            //
-            //    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            //    GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-            //
-            //_shader.CurrentTechnique = _shader.Techniques["Diffuse"];
 
             CommonShaderParameters commonShaderParameters = new CommonShaderParameters()
             {
@@ -279,11 +228,18 @@ namespace WpfTest.Scenes
         }
 
         public virtual void ApplyCustomShaderParams()
-        { 
+        {
+         
         }
 
         public virtual void Update(GameTime time)
         { }
+
+        public virtual void Dispose()
+        {
+            if(_model != null)
+                _model.Dispose();
+        }
     }
 
     public class LineRenderItem : RenderItem
@@ -309,8 +265,6 @@ namespace WpfTest.Scenes
     public class TextureMeshRenderItem : MeshRenderItem
     {
 
-
-
         public Dictionary<TexureType, Texture2D> Textures { get; set; } = new Dictionary<TexureType, Texture2D>();
 
         public TextureMeshRenderItem(MeshModel model, Effect shader) : base(model, shader)
@@ -335,6 +289,13 @@ namespace WpfTest.Scenes
             _shader.Parameters["HasSpecular"].SetValue(hasSpecular);
             if (hasDiffuse)
                 _shader.Parameters["SpecularTexture"].SetValue(specularTexture);*/
+        }
+
+        public override void Dispose()
+        {
+            //foreach (var texture in Textures)
+            //    texture.Value.Dispose();
+            base.Dispose();
         }
 
     }

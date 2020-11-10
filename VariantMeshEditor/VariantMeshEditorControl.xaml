@@ -10,13 +10,22 @@
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.75*" />
-            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="8" />
             <ColumnDefinition Width="0.25*" />
         </Grid.ColumnDefinitions>
         
         <scene:SceneView Grid.Column="0" Grid.RowSpan="3" x:Name="RenderView" ></scene:SceneView>
-        
-        <GridSplitter Grid.Column="1" Grid.RowSpan="3" Background="Gray"  HorizontalAlignment="Stretch" />
+
+        <GridSplitter Grid.Column="1" Grid.RowSpan="3" HorizontalAlignment="Stretch">
+            <GridSplitter.Template>
+                <ControlTemplate TargetType="{x:Type GridSplitter}">
+                    <Grid>
+                        <Button Content="⁞" />
+                        <Rectangle Fill="#00FFFFFF" />
+                    </Grid>
+                </ControlTemplate>
+            </GridSplitter.Template>
+        </GridSplitter>
 
         <editorviews:EditorPanelView  Grid.Column="2" x:Name="EditorPanel" DataContext="{Binding Path=SceneGraph, UpdateSourceTrigger=PropertyChanged}"></editorviews:EditorPanelView>
 

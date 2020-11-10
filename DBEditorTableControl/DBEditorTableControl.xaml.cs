@@ -2271,6 +2271,10 @@ namespace DBTableControl
             dberrorsListView.Visibility = System.Windows.Visibility.Visible;
         }
 
+        public void Dispose()
+        {
+        }
+
         #endregion
     }
 

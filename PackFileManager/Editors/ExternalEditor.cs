@@ -98,6 +98,10 @@ namespace PackFileManager {
         public void SetModifiedOnFileChange(object sender, FileSystemEventArgs args) {
             Modified = true;
         }
+
+        public void Dispose()
+        {
+        }
     }
 }
 

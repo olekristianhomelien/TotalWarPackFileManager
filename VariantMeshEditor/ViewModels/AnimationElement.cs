@@ -25,8 +25,6 @@ namespace VariantMeshEditor.ViewModels
         }
 
 
-        
-
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
 
 

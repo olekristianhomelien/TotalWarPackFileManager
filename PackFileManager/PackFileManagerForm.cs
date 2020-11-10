@@ -50,6 +50,7 @@ namespace PackFileManager
         {
             PackedFileEditorRegistry.Editors.Add(new AtlasFileEditorControl { Dock = DockStyle.Fill });
             PackedFileEditorRegistry.Editors.Add(WpfPackedFileEditorHost.Create<DBTableControl.DBEditorTableControl>());
+            PackedFileEditorRegistry.Editors.Add(WpfPackedFileEditorHost.Create<VariantMeshEditor.VariantMeshEditorControl>());
             PackedFileEditorRegistry.Editors.Add(new ImageViewerControl { Dock = DockStyle.Fill });
             PackedFileEditorRegistry.Editors.Add(new LocFileEditorControl { Dock = DockStyle.Fill });
             PackedFileEditorRegistry.Editors.Add(new GroupformationEditor { Dock = DockStyle.Fill });
@@ -172,18 +173,15 @@ namespace PackFileManager
             //dBDecoderToolStripMenuItem_Click(null, null);
 
 
-            var containerForm = new Form()
-            {
-                Width = 1600,
-                Height = 1000
-            };
-
-            var dbDecoder = new VariantMeshEditor.VariantMeshEditorControl();
-            //dbDecoder.Show();
-
-            //var dbDecoder = new DbSchemaDecoder.DbSchemaDecoder(GameManager.Instance.CurrentGame);
-            var wpfWindow = WpfPackedFileEditorHost.Create(dbDecoder);
-            splitContainer1.Panel2.Controls.Add(wpfWindow);
+            List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
+            CurrentPackFile = loadedContent.FirstOrDefault();
+            //
+            //var meshEditor = new VariantMeshEditor.VariantMeshEditorControl();
+            ////dbDecoder.Show();
+            //
+            ////var dbDecoder = new DbSchemaDecoder.DbSchemaDecoder(GameManager.Instance.CurrentGame);
+            //var wpfWindow = WpfPackedFileEditorHost.Create(meshEditor);
+            //splitContainer1.Panel2.Controls.Add(wpfWindow);
 
         }
         
@@ -1007,7 +1005,8 @@ namespace PackFileManager
             OpenPackedFile(editor, packedFile);
         }
         
-        private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) {
+        private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) 
+        {
             if (editor != null) {
                 try 
                 {
@@ -1029,6 +1028,10 @@ namespace PackFileManager
                 editor.Commit();
             }
 
+            //var currentEditor = splitContainer1.Panel2.Controls.Cast<IPackedFileEditor>().FirstOrDefault();
+            //if (currentEditor != null)
+            //    currentEditor.Dispose();
+            
             splitContainer1.Panel2.Controls.Clear();
         }
 

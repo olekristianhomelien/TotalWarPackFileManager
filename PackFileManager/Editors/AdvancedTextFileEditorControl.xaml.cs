@@ -32,6 +32,8 @@ namespace PackFileManager.Editors
 
         public AdvancedTextFileEditorControl()
         {
+
+
             InitializeComponent();
             this.SetValue(TextOptions.TextFormattingModeProperty, TextFormattingMode.Display);
             SearchPanel.Install(textEditor);
@@ -174,6 +176,12 @@ namespace PackFileManager.Editors
                 ((XmlFoldingStrategy)foldingStrategy).UpdateFoldings(foldingManager, textEditor.Document);
             }
         }
+
+        public void Dispose()
+        {
+        }
+
+
         #endregion
     }
 }

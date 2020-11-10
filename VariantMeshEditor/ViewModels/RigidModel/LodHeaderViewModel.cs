@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace VariantMeshEditor.ViewModels.RigidModel
 {
-    public class LodHeaderViewModel : NotifyPropertyChangedImpl
+    public class LodHeaderViewModel : NotifyPropertyChangedImpl, IDisposable
     {
         public LodHeaderViewModel(LodHeader header, string name, bool isVisible)
         {
@@ -17,6 +17,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
             LodName = name;
             IsVisible = isVisible;
         }
+
         public LodHeader LodHeader { get; private set; }
         public string LodName { get; private set; }
 
@@ -27,5 +28,11 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         public byte QualityLvl { get { return LodHeader.QualityLvl; } set { LodHeader.QualityLvl = value; NotifyPropertyChanged(); } }
         public float LodCameraDistance { get { return LodHeader.LodCameraDistance; } set { LodHeader.LodCameraDistance = value; NotifyPropertyChanged(); } }
         public ObservableCollection<ModelViewModel> Models { get; set; } = new ObservableCollection<ModelViewModel>();
+
+        public void Dispose()
+        {
+            foreach (var model in Models)
+                model.Dispose();
+        }
     }
 }

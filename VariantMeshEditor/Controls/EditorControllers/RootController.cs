@@ -19,7 +19,6 @@ namespace VariantMeshEditor.Controls.EditorControllers
         RootEditorView _viewModel;
         ResourceLibary _resourceLibary;
         Scene3d _virtualWorld;
-        List<VariantMeshElement> _referenceElements = new List<VariantMeshElement>();
 
         public RootController(RootEditorView viewModel, RootElement rootElement, ResourceLibary resourceLibary, Scene3d virtualWorld)
         {
@@ -62,17 +61,17 @@ namespace VariantMeshEditor.Controls.EditorControllers
                 var res = loadedPackFileBrowser.ShowDialog();
             }
       
-            //def_armoured_cold_one.variantmeshdefinition
-            //brt_pegasus.variantmeshdefinition
-            SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-            var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
-            element.CreateContent(_virtualWorld, _resourceLibary);
-
-            var mesh = element.Children.First();
-            mesh.Parent = null;
-            _rootElement.AddChild(mesh);
-
-            CreateMeshList();
+           ////def_armoured_cold_one.variantmeshdefinition
+           ////brt_pegasus.variantmeshdefinition
+           //SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+           //var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
+           //element.CreateContent(_virtualWorld, _resourceLibary);
+           //
+           //var mesh = element.Children.First();
+           //mesh.Parent = null;
+           //_rootElement.AddChild(mesh);
+           //
+           //CreateMeshList();
         }
 
     }

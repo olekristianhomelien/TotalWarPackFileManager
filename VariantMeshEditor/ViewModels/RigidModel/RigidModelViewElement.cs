@@ -97,5 +97,13 @@ namespace VariantMeshEditor.ViewModels.RigidModel
                 }
             }
         }
+
+        public override void Dispose()
+        {
+            foreach (var lod in Lods)
+                lod.Dispose();
+
+            base.Dispose();
+        }
     }
 }

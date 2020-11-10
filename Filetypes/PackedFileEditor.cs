@@ -10,7 +10,7 @@ namespace Filetypes {
     /*
      * An interface for classes able to edit a file type contained in a pack file.
      */
-    public interface IPackedFileEditor 
+    public interface IPackedFileEditor : IDisposable
     {
         PackedFile CurrentPackedFile { get; set;}
         

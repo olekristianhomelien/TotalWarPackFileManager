@@ -12,7 +12,6 @@ namespace Viewer.GraphicModels
         Rmv2LodModel _model;
         VertexPositionNormalTexture[] _bufferArray;
         
-
         public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2LodModel lodModel)
         {
             _animationPlayer = animationPlayer;
