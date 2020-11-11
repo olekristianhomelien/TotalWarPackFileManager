@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:commondialogs="clr-namespace:CommonDialogs" 
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog"
+             xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="self">
@@ -24,12 +23,13 @@
         <Label Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  Content="{Binding LabelText, ElementName=self}" ></Label>
         <Label Grid.Row="0" Grid.Column="1">:</Label>
 
-        <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName"  TextWrapping="NoWrap" VerticalAlignment="Center" IsReadOnly="true" />
+        <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName" VerticalContentAlignment="Center"/>
         <Button Grid.Row="0" Grid.Column="3" x:Name="BrowseButton" DockPanel.Dock="Right" Width="70">Browse</Button>
 
         <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3">
             <filterdialog:FilterUserControl  
                 SearchItems="{Binding SearchItems, ElementName=self, UpdateSourceTrigger=PropertyChanged}"  
+                SelectedItem="{Binding SelectedItem, ElementName=self, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                 x:Name="FilterBox" 
                 DisplayMemberPath="{Binding DisplayMemberPath, ElementName=self}" 
                 InnerContent="{Binding InnerContent, ElementName=self}"  

@@ -14,7 +14,7 @@
             <AdornerDecorator>
                 <TextBox x:Name="SearchTextBox">
                     <controls:WatermarkService.Watermark>
-                        <TextBox>Search filter, regEx supported</TextBox>
+                        <TextBox VerticalContentAlignment="Center">Search filter, regEx supported</TextBox>
                     </controls:WatermarkService.Watermark>
                 </TextBox>
             </AdornerDecorator>
@@ -22,10 +22,11 @@
 
         <ContentPresenter DockPanel.Dock="Top" Content="{Binding InnerContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
         <ListView 
+            SelectedItem="{Binding SelectedItem, ElementName=self, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
             x:Name="ResultList"
             MouseDoubleClick="ResultList_MouseDoubleClick" 
             DisplayMemberPath="{Binding DisplayMemberPath, ElementName=self, UpdateSourceTrigger=PropertyChanged}"
-            MaxHeight="100"/>
+            Height="150" VerticalAlignment="Top"/>
         
     </DockPanel>
 </UserControl>

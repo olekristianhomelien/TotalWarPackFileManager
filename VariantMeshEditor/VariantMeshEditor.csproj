@@ -75,13 +75,13 @@
     <Compile Include="ViewModels\SlotsElement.cs" />
     <Compile Include="ViewModels\VariantMeshElement.cs" />
     <Compile Include="ViewModels\WsModelElement.cs" />
-    <Compile Include="Views\EditorViews\AnimationEditorView.xaml.cs">
+    <Compile Include="Views\EditorViews\Animation\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\AnimationViews\AnimationFragmentExplorerView.xaml.cs">
+    <Compile Include="Views\EditorViews\Animation\AnimationFragmentExplorerView.xaml.cs">
       <DependentUpon>AnimationFragmentExplorerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\AnimationViews\AnimationPlayerView.xaml.cs">
+    <Compile Include="Views\EditorViews\Animation\AnimationPlayerView.xaml.cs">
       <DependentUpon>AnimationPlayerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\EditorPanelView.xaml.cs">
@@ -98,9 +98,6 @@
     </Compile>
     <Compile Include="Views\EditorViews\SlotEditorView.xaml.cs">
       <DependentUpon>SlotEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\EditorViews\AnimationViews\AnimationExplorerView.xaml.cs">
-      <DependentUpon>AnimationExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Util\BrowsableItemView.xaml.cs">
       <DependentUpon>BrowsableItemView.xaml</DependentUpon>
@@ -129,15 +126,19 @@
       <DependentUpon>TexturePreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewViewModel.cs" />
-    <Page Include="Views\EditorViews\AnimationEditorView.xaml">
+    <Page Include="Views\EditorViews\Animation\AnimationEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\AnimationViews\AnimationFragmentExplorerView.xaml">
+    <Page Include="Views\EditorViews\Animation\AnimationFragmentExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\AnimationViews\AnimationPlayerView.xaml">
+    <Page Include="Views\EditorViews\Animation\AnimationPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -158,10 +159,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\SlotEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EditorViews\AnimationViews\AnimationExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -201,6 +198,10 @@
       <DependentUpon>VariantMeshEditorControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Styles\FullWidthTreeViewStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Styles\TestStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -270,8 +271,6 @@
       <Version>1.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\EditorViews\AnimationViews\Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

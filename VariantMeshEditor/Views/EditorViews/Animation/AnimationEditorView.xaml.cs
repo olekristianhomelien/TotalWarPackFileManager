@@ -1,11 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using VariantMeshEditor.Views.EditorViews.AnimationViews;
+﻿using System.Windows.Controls;
 
-namespace VariantMeshEditor.Views.EditorViews
+namespace VariantMeshEditor.Views.EditorViews.Animation
 {
     /// <summary>
     /// Interaction logic for AnimationEditorView.xaml

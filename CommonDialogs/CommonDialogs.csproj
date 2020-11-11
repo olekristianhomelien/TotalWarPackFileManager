@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="ComboBoxes\FilteredComboBox.cs" />
     <Compile Include="Common\BoolToVisibilityConverter.cs" />
+    <Compile Include="Common\IconToImageSourceConverter.cs" />
     <Compile Include="Common\NotifyPropertyChangedImpl.cs" />
     <Compile Include="Common\WaitCursor.cs" />
     <Compile Include="Common\WatermarkAdorner.cs" />

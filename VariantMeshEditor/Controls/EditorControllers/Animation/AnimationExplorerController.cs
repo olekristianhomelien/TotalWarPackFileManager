@@ -27,7 +27,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         AnimationPlayerController _playerController;
 
-        AnimationEditorView _viewModel;
+        //AnimationEditorView _viewModel;
         ResourceLibary _resourceLibary;
         SkeletonElement _skeletonElement;
         AnimationElement _animationElement;
@@ -45,14 +45,14 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             _playerController = playerController;
         }
 
-        public void PopulateExplorerView(AnimationEditorView viewModel)
-        {
-            _viewModel = viewModel;
-            //_viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
-
-            FindAllAnimations();
-            CreateAnimationExplorer(true);
-        }
+       //public void PopulateExplorerView(AnimationEditorView viewModel)
+       //{
+       //    _viewModel = viewModel;
+       //    //_viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
+       //
+       //    FindAllAnimations();
+       //    CreateAnimationExplorer(true);
+       //}
 
 
         public void CreateTestData()
@@ -96,7 +96,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
             GridViewColumn column = new GridViewColumn() { Header = "FileName", DisplayMemberBinding = new Binding("FileName") };
 
-            sender.SetItems(_animationsValidForSkeleton, null, (IEnumerable<object> orgList) => { return _animationFiles; });
+            //sender.SetItems(_animationsValidForSkeleton, null, (IEnumerable<object> orgList) => { return _animationFiles; });
         }
 
         bool OnAnimationSelected(AnimationExplorerItemView explorer, object selectedAnimationFile)
@@ -109,40 +109,41 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         bool LoadAnimation(AnimationExplorerItemView explorer, PackedFile file)
         {
-            try
-            {
-                explorer.AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
-
-                if (explorer.IsMainAnimation)
-                {
-                    _currentAnimationName = file.Name;
-                    explorer.AnimationExpanderName.Text = "Main animation : " + _currentAnimationName;
-                }
-                else
-                {
-                    explorer.AnimationExpanderName.Text = "Sub animation : " + file.Name;
-                }
-
-                explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
-                explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
-
-                explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;
-                explorer.DynamicFrameCheckbox.IsChecked = explorer.DynamicFrameCheckbox.IsEnabled;
-                explorer.DynamicFrameCheckbox.Content = $"Dynamic[{explorer.AnimationFile.DynamicFrames.Count}]";
-
-                explorer.StaticFramesCheckbox.IsEnabled = explorer.AnimationFile.StaticFrame != null;
-                explorer.StaticFramesCheckbox.IsChecked = explorer.StaticFramesCheckbox.IsEnabled;
-
-                UpdateCurrentAnimation();
-                return true;
-            }
-            catch (Exception exception)
-            {
-                var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
-                //error
-                _logger.Error(error);
-                return false;
-            }
+            // try
+            // {
+            //     explorer.AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
+            //
+            //     if (explorer.IsMainAnimation)
+            //     {
+            //         _currentAnimationName = file.Name;
+            //         explorer.AnimationExpanderName.Text = "Main animation : " + _currentAnimationName;
+            //     }
+            //     else
+            //     {
+            //         explorer.AnimationExpanderName.Text = "Sub animation : " + file.Name;
+            //     }
+            //    //
+            //    // explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
+            //    // explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
+            //    //
+            //     explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;
+            //     explorer.DynamicFrameCheckbox.IsChecked = explorer.DynamicFrameCheckbox.IsEnabled;
+            //     explorer.DynamicFrameCheckbox.Content = $"Dynamic[{explorer.AnimationFile.DynamicFrames.Count}]";
+            //
+            //     explorer.StaticFramesCheckbox.IsEnabled = explorer.AnimationFile.StaticFrame != null;
+            //     explorer.StaticFramesCheckbox.IsChecked = explorer.StaticFramesCheckbox.IsEnabled;
+            //
+            //     UpdateCurrentAnimation();
+            //     return true;
+            // }
+            // catch (Exception exception)
+            // {
+            //     var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
+            //     //error
+            //     _logger.Error(error);
+            //     return false;
+            // }
+            return false;
         }
 
         void UpdateCurrentAnimation()

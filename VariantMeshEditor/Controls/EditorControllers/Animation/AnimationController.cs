@@ -17,7 +17,7 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         AnimationFragmentExplorerController _animationFragmentExplorerController;
 
-        AnimationEditorView _viewModel;
+       // AnimationEditorView _viewModel;
 
         public AnimationController(ResourceLibary resourceLibary, AnimationElement animationElement, SkeletonElement skeletonElement)
         {
@@ -27,20 +27,20 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             _animationFragmentExplorerController = new AnimationFragmentExplorerController(resourceLibary);
         }
 
-        public AnimationEditorView GetView()
-        {
-            if (_viewModel == null)
-            {
-                _viewModel = new AnimationEditorView();
-                _animationPlayerController.PopulateExplorerView(_viewModel.Player);
-
-                _animationExplorerController.PopulateExplorerView(_viewModel);
-                _animationExplorerController.CreateTestData();
-
-                _animationFragmentExplorerController.PopulateExplorerView(_viewModel);
-            }
-            return _viewModel;
-        }
+        //public AnimationEditorView GetView()
+        //{
+        //    if (_viewModel == null)
+        //    {
+        //        _viewModel = new AnimationEditorView();
+        //        _animationPlayerController.PopulateExplorerView(_viewModel.Player);
+        //
+        //        _animationExplorerController.PopulateExplorerView(_viewModel);
+        //        _animationExplorerController.CreateTestData();
+        //
+        //        _animationFragmentExplorerController.PopulateExplorerView(_viewModel);
+        //    }
+        //    return _viewModel;
+        //}
 
         public void Update()
         {

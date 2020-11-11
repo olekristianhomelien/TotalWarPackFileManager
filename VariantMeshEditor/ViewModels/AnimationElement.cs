@@ -4,33 +4,81 @@ using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Xna.Framework;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Input;
-using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Controls.EditorControllers.Animation;
 using VariantMeshEditor.Util;
-using VariantMeshEditor.Views.EditorViews;
 using Viewer.Animation;
 using Viewer.Scene;
 using WpfTest.Scenes;
+using static CommonDialogs.FilterDialog.FilterUserControl;
 
 namespace VariantMeshEditor.ViewModels
 {
 
-
-
-
     public class AnimationExplorerNodeViewModel : NotifyPropertyChangedImpl
     {
+        ILogger _logger = Logging.Create<AnimationExplorerNodeViewModel>();
         AnimationExplorerViewModel Parent { get; set; }
+        public AnimationFile AnimationFile { get; set; }
+
+        public delegate void AnimationChanged();
+        public event AnimationChanged OnAnimationChanged;
+
         public ICommand RemoveCommand { get; set; }
+
+        #region Properties
+        #region Frame properties
+        bool _hasStaticFrame = false;
+        public bool HasStaticFrame
+        {
+            get { return _hasStaticFrame; }
+            set { SetAndNotify(ref _hasStaticFrame, value); }
+        }
+
+        bool _isStaticFrameEnabled = false;
+        public bool IsStaticFrameEnabled
+        {
+            get { return _isStaticFrameEnabled; }
+            set { SetAndNotify(ref _isStaticFrameEnabled, value); }
+        }
+
+        bool _hasDynamicFrames = false;
+        public bool HasDynamicFrames
+        {
+            get { return _hasDynamicFrames; }
+            set { SetAndNotify(ref _hasDynamicFrames, value); }
+        }
+
+        bool _isDynamicFramesEnabled = false;
+        public bool IsDynamicFramesEnabled
+        {
+            get { return _isDynamicFramesEnabled; }
+            set { SetAndNotify(ref _isDynamicFramesEnabled, value); }
+        }
+
+        string _dynamicFramesText = "Dynamic[0]";
+        public string DynamicFramesText
+        {
+            get { return _dynamicFramesText; }
+            set { SetAndNotify(ref _dynamicFramesText, value); }
+        }
+        #endregion
+
+        #region Animation properties
+        public bool IsMainAnimation { get; set; } = false;
+
+        bool _useAnimation = true;
+        public bool UseAnimation
+        {
+            get { return _useAnimation; }
+            set { SetAndNotify(ref _useAnimation, value); }
+        }
 
         string _animationName;
         public string AnimationName
@@ -39,12 +87,27 @@ namespace VariantMeshEditor.ViewModels
             set { SetAndNotify(ref _animationName, value); }
         }
 
+        string _skeletonName;
+        public string SkeletonName
+        {
+            get { return _skeletonName; }
+            set { SetAndNotify(ref _skeletonName, value); }
+        }
 
-        bool _onlyDisplayAnimationsForCurrentSkeleton;
+        string _animationVersion;
+        public string AnimationVersion
+        {
+            get { return _animationVersion; }
+            set { SetAndNotify(ref _animationVersion, value); }
+        }
+        #endregion
+
+        #region Filter properties
+        bool _onlyDisplayAnimationsForCurrentSkeleton = true;
         public bool OnlyDisplayAnimationsForCurrentSkeleton
         {
             get { return _onlyDisplayAnimationsForCurrentSkeleton; }
-            set 
+            set
             {
                 SetAndNotify(ref _onlyDisplayAnimationsForCurrentSkeleton, value);
                 if (value)
@@ -57,6 +120,10 @@ namespace VariantMeshEditor.ViewModels
         List<PackedFile> _filterList;
         public List<PackedFile> FilterList { get { return _filterList; } set { SetAndNotify(ref _filterList, value); } }
 
+        public OnSeachDelegate FilterItemOnSearch { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
+        #endregion
+
+        #region Error properties
         public bool DisplayErrorMessage { get { return !string.IsNullOrWhiteSpace(ErrorMessage); } }
 
         string _errorMessage;
@@ -69,26 +136,89 @@ namespace VariantMeshEditor.ViewModels
                 NotifyPropertyChanged(nameof(DisplayErrorMessage));
             }
         }
+        #endregion
 
-
-
-
-
-        public bool Filter(object item, Regex expression)
+        #region SelectedFile propterties
+        public event ValueChangedDelegate<PackedFile> OnSelectedAnimationChanged;
+        PackedFile _selectedAnimationPackFile;
+        public PackedFile SelectedAnimationPackFile
         {
-            return true;
+            get { return _selectedAnimationPackFile; }
+            set { SetAndNotify(ref _selectedAnimationPackFile, value, OnSelectedAnimationChanged); }
         }
+        #endregion
+        #endregion
 
         public AnimationExplorerNodeViewModel(AnimationExplorerViewModel parent)
         {
             Parent = parent;
-            RemoveCommand = new RelayCommand(OnRemoveButtonClicked);
+            OnSelectedAnimationChanged += LoadAnimation;
             OnlyDisplayAnimationsForCurrentSkeleton = true;
+
+            PropertyChanged += Model_PropertyChanged;
+            RemoveCommand = new RelayCommand(OnRemoveButtonClicked);
+        }
+
+        private void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            var attributesThatTriggerAnimationUpdate = new string[]
+            { 
+                nameof(IsStaticFrameEnabled), 
+                nameof(IsDynamicFramesEnabled),
+                nameof(UseAnimation)
+            };
+
+            var foundAttr = attributesThatTriggerAnimationUpdate.FirstOrDefault(x=>x == e.PropertyName);
+            if(foundAttr != null)
+                OnAnimationChanged?.Invoke();
         }
 
         void OnRemoveButtonClicked()
         {
-            //Parent.AnimationsTemp.Remove(this);
+            Parent.AnimationsTemp.Remove(this);
+        }
+
+        void LoadAnimation(PackedFile file)
+        {
+            if (file == null)
+            {
+               AnimationName = "";
+               SkeletonName = "";
+               AnimationVersion = "";
+                return;
+            }
+
+            try
+            {
+                AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
+
+                if (IsMainAnimation)
+                    AnimationName  = "Main animation : " + file.Name;
+                else
+                    AnimationName = "Sub animation : " + file.Name;
+
+                SkeletonName = AnimationFile.Header.SkeletonName;
+                AnimationVersion = AnimationFile.Header.AnimationType.ToString();
+
+                DynamicFramesText = $"Dynamic[{AnimationFile.DynamicFrames.Count}]";
+                HasDynamicFrames = AnimationFile.DynamicFrames.Count != 0;
+                IsDynamicFramesEnabled = HasDynamicFrames;
+
+                HasStaticFrame = AnimationFile.StaticFrame != null;
+                IsStaticFrameEnabled = HasStaticFrame;
+
+                if (!IsMainAnimation && HasDynamicFrames)
+                    ErrorMessage = "Only the main animation can have dynamic frames.";
+                else
+                    ErrorMessage = null;
+                OnAnimationChanged?.Invoke();
+            }
+            catch (Exception exception)
+            {
+                var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
+                ErrorMessage = error;
+                _logger.Error(error);
+            }
         }
     }
 
@@ -105,22 +235,29 @@ namespace VariantMeshEditor.ViewModels
 
         public AnimationExplorerViewModel(ResourceLibary resourceLibary, string skeletonName)
         {
-           
-
-
             _resourceLibary = resourceLibary;
             _skeletonName = skeletonName;
             
             FindAllAnimations();
 
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { AnimationName = "Animation0", FilterList=AnimationFiles });
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { AnimationName = "Animation1", FilterList=AnimationFiles });
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { AnimationName = "Animation2", FilterList=AnimationFiles });
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { AnimationName = "Animation3", FilterList= AnimationFiles });
+            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { IsMainAnimation=true});
+            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
+            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
+            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
 
             AddNewAnimationCommad = new RelayCommand(OnAddNewAnimationClicked);
+        }
 
-            
+        private void X_OnAnimationChanged()
+        {
+            //var animationFiles = _viewModel.AnimationExplorer.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
+            //animationFiles = animationFiles.Where(x => x != null).ToArray();
+            //if (animationFiles.Length != 0)
+            //{
+            //    AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.Skeleton);
+            //    _animationElement.AnimationPlayer.SetAnimation(clip);
+            //    _playerController.SetAnimation(clip);
+            //}
         }
 
         void OnAddNewAnimationClicked()

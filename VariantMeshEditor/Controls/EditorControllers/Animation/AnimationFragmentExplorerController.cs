@@ -24,11 +24,14 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 {
     class AnimationFragmentExplorerController
     {
+
+
+
         FragmentExplorerViewModel _fragmentExplorerViewModel;
         ResourceLibary _resourceLibary;
         AnimationPackLoader _animationPackData;
         Dictionary<int, Dictionary<string, List<AnimationFragmentItem>>> _fragmentList;
-        AnimationEditorView _editorView;
+        //AnimationEditorView _editorView;
 
 
         public AnimationFragmentExplorerController(ResourceLibary resourceLibary)
@@ -36,46 +39,46 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             _resourceLibary = resourceLibary;
         }
 
-        public void PopulateExplorerView(AnimationEditorView view)
-        {
-            _editorView = view;
-
-            try
-            {
-                var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
-                _animationPackData = new AnimationPackLoader();
-                _animationPackData.Load(new ByteChunk(file.Data));
-
-                _fragmentExplorerViewModel = new FragmentExplorerViewModel();
-
-                var skeltonNames = _animationPackData.AnimationTableEntries
-                    .Select(x => x.SkeletonName)
-                    .Distinct()
-                    .OrderBy(x => x); ;
-
-                foreach (var skeletonName in skeltonNames)
-                    _fragmentExplorerViewModel.SkeletonNameList.Add(skeletonName);
-
-                _fragmentExplorerViewModel.OnSelectedSkeletonChanged += OnSkeletonSelected;
-                _fragmentExplorerViewModel.OnSelectedMountChanged += OnMountSelected;
-                _fragmentExplorerViewModel.OnSelectedAnimationSetChanged += OnAnimationSetSelected;
-
-                view.AnimationFragmentExplorer.DataContext = _fragmentExplorerViewModel;
-
-
-                _fragmentExplorerViewModel.SelectedSkelton = "humanoid01";
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            //_viewModel = viewModel;
-            //_viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
-            //
-            //FindAllAnimations();
-            //CreateAnimationExplorer(true);
-        }
+        //public void PopulateExplorerView(AnimationEditorView view)
+        //{
+        //    _editorView = view;
+        //
+        //    try
+        //    {
+        //        var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+        //        _animationPackData = new AnimationPackLoader();
+        //        _animationPackData.Load(new ByteChunk(file.Data));
+        //
+        //        _fragmentExplorerViewModel = new FragmentExplorerViewModel();
+        //
+        //        var skeltonNames = _animationPackData.AnimationTableEntries
+        //            .Select(x => x.SkeletonName)
+        //            .Distinct()
+        //            .OrderBy(x => x); ;
+        //
+        //        foreach (var skeletonName in skeltonNames)
+        //            _fragmentExplorerViewModel.SkeletonNameList.Add(skeletonName);
+        //
+        //        _fragmentExplorerViewModel.OnSelectedSkeletonChanged += OnSkeletonSelected;
+        //        _fragmentExplorerViewModel.OnSelectedMountChanged += OnMountSelected;
+        //        _fragmentExplorerViewModel.OnSelectedAnimationSetChanged += OnAnimationSetSelected;
+        //
+        //        view.AnimationFragmentExplorer.DataContext = _fragmentExplorerViewModel;
+        //
+        //
+        //        _fragmentExplorerViewModel.SelectedSkelton = "humanoid01";
+        //    }
+        //    catch (Exception e)
+        //    {
+        //
+        //    }
+        //
+        //    //_viewModel = viewModel;
+        //    //_viewModel.AnimationExplorer.CreateNewAnimationButton.Click += (sender, e) => CreateAnimationExplorer();
+        //    //
+        //    //FindAllAnimations();
+        //    //CreateAnimationExplorer(true);
+        //}
 
         void OnSkeletonSelected(string newSkeletonName)
         {
@@ -135,8 +138,8 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
                         finalFragList.Add(value);
                 }
 
-                _editorView.AnimationFragmentExplorer.FragmentFilterDialog.SetItems(finalFragList, GetFragmentFilterDialogHeaders());
-                _editorView.AnimationFragmentExplorer.FragmentFilterDialog.OnSearch = _fragmentExplorerViewModel.OnSerach;
+                //_editorView.AnimationFragmentExplorer.FragmentFilterDialog.SetItems(finalFragList, GetFragmentFilterDialogHeaders());
+                //_editorView.AnimationFragmentExplorer.FragmentFilterDialog.OnSearch = _fragmentExplorerViewModel.OnSerach;
             }
         }
 

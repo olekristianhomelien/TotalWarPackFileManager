@@ -18,19 +18,10 @@ namespace CommonDialogs.FilterDialog
     [ContentProperty("InnerContent")]
     public partial class FilterUserControl : UserControl
     {
+        SolidColorBrush _noErrorBackground = new SolidColorBrush(Colors.White);
+        SolidColorBrush _errorBackground = new SolidColorBrush(Colors.Red);
 
-        
-
-        IEnumerable<object> _originalList;
-        SolidColorBrush _noErrorBackground;
-        SolidColorBrush _errorBackground;
-        public delegate IEnumerable<object> ExternalFilter(IEnumerable<object> originalList);
-        public delegate bool OnSeachDelegate(object item);
-
-        bool _useExternalFilter = false;
-
-        ExternalFilter _externalFilter;
-
+        public delegate bool OnSeachDelegate(object item, Regex regex);
 
         public EventHandler OnItemDoubleClicked;
         public EventHandler OnItemSelected;
@@ -38,16 +29,10 @@ namespace CommonDialogs.FilterDialog
         public FilterUserControl()
         {
             InitializeComponent();
-            _noErrorBackground = new SolidColorBrush(Colors.White);
-            _errorBackground = new SolidColorBrush(Colors.Red);
             SearchTextBox.TextChanged += (sender, e) => FilterConditionChanged();
             ClearFilterButton.Click += (sender, e) => SearchTextBox.Text = "";
-            //ExtraFilterButton.Click += (sender, e) => { _useExternalFilter = !_useExternalFilter; FilterConditionChanged(); };
             ResultList.SelectionChanged += (sender, e) => OnItemSelected?.Invoke(null, null);
         }
-
-
-
 
 
         public FrameworkElement InnerContent
@@ -78,7 +63,14 @@ namespace CommonDialogs.FilterDialog
             DependencyProperty.Register("OnSearch", typeof(OnSeachDelegate), typeof(FilterUserControl), new PropertyMetadata(null));
 
 
+        public object SelectedItem
+        {
+            get { return (object)GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
 
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register("SelectedItem", typeof(object), typeof(FilterUserControl), new PropertyMetadata(null));
 
 
         public IEnumerable SearchItems
@@ -89,65 +81,19 @@ namespace CommonDialogs.FilterDialog
 
         public static readonly DependencyProperty SearchItemsProperty =
             DependencyProperty.Register("SearchItems", typeof(IEnumerable), typeof(FilterUserControl), 
-                new PropertyMetadata 
-                { 
-                    PropertyChangedCallback = OnSearchItemsChanged
+                new PropertyMetadata
+                {
+                    PropertyChangedCallback = (obj, e) => { (obj as FilterUserControl).FilterConditionChanged(); }
                 });
 
-
-        static private void OnSearchItemsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            (obj as FilterUserControl).FilterConditionChanged();
-        }
-
-
-
-        public object GetSelectedItem()
-        {
-        
-            return ResultList.SelectedItem;
-        }
-
-        public void SetItems(IEnumerable<object> items, IEnumerable<GridViewColumn> columns, ExternalFilter externalFilter = null)
-        {
-            if (columns != null && columns.Any())
-            {
-                var gridView = new GridView();
-                ResultList.View = gridView;
-                foreach (var column in columns)
-                {
-                    gridView.Columns.Add(column);
-                }
-            }
-
-            _originalList = items;
-            if (externalFilter != null)
-            {
-                _externalFilter = externalFilter;
-            }
-            else
-            {
-                //ExtraFilterButton.Visibility = Visibility.Hidden;
-            }
-
-            FilterConditionChanged();
-        }
 
         private void FilterConditionChanged()
         {
             using (new WaitCursor())
             {
+                if (SearchItems == null)
+                    return;
 
-                var s = OnSearch;
-                if (s != null)
-                    OnSearch("Cat");
-
-                var itemsToFilter = _originalList;
-                if (_useExternalFilter)
-                    itemsToFilter = _externalFilter(_originalList);
-                ResultList.ItemsSource = SearchItems;
-                return;
-                SearchTextBox.Background = _noErrorBackground;
                 var toolTip = SearchTextBox.ToolTip as ToolTip;
                 if (toolTip == null)
                 {
@@ -155,31 +101,39 @@ namespace CommonDialogs.FilterDialog
                     SearchTextBox.ToolTip = toolTip;
                 }
 
-                var filterText = SearchTextBox.Text.ToLower();
-                if (string.IsNullOrWhiteSpace(filterText))
+                var filterText = SearchTextBox.Text;
+                if (string.IsNullOrWhiteSpace(filterText) || OnSearch == null)
                 {
+                    ResultList.ItemsSource = SearchItems;
                     toolTip.IsOpen = false;
+                    SearchTextBox.Background = _noErrorBackground;
                     return;
                 }
 
-                Regex rx = null;
                 try
                 {
+                    Regex rx = null;
                     rx = new Regex(filterText, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                    List<object> displayList = new List<object>();
+                    foreach (var item in SearchItems)
+                    {
+                        var result = OnSearch(item, rx);
+                        if (result)
+                            displayList.Add(item);
+                    }
+                    ResultList.ItemsSource = displayList;
                     toolTip.IsOpen = false;
+                    SearchTextBox.Background = _noErrorBackground;
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     SearchTextBox.Background = _errorBackground;
                     toolTip.IsOpen = true;
                     toolTip.Content = e.Message;
                     toolTip.Content += "\n\nCommon usage:\n";
                     toolTip.Content += "Value0.*Value1.*Value2 -> for searching for multiple substrings";
-                    return;
                 }
-
-                ResultList.ItemsSource = itemsToFilter.Where(x => rx.Match(x.ToString()).Success);
-
             }
         }
 
@@ -187,8 +141,5 @@ namespace CommonDialogs.FilterDialog
         {
             OnItemDoubleClicked?.Invoke(sender, e);
         }
-
-        
-
     }
 }

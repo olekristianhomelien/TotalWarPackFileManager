@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
-             xmlns:commondialogs1="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs"
+             xmlns:commondialogs1="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" 
+             xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs"
              mc:Ignorable="d" >
     <UserControl.Resources>
         <common:BoolToVisibilityConverter x:Key="BoolToHiddenConverter" TrueValue="Visible" FalseValue="Collapsed" />
@@ -18,7 +18,6 @@
                 <TextBlock Text="{Binding AnimationName, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
         </Expander.Header>
-
         <DockPanel LastChildFill="False">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
                 <Label Width="70">Frame Types</Label>
@@ -26,7 +25,6 @@
                 <CheckBox Content="Static" x:Name="StaticFramesCheckbox" VerticalAlignment="Center"/>
                 <CheckBox Content="Dynamic[11]" x:Name="DynamicFrameCheckbox" VerticalAlignment="Center" Margin="20,0,0,0"/>
             </StackPanel>
-
             <Grid DockPanel.Dock="Top" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"></ColumnDefinition>
@@ -60,11 +58,6 @@
             </commondialogs1:CollapsableFilterControl>
 
             <Button x:Name="RemoveButton" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Command="{Binding RemoveCommand}">Remove animation</Button>
-
-            <DockPanel DockPanel.Dock="Bottom" Visibility="{Binding DisplayErrorMessage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToHiddenConverter}}" >
-                <Label DockPanel.Dock="Left">Error:</Label>
-                <TextBox TextWrapping="NoWrap" Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Background="Red"/>
-            </DockPanel>
 
         </DockPanel>
     </Expander>

@@ -11,39 +11,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../../Styles/TestStyle.xaml" />
+                <ResourceDictionary Source="../../Styles/FullWidthTreeViewStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style x:Key="CustomTreeViewStyle" TargetType="{x:Type TreeViewItem}">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type TreeViewItem}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <ContentPresenter Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" x:Name="PART_Header"  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" ContentSource="Header" />
-                                <ItemsPresenter   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ItemsHost" Margin="0,0,0,5"  />
-                            </Grid>
-
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsExpanded" Value="false">
-                                    <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -51,7 +20,7 @@
 
 
 
-    <TreeView  ItemsSource="{Binding Path=Lods, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource CustomTreeViewStyle}" Padding="1" BorderThickness="0" >
+    <TreeView  ItemsSource="{Binding Path=Lods, UpdateSourceTrigger=PropertyChanged}"  ItemContainerStyle="{StaticResource FullWidthTreeViewStyle}" Padding="1" BorderThickness="0" >
 
         <TreeView.ItemTemplate >
 

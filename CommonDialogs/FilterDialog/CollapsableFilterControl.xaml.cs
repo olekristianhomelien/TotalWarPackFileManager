@@ -12,14 +12,6 @@ namespace CommonDialogs.FilterDialog
     /// </summary>
     public partial class CollapsableFilterControl : UserControl
     {
-
-        public delegate bool OnItemSelectedDelegate(object sender);
-        public delegate void OnOpeningFirstTimeDelegate(CollapsableFilterControl sender);
-
-        public OnItemSelectedDelegate OnItemSelected;
-        public OnOpeningFirstTimeDelegate OnOpeningFirstTime;
-        bool _firstTimeOpening = true;
-
         public CollapsableFilterControl()
         {
             InitializeComponent();
@@ -29,22 +21,25 @@ namespace CommonDialogs.FilterDialog
             FilterBox.Visibility = Visibility.Collapsed;
         }
 
-
         void HandleItemDoubleClicked()
         {
-            var restult = HandleOnItemSelected();
-            if (restult.HasValue && restult.Value)
-            {
-                FilterBox.Visibility = Visibility.Collapsed;
-                BrowseButton.Content = "Browse";
-            }
+            HandleOnItemSelected();
+            FilterBox.Visibility = Visibility.Collapsed;
+            BrowseButton.Content = "Browse";
         }
 
-        bool? HandleOnItemSelected()
+        void HandleOnItemSelected()
         {
-            var selectedItem = FilterBox.GetSelectedItem();
-            SelectedFileName.Text = selectedItem.ToString();
-            return OnItemSelected?.Invoke(selectedItem);
+            var selectedItem = FilterBox.SelectedItem;
+            if (selectedItem != null)
+            {
+                var val = selectedItem.GetType().GetProperty(DisplayMemberPath).GetValue(selectedItem, null);
+                SelectedFileName.Text = val.ToString();
+            }
+            else
+            {
+                SelectedFileName.Text = "";
+            }
         }
 
         void ToggleSearchFiled()
@@ -56,27 +51,10 @@ namespace CommonDialogs.FilterDialog
             }
             else
             {
-                if (_firstTimeOpening)
-
-                {
-                    using (new WaitCursor())
-                    {
-                        OnOpeningFirstTime?.Invoke(this);
-                        _firstTimeOpening = false;
-                    }
-                }
-                
                 BrowseButton.Content = "Hide";
                 FilterBox.Visibility = Visibility.Visible;
             }
         }
-
-        public void SetItems(IEnumerable<object> items, IEnumerable<GridViewColumn> columns, ExternalFilter externalFilter = null)
-        {
-            FilterBox.SetItems(items, columns, externalFilter);
-        }
-
-
         #region properties
 
         public FrameworkElement InnerContent
@@ -133,14 +111,18 @@ namespace CommonDialogs.FilterDialog
         }
 
         public static readonly DependencyProperty SearchItemsProperty =
-            DependencyProperty.Register("SearchItems", typeof(IEnumerable), typeof(CollapsableFilterControl), new PropertyMetadata(OnCurrentReadingChanged));
+            DependencyProperty.Register("SearchItems", typeof(IEnumerable), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
-        static private void OnCurrentReadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+        public object SelectedItem
         {
-   
+            get { return (object)GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
         }
 
-
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register("SelectedItem", typeof(object), typeof(CollapsableFilterControl), new PropertyMetadata(null));
+            
         #endregion
     }
 }
