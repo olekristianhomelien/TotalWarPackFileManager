@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 using VariantMeshEditor.Controls.EditorControllers.Animation;
 using VariantMeshEditor.Util;
@@ -124,7 +125,7 @@ namespace VariantMeshEditor.ViewModels
         #endregion
 
         #region Error properties
-        public bool DisplayErrorMessage { get { return !string.IsNullOrWhiteSpace(ErrorMessage); } }
+        public bool HasErrorMessage { get { return !string.IsNullOrWhiteSpace(ErrorMessage); } }
 
         string _errorMessage;
         public string ErrorMessage
@@ -133,7 +134,7 @@ namespace VariantMeshEditor.ViewModels
             set
             {
                 SetAndNotify(ref _errorMessage, value);
-                NotifyPropertyChanged(nameof(DisplayErrorMessage));
+                NotifyPropertyChanged(nameof(HasErrorMessage));
             }
         }
         #endregion
@@ -175,16 +176,17 @@ namespace VariantMeshEditor.ViewModels
 
         void OnRemoveButtonClicked()
         {
-            Parent.AnimationsTemp.Remove(this);
+            if(MessageBox.Show("Are you sure you want to delete this animation", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                Parent.AnimationList.Remove(this);
         }
 
         void LoadAnimation(PackedFile file)
         {
             if (file == null)
             {
-               AnimationName = "";
-               SkeletonName = "";
-               AnimationVersion = "";
+                AnimationName = "";
+                SkeletonName = "";
+                AnimationVersion = "";
                 return;
             }
 
@@ -225,44 +227,52 @@ namespace VariantMeshEditor.ViewModels
     public class AnimationExplorerViewModel : NotifyPropertyChangedImpl
     {
         ResourceLibary _resourceLibary;
-        string _skeletonName;
-
-        public ICommand AddNewAnimationCommad { get; set; }
+        SkeletonElement _skeletonNode;
+        AnimationPlayer _animationPlayer;
+        public ICommand AddNewAnimationCommand { get; set; }
 
 
         public List<PackedFile> AnimationFiles { get; set; } = new List<PackedFile>();
         public List<PackedFile> AnimationFilesForSkeleton { get; set; } = new List<PackedFile>();
 
-        public AnimationExplorerViewModel(ResourceLibary resourceLibary, string skeletonName)
+        public AnimationExplorerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayer animationPlayer)
         {
             _resourceLibary = resourceLibary;
-            _skeletonName = skeletonName;
-            
+            _skeletonNode = skeletonNode;
+            _animationPlayer = animationPlayer;
+
+
             FindAllAnimations();
+            AddNewAnimationNode(true);
 
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this) { IsMainAnimation=true});
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
-
-            AddNewAnimationCommad = new RelayCommand(OnAddNewAnimationClicked);
+            AddNewAnimationCommand = new RelayCommand(() => { AddNewAnimationNode(); });
         }
 
-        private void X_OnAnimationChanged()
+        private void OnAnimationChanged()
         {
-            //var animationFiles = _viewModel.AnimationExplorer.Explorers.Where(x=>x.UseAnimationCheckbox.IsChecked== true).Select(x => x.AnimationFile).ToArray();
-            //animationFiles = animationFiles.Where(x => x != null).ToArray();
-            //if (animationFiles.Length != 0)
-            //{
-            //    AnimationClip clip = AnimationClip.Create(animationFiles, _skeletonElement.Skeleton);
-            //    _animationElement.AnimationPlayer.SetAnimation(clip);
-            //    _playerController.SetAnimation(clip);
-            //}
+            var animationFiles = AnimationList
+                .Where(x => x.UseAnimation == true && x.HasErrorMessage == false && x.AnimationFile != null)
+                .Select(x => x.AnimationFile);
+
+            if (animationFiles.Any())
+            {
+               AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), _skeletonNode.Skeleton);
+                _animationPlayer.SetAnimation(clip);
+               //_playerController.SetAnimation(clip);
+            }
+            else
+            {
+                _animationPlayer.SetAnimation(null);
+            }
         }
 
-        void OnAddNewAnimationClicked()
+        void AddNewAnimationNode(bool isMainAnimation = false)
         {
-            AnimationsTemp.Add(new AnimationExplorerNodeViewModel(this));
+            var node = new AnimationExplorerNodeViewModel(this);
+            node.OnAnimationChanged += OnAnimationChanged;
+            node.IsMainAnimation = isMainAnimation;
+
+            AnimationList.Add(node);
         }
 
         void FindAllAnimations()
@@ -272,12 +282,12 @@ namespace VariantMeshEditor.ViewModels
             foreach (var animation in AnimationFiles)
             {
                 var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
-                if (animationSkeletonName == _skeletonName)
+                if (animationSkeletonName == _skeletonNode.SkeletonFile.Header.SkeletonName)
                     AnimationFilesForSkeleton.Add(animation);
             }
         }
 
-        public ObservableCollection<AnimationExplorerNodeViewModel> AnimationsTemp { get; set; } = new ObservableCollection<AnimationExplorerNodeViewModel>();
+        public ObservableCollection<AnimationExplorerNodeViewModel> AnimationList { get; set; } = new ObservableCollection<AnimationExplorerNodeViewModel>();
     }
 
 
@@ -297,37 +307,21 @@ namespace VariantMeshEditor.ViewModels
     {
         public AnimationExplorerViewModel AnimationExplorer { get; set; }
 
-
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
 
-        AnimationController _controller;
 
         public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation")
         {
-            ApplyElementCheckboxVisability = System.Windows.Visibility.Hidden;
-
-
+            ApplyElementCheckboxVisability = Visibility.Hidden;
         }
-
-
-
-
-
-
-
-
-
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
             var skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this);
             if (skeleton.Count == 1)
             {
-                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First().SkeletonFile.Header.SkeletonName);
-
-
-                //_controller = new AnimationController(resourceLibary, this, skeleton.First());
+                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayer);
             }
         }
 
@@ -337,8 +331,5 @@ namespace VariantMeshEditor.ViewModels
             //DisplayName = "Animation - " + _controller.GetCurrentAnimationName();
             //_controller.Update();
         }
-
-
-
     }
 }

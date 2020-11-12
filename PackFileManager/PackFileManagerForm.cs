@@ -172,11 +172,23 @@ namespace PackFileManager
 
             //dBDecoderToolStripMenuItem_Click(null, null);
 
-
+            //
             List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
             CurrentPackFile = loadedContent.FirstOrDefault();
 
-            var file = PackFileLoadHelper.FindFile(loadedContent, @"variantmeshes\variantmeshdefinitions\brt_knights_of_the_realm.variantmeshdefinition");
+            foreach (IPackedFileEditor e in PackedFileEditorRegistry.Editors)
+            {
+                
+                if (e as WpfPackedFileEditorHost != null)
+                {
+                    var ctr = (e as WpfPackedFileEditorHost).Child as VariantMeshEditor.VariantMeshEditorControl;
+                    if(ctr != null)
+                        ctr.SetPackFiles(loadedContent);
+                }
+            }
+
+
+            var file = PackFileLoadHelper.FindFile(loadedContent, @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
             OpenPackedFileEditor(file);
             //
             //var meshEditor = new VariantMeshEditor.VariantMeshEditorControl();

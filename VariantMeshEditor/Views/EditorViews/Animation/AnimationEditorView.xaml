@@ -28,12 +28,13 @@
         <TabControl DockPanel.Dock="Top">
             <TabItem Header="Animation Explorer">
                 <DockPanel>
-                    <Button x:Name="CreateNewAnimationButton" DockPanel.Dock="Bottom">Add Animation</Button>
-                    <DockPanel x:Name="AnimationExplorers" DockPanel.Dock="Top" LastChildFill="False"/>
+                    <Button Command="{Binding AnimationExplorer.AddNewAnimationCommand}" 
+                            DockPanel.Dock="Bottom"
+                            Content="Add Animation"/>
 
                     <TreeView  
                         AlternationCount="2"
-                        ItemsSource="{Binding Path=AnimationExplorer.AnimationsTemp, UpdateSourceTrigger=PropertyChanged}"  
+                        ItemsSource="{Binding Path=AnimationExplorer.AnimationList, UpdateSourceTrigger=PropertyChanged}"  
                         ItemContainerStyle="{StaticResource FullWidthTreeViewStyle}"
                         Padding="1" 
                         BorderThickness="0">

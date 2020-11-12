@@ -1,5 +1,6 @@
 ﻿using Common;
 using Filetypes;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using VariantMeshEditor.Controls;
 using VariantMeshEditor.ViewModels;
@@ -13,6 +14,8 @@ namespace VariantMeshEditor
     {
         EditorMainController _mainController;
 
+
+        
         public BaseViewModel RootViewModel { get; set; } = new BaseViewModel();
 
 
@@ -32,9 +35,16 @@ namespace VariantMeshEditor
             InitializeComponent();
             DataContext = RootViewModel;
 
-            _mainController = new EditorMainController(RenderView.Scene, RootViewModel);
+            
            
         }
+
+
+        public void SetPackFiles(List<PackFile> packFiles)
+        {
+            _mainController = new EditorMainController(RenderView.Scene, RootViewModel, packFiles);
+        }
+
 
         public bool CanEdit(PackedFile file)
         {

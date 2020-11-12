@@ -20,14 +20,12 @@ namespace VariantMeshEditor.Controls
 
         public BaseViewModel RootViewModel { get; set; }
 
-        public EditorMainController(Scene3d scene3d, BaseViewModel rootViewModel)
+        public EditorMainController(Scene3d scene3d, BaseViewModel rootViewModel, List<PackFile> packFile)
         {
             _scene3d = scene3d;
             RootViewModel = rootViewModel;
 
-            List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
-
-            _resourceLibary = new ResourceLibary(loadedContent);
+            _resourceLibary = new ResourceLibary(packFile);
             _scene3d.LoadScene += Create3dWorld;
         }
 

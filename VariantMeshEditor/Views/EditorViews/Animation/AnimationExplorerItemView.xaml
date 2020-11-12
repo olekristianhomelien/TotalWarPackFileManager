@@ -23,7 +23,7 @@
                     Width="16"
                     Height="16"
                     ToolTip="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged}"
-                    Visibility="{Binding DisplayErrorMessage, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource HasErrorToVisConverter}}"
+                    Visibility="{Binding HasErrorMessage, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource HasErrorToVisConverter}}"
                     Source="{Binding Source={x:Static draw:SystemIcons.Error},Converter={StaticResource IconToImageSourceConverter}, Mode=OneWay}" />
                 <CheckBox IsChecked="{Binding UseAnimation, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock x:Name="AnimationExpanderName" Text="Animation - " />
