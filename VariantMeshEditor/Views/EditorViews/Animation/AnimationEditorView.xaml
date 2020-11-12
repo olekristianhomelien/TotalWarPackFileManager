@@ -41,7 +41,7 @@
                         <TreeView.ItemTemplate >
                             <HierarchicalDataTemplate>
                                 <StackPanel MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentPresenter, AncestorLevel=1}}">
-                                    <animation:AnimationExplorerItemView 
+                                    <animation:AnimationExplorerNodeView 
                                                 Background="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type TreeViewItem}},
                                                 Path=(ItemsControl.AlternationIndex),
                                                 Converter={StaticResource AlternateForegroundConverter}}"/>

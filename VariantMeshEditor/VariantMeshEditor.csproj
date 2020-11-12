@@ -80,8 +80,8 @@
     <Compile Include="Views\EditorViews\Animation\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Animation\AnimationExplorerItemView.xaml.cs">
-      <DependentUpon>AnimationExplorerItemView.xaml</DependentUpon>
+    <Compile Include="Views\EditorViews\Animation\AnimationExplorerNodeView.xaml.cs">
+      <DependentUpon>AnimationExplorerNodeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationFragmentExplorerView.xaml.cs">
       <DependentUpon>AnimationFragmentExplorerView.xaml</DependentUpon>
@@ -135,7 +135,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Animation\AnimationExplorerItemView.xaml">
+    <Page Include="Views\EditorViews\Animation\AnimationExplorerNodeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
