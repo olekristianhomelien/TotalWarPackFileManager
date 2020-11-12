@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Util;
+using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Animation;
 using Viewer.GraphicModels;

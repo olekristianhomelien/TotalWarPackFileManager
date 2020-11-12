@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using VariantMeshEditor.ViewModels;
+using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.Views.EditorViews;
 using VariantMeshEditor.Views.EditorViews.AnimationViews;
 using VariantMeshEditor.Views.EditorViews.Util;

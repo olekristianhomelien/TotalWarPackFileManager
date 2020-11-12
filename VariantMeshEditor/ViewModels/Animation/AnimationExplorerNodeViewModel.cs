@@ -3,25 +3,16 @@ using CommonDialogs.Common;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Xna.Framework;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using VariantMeshEditor.Controls.EditorControllers.Animation;
-using VariantMeshEditor.Util;
-using Viewer.Animation;
-using Viewer.Scene;
-using WpfTest.Scenes;
 using static CommonDialogs.FilterDialog.FilterUserControl;
 
-namespace VariantMeshEditor.ViewModels
+namespace VariantMeshEditor.ViewModels.Animation
 {
-
     public class AnimationExplorerNodeViewModel : NotifyPropertyChangedImpl
     {
         ILogger _logger = Logging.Create<AnimationExplorerNodeViewModel>();
@@ -163,20 +154,20 @@ namespace VariantMeshEditor.ViewModels
         private void Model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             var attributesThatTriggerAnimationUpdate = new string[]
-            { 
-                nameof(IsStaticFrameEnabled), 
+            {
+                nameof(IsStaticFrameEnabled),
                 nameof(IsDynamicFramesEnabled),
                 nameof(UseAnimation)
             };
 
-            var foundAttr = attributesThatTriggerAnimationUpdate.FirstOrDefault(x=>x == e.PropertyName);
-            if(foundAttr != null)
+            var foundAttr = attributesThatTriggerAnimationUpdate.FirstOrDefault(x => x == e.PropertyName);
+            if (foundAttr != null)
                 OnAnimationChanged?.Invoke();
         }
 
         void OnRemoveButtonClicked()
         {
-            if(MessageBox.Show("Are you sure you want to delete this animation", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Are you sure you want to delete this animation", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 Parent.AnimationList.Remove(this);
         }
 
@@ -195,7 +186,7 @@ namespace VariantMeshEditor.ViewModels
                 AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
 
                 if (IsMainAnimation)
-                    AnimationName  = "Main animation : " + file.Name;
+                    AnimationName = "Main animation : " + file.Name;
                 else
                     AnimationName = "Sub animation : " + file.Name;
 
@@ -221,115 +212,6 @@ namespace VariantMeshEditor.ViewModels
                 ErrorMessage = error;
                 _logger.Error(error);
             }
-        }
-    }
-
-    public class AnimationExplorerViewModel : NotifyPropertyChangedImpl
-    {
-        ResourceLibary _resourceLibary;
-        SkeletonElement _skeletonNode;
-        AnimationPlayer _animationPlayer;
-        public ICommand AddNewAnimationCommand { get; set; }
-
-
-        public List<PackedFile> AnimationFiles { get; set; } = new List<PackedFile>();
-        public List<PackedFile> AnimationFilesForSkeleton { get; set; } = new List<PackedFile>();
-
-        public AnimationExplorerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayer animationPlayer)
-        {
-            _resourceLibary = resourceLibary;
-            _skeletonNode = skeletonNode;
-            _animationPlayer = animationPlayer;
-
-
-            FindAllAnimations();
-            AddNewAnimationNode(true);
-
-            AddNewAnimationCommand = new RelayCommand(() => { AddNewAnimationNode(); });
-        }
-
-        private void OnAnimationChanged()
-        {
-            var animationFiles = AnimationList
-                .Where(x => x.UseAnimation == true && x.HasErrorMessage == false && x.AnimationFile != null)
-                .Select(x => x.AnimationFile);
-
-            if (animationFiles.Any())
-            {
-               AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), _skeletonNode.Skeleton);
-                _animationPlayer.SetAnimation(clip);
-               //_playerController.SetAnimation(clip);
-            }
-            else
-            {
-                _animationPlayer.SetAnimation(null);
-            }
-        }
-
-        void AddNewAnimationNode(bool isMainAnimation = false)
-        {
-            var node = new AnimationExplorerNodeViewModel(this);
-            node.OnAnimationChanged += OnAnimationChanged;
-            node.IsMainAnimation = isMainAnimation;
-
-            AnimationList.Add(node);
-        }
-
-        void FindAllAnimations()
-        {
-            AnimationFiles = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "anim");
-
-            foreach (var animation in AnimationFiles)
-            {
-                var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
-                if (animationSkeletonName == _skeletonNode.SkeletonFile.Header.SkeletonName)
-                    AnimationFilesForSkeleton.Add(animation);
-            }
-        }
-
-        public ObservableCollection<AnimationExplorerNodeViewModel> AnimationList { get; set; } = new ObservableCollection<AnimationExplorerNodeViewModel>();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public class AnimationElement : FileSceneElement
-    {
-        public AnimationExplorerViewModel AnimationExplorer { get; set; }
-
-        public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
-        public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
-
-
-        public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation")
-        {
-            ApplyElementCheckboxVisability = Visibility.Hidden;
-        }
-
-        protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
-        {
-            var skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this);
-            if (skeleton.Count == 1)
-            {
-                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayer);
-            }
-        }
-
-        protected override void UpdateNode(GameTime time)
-        {
-            AnimationPlayer.Update(time);
-            //DisplayName = "Animation - " + _controller.GetCurrentAnimationName();
-            //_controller.Update();
         }
     }
 }

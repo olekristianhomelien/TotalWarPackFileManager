@@ -62,7 +62,9 @@
     <Compile Include="Controls\EditorMainController.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
-    <Compile Include="ViewModels\AnimationElement.cs" />
+    <Compile Include="ViewModels\Animation\AnimationElement.cs" />
+    <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
     <Compile Include="ViewModels\RigidModel\LodHeaderViewModel.cs" />

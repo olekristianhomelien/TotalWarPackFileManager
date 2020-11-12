@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VariantMeshEditor.Controls.EditorControllers.Animation;
 using VariantMeshEditor.ViewModels;
+using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Scene;
 

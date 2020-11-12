@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using VariantMeshEditor.ViewModels;
+using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.RigidModel;
 using Viewer.Scene;
 using static Filetypes.RigidModel.VariantMeshDefinition;

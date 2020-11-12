@@ -7,12 +7,13 @@
              xmlns:viewmodels="clr-namespace:VariantMeshEditor.ViewModels" 
              xmlns:rmwEditor="clr-namespace:VariantMeshEditor.Views.EditorViews.RigidBodyEditor"
              xmlns:rigidViewmodels="clr-namespace:VariantMeshEditor.ViewModels.RigidModel"
+             xmlns:animationViewmodels="clr-namespace:VariantMeshEditor.ViewModels.Animation"
              xmlns:animation="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <DataTemplate DataType="{ x:Type viewmodels:AnimationElement}">
+        <DataTemplate DataType="{ x:Type animationViewmodels:AnimationElement}">
             <animation:AnimationEditorView/>
         </DataTemplate>
 
