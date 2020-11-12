@@ -78,6 +78,9 @@
     <Compile Include="Views\EditorViews\Animation\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationExplorerItemView.xaml.cs">
+      <DependentUpon>AnimationExplorerItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationFragmentExplorerView.xaml.cs">
       <DependentUpon>AnimationFragmentExplorerView.xaml</DependentUpon>
     </Compile>
@@ -130,15 +133,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationExplorerItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditorViews\Animation\AnimationFragmentExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationPlayerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EditorViews\Animation\AnimationExplorerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

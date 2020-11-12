@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util" 
-             xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
+             xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" 
+             xmlns:animation="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -13,7 +14,6 @@
                 <ResourceDictionary Source="../../Styles/FullWidthTreeViewStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
            
-
             <AlternationConverter x:Key="AlternateForegroundConverter">
                 <SolidColorBrush>Transparent</SolidColorBrush>
                 <SolidColorBrush>LightGray</SolidColorBrush>
@@ -40,7 +40,7 @@
                         <TreeView.ItemTemplate >
                             <HierarchicalDataTemplate>
                                 <StackPanel MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ContentPresenter, AncestorLevel=1}}">
-                                    <animationviews:AnimationExplorerItemView 
+                                    <animation:AnimationExplorerItemView 
                                                 Background="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type TreeViewItem}},
                                                 Path=(ItemsControl.AlternationIndex),
                                                 Converter={StaticResource AlternateForegroundConverter}}"/>

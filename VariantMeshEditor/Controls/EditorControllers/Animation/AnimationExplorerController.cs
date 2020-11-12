@@ -67,28 +67,28 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             //oadAnimation(handExplorer, hand);
         }
 
-        AnimationExplorerItemView CreateAnimationExplorer(bool isMainAnimation = false)
-        {
-            return null;
-            //var explorer = _viewModel.AnimationExplorer.CreateAnimationExplorer();
-            //explorer.SkeletonName.Text = "";
-            //explorer.IsMainAnimation = isMainAnimation;
-            //if (isMainAnimation)
-            //    explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
-            //else
-            //    explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
-            //
-            //explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
-            //
-            //explorer.FilterDialog.OnOpeningFirstTime += (sender) => OnAnimationExplorerOpeningFirstTime(sender);
-            //explorer.FilterDialog.OnItemSelected += (item) => OnAnimationSelected(explorer, item);
-            //
-            //explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
-            //explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
-            //
-            //return explorer;
-        }
-
+       // AnimationExplorerItemView CreateAnimationExplorer(bool isMainAnimation = false)
+       // {
+       //     return null;
+       //     //var explorer = _viewModel.AnimationExplorer.CreateAnimationExplorer();
+       //     //explorer.SkeletonName.Text = "";
+       //     //explorer.IsMainAnimation = isMainAnimation;
+       //     //if (isMainAnimation)
+       //     //    explorer.RemoveButton.Visibility = System.Windows.Visibility.Collapsed;
+       //     //else
+       //     //    explorer.RemoveButton.Click += (sender, e) => _viewModel.AnimationExplorer.RemoveAnimationExplorer(explorer);
+       //     //
+       //     //explorer.ErrorBar.Visibility = System.Windows.Visibility.Collapsed;
+       //     //
+       //     //explorer.FilterDialog.OnOpeningFirstTime += (sender) => OnAnimationExplorerOpeningFirstTime(sender);
+       //     //explorer.FilterDialog.OnItemSelected += (item) => OnAnimationSelected(explorer, item);
+       //     //
+       //     //explorer.DynamicFrameCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.DynamicFrameCheckbox.IsChecked.Value; };
+       //     //explorer.StaticFramesCheckbox.Click += (sender, e) => { _animationElement.AnimationPlayer.ApplyDynamicFrames = explorer.StaticFramesCheckbox.IsChecked.Value; };
+       //     //
+       //     //return explorer;
+       // }
+       //
 
         void OnAnimationExplorerOpeningFirstTime(CollapsableFilterControl sender)
         {
@@ -99,52 +99,52 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             //sender.SetItems(_animationsValidForSkeleton, null, (IEnumerable<object> orgList) => { return _animationFiles; });
         }
 
-        bool OnAnimationSelected(AnimationExplorerItemView explorer, object selectedAnimationFile)
-        {
-            var selectedItem = selectedAnimationFile as AnimationListItem;
-            if (selectedItem != null)
-                return LoadAnimation(explorer, selectedItem.File);
-            return false;
-        }
+       //bool OnAnimationSelected(AnimationExplorerItemView explorer, object selectedAnimationFile)
+       //{
+       //    var selectedItem = selectedAnimationFile as AnimationListItem;
+       //    if (selectedItem != null)
+       //        return LoadAnimation(explorer, selectedItem.File);
+       //    return false;
+       //}
 
-        bool LoadAnimation(AnimationExplorerItemView explorer, PackedFile file)
-        {
-            // try
-            // {
-            //     explorer.AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
-            //
-            //     if (explorer.IsMainAnimation)
-            //     {
-            //         _currentAnimationName = file.Name;
-            //         explorer.AnimationExpanderName.Text = "Main animation : " + _currentAnimationName;
-            //     }
-            //     else
-            //     {
-            //         explorer.AnimationExpanderName.Text = "Sub animation : " + file.Name;
-            //     }
-            //    //
-            //    // explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
-            //    // explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
-            //    //
-            //     explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;
-            //     explorer.DynamicFrameCheckbox.IsChecked = explorer.DynamicFrameCheckbox.IsEnabled;
-            //     explorer.DynamicFrameCheckbox.Content = $"Dynamic[{explorer.AnimationFile.DynamicFrames.Count}]";
-            //
-            //     explorer.StaticFramesCheckbox.IsEnabled = explorer.AnimationFile.StaticFrame != null;
-            //     explorer.StaticFramesCheckbox.IsChecked = explorer.StaticFramesCheckbox.IsEnabled;
-            //
-            //     UpdateCurrentAnimation();
-            //     return true;
-            // }
-            // catch (Exception exception)
-            // {
-            //     var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
-            //     //error
-            //     _logger.Error(error);
-            //     return false;
-            // }
-            return false;
-        }
+       //bool LoadAnimation(AnimationExplorerItemView explorer, PackedFile file)
+       //{
+       //    // try
+       //    // {
+       //    //     explorer.AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
+       //    //
+       //    //     if (explorer.IsMainAnimation)
+       //    //     {
+       //    //         _currentAnimationName = file.Name;
+       //    //         explorer.AnimationExpanderName.Text = "Main animation : " + _currentAnimationName;
+       //    //     }
+       //    //     else
+       //    //     {
+       //    //         explorer.AnimationExpanderName.Text = "Sub animation : " + file.Name;
+       //    //     }
+       //    //    //
+       //    //    // explorer.SkeletonName.Text = explorer.AnimationFile.Header.SkeletonName;
+       //    //    // explorer.AnimationType.Text = explorer.AnimationFile.Header.AnimationType.ToString();
+       //    //    //
+       //    //     explorer.DynamicFrameCheckbox.IsEnabled = explorer.AnimationFile.DynamicFrames.Count != 0;
+       //    //     explorer.DynamicFrameCheckbox.IsChecked = explorer.DynamicFrameCheckbox.IsEnabled;
+       //    //     explorer.DynamicFrameCheckbox.Content = $"Dynamic[{explorer.AnimationFile.DynamicFrames.Count}]";
+       //    //
+       //    //     explorer.StaticFramesCheckbox.IsEnabled = explorer.AnimationFile.StaticFrame != null;
+       //    //     explorer.StaticFramesCheckbox.IsChecked = explorer.StaticFramesCheckbox.IsEnabled;
+       //    //
+       //    //     UpdateCurrentAnimation();
+       //    //     return true;
+       //    // }
+       //    // catch (Exception exception)
+       //    // {
+       //    //     var error = $"Error loading skeleton {file.FullPath}:{exception.Message}";
+       //    //     //error
+       //    //     _logger.Error(error);
+       //    //     return false;
+       //    // }
+       //    return false;
+       //}
 
         void UpdateCurrentAnimation()
         {
