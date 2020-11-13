@@ -7,7 +7,6 @@
     
     <DockPanel LastChildFill="False">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-            <TextBlock Text="{Binding Data, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="Frame"/>
             <TextBlock Text="{Binding CurrentFrame, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text=" / "/>
@@ -18,7 +17,11 @@
             <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏮︎</Button>
             <Button Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</Button>
             <Button Command="{Binding NextFrameCommand}" FontSize="20">⏭︎</Button>
-            <ComboBox ItemsSource="{Binding PossibleAnimationSpeeds}" SelectedItem="{Binding SelectedAnimationSpeed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <ComboBox 
+                ItemsSource="{Binding PossibleAnimationSpeeds}" 
+                SelectedItem="{Binding SelectedAnimationSpeed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                DisplayMemberPath="DisplayName"
+                VerticalContentAlignment="Center"/>
         </StackPanel>
         <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center">
             <CheckBox IsChecked="{Binding SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync Animations"/>

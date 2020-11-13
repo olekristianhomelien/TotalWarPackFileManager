@@ -1,10 +1,6 @@
 ﻿using CommonDialogs.Common;
 using GalaSoft.MvvmLight.CommandWpf;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using VariantMeshEditor.Util;
 
@@ -12,8 +8,6 @@ namespace VariantMeshEditor.ViewModels.Animation
 {
     public class AnimationPlayerViewModel : NotifyPropertyChangedImpl
     {
-        public string Data { get; set; } = "Cats are terrible2";
-
         int _currentFrame;
         public int CurrentFrame { get { return _currentFrame; } set { SetAndNotify(ref _currentFrame, value); } }
 
@@ -30,11 +24,11 @@ namespace VariantMeshEditor.ViewModels.Animation
         public bool SyncAllAnimations { get { return _syncAllAnimations; } set { SetAndNotify(ref _syncAllAnimations, value); HandleSyncAllAnimations(); } }
 
 
-        protected List<AnimationSpeed> PossibleAnimationSpeeds { get; set; }
+        public List<AnimationSpeed> PossibleAnimationSpeeds { get; set; }
 
 
         AnimationSpeed _selectedAnimationSpeed;
-        protected AnimationSpeed SelectedAnimationSpeed { get{ return _selectedAnimationSpeed; } set { SetAndNotify(ref _selectedAnimationSpeed, value); HandleAnimationSpeedChanged(); } }
+        public AnimationSpeed SelectedAnimationSpeed { get{ return _selectedAnimationSpeed; } set { SetAndNotify(ref _selectedAnimationSpeed, value); HandleAnimationSpeedChanged(); } }
 
 
         public ICommand PausePlayCommand { get; set; }
@@ -90,8 +84,8 @@ namespace VariantMeshEditor.ViewModels.Animation
         }
 
         void HandleAnimationSpeedChanged()
-        { 
-        
+        {
+            _animationNode.AnimationPlayer.FrameRate = SelectedAnimationSpeed.FrameRate;
         }
 
         void HandleSyncAllAnimations()
@@ -122,14 +116,10 @@ namespace VariantMeshEditor.ViewModels.Animation
         }
 
 
-        protected class AnimationSpeed
+        public class AnimationSpeed
         {
             public double FrameRate { get; set; }
             public string DisplayName { get; set; }
-            public override string ToString()
-            {
-                return DisplayName;
-            }
         }
     }
 }

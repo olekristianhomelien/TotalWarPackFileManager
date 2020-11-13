@@ -10,8 +10,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 {
     public class AnimationElement : FileSceneElement
     {
-        protected AnimationExplorerViewModel AnimationExplorer { get; set; }
-        protected AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
+        public AnimationExplorerViewModel AnimationExplorer { get; set; }
+        public AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;

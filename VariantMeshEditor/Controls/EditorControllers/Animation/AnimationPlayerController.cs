@@ -26,15 +26,15 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
             _viewModel = view;
             CreateAnimationSpeed();
 
-            _viewModel.PlayPauseButton.Click += (sender, e) => OnPlayButtonPressed();
-            _viewModel.NextFrameButton.Click += (sender, e) => NextFrame();
-            _viewModel.PrivFrameButton.Click += (sender, e) => PrivFrame();
-            _viewModel.AnimateInPlaceCheckBox.Click += (sender, e) =>{ _animationElement.AnimationPlayer.AnimateInPlace = _viewModel.AnimateInPlaceCheckBox.IsChecked.Value;};
+            //_viewModel.PlayPauseButton.Click += (sender, e) => OnPlayButtonPressed();
+            //_viewModel.NextFrameButton.Click += (sender, e) => NextFrame();
+            //_viewModel.PrivFrameButton.Click += (sender, e) => PrivFrame();
+            //_viewModel.AnimateInPlaceCheckBox.Click += (sender, e) =>{ _animationElement.AnimationPlayer.AnimateInPlace = _viewModel.AnimateInPlaceCheckBox.IsChecked.Value;};
         }
 
         public void SetAnimation(AnimationClip clip)
         {
-            _viewModel.NoFramesLabel.Content = "/" + clip.KeyFrameCollection.Count();
+          //  _viewModel.NoFramesLabel.Content = "/" + clip.KeyFrameCollection.Count();
             SyncAllAnimations();
         }
 
@@ -83,13 +83,13 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
         }
 
         void CreateAnimationSpeed()
-        {
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = 20.0 / 1000.0, DisplayName = "1x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.5) / 1000.0, DisplayName = "0.5x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.1) / 1000.0, DisplayName = "0.1x" });
-            _viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.01) / 1000.0, DisplayName = "0.01x" });
-            _viewModel.AnimationSpeedComboBox.SelectedIndex = 0;
-            _viewModel.AnimationSpeedComboBox.SelectionChanged += OnAnimationSpeedChanged;
+        {   //
+            //_viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = 20.0 / 1000.0, DisplayName = "1x" });
+            //_viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.5) / 1000.0, DisplayName = "0.5x" });
+            //_viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.1) / 1000.0, DisplayName = "0.1x" });
+            //_viewModel.AnimationSpeedComboBox.Items.Add(new AnimationSpeedItem() { FrameRate = (20.0 / 0.01) / 1000.0, DisplayName = "0.01x" });
+            //_viewModel.AnimationSpeedComboBox.SelectedIndex = 0;
+            //_viewModel.AnimationSpeedComboBox.SelectionChanged += OnAnimationSpeedChanged;
         }
 
         private void OnAnimationSpeedChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -105,9 +105,9 @@ namespace VariantMeshEditor.Controls.EditorControllers.Animation
 
         public void Update()
         {
-            if (_viewModel != null)
-                _viewModel.CurretFrameText.Text = (_animationElement.AnimationPlayer.CurrentFrame + 1).ToString();
-        }
+            //if (_viewModel != null)
+            //    _viewModel.CurretFrameText.Text = (_animationElement.AnimationPlayer.CurrentFrame + 1).ToString();
+        }   //
     }
 
     class AnimationSpeedItem

@@ -97,8 +97,6 @@
                             x:Name="FragmentFilterDialog">
             </filterdialog:CollapsableFilterControl>
 
-            <animationviews:AnimationPlayerView></animationviews:AnimationPlayerView>
-
 
             <Label>Selected Animation : Walk_01</Label>
             <TextBox IsReadOnly="True">Animation fileName</TextBox>
