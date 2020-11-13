@@ -3,29 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" >
+    
     <DockPanel LastChildFill="False">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-            <Label>Frame</Label>
-            <Border BorderBrush="{x:Null}" >
-                <TextBlock x:Name="CurretFrameText"  TextWrapping="NoWrap" Text="12" VerticalAlignment="Center"/>
-            </Border>
-            <Label x:Name="NoFramesLabel">/ 300</Label>
+            <TextBlock Text="{Binding Data, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="Frame"/>
+            <TextBlock Text="{Binding CurrentFrame, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text=" / "/>
+            <TextBlock Text="{Binding MaxFames, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-            <Button x:Name="PrivFrameButton" FontSize="20" >⏮︎</Button>
-            <Button x:Name="PlayPauseButton" FontSize="20">⏯︎</Button>
-            <Button x:Name="NextFrameButton" FontSize="20">⏭︎</Button>
-            <ComboBox x:Name="AnimationSpeedComboBox"></ComboBox>
+            <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏮︎</Button>
+            <Button Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</Button>
+            <Button Command="{Binding NextFrameCommand}" FontSize="20">⏭︎</Button>
+            <ComboBox ItemsSource="{Binding PossibleAnimationSpeeds}" SelectedItem="{Binding SelectedAnimationSpeed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-            <CheckBox x:Name="SyncAnimationCheckbox">Sync Animations</CheckBox>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
-            <CheckBox x:Name="AnimateInPlaceCheckBox" IsChecked="true">Animate in place</CheckBox>
+        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center">
+            <CheckBox IsChecked="{Binding SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync Animations"/>
+            <CheckBox IsChecked="{Binding AnimateInPlace, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Animate in place"/>
         </StackPanel>
     </DockPanel>
 </UserControl>

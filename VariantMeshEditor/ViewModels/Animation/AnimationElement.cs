@@ -1,51 +1,21 @@
-﻿using Common;
-using CommonDialogs.Common;
-using Filetypes.ByteParsing;
-using Filetypes.RigidModel;
-using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Xna.Framework;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Microsoft.Xna.Framework;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Input;
-using VariantMeshEditor.Controls.EditorControllers.Animation;
 using VariantMeshEditor.Util;
 using Viewer.Animation;
 using Viewer.Scene;
 using WpfTest.Scenes;
-using static CommonDialogs.FilterDialog.FilterUserControl;
 
 namespace VariantMeshEditor.ViewModels.Animation
 {
-
-    
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public class AnimationElement : FileSceneElement
     {
-        public AnimationExplorerViewModel AnimationExplorer { get; set; }
-
-        public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
+        protected AnimationExplorerViewModel AnimationExplorer { get; set; }
+        protected AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
 
+        public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
+        
 
         public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation")
         {
@@ -57,15 +27,16 @@ namespace VariantMeshEditor.ViewModels.Animation
             var skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this);
             if (skeleton.Count == 1)
             {
-                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayer);
+                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), this);
+                AnimationPlayerViewModel = new AnimationPlayerViewModel(this);
             }
         }
 
         protected override void UpdateNode(GameTime time)
         {
             AnimationPlayer.Update(time);
-            //DisplayName = "Animation - " + _controller.GetCurrentAnimationName();
-            //_controller.Update();
+            if (AnimationPlayerViewModel != null)
+                AnimationPlayerViewModel.Update();
         }
     }
 }

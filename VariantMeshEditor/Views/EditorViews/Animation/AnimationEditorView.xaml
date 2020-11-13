@@ -23,7 +23,7 @@
     </UserControl.Resources>
 
     <DockPanel LastChildFill="true">
-        <animationviews:AnimationPlayerView x:Name="Player" DockPanel.Dock="Top"></animationviews:AnimationPlayerView>
+        <animationviews:AnimationPlayerView  DataContext="{Binding Path=AnimationPlayerViewModel}" DockPanel.Dock="Top"/>
 
         <TabControl DockPanel.Dock="Top">
             <TabItem Header="Animation Explorer">

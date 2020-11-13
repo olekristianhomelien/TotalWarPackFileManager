@@ -65,6 +65,7 @@
     <Compile Include="ViewModels\Animation\AnimationElement.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationPlayerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
     <Compile Include="ViewModels\RigidModel\LodHeaderViewModel.cs" />
