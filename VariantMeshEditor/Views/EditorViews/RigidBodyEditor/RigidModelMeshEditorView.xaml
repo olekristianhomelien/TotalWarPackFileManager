@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Util" 
+             xmlns:enumValue="clr-namespace:Filetypes.RigidModel;assembly=FileTypes"
              mc:Ignorable="d">
 
     <DockPanel LastChildFill="False">
@@ -26,10 +27,10 @@
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Has Pivot = "/>
-                        <TextBlock Text="true"/>
+                        <TextBlock Text="{Binding TransformHasPivot, UpdateSourceTrigger=PropertyChanged}"/>
                         <TextBlock Text=" ⁞ "/>
                         <TextBlock Text="IdentityMatrix = "/>
-                        <TextBlock Text="false"/>
+                        <TextBlock Text="{Binding TransformHasIdentityMatrices, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </Expander.Header>
                 <StackPanel>
@@ -38,9 +39,9 @@
 
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <local:Matrix3x4View MatrixData="{Binding TransformMatrixA, UpdateSourceTrigger=PropertyChanged}"/>
-                        <local:Matrix3x4View MatrixData="{Binding TransformMatrixB, UpdateSourceTrigger=PropertyChanged}"/>
-                        <local:Matrix3x4View MatrixData="{Binding TransformMatrixC, UpdateSourceTrigger=PropertyChanged}"/>
+                        <local:Matrix3x4View MatrixData="{Binding TransformMatrix[0], UpdateSourceTrigger=PropertyChanged}"/>
+                        <local:Matrix3x4View MatrixData="{Binding TransformMatrix[1], UpdateSourceTrigger=PropertyChanged}"/>
+                        <local:Matrix3x4View MatrixData="{Binding TransformMatrix[2], UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </StackPanel>
             </Expander>
@@ -68,7 +69,24 @@
             <Label Width="100">Attachments</Label>
             <Label>:</Label>
             <Expander>
-                <ListView ItemsSource="{Binding AttachmentPoints}" ></ListView>
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Count = "/>
+                        <TextBlock Text="{Binding AttachmentPoints.Count, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </Expander.Header>
+
+                <ListView ItemsSource="{Binding AttachmentPoints}" MaxHeight="350" >
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="BoneIndex" DisplayMemberBinding="{Binding BoneIndex}"/>
+                        </GridView>
+                    </ListView.View>
+
+                    
+                </ListView>
             </Expander>
         </StackPanel>
 
@@ -81,14 +99,55 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Width="100">Alpha Mode</Label>
             <Label>:</Label>
-            <ComboBox  VerticalAlignment="Center"/>
+            <ComboBox  VerticalAlignment="Center" ItemsSource="{Binding PossibleAlphaModes}" SelectedItem="{Binding SelectedAlphaMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
         </StackPanel>
 
-        <local:BrowsableItemView DisplayPreviewButton="False" DisplayRemoveButton="False" DockPanel.Dock="Top" LabelLength="100" LabelName="Texture Directory"></local:BrowsableItemView>
-        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Diffuse"></local:BrowsableItemView>
-        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Specular"></local:BrowsableItemView>
-        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Gloss"></local:BrowsableItemView>
-        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Normal"></local:BrowsableItemView>
+        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Texture Directory"
+                                 PathTextReadOnly="true"
+                                 DisplayRemoveButton="False" 
+                                 DisplayPreviewButton="False" 
+                                 Browse="{Binding BrowseTextureDirCommand}" 
+                                 PathText="{Binding Path=TextureDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Diffuse"
+                                 DisplayCheckBox="True" 
+                                 PathTextReadOnly="true"
+                                 Preview="{Binding PreviewCommand}" 
+                                 Browse="{Binding BrowseCommand}" 
+                                 Remove="{Binding RemoveCommand}" 
+                                 CheckBoxValue="{Binding Path=Textures[(enumValue:TexureType)Diffuse].UseTexture, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 ItemValue="{Binding Path=Textures[(enumValue:TexureType)Diffuse]}" 
+                                 PathText="{Binding Path=Textures[(enumValue:TexureType)Diffuse].Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Specular"
+                                 DisplayCheckBox="True" 
+                                 PathTextReadOnly="true"
+                                 Preview="{Binding PreviewCommand}" 
+                                 Browse="{Binding BrowseCommand}" 
+                                 Remove="{Binding RemoveCommand}" 
+                                 CheckBoxValue="{Binding Path=Textures[(enumValue:TexureType)Specular].UseTexture, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 ItemValue="{Binding Path=Textures[(enumValue:TexureType)Specular]}" 
+                                 PathText="{Binding Path=Textures[(enumValue:TexureType)Specular].Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+       
+        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Gloss"                                
+                                 DisplayCheckBox="True" 
+                                 PathTextReadOnly="true"
+                                 Preview="{Binding PreviewCommand}" 
+                                 Browse="{Binding BrowseCommand}" 
+                                 Remove="{Binding RemoveCommand}" 
+                                 CheckBoxValue="{Binding Path=Textures[(enumValue:TexureType)Gloss].UseTexture, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 ItemValue="{Binding Path=Textures[(enumValue:TexureType)Gloss]}" 
+                                 PathText="{Binding Path=Textures[(enumValue:TexureType)Gloss].Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <local:BrowsableItemView DockPanel.Dock="Top" LabelLength="100" LabelName="Normal"                                 
+                                 DisplayCheckBox="True" 
+                                 PathTextReadOnly="true"
+                                 Preview="{Binding PreviewCommand}" 
+                                 Browse="{Binding BrowseCommand}" 
+                                 Remove="{Binding RemoveCommand}" 
+                                 CheckBoxValue="{Binding Path=Textures[(enumValue:TexureType)Normal].UseTexture, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 ItemValue="{Binding Path=Textures[(enumValue:TexureType)Normal]}" 
+                                 PathText="{Binding Path=Textures[(enumValue:TexureType)Normal].Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
     </DockPanel>
 </UserControl>

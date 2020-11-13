@@ -55,13 +55,13 @@
                 <DockPanel Grid.Column="0">
                     <Label Width="70">Skeleton</Label>
                     <Label>:</Label>
-                    <TextBlock x:Name="SkeletonName"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                    <TextBlock TextWrapping="NoWrap" VerticalAlignment="Center" Text="{Binding SkeletonName, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
 
                 <DockPanel  Grid.Column="1">
                     <Label>Version</Label>
                     <Label>:</Label>
-                    <TextBlock x:Name="AnimationType"  TextWrapping="NoWrap" VerticalAlignment="Center"/>
+                    <TextBlock TextWrapping="NoWrap" VerticalAlignment="Center" Text="{Binding AnimationVersion, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
             </Grid>
 

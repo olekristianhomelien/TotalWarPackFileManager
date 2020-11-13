@@ -12,28 +12,31 @@
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="50" Height="auto"></RowDefinition>
+            <RowDefinition MaxHeight="50" Height="auto"/>
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0"  Content="{Binding LabelName, ElementName=self}" Width="{Binding LabelLength, ElementName=self}"/>
         <Label Grid.Column="1">:</Label>
 
-        <CheckBox Grid.Column="2" x:Name="CheckBox" Visibility="Collapsed" VerticalAlignment="Center"></CheckBox>
+        <CheckBox Grid.Column="2"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding DisplayCheckBox,  ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" 
+                  IsChecked="{Binding CheckBoxValue,  ElementName=self, Mode=TwoWay}"/>
         <Border x:Name="b" Grid.Column="3"/>
         <TextBox  Grid.Column="3" IsReadOnly="{Binding PathTextReadOnly, ElementName=self}" TextWrapping="NoWrap" VerticalAlignment="Center" Text="{Binding PathText, ElementName=self}" Width="{Binding ActualWidth, ElementName=b}"/>
 
-        <Button Grid.Column="4" Visibility="{Binding DisplayRemoveButton,  ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Remove, ElementName=self}" CommandParameter="{Binding}" DockPanel.Dock="Right" Width="50" >Remove</Button>
-        <Button Grid.Column="5" Visibility="{Binding DisplayBrowseButton,  ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Browse, ElementName=self}" CommandParameter="{Binding}" DockPanel.Dock="Right" Width="50" >Browse</Button>
-        <Button Grid.Column="6" Visibility="{Binding DisplayPreviewButton, ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Preview, ElementName=self}" CommandParameter="{Binding}" DockPanel.Dock="Right" Width="50" >Preview</Button>
-    </Grid>
+        <Button Grid.Column="4" Visibility="{Binding DisplayRemoveButton,  ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Remove,  ElementName=self}" CommandParameter="{Binding ItemValue, ElementName=self}" DockPanel.Dock="Right" Width="50" >Remove</Button>
+        <Button Grid.Column="5" Visibility="{Binding DisplayBrowseButton,  ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Browse,  ElementName=self}" CommandParameter="{Binding ItemValue, ElementName=self}" DockPanel.Dock="Right" Width="50" >Browse</Button>
+        <Button Grid.Column="6" Visibility="{Binding DisplayPreviewButton, ElementName=self, Converter={StaticResource BoolToHiddenConverter}}" Command="{Binding Preview, ElementName=self}" CommandParameter="{Binding ItemValue, ElementName=self}" DockPanel.Dock="Right" Width="50" >Preview</Button>
+    </Grid>                                                                                                                                                                                                         
     
 </UserControl>

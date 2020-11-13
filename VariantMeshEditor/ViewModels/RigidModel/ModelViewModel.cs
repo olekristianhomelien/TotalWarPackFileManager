@@ -27,7 +27,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         public ICommand RemoveCommand { get; set; }
         public ICommand BrowseCommand { get; set; }
         public ICommand PreviewCommand { get; set; }
-
+        public ICommand BrowseTextureDirCommand { get; set; }
 
         // View Model properties
         // ------------------------
@@ -45,14 +45,18 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         Vector3ViewData _pivot;
         public Vector3ViewData Pivot { get { return _pivot; } set { SetAndNotify(ref _pivot, value); } }
 
-        FileMatrix3x4ViewData _transformMatrixA;
-        public FileMatrix3x4ViewData TransformMatrixA { get { return _transformMatrixA; } set { SetAndNotify(ref _transformMatrixA, value); } }
+        FileMatrix3x4ViewData[] _transformMatrix = new FileMatrix3x4ViewData[3];
+        public FileMatrix3x4ViewData[] TransformMatrix { get { return _transformMatrix; } }
 
-        FileMatrix3x4ViewData _transformMatrixB;
-        public FileMatrix3x4ViewData TransformMatrixB { get { return _transformMatrixB; } set { SetAndNotify(ref _transformMatrixB, value); } }
 
-        FileMatrix3x4ViewData _transformMatrixC;
-        public FileMatrix3x4ViewData TransformMatrixC { get { return _transformMatrixC; } set { SetAndNotify(ref _transformMatrixC, value); } }
+        public bool TransformHasPivot { get { return !LodModelInstance.Transformation.IsIdentityPivot(); } }
+        public bool TransformHasIdentityMatrices { get { return LodModelInstance.Transformation.IsIdentityMatrices(); } }
+
+
+
+
+
+        public Dictionary<TexureType, string> TextureTest { get; set; } = new Dictionary<TexureType, string>();
 
 
         public VertexFormat VertexFormat { get { return LodModelInstance.VertexFormat; } }
@@ -63,14 +67,16 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         ObservableCollection<RigidModelAttachmentPoint> _attachmentPoints;
         public ObservableCollection<RigidModelAttachmentPoint> AttachmentPoints { get { return _attachmentPoints; } set { SetAndNotify(ref _attachmentPoints, value); } }
 
+
+        public List<AlphaMode> PossibleAlphaModes { get { return new List<AlphaMode> { AlphaMode.Alpha_Blend, AlphaMode.Alpha_Test, AlphaMode.Opaque }; } }
+        public AlphaMode SelectedAlphaMode { get { return LodModelInstance.AlphaMode; } set { LodModelInstance.AlphaMode = value; NotifyPropertyChanged();  } }
+
         public string ShaderName { get { return LodModelInstance.ShaderName; } }
 
-        public string TextureDirectory { get; set; }
-        public FileTextureViewModel DiffuseTexture { get; set; }
-        public FileTextureViewModel SpecularTexture { get; set; }
-        public FileTextureViewModel GlossTexture { get; set; }
-        public FileTextureViewModel NormalTexture { get; set; }
-        public FileTextureViewModel MaskTexture { get; set; }
+        public string TextureDirectory { get { return LodModelInstance.TextureDirectory; } set { LodModelInstance.TextureDirectory = value; NotifyPropertyChanged(); } }
+
+
+        public Dictionary<TexureType, FileTextureViewModel> Textures { get; set; } = new Dictionary<TexureType, FileTextureViewModel>();
 
         public string ModelName { get { return LodModelInstance.ModelName; } }
 
@@ -83,28 +89,41 @@ namespace VariantMeshEditor.ViewModels.RigidModel
             LodModelInstance = lodModelInstance;
             RenderInstance = renderInstance;
             Pivot = new Vector3ViewData(LodModelInstance.Transformation.Pivot, "Pivot");
-            TransformMatrixA = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[0], "Matrix A");
-            TransformMatrixB = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[1], "Matrix B");
-            TransformMatrixC = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[2], "Matrix C");
+            TransformMatrix[0] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[0], "Matrix A");
+            TransformMatrix[1] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[1], "Matrix B");
+            TransformMatrix[2] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[2], "Matrix C");
             AttachmentPoints = new ObservableCollection<RigidModelAttachmentPoint>(LodModelInstance.AttachmentPoint);
 
-            BrowseCommand = new RelayCommand<RigidModelElement>(OnBrowseCommand);
-            RemoveCommand = new RelayCommand<RigidModelElement>(OnRemoveCommand);
-            PreviewCommand = new RelayCommand<RigidModelElement>(OnPreviewCommand);
+            foreach (var texture in LodModelInstance.Textures)
+                Textures.Add(texture.Type, new FileTextureViewModel() { Path = texture.Name, RenderInstance = renderInstance });
+
+            BrowseCommand = new RelayCommand<FileTextureViewModel>(OnBrowseCommand);
+            BrowseTextureDirCommand = new RelayCommand<FileTextureViewModel>(OnBrowseTextureDirCommand);
+            RemoveCommand = new RelayCommand<FileTextureViewModel>(OnRemoveCommand);
+            PreviewCommand = new RelayCommand<FileTextureViewModel>(OnPreviewCommand);
+
         }
 
-        void OnRemoveCommand(RigidModelElement element)
+        void OnBrowseTextureDirCommand(FileTextureViewModel element)
         {
 
         }
 
-        void OnBrowseCommand(RigidModelElement element)
+        void OnBrowseCommand(FileTextureViewModel element)
         {
 
         }
 
+        void OnRemoveCommand(FileTextureViewModel element)
+        {
+            element.Path = "";
+        }
 
-        void OnPreviewCommand(RigidModelElement element)
+
+
+
+
+        void OnPreviewCommand(FileTextureViewModel element)
         {
 
         }

@@ -17,40 +17,19 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         // ------------------------
         public TextureMeshRenderItem RenderInstance { get; set; }
 
-
-        // Commands
-        // ------------------------
-        public ICommand RemoveCommand { get; set; }
-        public ICommand BrowseCommand { get; set; }
-        public ICommand PreviewCommand { get; set; }
-
-
         // View Model properties
         // ------------------------
-        public TexureType Type { get; set; }
-        public string Path { get; set; }
 
+        public string _path;
+        public string Path { get { return _path; } set { SetAndNotify(ref _path, value); } }
+
+
+        public bool _useTexture = true;
+        public bool UseTexture { get { return _useTexture; } set { SetAndNotify(ref _useTexture, value); } }
 
         public FileTextureViewModel()
         {
-            BrowseCommand = new RelayCommand<RigidModelElement>(OnBrowseCommand);
-            RemoveCommand = new RelayCommand<RigidModelElement>(OnRemoveCommand);
-            PreviewCommand = new RelayCommand<RigidModelElement>(OnPreviewCommand);
-        }
 
-
-
-        void OnRemoveCommand(RigidModelElement element)
-        {
-        }
-
-        void OnBrowseCommand(RigidModelElement element)
-        {
-        }
-
-
-        void OnPreviewCommand(RigidModelElement element)
-        {
         }
     }
 }

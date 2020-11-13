@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace VariantMeshEditor.Views.EditorViews.Util
 {
@@ -75,7 +63,12 @@ namespace VariantMeshEditor.Views.EditorViews.Util
             set { SetValue(PathTextReadOnlyProperty, value); }
         }
 
-
+        public static readonly DependencyProperty ItemValueProperty = DependencyProperty.Register("ItemValue", typeof(object), typeof(BrowsableItemView), new UIPropertyMetadata(null));
+        public object ItemValue
+        {
+            get { return (object)GetValue(ItemValueProperty); }
+            set { SetValue(ItemValueProperty, value); }
+        }
 
 
         public static readonly DependencyProperty DisplayRemoveButtonProperty = DependencyProperty.Register("DisplayRemoveButton", typeof(bool), typeof(BrowsableItemView), new UIPropertyMetadata(null));
@@ -98,6 +91,24 @@ namespace VariantMeshEditor.Views.EditorViews.Util
             get { return (bool)GetValue(DisplayBrowseButtonProperty); }
             set { SetValue(DisplayBrowseButtonProperty, value); }
         }
+
+
+
+
+        public static readonly DependencyProperty DisplayCheckBoxProperty = DependencyProperty.Register("DisplayCheckBox", typeof(bool), typeof(BrowsableItemView), new PropertyMetadata(false));
+        public bool DisplayCheckBox
+        {
+            get { return (bool)GetValue(DisplayCheckBoxProperty); }
+            set { SetValue(DisplayCheckBoxProperty, value); }
+        }
+
+        public static readonly DependencyProperty CheckBoxValueProperty = DependencyProperty.Register("CheckBoxValue", typeof(bool), typeof(BrowsableItemView), new PropertyMetadata(false));
+        public bool CheckBoxValue
+        {
+            get { return (bool)GetValue(CheckBoxValueProperty); }
+            set { SetValue(CheckBoxValueProperty, value); }
+        }
+
 
         public BrowsableItemView()
         {
