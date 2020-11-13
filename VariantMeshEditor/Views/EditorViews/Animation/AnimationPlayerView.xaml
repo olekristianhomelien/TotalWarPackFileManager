@@ -5,17 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" >
     
-    <DockPanel LastChildFill="False">
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
+    <StackPanel >
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock Text="Frame"/>
             <TextBlock Text="{Binding CurrentFrame, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text=" / "/>
             <TextBlock Text="{Binding MaxFames, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Center">
+        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
             <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏮︎</Button>
-            <Button Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</Button>
+            <ToggleButton Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</ToggleButton>
             <Button Command="{Binding NextFrameCommand}" FontSize="20">⏭︎</Button>
             <ComboBox 
                 ItemsSource="{Binding PossibleAnimationSpeeds}" 
@@ -23,9 +23,9 @@
                 DisplayMemberPath="DisplayName"
                 VerticalContentAlignment="Center"/>
         </StackPanel>
-        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center">
             <CheckBox IsChecked="{Binding SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync Animations"/>
             <CheckBox IsChecked="{Binding AnimateInPlace, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Animate in place"/>
         </StackPanel>
-    </DockPanel>
+    </StackPanel>
 </UserControl>

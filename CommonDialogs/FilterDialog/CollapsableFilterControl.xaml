@@ -20,10 +20,10 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  Content="{Binding LabelText, ElementName=self}" ></Label>
+        <Label Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  Content="{Binding LabelText, ElementName=self}" />
         <Label Grid.Row="0" Grid.Column="1">:</Label>
 
-        <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName" VerticalContentAlignment="Center"/>
+        <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName" VerticalContentAlignment="Center" IsReadOnly="True"/>
         <Button Grid.Row="0" Grid.Column="3" x:Name="BrowseButton" DockPanel.Dock="Right" Width="70">Browse</Button>
 
         <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3">

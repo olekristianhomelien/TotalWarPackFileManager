@@ -69,6 +69,7 @@
                 SelectedItem="{Binding SelectedAnimationPackFile, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                 SearchItems="{Binding FilterList, UpdateSourceTrigger=PropertyChanged}"     
                 OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                IsManipulationEnabled="False"
                 LabelTotalWidth="70"   
                 DisplayMemberPath="FullPath"
                 DockPanel.Dock="top"
