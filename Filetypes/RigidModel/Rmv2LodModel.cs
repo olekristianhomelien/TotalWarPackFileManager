@@ -47,10 +47,15 @@ namespace Filetypes.RigidModel
             return str;
         }
 
-        public bool IsIdentity()
+        public bool IsIdentityPivot()
         {
             if (!Pivot.IsAllZero())
                 return false;
+            return true;
+        }
+
+        public bool IsIdentityMatrices()
+        {
             foreach (var matrix in Matrices)
             {
                 if (!matrix.IsIdentity())
@@ -84,6 +89,16 @@ namespace Filetypes.RigidModel
             return false;
         }
 
+        public string GetAsDebugStr()
+        {
+            var str = "";
+            str += $"{Matrix[0].X},{Matrix[0].Y},{Matrix[0].Z},{Matrix[0].W} ";
+            str += $"{Matrix[1].X},{Matrix[1].Y},{Matrix[1].Z},{Matrix[1].W} ";
+            str += $"{Matrix[2].X},{Matrix[2].Y},{Matrix[2].Z},{Matrix[2].W} ";
+            return str;
+        }
+
+
     }
 
     public class Rmv2LodModel
@@ -97,6 +112,7 @@ namespace Filetypes.RigidModel
         public uint FaceCount { get; set; }
         public uint FaceOffset { get; set; }
         public uint VertexFormatValue { get; set; }
+        public int VertexSize { get; set; }
         public VertexFormat VertexFormat { get; set; } = VertexFormat.Unknown;
         public string ShaderName { get; set; }
         public byte[] Unknown_Shaderarameters { get; set; }
@@ -118,10 +134,9 @@ namespace Filetypes.RigidModel
         public byte[] ZeroPadding2;
 
         public uint ModelSize;
-        public uint Unknown2;
 
-        public uint Unknown2_val0;
-        public uint Unknown2_val1;
+        public byte Unknown2_val0;
+        public byte Unknown2_val1;
 
         public int AnimationFrameForDestructableBodies;
         public int Flag_alwaysNegativeOne;
@@ -143,6 +158,7 @@ namespace Filetypes.RigidModel
             lodModel.VertexCount = chunk.ReadUInt32();
             lodModel.FaceOffset = chunk.ReadUInt32();
             lodModel.FaceCount = chunk.ReadUInt32();
+            lodModel.VertexSize = (int)((lodModel.FaceOffset - lodModel.VertexOffset) / lodModel.VertexCount);
 
             lodModel.BoundingBox = BoundingBox.Create(chunk);
 
@@ -158,7 +174,8 @@ namespace Filetypes.RigidModel
             lodModel.TextureDirectory = Util.SanatizeFixedString(chunk.ReadFixedLength(256));  
             lodModel.ZeroPadding0 = chunk.ReadBytes(256);
 
-            lodModel.Unknown2 = chunk.ReadUShort();
+            lodModel.Unknown2_val0 = chunk.ReadByte();
+            lodModel.Unknown2_val1 = chunk.ReadByte();
             lodModel.Transformation = LoadTransformations(chunk);
             lodModel.AnimationFrameForDestructableBodies = chunk.ReadInt32();       // Keep -1 for most stuff. Might not be the frame, but the value is only there for things that can be destroyed
             lodModel.Flag_alwaysNegativeOne = chunk.ReadInt32();
@@ -365,7 +382,8 @@ namespace Filetypes.RigidModel
                     case 4:
                         return CreateCinematicVertex(chunk, count);
                     default:
-                        throw new NotImplementedException();
+                        chunk.Index += (int)(model.FaceOffset - model.VertexOffset);
+                        return null;
                 }
             }
             else
@@ -382,7 +400,8 @@ namespace Filetypes.RigidModel
                         chunk.Index += (int)count * 32;
                         return null;
                     default:
-                        throw new NotImplementedException();
+                        chunk.Index += (int)(model.FaceOffset - model.VertexOffset);
+                        return null;
                 }
             }
 

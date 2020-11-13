@@ -42,6 +42,10 @@ namespace VariantMeshEditor
 
         public void SetPackFiles(List<PackFile> packFiles)
         {
+
+
+
+
             _mainController = new EditorMainController(RenderView.Scene, RootViewModel, packFiles);
         }
 

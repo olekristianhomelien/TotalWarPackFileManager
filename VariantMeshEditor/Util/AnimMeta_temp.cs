@@ -7,91 +7,50 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Viewer.Scene;
 
 namespace VariantMeshEditor.Util
 {
-    class AnimMeta_temp
+    public class DumpRmv2Files
     {
-
-        void start2()
+        public void Dump(ResourceLibary resourceLibary, string outputDirectory)
         {
+            Directory.CreateDirectory(outputDirectory);
 
-            //_scene3d = scene3d;
-            //RootViewModel = rootViewModel;
-            //
-            //List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
-            //
-            //_resourceLibary = new ResourceLibary(loadedContent);
-            //
-            //try
-            //{
-            //
-            //
-            //    var data = File.ReadAllBytes(@"C:\Users\ole_k\Desktop\ModelDecoding\ModelsWithMaterials\foobar.rigid_model_");
-            //    ByteChunk chunk = new ByteChunk(data);
-            //    var model3d = RigidModel.Create(chunk, out string errorMessage);
-            //}
-            //catch (Exception e)
-            //{
-            //
-            //
-            //}
+            Dictionary<string, string> errorList = new Dictionary<string, string>();
+            List<string> completedList = new List<string>();
+            var files = PackFileLoadHelper.GetAllWithExtention(resourceLibary.PackfileContent, "rigid_model_v2");
 
-            // 
-            // 
-            // 
-            //  Dictionary<string, string> errorList = new Dictionary<string, string>();
-            //  List<string> completedList = new List<string>();
-            //  var files = PackFileLoadHelper.GetAllWithExtention(loadedContent, "rigid_model_v2");
-            // 
-            // using (FileStream output = new FileStream(@"c:\temp\allModelDataHeaderInfo_3.csv", FileMode.OpenOrCreate))
-            // {
-            //     CreateHeader(output);
-            // 
-            //     int counter = 0;
-            //     foreach (var file in files)
-            //     {
-            //         var result = Export(file, output);
-            //         if (result.Item1 == false)
-            //             errorList.Add(file.FullPath, result.Item2);
-            //         else
-            //             completedList.Add(file.FullPath);
-            //     
-            //         counter++;
-            // 
-            //     }
-            // }
-            //   
-        }
+            using (FileStream output = new FileStream(outputDirectory + "allModelInfo.csv", FileMode.OpenOrCreate))
+            {
+                CreateHeader(output);
 
-        void Start()
-        {
-            /*var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+                int counter = 0;
+                foreach (var file in files)
+                {
+                    var result = Export(file, output);
+                    if (result.Item1 == false)
+                        errorList.Add(file.FullPath, result.Item2);
+                    else
+                        completedList.Add(file.FullPath);
 
-    var res = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "meta").Where(x => x.Name.Contains("anm.meta")).ToList();
+                    counter++;
+                }
+            }
 
+            using (FileStream output = new FileStream(outputDirectory + "Errors.csv", FileMode.OpenOrCreate))
+            {
+                WriteString(output, "Path");
+                WriteString(output, "Error");
+                WriteNewLine(output);
 
-
-    try
-    {
-        AnmMetaParser parser = new AnmMetaParser();
-        parser.ParesFiles(res);
-    }
-    catch (Exception e)
-    {
-
-    }
-
-
-    try
-    {var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
-        AnimPackLoader loader = new AnimPackLoader();
-        loader.Load(new ByteChunk(file.Data));
-    }
-    catch (Exception e)
-    {
-
-    }*/
+                foreach (var item in errorList)
+                {
+                    WriteString(output, item.Key);
+                    WriteString(output, item.Value);
+                    WriteNewLine(output);
+                }
+            }
         }
 
         #region Export, clean later
@@ -151,7 +110,6 @@ namespace VariantMeshEditor.Util
                     }
                 }
 
-
                 return (true, "");
             }
             catch (Exception e)
@@ -173,28 +131,42 @@ namespace VariantMeshEditor.Util
         void CreateHeader(FileStream fileStream)
         {
             WriteString(fileStream, "Path");
+            WriteString(fileStream, "ModelName");
+
             WriteString(fileStream, "LodId");
             WriteString(fileStream, "GroupId");
-            WriteString(fileStream, "ModelName");
+            
             WriteString(fileStream, "ModelSize");
-            WriteString(fileStream, "MaterialId");
+            WriteString(fileStream, "MaterialType");
 
+            WriteString(fileStream, "VertexFormat");
             WriteString(fileStream, "VertexCount");
+            WriteString(fileStream, "VertexSize");
             WriteString(fileStream, "IndexCount");
 
             WriteString(fileStream, "ShaderName");
             WriteString(fileStream, "ShaderProperties");
+            WriteString(fileStream, "ZeroShaderProperties");
 
-            WriteString(fileStream, "VertexFormat");
+            WriteString(fileStream, "Unknown_byte0");
+            WriteString(fileStream, "Unknown_byte1");
 
-            WriteString(fileStream, "Unknown2");
+            WriteString(fileStream, "DefaultPivot");
             WriteString(fileStream, "TransformationIdentity");
             WriteString(fileStream, "Transformation");
             WriteString(fileStream, "AnimationFrameForDestructableBodies");
 
-
             WriteString(fileStream, "MaterialCount");
-            WriteString(fileStream, "BoneCount");
+            WriteString(fileStream, "NumAttachmentPointThatIsNotIdent");
+            WriteString(fileStream, "AttachmentPointCount");
+
+            for (int i = 0; i < 15; i++)
+            {
+                WriteString(fileStream, "AttachmentPointName" + i);
+                WriteString(fileStream, "AttachmentPointIsIdentity" + i);
+                WriteString(fileStream, "AttachmentPointTransform" + i);
+                WriteString(fileStream, "AttachmentPointBoneIndex" + i);
+            }
 
             WriteString(fileStream, "AlphaValue");
             WriteString(fileStream, "AlphaMode");
@@ -207,39 +179,103 @@ namespace VariantMeshEditor.Util
 
         void Serialize(FileStream fileStream, Rmv2LodModel model, string fillPath, int groupId, int lodLvl)
         {
-            WriteString(fileStream, fillPath);
-            WriteString(fileStream, lodLvl.ToString());
-            WriteString(fileStream, groupId.ToString());
-            WriteString(fileStream, model.ModelName);
-            WriteString(fileStream, model.ModelSize.ToString());
-            WriteString(fileStream, model.MaterialId.ToString());
-
-            WriteString(fileStream, model.VertexCount.ToString());
-            WriteString(fileStream, model.FaceCount.ToString());
-
-            WriteString(fileStream, model.ShaderName.ToString());
+            WriteString(fileStream, fillPath);                                              //WriteString(fileStream, "Path");
+            WriteString(fileStream, model.ModelName);                                       //WriteString(fileStream, "ModelName");
+            
+            WriteString(fileStream, lodLvl.ToString());                                     //WriteString(fileStream, "LodId");
+            WriteString(fileStream, groupId.ToString());                                    //WriteString(fileStream, "GroupId");
+            
+            WriteString(fileStream, model.ModelSize.ToString());                            //WriteString(fileStream, "ModelSize");
+            WriteString(fileStream, model.MaterialId.ToString());                           //WriteString(fileStream, "MaterialType");
+            
+            WriteString(fileStream, model.VertexFormat.ToString());                         //WriteString(fileStream, "VertexFormat");
+            WriteString(fileStream, model.VertexCount.ToString());                          //WriteString(fileStream, "VertexCount");
+            WriteString(fileStream, model.VertexSize.ToString());                           //WriteString(fileStream, "VertexSize");
+            WriteString(fileStream, model.FaceCount.ToString());                            //WriteString(fileStream, "IndexCount");
+            //
+            WriteString(fileStream, model.ShaderName.ToString());                                   //WriteString(fileStream, "ShaderName");
             var shaderPrmStr = string.Join("\t", model.Unknown_Shaderarameters.Select(x => (int)x));
-            WriteString(fileStream, shaderPrmStr);
+            WriteString(fileStream, shaderPrmStr);                                                  //WriteString(fileStream, "ShaderProperties");
+            var shaderPrmStrZero = string.Join("\t", model.AllZero_Shaderarameters.Select(x => (int)x));
+            WriteString(fileStream, shaderPrmStrZero);                                              //WriteString(fileStream, "ZeroShaderProperties");
 
-            WriteString(fileStream, model.VertexFormat.ToString());
+            WriteString(fileStream, model.Unknown2_val0.ToString());                                //WriteString(fileStream, "Unknown_byte0");
+            WriteString(fileStream, model.Unknown2_val1.ToString());                                //WriteString(fileStream, "Unknown_byte1");
 
-            WriteString(fileStream, model.Unknown2.ToString());
-            WriteString(fileStream, model.Transformation.IsIdentity().ToString());
-            WriteString(fileStream, model.Transformation.GetAsDebugStr());
-            WriteString(fileStream, model.AnimationFrameForDestructableBodies.ToString());
+            WriteString(fileStream, model.Transformation.IsIdentityPivot().ToString());             //WriteString(fileStream, "DefaultPivot");
+            WriteString(fileStream, model.Transformation.IsIdentityMatrices().ToString());          //WriteString(fileStream, "TransformationIdentity");
+            WriteString(fileStream, model.Transformation.GetAsDebugStr());                          //WriteString(fileStream, "Transformation");
+            WriteString(fileStream, model.AnimationFrameForDestructableBodies.ToString());          //WriteString(fileStream, "AnimationFrameForDestructableBodies");
 
-            WriteString(fileStream, model.TextureCount.ToString());
-            WriteString(fileStream, model.AttachmentPointCount.ToString());
-
-            WriteString(fileStream, model.AlphaKeyValue.ToString());
-            WriteString(fileStream, model.AlphaMode.ToString());
-
-            WriteString(fileStream, model.Flag_alwaysNegativeOne.ToString());
-            WriteString(fileStream, model.Flag_alwaysOne.ToString());
+            WriteString(fileStream, model.TextureCount.ToString());                                                             //WriteString(fileStream, "MaterialCount");
+            WriteString(fileStream, model.AttachmentPoint.Count(x => !x.Transform.IsIdentity()).ToString());                    //WriteString(fileStream, "NumAttachmentPointThatIsNotIdent");
+            WriteString(fileStream, model.AttachmentPointCount.ToString());                                                     //WriteString(fileStream, "AttachmentPointCount");
+      
+            for (int i = 0; i < 15; i++)
+            {
+                if (i < model.AttachmentPointCount)
+                {
+                    WriteString(fileStream, model.AttachmentPoint[i].Name);                                 //WriteString(fileStream, "AttachmentPointName" + i);
+                    WriteString(fileStream, model.AttachmentPoint[i].Transform.IsIdentity().ToString());    //WriteString(fileStream, "AttachmentPointIsIdentity" + i);
+                    WriteString(fileStream, model.AttachmentPoint[i].Transform.GetAsDebugStr());            //WriteString(fileStream, "AttachmentPointTransform" + i);
+                    WriteString(fileStream, model.AttachmentPoint[i].BoneIndex.ToString());                 // WriteString(fileStream, "AttachmentPointBoneIndex" + i);
+                }
+                else
+                {
+                    WriteString(fileStream, "Index missing");    //WriteString(fileStream, "AttachmentPointName" + i);
+                    WriteString(fileStream, "Index missing");    //WriteString(fileStream, "AttachmentPointIsIdentity" + i);
+                    WriteString(fileStream, "Index missing");    //WriteString(fileStream, "AttachmentPointTransform" + i);
+                    WriteString(fileStream, "Index missing");    // WriteString(fileStream, "AttachmentPointBoneIndex" + i);
+                }
+            }
+            
+            WriteString(fileStream, model.AlphaKeyValue.ToString());                //WriteString(fileStream, "AlphaValue");
+            WriteString(fileStream, model.AlphaMode.ToString());                    //WriteString(fileStream, "AlphaMode");
+            
+            WriteString(fileStream, model.Flag_alwaysNegativeOne.ToString());       //WriteString(fileStream, "Flag_alwaysNegativeOne");
+            WriteString(fileStream, model.Flag_alwaysOne.ToString());               //WriteString(fileStream, "Flag_alwaysOne");
 
             WriteNewLine(fileStream);
         }
         #endregion
+    }
+
+    class AnimMeta_temp
+    {
+
+    
+
+        void Start()
+        {
+            /*var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+
+    var res = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "meta").Where(x => x.Name.Contains("anm.meta")).ToList();
+
+
+
+    try
+    {
+        AnmMetaParser parser = new AnmMetaParser();
+        parser.ParesFiles(res);
+    }
+    catch (Exception e)
+    {
+
+    }
+
+
+    try
+    {var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+        AnimPackLoader loader = new AnimPackLoader();
+        loader.Load(new ByteChunk(file.Data));
+    }
+    catch (Exception e)
+    {
+
+    }*/
+        }
+
+ 
     }
 
     public abstract class AnimMetaObject

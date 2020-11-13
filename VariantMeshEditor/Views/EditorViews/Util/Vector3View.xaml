@@ -4,15 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-
+             x:Name="self">
     <Grid>
-        <GroupBox x:Name="GroupBox" Header="VectorName">
+        <GroupBox Header="{Binding VectorData.Name, ElementName=self, UpdateSourceTrigger=PropertyChanged}">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
-                    <TextBox x:Name="Row0_0" Width="50" Margin="2,0,2,0"></TextBox>
-                    <TextBox x:Name="Row0_1" Width="50" Margin="2,0,2,0"></TextBox>
-                    <TextBox x:Name="Row0_2" Width="50" Margin="2,0,2,0"></TextBox>
+                    <TextBox Text="{Binding VectorData.X, ElementName=self, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N5}" Width="50" Margin="2,0,2,0"></TextBox>
+                    <TextBox Text="{Binding VectorData.Y, ElementName=self, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N5}" Width="50" Margin="2,0,2,0"></TextBox>
+                    <TextBox Text="{Binding VectorData.Z, ElementName=self, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, StringFormat=N5}" Width="50" Margin="2,0,2,0"></TextBox>
                 </StackPanel>
             </StackPanel>
         </GroupBox>

@@ -27,6 +27,11 @@ namespace VariantMeshEditor.Controls
 
             _resourceLibary = new ResourceLibary(packFile);
             _scene3d.LoadScene += Create3dWorld;
+
+
+
+            //DumpRmv2Files dumper = new DumpRmv2Files();
+            //dumper.Dump(_resourceLibary, @"C:\temp\DataDump\");
         }
 
         public void LoadModel(PackedFile model)

@@ -1,23 +1,11 @@
-﻿using CommonDialogs.Common;
-using Filetypes.RigidModel;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
-using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
-using VariantMeshEditor.Views.EditorViews;
-using Viewer.Animation;
 using Viewer.GraphicModels;
 using Viewer.Scene;
 using WpfTest.Scenes;
@@ -29,20 +17,6 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         public Rmv2RigidModel Model { get; set; }
         public ObservableCollection<LodHeaderViewModel> Lods { get; set; } = new ObservableCollection<LodHeaderViewModel>();
 
-        public ICommand RemoveCommand { get; set; }
-        public ICommand BrowseCommand { get; set; }
-
-
-        void OnRemoveCommand(RigidModelElement element)
-        {
-
-        }
-
-        void OnBrowseCommand(RigidModelElement element)
-        {
-
-        }
-
         public override FileSceneElementEnum Type => FileSceneElementEnum.RigidModel;
 
 
@@ -52,8 +26,6 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
             Model = model;
             DisplayName = $"RigidModel - {FileName}";
-            BrowseCommand = new RelayCommand<RigidModelElement>(OnBrowseCommand);
-            RemoveCommand = new RelayCommand<RigidModelElement>(OnRemoveCommand);
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
@@ -75,7 +47,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
                         Textures = meshModel.ResolveTextures(resourceLibary, virtualWorld.GraphicsDevice)
                     };
 
-                    var model = new ModelViewModel() { LodModelInstance = lodModel, RenderInstance = meshRenderItem };
+                    var model = new ModelViewModel(lodModel, meshRenderItem);
                     currentLoad.Models.Add(model);
                 }
 

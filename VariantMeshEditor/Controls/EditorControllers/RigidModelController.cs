@@ -39,21 +39,21 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         void DisplayMatrix(string name, Matrix3x4View view, FileMatrix3x4 matrix)
         {
-            view.GroupBox.Header = name;
-            view.Row0_0.Text = matrix.Matrix[0].X.ToString();
-            view.Row0_1.Text = matrix.Matrix[0].Y.ToString();
-            view.Row0_2.Text = matrix.Matrix[0].Z.ToString();
-            view.Row0_3.Text = matrix.Matrix[0].W.ToString();
-
-            view.Row1_0.Text = matrix.Matrix[1].X.ToString();
-            view.Row1_1.Text = matrix.Matrix[1].Y.ToString();
-            view.Row1_2.Text = matrix.Matrix[1].Z.ToString();
-            view.Row1_3.Text = matrix.Matrix[1].W.ToString();
-
-            view.Row2_0.Text = matrix.Matrix[2].X.ToString();
-            view.Row2_1.Text = matrix.Matrix[2].Y.ToString();
-            view.Row2_2.Text = matrix.Matrix[2].Z.ToString();
-            view.Row2_3.Text = matrix.Matrix[2].W.ToString();
+            //view.GroupBox.Header = name;
+            //view.Row0_0.Text = matrix.Matrix[0].X.ToString();
+            //view.Row0_1.Text = matrix.Matrix[0].Y.ToString();
+            //view.Row0_2.Text = matrix.Matrix[0].Z.ToString();
+            //view.Row0_3.Text = matrix.Matrix[0].W.ToString();
+            //
+            //view.Row1_0.Text = matrix.Matrix[1].X.ToString();
+            //view.Row1_1.Text = matrix.Matrix[1].Y.ToString();
+            //view.Row1_2.Text = matrix.Matrix[1].Z.ToString();
+            //view.Row1_3.Text = matrix.Matrix[1].W.ToString();
+            //
+            //view.Row2_0.Text = matrix.Matrix[2].X.ToString();
+            //view.Row2_1.Text = matrix.Matrix[2].Y.ToString();
+            //view.Row2_2.Text = matrix.Matrix[2].Z.ToString();
+            //view.Row2_3.Text = matrix.Matrix[2].W.ToString();
         }
 
         void CreateTextureDisplayItem(Rmv2LodModel mesh, BrowsableItemView view, TexureType textureType)
