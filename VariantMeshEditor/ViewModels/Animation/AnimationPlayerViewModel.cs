@@ -130,7 +130,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame;
         }
 
-        public void SetAnimationClip(IEnumerable<AnimationFile> animationFiles, Skeleton skeleton)
+        public void SetAnimationClip(IEnumerable<AnimationFile> animationFiles, Viewer.Animation.Skeleton skeleton)
         {
             if (animationFiles == null || animationFiles.Any() == false)
             {

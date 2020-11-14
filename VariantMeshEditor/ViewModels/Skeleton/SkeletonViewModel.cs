@@ -1,4 +1,5 @@
 ﻿using CommonDialogs.Common;
+using Filetypes.RigidModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +13,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
     {
         SkeletonElement _skeletonElement;
 
-        ObservableCollection
+        ObservableCollection<AnimationFile.BoneInfo> Bones { get; set; } = new ObservableCollection<AnimationFile.BoneInfo>();
         public SkeletonViewModel(SkeletonElement skeletonElement)
         {
             _skeletonElement = skeletonElement;

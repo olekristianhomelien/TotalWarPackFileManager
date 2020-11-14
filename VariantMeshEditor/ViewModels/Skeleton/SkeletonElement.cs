@@ -21,7 +21,7 @@ namespace VariantMeshEditor.ViewModels
         SkeletonController Controller { get; set; }
         public AnimationFile SkeletonFile { get; set; }
         SkeletonModel SkeletonModel { get; set; }
-        public Skeleton Skeleton { get; set; }
+        public Viewer.Animation.Skeleton Skeleton { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
@@ -42,7 +42,7 @@ namespace VariantMeshEditor.ViewModels
                 SkeletonFile = AnimationFile.Create(new ByteChunk(file.Data));
                 FullPath = skeletonFilePath;
                 FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
-                Skeleton = new Skeleton(SkeletonFile);
+                Skeleton = new Viewer.Animation.Skeleton(SkeletonFile);
             }
 
             SkeletonModel = new SkeletonModel(resourceLibary.GetEffect(ShaderTypes.Line));
