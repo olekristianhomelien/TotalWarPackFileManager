@@ -51,21 +51,20 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\EditorControllers\Animation\AnimationController.cs" />
-    <Compile Include="Controls\EditorControllers\Animation\AnimationExplorerController.cs" />
     <Compile Include="Controls\EditorControllers\Animation\AnimationFragmentExplorerController.cs" />
-    <Compile Include="Controls\EditorControllers\Animation\AnimationPlayerController.cs" />
     <Compile Include="Controls\EditorControllers\RigidModelController.cs" />
     <Compile Include="Controls\EditorControllers\RootController.cs" />
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
+    <Compile Include="Services\AnimationService.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
     <Compile Include="ViewModels\Animation\AnimationElement.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationPlayerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
     <Compile Include="ViewModels\RigidModel\LodHeaderViewModel.cs" />
@@ -74,7 +73,8 @@
     <Compile Include="ViewModels\RootElement.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Util\SceneElementHelper.cs" />
-    <Compile Include="ViewModels\SkeletonElement.cs" />
+    <Compile Include="ViewModels\Skeleton\SkeletonElement.cs" />
+    <Compile Include="ViewModels\Skeleton\SkeletonViewModel.cs" />
     <Compile Include="ViewModels\SlotsElement.cs" />
     <Compile Include="ViewModels\VariantMeshElement.cs" />
     <Compile Include="ViewModels\WsModelElement.cs" />

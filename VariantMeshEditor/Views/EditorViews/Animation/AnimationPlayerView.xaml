@@ -14,9 +14,12 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
-            <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏮︎</Button>
+           
+            <Button Command="{Binding FirstFrameCommand}" FontSize="20">⏮︎</Button>
+            <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏪</Button>
             <ToggleButton Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</ToggleButton>
-            <Button Command="{Binding NextFrameCommand}" FontSize="20">⏭︎</Button>
+            <Button Command="{Binding NextFrameCommand}" FontSize="20">⏩</Button>
+            <Button Command="{Binding LastFrameCommand}" FontSize="20">⏭</Button>
             <ComboBox 
                 ItemsSource="{Binding PossibleAnimationSpeeds}" 
                 SelectedItem="{Binding SelectedAnimationSpeed, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 

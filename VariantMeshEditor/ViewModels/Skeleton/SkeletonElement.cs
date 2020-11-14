@@ -23,15 +23,13 @@ namespace VariantMeshEditor.ViewModels
         SkeletonModel SkeletonModel { get; set; }
         public Skeleton Skeleton { get; set; }
 
-
-
+        public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
         public SkeletonElement(FileSceneElement parent, string fullPath) : base(parent, "", fullPath, "Skeleton")
         {
-            ApplyElementCheckboxVisability = System.Windows.Visibility.Hidden;  
         }
 
-        public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
+        
 
 
         public void Create(AnimationPlayer animationPlayer, ResourceLibary resourceLibary, string skeletonName)

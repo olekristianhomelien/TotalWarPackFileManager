@@ -23,6 +23,10 @@ namespace VariantMeshEditor.ViewModels.Animation
         public List<PackedFile> AnimationFilesForSkeleton { get; set; } = new List<PackedFile>();
         public ObservableCollection<AnimationExplorerNodeViewModel> AnimationList { get; set; } = new ObservableCollection<AnimationExplorerNodeViewModel>();
 
+        bool _isSelected = true;
+        public bool IsSelected{ get { return _isSelected; } set { SetAndNotify(ref _isSelected, value); IsInFocus(IsSelected); }}
+
+
         public AnimationExplorerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer)
         {
             _resourceLibary = resourceLibary;
@@ -46,26 +50,28 @@ namespace VariantMeshEditor.ViewModels.Animation
             AddNewAnimationCommand = new RelayCommand(() => { AddNewAnimationNode(); });
         }
 
-        private void OnAnimationChanged()
+        void ApplyCurrentAnimation()
         {
             var animationFiles = AnimationList
                 .Where(x => x.UseAnimation == true && x.HasErrorMessage == false && x.AnimationFile != null)
                 .Select(x => x.AnimationFile);
 
             if (animationFiles.Any())
-            {
                 _animationPlayer.SetAnimationClip(animationFiles.ToArray(), _skeletonNode.Skeleton);
-            }
             else
-            {
                 _animationPlayer.SetAnimationClip(null, null);
-            }
+        }
+
+        void IsInFocus(bool isInFocus)
+        {
+            if (isInFocus)
+                ApplyCurrentAnimation();
         }
 
         void AddNewAnimationNode(bool isMainAnimation = false)
         {
             var node = new AnimationExplorerNodeViewModel(this);
-            node.OnAnimationChanged += OnAnimationChanged;
+            node.OnAnimationChanged += ApplyCurrentAnimation;
             node.IsMainAnimation = isMainAnimation;
 
             AnimationList.Add(node);

@@ -6,31 +6,19 @@
              mc:Ignorable="d" 
              x:Name="Self"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
+    <DockPanel>
 
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Label Content="Skeleton Name:" Width="100"/>
+            <Label Content="{Binding SkeletonName, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
 
-    </UserControl.Resources>
-    <Grid>
-        <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Label Content="Bone Count:" Width="100"/>
+            <Label Content="{Binding BoneCount, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
 
+        <TreeView DockPanel.Dock="Top" x:Name="SkeletonBonesView"></TreeView>
+    </DockPanel>
 
-         
-            <commondialogs:CollapsableButton DockPanel.Dock="Top"  LabelText="MyLabel">
-                <StackPanel>
-                    <Button>subBuddon0</Button>
-                    <Button>subBuddon1</Button>
-                    <Button>subBuddon2</Button>
-                    <Button>subBuddon3</Button>
-                </StackPanel>
-            </commondialogs:CollapsableButton>
-
-
-            <Label DockPanel.Dock="Top" x:Name="SkeletonName">Skeleton:"SkellyBoi"</Label>
-            <Label DockPanel.Dock="Top" x:Name="BoneCount">BoneCount:"123"</Label>
-            <TreeView DockPanel.Dock="Top" x:Name="SkeletonBonesView"></TreeView>
-
-
-
-        </DockPanel>
-    </Grid>
 </UserControl>

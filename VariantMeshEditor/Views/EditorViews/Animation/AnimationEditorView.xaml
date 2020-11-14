@@ -26,7 +26,7 @@
         <animationviews:AnimationPlayerView  DataContext="{Binding Path=AnimationPlayerViewModel}" DockPanel.Dock="Top"/>
 
         <TabControl DockPanel.Dock="Top">
-            <TabItem Header="Animation Explorer">
+            <TabItem Header="Animation Explorer" IsSelected="{Binding AnimationExplorer.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <DockPanel>
                     <Button Command="{Binding AnimationExplorer.AddNewAnimationCommand}" 
                             DockPanel.Dock="Bottom"
@@ -52,8 +52,8 @@
                     
                 </DockPanel>
             </TabItem>
-            <TabItem Header="Fragment Explorer">
-                <animationviews:AnimationFragmentExplorerView x:Name="AnimationFragmentExplorer" ></animationviews:AnimationFragmentExplorerView>
+            <TabItem Header="Fragment Explorer" IsSelected="{Binding AnimationFragmentExplorerViewModel.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <animationviews:AnimationFragmentExplorerView DataContext="{Binding AnimationFragmentExplorerViewModel}"></animationviews:AnimationFragmentExplorerView>
             </TabItem>
         </TabControl>
 

@@ -64,6 +64,8 @@ namespace Viewer.Animation
                 if (dynamicIndex != -1)
                 {
                     var pos = frame.Transforms[i];
+                    if (animateInPlace && dynamicIndex == 0)
+                        pos = new float[] { 0, 0, 0 };
 
                     var temp = currentFrame.BoneTransforms[dynamicIndex].Transform;
                     temp.Translation = new Vector3(pos[0], pos[1], pos[2]);

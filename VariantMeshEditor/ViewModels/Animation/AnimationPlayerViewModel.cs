@@ -38,6 +38,9 @@ namespace VariantMeshEditor.ViewModels.Animation
         public ICommand NextFrameCommand { get; set; }
         public ICommand PrivFrameCommand { get; set; }
 
+        public ICommand FirstFrameCommand { get; set; }
+        public ICommand LastFrameCommand { get; set; }
+
 
         AnimationElement _animationNode;
         public AnimationPlayerViewModel(AnimationElement animationNode)
@@ -57,6 +60,9 @@ namespace VariantMeshEditor.ViewModels.Animation
             PausePlayCommand = new RelayCommand(OnPlayPause);
             NextFrameCommand = new RelayCommand(OnNextFrame);
             PrivFrameCommand = new RelayCommand(OnPrivFrame);
+
+            FirstFrameCommand = new RelayCommand(OnFirstFrame);
+            LastFrameCommand = new RelayCommand(OnLastFrame);
         }
 
         void OnPlayPause()
@@ -78,6 +84,18 @@ namespace VariantMeshEditor.ViewModels.Animation
         {
             _animationNode.AnimationPlayer.Pause();
             _animationNode.AnimationPlayer.CurrentFrame--;
+        }
+
+        void OnFirstFrame()
+        {
+            _animationNode.AnimationPlayer.Pause();
+            _animationNode.AnimationPlayer.CurrentFrame = 0;
+        }
+
+        void OnLastFrame()
+        {
+            _animationNode.AnimationPlayer.Pause();
+            _animationNode.AnimationPlayer.CurrentFrame = _animationNode.AnimationPlayer.FrameCount();
         }
 
         void HandleAnimationSpeedChanged()

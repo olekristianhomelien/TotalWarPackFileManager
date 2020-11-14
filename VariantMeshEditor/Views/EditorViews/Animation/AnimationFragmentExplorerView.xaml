@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Common="clr-namespace:CommonDialogs.ComboBoxes;assembly=CommonDialogs"
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             xmlns:System="clr-namespace:System;assembly=mscorlib" 
+             xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs" 
+             xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" 
+             xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
+             mc:Ignorable="d" >
     <UserControl.Resources>
         <System:Double x:Key="theMargin">125</System:Double>
         
@@ -16,8 +17,6 @@
         <StackPanel DockPanel.Dock="Top">
 
             <DockPanel>
-
-
                 <Label Width="{StaticResource theMargin}">Skeleton</Label>
                 <Label>:</Label>
 
@@ -76,26 +75,26 @@
 
             </DockPanel>
 
-            <Expander Header="Fragment collections:">
-                <ListBox  DockPanel.Dock="Top"  ItemsSource="{Binding FragmentCollectionList}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Expander Header="Fragment collections:" >
+                <ListBox    ItemsSource="{Binding FragmentCollectionList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Expander>
 
-            <filterdialog:CollapsableFilterControl DockPanel.Dock="top"
-                                                   MaxHeight="400"
+            <filterdialog:CollapsableFilterControl 
+                DockPanel.Dock="top"
+                MaxHeight="400"
+                DisplayMemberPath="FullPath"
+                LabelText="Fragments"
+                LabelTotalWidth="70"           
+                x:Name="FragmentFilterDialog"/>
 
-                            DisplayMemberPath="FullPath"
-                            LabelText="Fragments"
-                            LabelTotalWidth="70"           
-                            x:Name="FragmentFilterDialog">
-            </filterdialog:CollapsableFilterControl>
 
 
             <Label>Selected Animation : Walk_01</Label>
