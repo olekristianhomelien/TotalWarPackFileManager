@@ -1,8 +1,11 @@
 ﻿using CommonDialogs.Common;
+using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Input;
 using VariantMeshEditor.Util;
+using Viewer.Animation;
 
 namespace VariantMeshEditor.ViewModels.Animation
 {
@@ -56,12 +59,6 @@ namespace VariantMeshEditor.ViewModels.Animation
             PrivFrameCommand = new RelayCommand(OnPrivFrame);
         }
 
-        void OnAnimationClipChanged()
-        {
-            MaxFames = _animationNode.AnimationPlayer.FrameCount();
-            CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame;
-        }
-
         void OnPlayPause()
         {
             var player = _animationNode.AnimationPlayer;
@@ -112,6 +109,23 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         public void Update()
         {
+            CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame;
+        }
+
+        public void SetAnimationClip(IEnumerable<AnimationFile> animationFiles, Skeleton skeleton)
+        {
+            if (animationFiles == null || animationFiles.Any() == false)
+            {
+                _animationNode.AnimationPlayer.SetAnimation(null);
+            }
+            else
+            {
+
+                AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), skeleton);
+                _animationNode.AnimationPlayer.SetAnimation(clip);
+            }
+
+            MaxFames = _animationNode.AnimationPlayer.FrameCount();
             CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame;
         }
 

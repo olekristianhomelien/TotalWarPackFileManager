@@ -27,8 +27,8 @@ namespace VariantMeshEditor.ViewModels.Animation
             var skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this);
             if (skeleton.Count == 1)
             {
-                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), this);
                 AnimationPlayerViewModel = new AnimationPlayerViewModel(this);
+                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
             }
         }
 

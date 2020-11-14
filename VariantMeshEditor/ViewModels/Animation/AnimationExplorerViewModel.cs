@@ -16,18 +16,18 @@ namespace VariantMeshEditor.ViewModels.Animation
     {
         ResourceLibary _resourceLibary;
         SkeletonElement _skeletonNode;
-        AnimationElement _animationNode;
+        AnimationPlayerViewModel _animationPlayer;
         public ICommand AddNewAnimationCommand { get; set; }
 
         public List<PackedFile> AnimationFiles { get; set; } = new List<PackedFile>();
         public List<PackedFile> AnimationFilesForSkeleton { get; set; } = new List<PackedFile>();
         public ObservableCollection<AnimationExplorerNodeViewModel> AnimationList { get; set; } = new ObservableCollection<AnimationExplorerNodeViewModel>();
 
-        public AnimationExplorerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationElement animationNode)
+        public AnimationExplorerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer)
         {
             _resourceLibary = resourceLibary;
             _skeletonNode = skeletonNode;
-            _animationNode = animationNode;
+            _animationPlayer = animationPlayer;
 
             FindAllAnimations();
             AddNewAnimationNode(true);
@@ -54,12 +54,11 @@ namespace VariantMeshEditor.ViewModels.Animation
 
             if (animationFiles.Any())
             {
-                AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), _skeletonNode.Skeleton);
-                _animationNode.AnimationPlayer.SetAnimation(clip);
+                _animationPlayer.SetAnimationClip(animationFiles.ToArray(), _skeletonNode.Skeleton);
             }
             else
             {
-                _animationNode.AnimationPlayer.SetAnimation(null);
+                _animationPlayer.SetAnimationClip(null, null);
             }
         }
 
