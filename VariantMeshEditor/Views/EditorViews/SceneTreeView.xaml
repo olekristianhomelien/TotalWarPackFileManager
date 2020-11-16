@@ -14,7 +14,7 @@
                 <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
             </Style>
 
-            <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=TwoWay}">
+            <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <StackPanel Orientation="Horizontal" >
                     <util:OptionalRadioButton Style="{DynamicResource CheckBoxStyle1}" GroupName="{Binding CheckBoxGroupingName}" Focusable="False"  IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Visibility="{Binding ApplyElementCheckboxVisability}" />
                     <ContentPresenter  Content="{Binding Path=DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="2,0"/>

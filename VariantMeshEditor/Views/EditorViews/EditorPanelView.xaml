@@ -29,6 +29,14 @@
         <DataTemplate DataType="{x:Type skeleton:SkeletonElement}">
             <local:SkeletonEditorView/>
         </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:RootElement}">
+            <local:RootEditorView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type viewmodels:VariantMeshElement}">
+            <local:VariantModelEditorView/>
+        </DataTemplate>
     </UserControl.Resources>
 
     <Grid>

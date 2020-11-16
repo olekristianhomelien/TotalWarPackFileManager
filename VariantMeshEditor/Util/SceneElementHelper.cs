@@ -55,6 +55,17 @@ namespace VariantMeshEditor.Util
             }
         }
 
+        public static T GetFirstChild<T>(FileSceneElement element) where T : FileSceneElement
+        {
+            if (element as T != null)
+                return element as T;
+
+            foreach (var child in element.Children)
+                return GetFirstChild<T>(child);
+
+            return null;
+        }
+
         public static FileSceneElement GetRoot(FileSceneElement item)
         {
             if (item.Parent == null)

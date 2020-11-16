@@ -127,6 +127,9 @@
     <Compile Include="Views\EditorViews\SceneTreeView.xaml.cs">
       <DependentUpon>SceneTreeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\VariantModelEditorView.xaml.cs">
+      <DependentUpon>VariantModelEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewController.cs" />
     <Compile Include="Views\TexturePreview\TexturePreviewView.xaml.cs">
       <DependentUpon>TexturePreviewView.xaml</DependentUpon>
@@ -204,6 +207,10 @@
       <DependentUpon>VariantMeshEditorControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\EditorViews\VariantModelEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Styles\FullWidthTreeViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

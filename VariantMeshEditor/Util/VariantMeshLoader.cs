@@ -29,15 +29,15 @@ namespace VariantMeshEditor.Util
             switch (file.FileExtention)
             {
                 case "variantmeshdefinition":
-                     LoadVariantMesh(file, parent);
+                     LoadVariantMesh(file, ref parent);
                     break;
 
                 case "rigid_model_v2":
-                    LoadRigidMesh(file, parent);
+                    LoadRigidMesh(file, ref parent);
                     break;
 
                 case "wsmodel":
-                    LoadWsModel(file, parent);
+                    LoadWsModel(file, ref parent);
                     break;
             }
 
@@ -50,12 +50,19 @@ namespace VariantMeshEditor.Util
             return Load(file, parent);
         }
 
-        void LoadVariantMesh(PackedFile file, FileSceneElement parent)
+        void LoadVariantMesh(PackedFile file, ref FileSceneElement parent)
         {
             var variantMeshElement = new VariantMeshElement(parent,file.Name);
-            if (parent.Children.Count == 0)
-                variantMeshElement.IsChecked = true;
-            parent.Children.Add(variantMeshElement);
+            if (parent == null)
+            {
+                parent = variantMeshElement;
+            }
+            else
+            {
+                if (parent.Children.Count == 0)
+                    variantMeshElement.IsChecked = true;
+                parent.Children.Add(variantMeshElement);
+            }
 
             var animationElement = new AnimationElement(variantMeshElement);
             variantMeshElement.Children.Add(animationElement);
@@ -104,22 +111,36 @@ namespace VariantMeshEditor.Util
             }
         }
 
-        void LoadRigidMesh(PackedFile file, FileSceneElement parent)
+        void LoadRigidMesh(PackedFile file, ref FileSceneElement parent)
         {
             ByteChunk chunk = new ByteChunk(file.Data);
             var model3d = Rmv2RigidModel.Create(chunk, out string errorMessage);
             var model = new RigidModelElement(parent, model3d, file.FullPath);
-            if (parent.Children.Count == 0)
-                model.IsChecked = true;
-            parent.Children.Add(model);
+            if (parent == null)
+            {
+                parent = model;
+            }
+            else
+            {
+                if (parent.Children.Count == 0)
+                    model.IsChecked = true;
+                parent.Children.Add(model);
+            }
         }
 
-        void LoadWsModel(PackedFile file, FileSceneElement parent)
+        void LoadWsModel(PackedFile file, ref FileSceneElement parent)
         {
             var model = new WsModelElement(parent,file.FullPath);
-            if (parent.Children.Count == 0)
-                model.IsChecked = true;
-            parent.Children.Add(model);
+            if (parent == null)
+            {
+                parent = model;
+            }
+            else
+            {
+                if (parent.Children.Count == 0)
+                    model.IsChecked = true;
+                parent.Children.Add(model);
+            }
 
             var buffer = file.Data;
             string s = System.Text.Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -130,7 +151,9 @@ namespace VariantMeshEditor.Util
             foreach (XmlNode node in nodes)
             {
                 var file2 = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, node.InnerText);
-                LoadRigidMesh(file2, model);
+                var modelAsBase = model as FileSceneElement;
+                LoadRigidMesh(file2,  ref modelAsBase);
+                model = modelAsBase as WsModelElement;
             }
         }
 
@@ -148,4 +171,5 @@ namespace VariantMeshEditor.Util
             }
         }
     }
+
 }

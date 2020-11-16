@@ -91,7 +91,6 @@ namespace VariantMeshEditor.ViewModels
             {
                 child.CreateContent(virtualWorld, resourceLibary);
             }
-            
         }
 
         protected virtual void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)

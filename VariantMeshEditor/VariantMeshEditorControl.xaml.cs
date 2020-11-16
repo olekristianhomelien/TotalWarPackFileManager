@@ -15,10 +15,7 @@ namespace VariantMeshEditor
     {
         EditorMainController _mainController;
 
-
-        
         public BaseViewModel RootViewModel { get; set; } = new BaseViewModel();
-
 
         PackedFile _currentPackFile;
         public PackedFile CurrentPackedFile { 
@@ -35,18 +32,11 @@ namespace VariantMeshEditor
         {
             InitializeComponent();
             DataContext = RootViewModel;
-
-            
-           
         }
 
 
         public void SetPackFiles(List<PackFile> packFiles)
         {
-
-
-
-
             _mainController = new EditorMainController(RenderView.Scene, RootViewModel, packFiles);
         }
 

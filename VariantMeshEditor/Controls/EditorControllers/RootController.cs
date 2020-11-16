@@ -27,7 +27,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
             _resourceLibary = resourceLibary;
             _virtualWorld = virtualWorld;
             CreateMeshList();
-            _viewModel.AddButton.Click += AddButton_Click;
+            //_viewModel.AddButton.Click += AddButton_Click;
         }
 
 

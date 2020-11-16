@@ -78,7 +78,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             SkeletonBoneNode item = new SkeletonBoneNode
             {
                 BoneIndex = bone.Id,
-                BoneName = bone.Name + " [" + bone.Id + "]",
+                BoneName = bone.Name + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
                 BoneRef = bone
             };
             return item;

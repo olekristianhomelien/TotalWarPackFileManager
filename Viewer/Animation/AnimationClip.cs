@@ -53,7 +53,7 @@ namespace Viewer.Animation
             }
         }
 
-        void ApplyFrame(bool animateInPlace, AnimationFile.Frame frame, List<int> translationMappings, List<int> rotationMapping, AnimationFrame currentFrame)
+        void ApplyFrame(AnimationFile.Frame frame, List<int> translationMappings, List<int> rotationMapping, AnimationFrame currentFrame)
         {
             if (frame == null)
                 return;
@@ -64,9 +64,6 @@ namespace Viewer.Animation
                 if (dynamicIndex != -1)
                 {
                     var pos = frame.Transforms[i];
-                    if (animateInPlace && dynamicIndex == 0)
-                        pos = new float[] { 0, 0, 0 };
-
                     var temp = currentFrame.BoneTransforms[dynamicIndex].Transform;
                     temp.Translation = new Vector3(pos[0], pos[1], pos[2]);
                     currentFrame.BoneTransforms[dynamicIndex].Transform = temp;
@@ -107,7 +104,7 @@ namespace Viewer.Animation
             if (applyStaticFrames)
             {
                 foreach(var animation in _animations)
-                  ApplyFrame(animateInPlace, animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
+                  ApplyFrame(animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
             
                 if (_animations[0].DynamicFrames.Count() == 0 || applyDynamicFrames == false)
                 {
@@ -122,8 +119,45 @@ namespace Viewer.Animation
                     var animationKeyFrameData = _animations[0].DynamicFrames[frameIndex];
             
                     var currentFrame = defaultFrame.Clone();
-                    ApplyFrame(animateInPlace, animationKeyFrameData, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, currentFrame);
+                    ApplyFrame(animationKeyFrameData, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, currentFrame);
                     KeyFrameCollection.Add(currentFrame);
+                }
+            }
+
+            if (animateInPlace)
+            {
+                foreach (var keyframe in KeyFrameCollection)
+                {
+                    Vector3 rootOfset = new Vector3(0);
+                    Vector3 animRootOffset = new Vector3(0);
+                    foreach (var boneTransform in keyframe.BoneTransforms)
+                    {
+                        if (boneTransform.BoneIndex == 0)
+                        {
+                            var matrix = boneTransform.Transform;
+                            animRootOffset += boneTransform.Transform.Translation;
+                            matrix.Translation = new Vector3(0, 0, 0);
+                            boneTransform.Transform = matrix;
+                        }
+
+                        if (boneTransform.BoneIndex == 7)
+                        {
+                            var matrix = boneTransform.Transform;
+                            rootOfset += boneTransform.Transform.Translation;
+                            matrix.Translation = new Vector3(0, 0, 0);
+                            boneTransform.Transform = matrix;
+                        }
+                    }
+
+                    foreach (var boneTransform in keyframe.BoneTransforms)
+                    {
+                        if (boneTransform.ParentBoneIndex == 0 && boneTransform.BoneIndex != 7)
+                        {
+                            var matrix = boneTransform.Transform;
+                            matrix.Translation -=  rootOfset ;
+                            boneTransform.Transform = matrix;
+                        }
+                    }
                 }
             }
 
