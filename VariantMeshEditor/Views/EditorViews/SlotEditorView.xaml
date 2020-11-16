@@ -6,6 +6,7 @@
              xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util"
              xmlns:viewmodels="clr-namespace:VariantMeshEditor.ViewModels"
              xmlns:rigidViewmodels="clr-namespace:VariantMeshEditor.ViewModels.RigidModel"
+             xmlns:variantMesh="clr-namespace:VariantMeshEditor.ViewModels.VariantMesh"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -14,19 +15,19 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/TestStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
-         
 
-        <DataTemplate DataType="{x:Type viewmodels:VariantMeshElement}">
-            <util:BrowsableItemView LabelName="Mesh:">
-                
-            </util:BrowsableItemView>
-        </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:WsModelElement}">
-            <util:BrowsableItemView LabelName="Mesh:">
-                
-            </util:BrowsableItemView>
-        </DataTemplate>
+            <DataTemplate DataType="{x:Type variantMesh:VariantMeshElement}">
+                <util:BrowsableItemView LabelName="Mesh:">
+
+                </util:BrowsableItemView>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodels:WsModelElement}">
+                <util:BrowsableItemView LabelName="Mesh:">
+
+                </util:BrowsableItemView>
+            </DataTemplate>
 
             <DataTemplate DataType="{x:Type rigidViewmodels:RigidModelElement}">
             <util:BrowsableItemView 

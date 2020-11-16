@@ -28,7 +28,12 @@
         </StackPanel>
         <StackPanel HorizontalAlignment="Center">
             <CheckBox IsChecked="{Binding SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync Animations"/>
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
             <CheckBox IsChecked="{Binding AnimateInPlace, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Animate in place"/>
+            <TextBlock Text="    RootBone:"/>
+            <ComboBox ></ComboBox>
         </StackPanel>
     </StackPanel>
 </UserControl>

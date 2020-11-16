@@ -84,6 +84,9 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         bool _isVisible = true;
         public bool IsVisible { get { return _isVisible; } set { SetAndNotify(ref _isVisible, value); } }
 
+
+        public int LinkDirectlyToBoneIndex { get { return LodModelInstance.LinkDirectlyToBoneIndex; } }
+
         public ModelViewModel(Rmv2LodModel lodModelInstance, TextureMeshRenderItem renderInstance)
         {
             LodModelInstance = lodModelInstance;

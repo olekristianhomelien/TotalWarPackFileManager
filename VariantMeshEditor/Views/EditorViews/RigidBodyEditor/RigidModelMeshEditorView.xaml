@@ -90,6 +90,13 @@
             </Expander>
         </StackPanel>
 
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="100">BoneIdx Link</Label>
+            <Label>:</Label>
+            <TextBlock  Text="{Binding LinkDirectlyToBoneIndex}"  VerticalAlignment="Center"/>
+        </StackPanel>
+
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Label Width="100">Shader Name</Label>
             <Label>:</Label>

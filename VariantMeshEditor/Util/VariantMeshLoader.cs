@@ -10,6 +10,7 @@ using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.RigidModel;
 using VariantMeshEditor.ViewModels.Skeleton;
+using VariantMeshEditor.ViewModels.VariantMesh;
 using Viewer.Scene;
 using static Filetypes.RigidModel.VariantMeshDefinition;
 

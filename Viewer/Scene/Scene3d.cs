@@ -134,7 +134,7 @@ namespace WpfTest.Scenes
                 MathHelper.ToRadians(45), // 45 degree angle
                 (float)GraphicsDevice.Viewport.Width /
                 (float)GraphicsDevice.Viewport.Height,
-                .01f, 20);
+                .01f, 150);
             _basicEffect.Projection = _projectionMatrix;
         }
 

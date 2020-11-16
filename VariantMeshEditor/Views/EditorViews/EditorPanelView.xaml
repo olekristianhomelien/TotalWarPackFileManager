@@ -10,6 +10,7 @@
              xmlns:animationViewmodels="clr-namespace:VariantMeshEditor.ViewModels.Animation"
              xmlns:animation="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation"
              xmlns:skeleton="clr-namespace:VariantMeshEditor.ViewModels.Skeleton"
+             xmlns:variantMesh="clr-namespace:VariantMeshEditor.ViewModels.VariantMesh"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -34,7 +35,7 @@
             <local:RootEditorView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:VariantMeshElement}">
+        <DataTemplate DataType="{x:Type variantMesh:VariantMeshElement}">
             <local:VariantModelEditorView/>
         </DataTemplate>
     </UserControl.Resources>
