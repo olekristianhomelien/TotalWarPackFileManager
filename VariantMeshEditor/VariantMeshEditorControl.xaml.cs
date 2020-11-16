@@ -1,6 +1,7 @@
 ﻿using Common;
 using Filetypes;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using VariantMeshEditor.Controls;
 using VariantMeshEditor.ViewModels;
@@ -52,7 +53,8 @@ namespace VariantMeshEditor
 
         public bool CanEdit(PackedFile file)
         {
-            return (file.FileExtention == "variantmeshdefinition");
+            var possibleExtentions = new string[]{ "variantmeshdefinition", "wsmodel", "rigid_model_v2" };
+            return possibleExtentions.Contains(file.FileExtention);
         }
 
         public void Commit()

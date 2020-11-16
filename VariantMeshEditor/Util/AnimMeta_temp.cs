@@ -205,7 +205,7 @@ namespace VariantMeshEditor.Util
             WriteString(fileStream, model.Transformation.IsIdentityPivot().ToString());             //WriteString(fileStream, "DefaultPivot");
             WriteString(fileStream, model.Transformation.IsIdentityMatrices().ToString());          //WriteString(fileStream, "TransformationIdentity");
             WriteString(fileStream, model.Transformation.GetAsDebugStr());                          //WriteString(fileStream, "Transformation");
-            WriteString(fileStream, model.AnimationFrameForDestructableBodies.ToString());          //WriteString(fileStream, "AnimationFrameForDestructableBodies");
+            WriteString(fileStream, model.LinkDirectlyToBoneIndex.ToString());          //WriteString(fileStream, "AnimationFrameForDestructableBodies");
 
             WriteString(fileStream, model.TextureCount.ToString());                                                             //WriteString(fileStream, "MaterialCount");
             WriteString(fileStream, model.AttachmentPoint.Count(x => !x.Transform.IsIdentity()).ToString());                    //WriteString(fileStream, "NumAttachmentPointThatIsNotIdent");

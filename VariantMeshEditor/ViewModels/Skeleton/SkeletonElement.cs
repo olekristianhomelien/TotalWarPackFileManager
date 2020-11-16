@@ -13,24 +13,23 @@ using Viewer.GraphicModels;
 using Viewer.Scene;
 using WpfTest.Scenes;
 
-namespace VariantMeshEditor.ViewModels
+namespace VariantMeshEditor.ViewModels.Skeleton
 {
     public class SkeletonElement : FileSceneElement
     {
 
-        SkeletonController Controller { get; set; }
         public AnimationFile SkeletonFile { get; set; }
         SkeletonModel SkeletonModel { get; set; }
         public Viewer.Animation.Skeleton Skeleton { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
+        public SkeletonViewModel ViewModel { get; set; }
+
         public SkeletonElement(FileSceneElement parent, string fullPath) : base(parent, "", fullPath, "Skeleton")
         {
+
         }
-
-        
-
 
         public void Create(AnimationPlayer animationPlayer, ResourceLibary resourceLibary, string skeletonName)
         {
@@ -47,12 +46,10 @@ namespace VariantMeshEditor.ViewModels
 
             SkeletonModel = new SkeletonModel(resourceLibary.GetEffect(ShaderTypes.Line));
             SkeletonModel.Create(animationPlayer, Skeleton);
+
+            ViewModel = new SkeletonViewModel(this);
         }
 
-        protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
-        {
-            Controller = new SkeletonController(this);
-        }
 
         protected override void UpdateNode(GameTime time)
         {
@@ -61,6 +58,7 @@ namespace VariantMeshEditor.ViewModels
 
         protected override void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
+            SkeletonModel.SelectedBoneIndex = ViewModel.SelectedBone?.BoneIndex;
             SkeletonModel.Draw(device, parentTransform, commonShaderParameters);
         }
     }

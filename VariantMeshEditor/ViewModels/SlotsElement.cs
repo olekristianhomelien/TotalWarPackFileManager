@@ -9,6 +9,7 @@ using System.Windows.Input;
 using VariantMeshEditor.Controls.EditorControllers;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.Skeleton;
 using VariantMeshEditor.Views.EditorViews;
 using Viewer.Scene;
 using WpfTest.Scenes;

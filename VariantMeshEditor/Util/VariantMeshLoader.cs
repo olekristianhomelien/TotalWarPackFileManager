@@ -9,6 +9,7 @@ using System.Xml;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.RigidModel;
+using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Scene;
 using static Filetypes.RigidModel.VariantMeshDefinition;
 

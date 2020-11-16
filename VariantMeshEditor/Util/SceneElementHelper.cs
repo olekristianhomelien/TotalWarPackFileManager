@@ -24,7 +24,7 @@ namespace VariantMeshEditor.Util
                 }
             }
 
-            if (knownNode.Type != FileSceneElementEnum.VariantMesh)
+            if (knownNode == null || knownNode.Type != FileSceneElementEnum.VariantMesh)
                 return new List<T>();
 
             var output = new List<T>();

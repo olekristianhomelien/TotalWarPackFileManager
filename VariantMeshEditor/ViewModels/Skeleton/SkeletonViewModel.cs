@@ -6,71 +6,117 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace VariantMeshEditor.ViewModels.Skeleton
 {
-    class SkeletonViewModel : NotifyPropertyChangedImpl
+    public class SkeletonViewModel : NotifyPropertyChangedImpl
     {
         SkeletonElement _skeletonElement;
 
-        ObservableCollection<AnimationFile.BoneInfo> Bones { get; set; } = new ObservableCollection<AnimationFile.BoneInfo>();
+
+        string _skeltonName;
+        public string SkeletonName
+        {
+            get { return _skeltonName; }
+            set { SetAndNotify(ref _skeltonName, value); }
+        }
+
+
+        int _boneCount = 0;
+        public int BoneCount
+        {
+            get { return _boneCount; }
+            set { SetAndNotify(ref _boneCount, value); }
+        }
+
+
+        public ObservableCollection<SkeletonBoneNode> Bones { get; set; } = new ObservableCollection<SkeletonBoneNode>();
+
+        public SkeletonBoneNode _selectedBone;
+        public SkeletonBoneNode SelectedBone
+        {
+            get { return _selectedBone; }
+            set { SetAndNotify(ref _selectedBone, value); }
+        }
+
         public SkeletonViewModel(SkeletonElement skeletonElement)
         {
             _skeletonElement = skeletonElement;
-
-            _viewModel = new SkeletonEditorView();
-            _viewModel.SkeletonName.Content = "Skeleton Name: " + _skeletonElement.DisplayName;
             CreateBoneOverview();
         }
 
 
         void CreateBoneOverview()
         {
-            _viewModel.SkeletonBonesView.Items.Clear();
-            _viewModel.BoneCount.Content = "Bone Count : " + _skeletonElement.SkeletonFile.Bones.Count();
-            var index = 0;
+            SelectedBone = null;
+            Bones.Clear();
+
+            SkeletonName = _skeletonElement.DisplayName;
+
             foreach (var bone in _skeletonElement.SkeletonFile.Bones)
             {
-                index++;
                 if (bone.ParentId == -1)
                 {
-                    _viewModel.SkeletonBonesView.Items.Add(CreateNode(bone));
+                    Bones.Add(CreateNode(bone));
                 }
                 else
                 {
                     var parentBone = _skeletonElement.SkeletonFile.Bones[bone.ParentId];
-                    var treeParent = GetParent(_viewModel.SkeletonBonesView.Items, parentBone);
+                    var treeParent = GetParent(Bones, parentBone);
 
                     if (treeParent != null)
-                        treeParent.Items.Add(CreateNode(bone));
+                        treeParent.Children.Add(CreateNode(bone));
                 }
             }
+
+            BoneCount = _skeletonElement.SkeletonFile.Bones.Count();
         }
 
-        TreeViewItem CreateNode(AnimationFile.BoneInfo bone)
+        SkeletonBoneNode CreateNode(AnimationFile.BoneInfo bone)
         {
-            TreeViewItem item = new TreeViewItem
+            SkeletonBoneNode item = new SkeletonBoneNode
             {
-                Header = bone.Name + " [" + bone.Id + "]",
-                Tag = bone,
-                IsExpanded = true
+                BoneIndex = bone.Id,
+                BoneName = bone.Name + " [" + bone.Id + "]",
+                BoneRef = bone
             };
             return item;
         }
 
-        TreeViewItem GetParent(ItemCollection root, AnimationFile.BoneInfo parentBone)
+        SkeletonBoneNode GetParent(ObservableCollection<SkeletonBoneNode> root, AnimationFile.BoneInfo parentBone)
         {
-            foreach (TreeViewItem item in root)
+            foreach (SkeletonBoneNode item in root)
             {
-                if (item.Tag == parentBone)
+                if (item.BoneRef == parentBone)
                     return item;
 
-                var result = GetParent(item.Items, parentBone);
+                var result = GetParent(item.Children, parentBone);
                 if (result != null)
                     return result;
             }
             return null;
         }
 
+
+        public class SkeletonBoneNode : NotifyPropertyChangedImpl
+        {
+            public AnimationFile.BoneInfo BoneRef { get; set; }
+
+            string _boneName;
+            public string BoneName
+            {
+                get { return _boneName; }
+                set { SetAndNotify(ref _boneName, value); }
+            }
+
+            int _boneIndex;
+            public int BoneIndex
+            {
+                get { return _boneIndex; }
+                set { SetAndNotify(ref _boneIndex, value); }
+            }
+            public ObservableCollection<SkeletonBoneNode> Children { get; set; } = new ObservableCollection<SkeletonBoneNode>();
+        }
     }
 }

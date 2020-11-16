@@ -138,7 +138,7 @@ namespace Filetypes.RigidModel
         public byte Unknown2_val0;
         public byte Unknown2_val1;
 
-        public int AnimationFrameForDestructableBodies;
+        public int LinkDirectlyToBoneIndex;
         public int Flag_alwaysNegativeOne;
         public int AlphaKeyValue;
 
@@ -177,7 +177,7 @@ namespace Filetypes.RigidModel
             lodModel.Unknown2_val0 = chunk.ReadByte();
             lodModel.Unknown2_val1 = chunk.ReadByte();
             lodModel.Transformation = LoadTransformations(chunk);
-            lodModel.AnimationFrameForDestructableBodies = chunk.ReadInt32();       // Keep -1 for most stuff. Might not be the frame, but the value is only there for things that can be destroyed
+            lodModel.LinkDirectlyToBoneIndex = chunk.ReadInt32();       // Keep -1 for most stuff. Might not be the frame, but the value is only there for things that can be destroyed
             lodModel.Flag_alwaysNegativeOne = chunk.ReadInt32();
             lodModel.AttachmentPointCount = chunk.ReadUInt32();
             lodModel.TextureCount = chunk.ReadUInt32();

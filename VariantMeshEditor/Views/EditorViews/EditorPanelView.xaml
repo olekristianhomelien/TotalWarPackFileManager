@@ -9,6 +9,7 @@
              xmlns:rigidViewmodels="clr-namespace:VariantMeshEditor.ViewModels.RigidModel"
              xmlns:animationViewmodels="clr-namespace:VariantMeshEditor.ViewModels.Animation"
              xmlns:animation="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation"
+             xmlns:skeleton="clr-namespace:VariantMeshEditor.ViewModels.Skeleton"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -25,7 +26,7 @@
             <rmwEditor:RigidModelEditorView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:SkeletonElement}">
+        <DataTemplate DataType="{x:Type skeleton:SkeletonElement}">
             <local:SkeletonEditorView/>
         </DataTemplate>
     </UserControl.Resources>

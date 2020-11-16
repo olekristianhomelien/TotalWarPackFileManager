@@ -2,23 +2,49 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:commondialogs="clr-namespace:CommonDialogs;assembly=CommonDialogs"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews"
              mc:Ignorable="d" 
              x:Name="Self"
              d:DesignHeight="450" d:DesignWidth="800">
     <DockPanel>
 
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Label Content="Skeleton Name:" Width="100"/>
-            <Label Content="{Binding SkeletonName, UpdateSourceTrigger=PropertyChanged}"/>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="90">Skeleton Name</Label>
+            <Label>:</Label>
+            <TextBlock TextWrapping="NoWrap"  VerticalAlignment="Center"  Text="{Binding Path=ViewModel.SkeletonName, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <Label Content="Bone Count:" Width="100"/>
-            <Label Content="{Binding BoneCount, UpdateSourceTrigger=PropertyChanged}"/>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="90">Bone Count</Label>
+            <Label>:</Label>
+            <TextBlock TextWrapping="NoWrap"  VerticalAlignment="Center"  Text="{Binding Path=ViewModel.BoneCount, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
-        <TreeView DockPanel.Dock="Top" x:Name="SkeletonBonesView"></TreeView>
+
+        <TreeView DockPanel.Dock="Top" ItemsSource="{Binding ViewModel.Bones, UpdateSourceTrigger=PropertyChanged}">
+            <i:Interaction.Behaviors>
+                <editorviews:BindableSelectedItemBehavior SelectedItem="{Binding ViewModel.SelectedBone, Mode=TwoWay}" />
+            </i:Interaction.Behaviors>
+
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+            <TreeView.ItemTemplate >
+
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=Children, UpdateSourceTrigger=PropertyChanged}">
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <TextBlock Text="{Binding BoneName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+        </TreeView>
     </DockPanel>
 
 </UserControl>

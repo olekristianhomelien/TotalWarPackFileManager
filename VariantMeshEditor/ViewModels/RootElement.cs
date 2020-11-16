@@ -17,11 +17,13 @@ namespace VariantMeshEditor.ViewModels
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
-
-            RootEditorView view = new RootEditorView();
-            RootController controller = new RootController(view, this, resourceLibary, virtualWorld);
+            RootController controller = new RootController(null, this, resourceLibary, virtualWorld);
 
         }
+
+
+        // Add remove for each child
+
     }
 
 }

@@ -102,8 +102,11 @@ namespace Common {
                 string[] paths = filepath.Split(Path.DirectorySeparatorChar);
                 VirtualDirectory dir = Root;
                 PackEntry result = dir;
-                foreach (string subDir in paths) {
+                foreach (string subDir in paths) 
+                {
                     result = dir.GetEntry(subDir);
+                    if (result == null)
+                        return null;
                     dir = result as VirtualDirectory;
                 }
                 return result;

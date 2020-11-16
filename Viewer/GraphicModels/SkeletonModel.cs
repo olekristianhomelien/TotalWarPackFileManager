@@ -14,6 +14,11 @@ namespace Viewer.GraphicModels
         Matrix[] _drawPositions;
         LineBox _lineBox;
 
+
+        Vector3 _defaultColour = new Vector3(.25f, 1, .25f);
+        Vector3 _selectedColour = new Vector3(1, 0, 0);
+
+        public int? SelectedBoneIndex { get; set; }
         public SkeletonModel(Effect shader) : base(null, shader)
         {
         }
@@ -56,6 +61,10 @@ namespace Viewer.GraphicModels
                 if (parentIndex == -1)
                     continue;
 
+                Vector3 drawColour = _defaultColour;
+                if (SelectedBoneIndex.HasValue && SelectedBoneIndex.Value == i)
+                    drawColour = _selectedColour;
+
                 var vertices = new[]
                 {
                     new VertexPosition(Vector3.Transform(_drawPositions[i].Translation, world)),
@@ -70,16 +79,16 @@ namespace Viewer.GraphicModels
                     device.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
 
-                DrawCube(device, commonShaderParameters, world * Matrix.CreateScale(0.05f) * _drawPositions[i]);
+                DrawCube(device, commonShaderParameters, world * Matrix.CreateScale(0.05f) * _drawPositions[i], drawColour);
             }
         }
 
-        void DrawCube(GraphicsDevice device, CommonShaderParameters commonShaderParameters, Matrix world)
+        void DrawCube(GraphicsDevice device, CommonShaderParameters commonShaderParameters, Matrix world, Vector3 colour)
         {
             foreach (var pass in _shader.CurrentTechnique.Passes)
             {
                 ApplyCommonShaderParameters(commonShaderParameters, world);
-                _shader.Parameters["Color"].SetValue(new Vector3(.25f, 1, .25f));
+                _shader.Parameters["Color"].SetValue(colour);
                 pass.Apply();
                 _lineBox.Render(device);
             }
