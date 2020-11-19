@@ -12,24 +12,19 @@ namespace Viewer.Animation
 {
     public class AnimationClip
     {
-        public class AnimationKeyFrame
+        public class BoneKeyFrame
         {
             public int BoneIndex { get; set; }
             public int ParentBoneIndex { get; set; }
             public Matrix Transform { get; set; }
 
-            public Quaternion Rotation { get; set; } = new Quaternion();
-            public Vector3 Translation { get; set; } = new Vector3();
-
-            public AnimationKeyFrame Clone()
+            public BoneKeyFrame Clone()
             {
-                var newItem = new AnimationKeyFrame()
+                var newItem = new BoneKeyFrame()
                 {
                     BoneIndex = BoneIndex,
                     ParentBoneIndex = ParentBoneIndex,
                     Transform = Transform,
-                    Rotation = Rotation,
-                    Translation = Translation
                 };
                 return newItem;
             }
@@ -42,7 +37,7 @@ namespace Viewer.Animation
 
         public class AnimationFrame
         {
-            public List<AnimationKeyFrame> BoneTransforms = new List<AnimationKeyFrame>();
+            public List<BoneKeyFrame> BoneTransforms = new List<BoneKeyFrame>();
 
             public AnimationFrame Clone()
             {
@@ -91,25 +86,21 @@ namespace Viewer.Animation
             var defaultFrame = new AnimationFrame();
             for (int i = 0; i < _skeleton.BoneCount; i++)
             {
-                defaultFrame.BoneTransforms.Add(new AnimationKeyFrame()
+                defaultFrame.BoneTransforms.Add(new BoneKeyFrame()
                 {
-                    Transform = (_skeleton.Transform[i]),
+                    Transform = _skeleton.Transform[i],
                     BoneIndex = i,
                     ParentBoneIndex = _skeleton.ParentBoneId[i],
-                    Translation = _skeleton.Translation[i],
-                    Rotation = _skeleton.Rotation[i]
                 });
             }
 
             if (applyStaticFrames)
             {
                 foreach(var animation in _animations)
-                  ApplyFrame(animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
+                    ApplyFrame(animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
             
                 if (_animations[0].DynamicFrames.Count() == 0 || applyDynamicFrames == false)
-                {
-                  KeyFrameCollection.Add(defaultFrame);
-                }
+                    KeyFrameCollection.Add(defaultFrame);
             }
             
             if(applyDynamicFrames)
@@ -165,15 +156,6 @@ namespace Viewer.Animation
             {
                 var currentFrame = KeyFrameCollection[frameIndex];
 
-
-                // Build transform
-                //for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
-                //{
-                //    currentFrame.BoneTransforms[i].Rotation.Normalize();
-                //    currentFrame.BoneTransforms[i].Transform = Matrix.CreateFromQuaternion(currentFrame.BoneTransforms[i].Rotation) * Matrix.CreateTranslation(currentFrame.BoneTransforms[i].Translation);
-                //}
-                //
-                
                 // Move into world space
                 for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
                 {

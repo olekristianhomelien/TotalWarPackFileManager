@@ -61,7 +61,12 @@ namespace VariantMeshEditor.Util
                 return element as T;
 
             foreach (var child in element.Children)
-                return GetFirstChild<T>(child);
+            {
+                var res =  GetFirstChild<T>(child);
+                if (res != null)
+                    return res;
+            }
+                
 
             return null;
         }

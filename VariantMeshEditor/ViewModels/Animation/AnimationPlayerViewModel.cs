@@ -134,13 +134,13 @@ namespace VariantMeshEditor.ViewModels.Animation
         {
             if (animationFiles == null || animationFiles.Any() == false)
             {
-                _animationNode.AnimationPlayer.SetAnimation(null);
+                _animationNode.AnimationPlayer.SetAnimation(null, null);
             }
             else
             {
 
-                AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), skeleton);
-                _animationNode.AnimationPlayer.SetAnimation(clip);
+                //AnimationClip clip = AnimationClip.Create(animationFiles.ToArray(), skeleton);
+                _animationNode.AnimationPlayer.SetAnimation(animationFiles.ToArray(), skeleton);
             }
 
             MaxFames = _animationNode.AnimationPlayer.FrameCount();

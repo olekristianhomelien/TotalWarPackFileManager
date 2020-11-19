@@ -74,7 +74,7 @@ namespace VariantMeshEditor.ViewModels
             if (currentFrame == null)
                 return Matrix.Identity;
 
-            return _animation.AnimationPlayer.GetCurrentFrame().BoneTransforms[index].Transform;
+            return currentFrame.BoneTransforms[index].Transform;
         }
 
         void SetDisplayName(string attachmentPointName)

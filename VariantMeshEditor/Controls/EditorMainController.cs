@@ -126,7 +126,7 @@ namespace VariantMeshEditor.Controls
             //var dragonFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
             //    @"variantmeshes\variantmeshdefinitions\hef_sun_dragon_mount.variantmeshdefinition");
             //var dragonMesh = rootNode.LoadModel(dragonFile, _resourceLibary, _scene3d);
-
+            //
             //var dragonAnim = SceneElementHelper.GetFirstChild<AnimationElement>(dragonMesh);
             ////var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
             //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\attacks\dr1_breath_attack_01.anim");

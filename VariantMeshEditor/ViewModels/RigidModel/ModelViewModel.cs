@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VariantMeshEditor.Views.EditorViews.Util;
+using VariantMeshEditor.Views.TexturePreview;
+using Viewer.Scene;
 using WpfTest.Scenes;
 
 namespace VariantMeshEditor.ViewModels.RigidModel
@@ -87,8 +89,15 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
         public int LinkDirectlyToBoneIndex { get { return LodModelInstance.LinkDirectlyToBoneIndex; } }
 
-        public ModelViewModel(Rmv2LodModel lodModelInstance, TextureMeshRenderItem renderInstance)
+
+        Scene3d _virtualWorld;
+        ResourceLibary _resourceLibary;
+
+        public ModelViewModel(Rmv2LodModel lodModelInstance, TextureMeshRenderItem renderInstance, Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
+            _virtualWorld = virtualWorld;
+            _resourceLibary = resourceLibary;
+
             LodModelInstance = lodModelInstance;
             RenderInstance = renderInstance;
             Pivot = new Vector3ViewData(LodModelInstance.Transformation.Pivot, "Pivot");
@@ -128,7 +137,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
         void OnPreviewCommand(FileTextureViewModel element)
         {
-
+            TexturePreviewController.Create(element.Path, _virtualWorld.TextureToTextureRenderer, _resourceLibary);
         }
 
         public void Dispose()

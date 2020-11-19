@@ -4,14 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
-             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" >
+    
     <Grid VerticalAlignment="Top" Margin="0,2,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/> 
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -23,7 +22,16 @@
         <ComboBox 
             Grid.Column="1" Grid.Row="0"
             ItemsSource="{Binding ViewModel.MeshList, UpdateSourceTrigger=PropertyChanged}" 
-            SelectedItem="{Binding ViewModel.SelectedMesh, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            SelectedItem="{Binding ViewModel.SelectedMesh, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            DisplayMemberPath="FullPath">
+
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="DropDownOpened">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.PopulateMeshListCommand}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+        </ComboBox>
 
         <TextBox Grid.Column="2" Grid.Row="0">Bone:</TextBox>
         <ComboBox 
@@ -31,10 +39,27 @@
             ItemsSource="{Binding ViewModel.BoneList, UpdateSourceTrigger=PropertyChanged}" 
             SelectedItem="{Binding ViewModel.SelectedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <i:Interaction.Triggers>
-                <i:EventTrigger EventName="OnDropDownOpened">
-                    <i:InvokeCommandAction Command="{Binding ViewModel.PopulateBoneList}"/>
+                <i:EventTrigger EventName="DropDownOpened">
+                    <i:InvokeCommandAction Command="{Binding ViewModel.PopulateBoneListCommand}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}"/>
+                        
+                        <TextBlock Text=" ["/>
+                        <TextBlock Text="{Binding Id}"/>
+                        <TextBlock Text="]"/>
+
+                        <TextBlock Text=" P["/>
+                        <TextBlock Text="{Binding ParentId}"/>
+                        <TextBlock Text="]"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+
         </ComboBox>
 
         <Button Command="{Binding ViewModel.RemoveCommand}" Content="Remove" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Margin="0,10,0,0"/>

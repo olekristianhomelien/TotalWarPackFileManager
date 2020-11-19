@@ -47,7 +47,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
                         Textures = meshModel.ResolveTextures(resourceLibary, virtualWorld.GraphicsDevice)
                     };
 
-                    var model = new ModelViewModel(lodModel, meshRenderItem);
+                    var model = new ModelViewModel(lodModel, meshRenderItem, virtualWorld, resourceLibary);
                     currentLoad.Models.Add(model);
                 }
 

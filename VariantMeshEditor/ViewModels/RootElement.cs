@@ -54,6 +54,7 @@ namespace VariantMeshEditor.ViewModels
             modelElement.IsChecked = true;
 
             Children.Add(modelElement);
+            modelElement.Parent = this;
             return modelElement;
         }
 
