@@ -294,8 +294,8 @@ namespace VariantMeshEditor.ViewModels.Animation
         #endregion
 
         #region Snap
-        private bool _useAnimationSnap;
-        public bool UseAnimationSnap { get { return _useAnimationSnap; } set { SetAndNotify(ref _useAnimationSnap, value); } }
+        public bool UseAnimationSnap { get { return _animationPlayer.Settings.UseAnimationSnap; } set { _animationPlayer.Settings.UseAnimationSnap = value; NotifyPropertyChanged(); } }
+        public bool OnlySnapTranslations { get { return _animationPlayer.Settings.OnlySnapTranslations; } set { _animationPlayer.Settings.OnlySnapTranslations = value; NotifyPropertyChanged(); } }
 
         public ICommand PopulateSnapBoneListCommand { get; set; }
         public ICommand PopulateSnapMeshListCommand { get; set; }
@@ -303,16 +303,32 @@ namespace VariantMeshEditor.ViewModels.Animation
         public ObservableCollection<FileSceneElement> PossibleSnapMeshList { get; set; } = new ObservableCollection<FileSceneElement>();
 
         FileSceneElement _selectedSnapMesh;
-        public FileSceneElement SelectedSnapMesh { get { return _selectedSnapMesh; } set { SetAndNotify(ref _selectedSnapMesh, value); } }
-
+        public FileSceneElement SelectedSnapMesh 
+        { 
+            get { return _selectedSnapMesh; } 
+            set 
+            {
+                SetAndNotify(ref _selectedSnapMesh, value);
+                _animationPlayer.ExternalAnimationRef.ExternalPlayer = SceneElementHelper.GetFirstChild<AnimationElement>(_selectedSnapMesh)?.AnimationPlayer;
+            } 
+        }
 
         AnimationFile.BoneInfo _selectedSnapBone;
-        public AnimationFile.BoneInfo SelectedSnapBone { get { return _selectedSnapBone; } set { SetAndNotify(ref _selectedSnapBone, value); } }
+        public AnimationFile.BoneInfo SelectedSnapBone 
+        { 
+            get { return _selectedSnapBone; } 
+            set 
+            { 
+                SetAndNotify(ref _selectedSnapBone, value);
+                if (_selectedSnapBone == null)
+                    _animationPlayer.ExternalAnimationRef.ExternalBoneIndex = -1;
+                else
+                    _animationPlayer.ExternalAnimationRef.ExternalBoneIndex = _selectedSnapBone.Id;
+            } 
+        }
 
         public ObservableCollection<AnimationFile.BoneInfo> PossibleSnapBones { get; set; } = new ObservableCollection<AnimationFile.BoneInfo>();
 
-        private bool _onlySnapTranslations;
-        public bool OnlySnapTranslations { get { return _onlySnapTranslations; } set { SetAndNotify(ref _onlySnapTranslations, value); } }
         #endregion
 
         FileSceneElement _parent;

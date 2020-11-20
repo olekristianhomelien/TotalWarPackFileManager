@@ -105,7 +105,7 @@ namespace VariantMeshEditor.Controls
 
         }
 
-        void PaladinAndDragon(RootElement rootNode, bool loadDragon = false)
+        void PaladinAndDragon(RootElement rootNode, bool loadDragon = true)
         {
             var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
                 @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
@@ -121,7 +121,7 @@ namespace VariantMeshEditor.Controls
             var secondAnimNode = paladinAnim.AnimationExplorer.AddNewAnimationNode();
             secondAnimNode.SelectedAnimationPackFile = handAnim;
 
-            paladinAnim.AnimationPlayer.AnimateInPlace = true;
+            paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
 
             if (loadDragon)
             {

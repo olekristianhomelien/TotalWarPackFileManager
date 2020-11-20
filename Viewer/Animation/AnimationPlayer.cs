@@ -12,25 +12,27 @@ namespace Viewer.Animation
 
     public class ExternalAnimationAttachmentResolver
     {
-       /* protected override void UpdateNode(GameTime time)
+        public AnimationPlayer ExternalPlayer { get; set; }
+        public int ExternalBoneIndex { get; set; } = -1;
+        public bool HasAnimation { get { return ExternalPlayer != null && ExternalBoneIndex != -1; } }
+
+        public Matrix UpdateNode(GameTime time)
         {
-            if (ViewModel.SelectedMesh != null && ViewModel.SelectedBone != null)
-            {
-                var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(ViewModel.SelectedMesh);
-                var animation = SceneElementHelper.GetFirstChild<AnimationElement>(ViewModel.SelectedMesh);
-                if (skeleton != null && animation != null)
-                {
-                    var bonePos = skeleton.Skeleton.WorldTransform[ViewModel.SelectedBone.Id];
-                    WorldTransform = Matrix.Identity;
+            if (!HasAnimation)
+                return Matrix.Identity;
 
-                    WorldTransform = Matrix.CreateTranslation(Matrix.Multiply(bonePos, GetAnimatedBone(ViewModel.SelectedBone.Id, animation)).Translation + new Vector3(0.0f, 0.8f, -0.15f));
-                    //WorldTransform = bonePos;
-                    return;
-                }
-            }
+            // Update if needed
+            if(time != null)
+                ExternalPlayer.Update(time);
 
-            WorldTransform = Matrix.Identity;
-        }*/
+        
+            var bonePos = ExternalPlayer._skeleton.WorldTransform[ExternalBoneIndex];
+
+            var animPos = ExternalPlayer.GetCurrentFrame().BoneTransforms[ExternalBoneIndex].Transform;
+            return Matrix.Multiply(bonePos, animPos);
+        }
+
+ 
     }
 
     public class AnimationFrame
@@ -48,6 +50,7 @@ namespace Viewer.Animation
 
     public class AnimationPlayerSettings
     {
+
         public bool UseTranslationOffset { get; set; } = false;
         public float TranslationOffsetX { get; set; } = 0;
         public float TranslationOffsetY { get; set; } = 0;
@@ -64,37 +67,28 @@ namespace Viewer.Animation
         public bool FreezeAnimationBone { get; set; } = false;
         public int FreezeAnimationBoneIndex { get; set; } = -1;
 
+
+        public bool UseAnimationSnap { get; set; } = false;
+        public bool OnlySnapTranslations { get; set; } = false;
     }
 
     public class AnimationPlayer
     {
         public AnimationPlayerSettings Settings { get; set; } = new AnimationPlayerSettings();
-
+        public ExternalAnimationAttachmentResolver ExternalAnimationRef { get; set; } = new ExternalAnimationAttachmentResolver();
 
         AnimationFile[] _animations;
-        Skeleton _skeleton;
+        public Skeleton _skeleton;
         int _currentFrame;
+        TimeSpan _timeAtCurrentFrame;
+        double _animationInterpolation = 0;
+        AnimationFrame _currentAnimFrame;
 
-        bool _animateInPlace = false;
-        public bool AnimateInPlace 
-        { 
-            get { return _animateInPlace; } 
-            set { _animateInPlace = value; } 
-        }
 
-        bool _applyStaticFrame = true;
-        public bool ApplyStaticFrame
-        {
-            get { return _applyStaticFrame; }
-            set {_applyStaticFrame = value; }
-        }
-
-        bool _applyDynamicFrames = true;
-        public bool ApplyDynamicFrames
-        {
-            get { return _applyDynamicFrames; }
-            set { _applyDynamicFrames = value; }
-        }
+        public bool IsPlaying { get; private set; } = false;
+        public double FrameRate { get; set; } = 20.0 / 1000.0;
+        public bool ApplyStaticFrame { get; set; } = true;
+        public bool ApplyDynamicFrames { get; set; } = true;
 
         public int CurrentFrame
         {
@@ -116,13 +110,6 @@ namespace Viewer.Animation
             }
         }
 
-        TimeSpan _timeAtCurrentFrame;
-        public double FrameRate { get; set; } = 20.0 / 1000.0;
-        double _animationInterpolation = 0;
-        public bool IsPlaying { get; private set; } = false;
-
-
-        AnimationFrame _currentAnimFrame;
 
         public void Update(GameTime gameTime)
         {
@@ -140,7 +127,7 @@ namespace Viewer.Animation
                         _currentFrame = 0;
                 }
 
-                ComputeCurrentFrame();
+                ComputeCurrentFrame(gameTime);
             }
         }
 
@@ -150,6 +137,7 @@ namespace Viewer.Animation
             _skeleton = skeleton;
             IsPlaying = true;
             _currentFrame = 0;
+            _animationInterpolation = 0;
             _animations = animation;
             _timeAtCurrentFrame = TimeSpan.FromSeconds(0);
         }
@@ -171,7 +159,7 @@ namespace Viewer.Animation
         }
 
 
-        public void ComputeCurrentFrame()
+        void ComputeCurrentFrame(GameTime time = null)
         {
             var currentFrame = new AnimationFrame();
             for (int i = 0; i < _skeleton.BoneCount; i++)
@@ -201,8 +189,9 @@ namespace Viewer.Animation
             }
 
            
-                EnsureSaticRootNode(currentFrame);
-
+            HandleFreezeAnimation(currentFrame);
+           
+            HandleSnapToExternalAnimation(currentFrame, time);
             OffsetAnimation(currentFrame);
 
             // Move into world space
@@ -229,7 +218,7 @@ namespace Viewer.Animation
             _currentAnimFrame = currentFrame;
         }
 
-        void EnsureSaticRootNode(AnimationFrame currentFrame)
+        void HandleFreezeAnimation(AnimationFrame currentFrame)
         {
             if (Settings.FreezeAnimationRoot)
             {
@@ -242,7 +231,7 @@ namespace Viewer.Animation
                         var matrix = boneTransform.Transform;
                         animRootOffset += boneTransform.Transform.Translation;
                         matrix.Translation = new Vector3(0, 0, 0);
-                        boneTransform.Transform = matrix;
+                        boneTransform.Transform = Matrix.Identity;
                     }
 
                     if (Settings.FreezeAnimationBone)
@@ -252,7 +241,7 @@ namespace Viewer.Animation
                             var matrix = boneTransform.Transform;
                             rootOfset += boneTransform.Transform.Translation;
                             matrix.Translation = new Vector3(0, 0, 0);
-                            boneTransform.Transform = matrix;
+                            boneTransform.Transform = Matrix.Identity;
                         }
                     }
                 }
@@ -264,7 +253,7 @@ namespace Viewer.Animation
                     {
                         var matrix = boneTransform.Transform;
                         matrix.Translation -= rootOfset;
-                        boneTransform.Transform = matrix;
+                        boneTransform.Transform = Matrix.Identity;
                     }
                 }
             }
@@ -284,6 +273,18 @@ namespace Viewer.Animation
             var matrix = currentFrame.BoneTransforms[0].Transform;
             matrix = roationMatrix * translationMatrix * matrix;
             currentFrame.BoneTransforms[0].Transform = matrix;
+        }
+
+        void HandleSnapToExternalAnimation(AnimationFrame currentFrame, GameTime time)
+        {
+            if (ExternalAnimationRef.HasAnimation && Settings.UseAnimationSnap)
+            {
+                var refTransform = ExternalAnimationRef.UpdateNode(time);
+                //foreach (var transform in currentFrame.BoneTransforms)
+                {
+                    currentFrame.BoneTransforms[0].Transform = Matrix.CreateTranslation(refTransform.Translation); ;// * currentFrame.BoneTransforms[0].Transform ;
+                }
+            }
         }
 
         void ApplyFrame(AnimationFile.Frame currentFrame, AnimationFile.Frame nextFrame, float animationInterpolation, List<int> translationMappings, List<int> rotationMapping, AnimationFrame finalAnimationFrame)
