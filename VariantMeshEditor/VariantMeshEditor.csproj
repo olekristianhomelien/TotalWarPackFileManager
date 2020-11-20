@@ -51,8 +51,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\EditorControllers\Animation\AnimationFragmentExplorerController.cs" />
-    <Compile Include="Controls\EditorControllers\RigidModelController.cs" />
     <Compile Include="Controls\EditorControllers\RootController.cs" />
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
     <Compile Include="Controls\EditorControllers\SlotController.cs" />

@@ -105,7 +105,7 @@ namespace VariantMeshEditor.Controls
 
         }
 
-        void PaladinAndDragon(RootElement rootNode)
+        void PaladinAndDragon(RootElement rootNode, bool loadDragon = false)
         {
             var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
                 @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
@@ -123,15 +123,18 @@ namespace VariantMeshEditor.Controls
 
             paladinAnim.AnimationPlayer.AnimateInPlace = true;
 
-            //var dragonFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-            //    @"variantmeshes\variantmeshdefinitions\hef_sun_dragon_mount.variantmeshdefinition");
-            //var dragonMesh = rootNode.LoadModel(dragonFile, _resourceLibary, _scene3d);
-            //
-            //var dragonAnim = SceneElementHelper.GetFirstChild<AnimationElement>(dragonMesh);
-            ////var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
-            //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\attacks\dr1_breath_attack_01.anim");
-            //
-            //dragonAnim.AnimationExplorer.AnimationList[0].SelectedAnimationPackFile = dragonMainAnim;
+            if (loadDragon)
+            {
+                var dragonFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
+                    @"variantmeshes\variantmeshdefinitions\hef_sun_dragon_mount.variantmeshdefinition");
+                var dragonMesh = rootNode.LoadModel(dragonFile, _resourceLibary, _scene3d);
+
+                var dragonAnim = SceneElementHelper.GetFirstChild<AnimationElement>(dragonMesh);
+                //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
+                var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\attacks\dr1_breath_attack_01.anim");
+
+                dragonAnim.AnimationExplorer.AnimationList[0].SelectedAnimationPackFile = dragonMainAnim;
+            }
         }
     }
 }

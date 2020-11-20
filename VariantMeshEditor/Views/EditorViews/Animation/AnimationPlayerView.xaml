@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs" xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
              mc:Ignorable="d" >
-    
+
     <StackPanel >
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock Text="Frame "/>
@@ -14,7 +15,7 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
-           
+
             <Button Command="{Binding FirstFrameCommand}" FontSize="20">⏮︎</Button>
             <Button Command="{Binding PrivFrameCommand}" FontSize="20">⏪</Button>
             <ToggleButton Command="{Binding PausePlayCommand}" FontSize="20">⏯︎</ToggleButton>
@@ -26,14 +27,175 @@
                 DisplayMemberPath="DisplayName"
                 VerticalContentAlignment="Center"/>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Center">
-            <CheckBox IsChecked="{Binding SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync Animations"/>
 
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding AnimateInPlace, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Animate in place"/>
-            <TextBlock Text="    RootBone:"/>
-            <ComboBox ></ComboBox>
-        </StackPanel>
+        <Expander Header="Advance options:" BorderThickness="1" BorderBrush="Gray" Margin="0,0,0,10" IsExpanded="true">
+            <StackPanel>
+
+                <!-- Sync animation -->
+
+                <GroupBox Header="Sync:">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox IsChecked="{Binding AdvanceSettings.SyncAllAnimations, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Content="Sync all Animations " VerticalContentAlignment="Center"/>
+                        <ComboBox MinWidth="100" 
+                                  ItemsSource="{Binding AdvanceSettings.PossibleSyncModes}" 
+                                  SelectedItem="{Binding AdvanceSettings.SelectedSyncMode, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"></ComboBox>
+                    </StackPanel>
+                </GroupBox>
+                <!-- Sync animation -->
+                <GroupBox Header="Freeze animation:">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding AdvanceSettings.FreezeAnimationRoot, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Freeze animation root" VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding AdvanceSettings.FreezeAnimationBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"    Content="Freeze animation bone: " VerticalContentAlignment="Center"/>
+                            <ComboBox MinWidth="100" 
+                                      IsEnabled="{Binding AdvanceSettings.FreezeAnimationBone, UpdateSourceTrigger=PropertyChanged}"
+                                      ItemsSource="{Binding AdvanceSettings.PosibleBonesToFreeze, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding AdvanceSettings.SelectedBoneToFreeze, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}"/>
+
+                                            <TextBlock Text=" ["/>
+                                            <TextBlock Text="{Binding Id}"/>
+                                            <TextBlock Text="]"/>
+
+                                            <TextBlock Text=" P["/>
+                                            <TextBlock Text="{Binding ParentId}"/>
+                                            <TextBlock Text="]"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Offset -->
+                <GroupBox Header="Offsets:">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <CheckBox IsChecked="{Binding AdvanceSettings.UseTranslationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="0" Grid.Row="0" Content="Translation Offset:" VerticalContentAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" IsEnabled="{Binding AdvanceSettings.UseTranslationOffset, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.TranslationOffsetX, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.TranslationOffsetY, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.TranslationOffsetZ, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                        </StackPanel>
+
+                        <CheckBox IsChecked="{Binding AdvanceSettings.UseRotationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Grid.Column="0" Grid.Row="1" Content="Rotation Offset:" VerticalContentAlignment="Center"/>
+                        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" IsEnabled="{Binding AdvanceSettings.UseRotationOffset, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.RotationOffsetX, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.RotationOffsetY, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                            <TextBox Width="50" Margin="5,0,0,0" Text="{Binding AdvanceSettings.RotationOffsetZ, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" MaxLength="7">
+                                <i:Interaction.Behaviors>
+                                    <animationviews:TextBoxInputBehavior InputMode="DecimalInput"/>
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!-- Snap animation to -->
+                <GroupBox Header="Snap animation">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <CheckBox IsChecked="{Binding AdvanceSettings.UseAnimationSnap, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Grid.Column="0" VerticalContentAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">Mesh:</TextBlock>
+                        <ComboBox 
+                            IsEnabled="{Binding AdvanceSettings.UseAnimationSnap, UpdateSourceTrigger=PropertyChanged}"
+                            Grid.Column="2" Grid.Row="0"
+                            ItemsSource="{Binding AdvanceSettings.PossibleSnapMeshList, UpdateSourceTrigger=PropertyChanged}" 
+                            SelectedItem="{Binding AdvanceSettings.SelectedSnapMesh, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            DisplayMemberPath="FullPath">
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownOpened">
+                                    <i:InvokeCommandAction Command="{Binding AdvanceSettings.PopulateSnapMeshListCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ComboBox>
+
+                        <TextBlock Grid.Column="3" Grid.Row="0" VerticalAlignment="Center">Bone:</TextBlock>
+                        <ComboBox 
+                            IsEnabled="{Binding AdvanceSettings.UseAnimationSnap, UpdateSourceTrigger=PropertyChanged}"
+                            Grid.Column="4" Grid.Row="0"
+                            ItemsSource="{Binding AdvanceSettings.PossibleSnapBones, UpdateSourceTrigger=PropertyChanged}" 
+                            SelectedItem="{Binding AdvanceSettings.SelectedSnapBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownOpened">
+                                    <i:InvokeCommandAction Command="{Binding AdvanceSettings.PopulateSnapBoneListCommand}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"/>
+
+                                        <TextBlock Text=" ["/>
+                                        <TextBlock Text="{Binding Id}"/>
+                                        <TextBlock Text="]"/>
+
+                                        <TextBlock Text=" P["/>
+                                        <TextBlock Text="{Binding ParentId}"/>
+                                        <TextBlock Text="]"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <CheckBox 
+                            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" VerticalContentAlignment="Center"
+                            Content="Only translate"
+                            IsEnabled="{Binding AdvanceSettings.UseAnimationSnap, UpdateSourceTrigger=PropertyChanged}"
+                            IsChecked="{Binding AdvanceSettings.OnlySnapTranslations, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                            />
+
+                    </Grid>
+                </GroupBox>
+               
+            </StackPanel>
+        </Expander>
     </StackPanel>
 </UserControl>

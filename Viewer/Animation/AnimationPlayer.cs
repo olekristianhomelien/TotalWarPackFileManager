@@ -6,45 +6,94 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using static Viewer.Animation.AnimationClip;
 
 namespace Viewer.Animation
 {
+
+    public class ExternalAnimationAttachmentResolver
+    {
+       /* protected override void UpdateNode(GameTime time)
+        {
+            if (ViewModel.SelectedMesh != null && ViewModel.SelectedBone != null)
+            {
+                var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(ViewModel.SelectedMesh);
+                var animation = SceneElementHelper.GetFirstChild<AnimationElement>(ViewModel.SelectedMesh);
+                if (skeleton != null && animation != null)
+                {
+                    var bonePos = skeleton.Skeleton.WorldTransform[ViewModel.SelectedBone.Id];
+                    WorldTransform = Matrix.Identity;
+
+                    WorldTransform = Matrix.CreateTranslation(Matrix.Multiply(bonePos, GetAnimatedBone(ViewModel.SelectedBone.Id, animation)).Translation + new Vector3(0.0f, 0.8f, -0.15f));
+                    //WorldTransform = bonePos;
+                    return;
+                }
+            }
+
+            WorldTransform = Matrix.Identity;
+        }*/
+    }
+
+    public class AnimationFrame
+    {
+        public class BoneKeyFrame
+        {
+            public int BoneIndex { get; set; }
+            public int ParentBoneIndex { get; set; }
+            public Matrix Transform { get; set; }
+        }
+
+        public List<BoneKeyFrame> BoneTransforms = new List<BoneKeyFrame>();
+    }
+
+
+    public class AnimationPlayerSettings
+    {
+        public bool UseTranslationOffset { get; set; } = false;
+        public float TranslationOffsetX { get; set; } = 0;
+        public float TranslationOffsetY { get; set; } = 0;
+        public float TranslationOffsetZ { get; set; } = 0;
+
+
+        public bool UseRotationOffset { get; set; } = false;
+        public float RotationOffsetX { get; set; } = 0;
+        public float RotationOffsetY { get; set; } = 0;
+        public float RotationOffsetZ { get; set; } = 0;
+
+
+        public bool FreezeAnimationRoot { get; set; } = false;
+        public bool FreezeAnimationBone { get; set; } = false;
+        public int FreezeAnimationBoneIndex { get; set; } = -1;
+
+    }
+
     public class AnimationPlayer
     {
+        public AnimationPlayerSettings Settings { get; set; } = new AnimationPlayerSettings();
+
+
+        AnimationFile[] _animations;
+        Skeleton _skeleton;
         int _currentFrame;
 
         bool _animateInPlace = false;
         public bool AnimateInPlace 
         { 
             get { return _animateInPlace; } 
-            set 
-            { 
-                _animateInPlace = value;
-                Recreate();
-            } 
+            set { _animateInPlace = value; } 
         }
 
         bool _applyStaticFrame = true;
         public bool ApplyStaticFrame
         {
             get { return _applyStaticFrame; }
-            set
-            {
-                _applyStaticFrame = value;
-                Recreate();
-            }
+            set {_applyStaticFrame = value; }
         }
 
         bool _applyDynamicFrames = true;
         public bool ApplyDynamicFrames
         {
             get { return _applyDynamicFrames; }
-            set
-            {
-                _applyDynamicFrames = value;
-                Recreate();
-            }
+            set { _applyDynamicFrames = value; }
         }
 
         public int CurrentFrame
@@ -52,16 +101,18 @@ namespace Viewer.Animation
             get { return _currentFrame; }
             set 
             {
-                //if (value < 0)
-                //    value = 0;
-                //
-                //if(_currentFrame != null)
-                //{
-                //    if (value > FrameCount() - 1)
-                //        value = FrameCount() - 1;
-                //}
-                //
-                //_currentFrame = value; 
+                if (value < 0)
+                    value = 0;
+                
+                if(_animations != null)
+                {
+                    if (value >= FrameCount() - 1)
+                        value = FrameCount() - 2;
+                }
+                
+                _currentFrame = value;
+                _animationInterpolation = 0;
+                ComputeCurrentFrame();
             }
         }
 
@@ -77,9 +128,6 @@ namespace Viewer.Animation
         {
             if (_animations != null && IsPlaying)
             {
-
-
-
                 _timeAtCurrentFrame += gameTime.ElapsedGameTime;
                 _animationInterpolation = _timeAtCurrentFrame.TotalMilliseconds / (FrameRate * 1000);
                 if (_timeAtCurrentFrame.TotalMilliseconds >= FrameRate * 1000)
@@ -88,23 +136,12 @@ namespace Viewer.Animation
                     _timeAtCurrentFrame = TimeSpan.FromSeconds(0);
                     _currentFrame++;
 
-                    if (_currentFrame >= _animations[0].DynamicFrames.Count() -1 )
+                    if (_currentFrame >= FrameCount() - 1 )
                         _currentFrame = 0;
-
-                  
-
-
                 }
 
-
-                _currentAnimFrame = ComputeCurrentFrame(false, true, true);
-
+                ComputeCurrentFrame();
             }
-
-
-
-
-
         }
 
 
@@ -128,49 +165,18 @@ namespace Viewer.Animation
 
         public int FrameCount()
         {
-            //if (_animations != null)
-            //    return _currentAnimation.KeyFrameCollection.Count();
+            if (_animations != null)
+                return _animations[0].DynamicFrames.Count();
             return 0;
         }
 
 
-        void Recreate()
+        public void ComputeCurrentFrame()
         {
-            //_currentAnimation.ReCreate(AnimateInPlace, ApplyDynamicFrames, ApplyStaticFrame);
-            //var totalFrames = _currentAnimation.KeyFrameCollection.Count();
-            //if (totalFrames == 1 || totalFrames == 0)
-            //    _currentFrame = 0;
-        }
-
-
-
-
-
-
-
-
-
-
-
-        AnimationFile[] _animations;
-        Skeleton _skeleton;
-
-
-
-        public AnimationFrame ComputeCurrentFrame(bool animateInPlace, bool applyDynamicFrames, bool applyStaticFrames)
-        {
-
-            //_animationInterpolation
-
-            int currentFrameIndex = _currentFrame;
-            //int nextFrameIndex = 2;
-            //float lerpValue = 0.5f;
-
-
-            var defaultFrame = new AnimationFrame();
+            var currentFrame = new AnimationFrame();
             for (int i = 0; i < _skeleton.BoneCount; i++)
             {
-                defaultFrame.BoneTransforms.Add(new BoneKeyFrame()
+                currentFrame.BoneTransforms.Add(new AnimationFrame.BoneKeyFrame()
                 {
                     Transform = _skeleton.Transform[i],
                     BoneIndex = i,
@@ -178,20 +184,26 @@ namespace Viewer.Animation
                 });
             }
 
-            if (applyStaticFrames)
+            if (ApplyStaticFrame)
             {
                 foreach (var animation in _animations)
-                    ApplyFrame(animation.StaticFrame, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, defaultFrame);
+                    ApplyFrame(animation.StaticFrame, null, (float)_animationInterpolation, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, currentFrame);
             }
 
-            if (applyDynamicFrames)
+            if (ApplyDynamicFrames)
             {
-                var animationKeyFrameData = _animations[0].DynamicFrames[currentFrameIndex];
-                ApplyFrame(animationKeyFrameData, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, defaultFrame);
-
+                if (_animations[0].DynamicFrames.Count > _currentFrame)
+                {
+                    var currentFrameKeys = _animations[0].DynamicFrames[_currentFrame];
+                    var nextFrameKeys = _animations[0].DynamicFrames[_currentFrame + 1];
+                    ApplyFrame(currentFrameKeys, nextFrameKeys, (float)_animationInterpolation, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, currentFrame);
+                }
             }
 
-            var currentFrame = defaultFrame;
+           
+                EnsureSaticRootNode(currentFrame);
+
+            OffsetAnimation(currentFrame);
 
             // Move into world space
             for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
@@ -213,39 +225,116 @@ namespace Viewer.Animation
                 var inv = Matrix.Invert(_skeleton.WorldTransform[i]);
                 currentFrame.BoneTransforms[i].Transform = Matrix.Multiply(inv, currentFrame.BoneTransforms[i].Transform);
             }
-            return defaultFrame;
+
+            _currentAnimFrame = currentFrame;
         }
 
-
-        void ApplyFrame(AnimationFile.Frame frame, List<int> translationMappings, List<int> rotationMapping, AnimationFrame currentFrame)
+        void EnsureSaticRootNode(AnimationFrame currentFrame)
         {
-            if (frame == null)
+            if (Settings.FreezeAnimationRoot)
+            {
+                Vector3 rootOfset = new Vector3(0);
+                Vector3 animRootOffset = new Vector3(0);
+                foreach (var boneTransform in currentFrame.BoneTransforms)
+                {
+                    if (boneTransform.BoneIndex == 0)
+                    {
+                        var matrix = boneTransform.Transform;
+                        animRootOffset += boneTransform.Transform.Translation;
+                        matrix.Translation = new Vector3(0, 0, 0);
+                        boneTransform.Transform = matrix;
+                    }
+
+                    if (Settings.FreezeAnimationBone)
+                    {
+                        if (boneTransform.BoneIndex == 7)
+                        {
+                            var matrix = boneTransform.Transform;
+                            rootOfset += boneTransform.Transform.Translation;
+                            matrix.Translation = new Vector3(0, 0, 0);
+                            boneTransform.Transform = matrix;
+                        }
+                    }
+                }
+
+                foreach (var boneTransform in currentFrame.BoneTransforms)
+                {
+                    bool test = Settings.FreezeAnimationBone && boneTransform.BoneIndex != 7;
+                    if (boneTransform.ParentBoneIndex == 0 && test)
+                    {
+                        var matrix = boneTransform.Transform;
+                        matrix.Translation -= rootOfset;
+                        boneTransform.Transform = matrix;
+                    }
+                }
+            }
+        }
+
+        void OffsetAnimation(AnimationFrame currentFrame)
+        {
+            var translationMatrix = Matrix.Identity;
+            var roationMatrix = Matrix.Identity;
+
+            if (Settings.UseTranslationOffset)
+                translationMatrix = Matrix.CreateTranslation(new Vector3(Settings.TranslationOffsetX, Settings.TranslationOffsetY, Settings.TranslationOffsetZ));
+
+            if (Settings.UseRotationOffset)
+                roationMatrix = Matrix.CreateRotationX(MathHelper.ToRadians(Settings.RotationOffsetX)) * Matrix.CreateRotationY(MathHelper.ToRadians(Settings.RotationOffsetY)) * Matrix.CreateRotationZ(MathHelper.ToRadians(Settings.RotationOffsetZ));
+
+            var matrix = currentFrame.BoneTransforms[0].Transform;
+            matrix = roationMatrix * translationMatrix * matrix;
+            currentFrame.BoneTransforms[0].Transform = matrix;
+        }
+
+        void ApplyFrame(AnimationFile.Frame currentFrame, AnimationFile.Frame nextFrame, float animationInterpolation, List<int> translationMappings, List<int> rotationMapping, AnimationFrame finalAnimationFrame)
+        {
+            if (currentFrame == null)
                 return;
 
-            for (int i = 0; i < frame.Transforms.Count(); i++)
+            for (int i = 0; i < currentFrame.Transforms.Count(); i++)
             {
                 var dynamicIndex = translationMappings[i];
                 if (dynamicIndex != -1)
                 {
-                    var pos = frame.Transforms[i];
-                    var temp = currentFrame.BoneTransforms[dynamicIndex].Transform;
-                    temp.Translation = new Vector3(pos[0], pos[1], pos[2]);
-                    currentFrame.BoneTransforms[dynamicIndex].Transform = temp;
+                    var animationValueCurrentFrame = VectorFromFloatArray(currentFrame.Transforms[i]);
+                    if (nextFrame != null)
+                    {   
+                        var animationValueNextFrame = VectorFromFloatArray(nextFrame.Transforms[i]);
+                        animationValueCurrentFrame = Vector3.Lerp(animationValueCurrentFrame, animationValueNextFrame, animationInterpolation);
+                    }
+
+                    var temp = finalAnimationFrame.BoneTransforms[dynamicIndex].Transform;
+                    temp.Translation = animationValueCurrentFrame;
+                    finalAnimationFrame.BoneTransforms[dynamicIndex].Transform = temp;
                 }
             }
 
-            for (int i = 0; i < frame.Quaternion.Count(); i++)
+            for (int i = 0; i < currentFrame.Quaternion.Count(); i++)
             {
                 var dynamicIndex = rotationMapping[i];
                 if (dynamicIndex != -1)
                 {
-                    var animQ = frame.Quaternion[i];
-                    var quaternion = new Quaternion(animQ[0], animQ[1], animQ[2], animQ[3]);
-                    quaternion.Normalize();
-                    var translation = currentFrame.BoneTransforms[dynamicIndex].Transform.Translation;
-                    currentFrame.BoneTransforms[dynamicIndex].Transform = Matrix.CreateFromQuaternion(quaternion) * Matrix.CreateTranslation(translation);
+                    var animationValueCurrentFrame = QuaternionFromFloatArray(currentFrame.Quaternion[i]);
+                    if (nextFrame != null)
+                    {
+                        var animationValueNextFrame = QuaternionFromFloatArray(nextFrame.Quaternion[i]);
+                        animationValueCurrentFrame = Quaternion.Slerp(animationValueCurrentFrame, animationValueNextFrame, animationInterpolation);
+                    }
+                    animationValueCurrentFrame.Normalize();
+                    var translation = finalAnimationFrame.BoneTransforms[dynamicIndex].Transform.Translation;
+                    finalAnimationFrame.BoneTransforms[dynamicIndex].Transform = Matrix.CreateFromQuaternion(animationValueCurrentFrame) * Matrix.CreateTranslation(translation);
                 }
             }
+        }
+
+        Vector3 VectorFromFloatArray(float[] array)
+        {
+            return new Vector3(array[0], array[1], array[2]);
+        }
+
+        Quaternion QuaternionFromFloatArray(short[] array)
+        {
+            return new Quaternion(array[0], array[1], array[2], array[3]);
         }
     }
 }
