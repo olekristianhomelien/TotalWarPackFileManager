@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace VariantMeshEditor.Views.EditorViews
 {
     /// <summary>
-    /// Interaction logic for VariantModelEditorView.xaml
+    /// Interaction logic for SlotsEditorView.xaml
     /// </summary>
-    public partial class VariantModelEditorView : UserControl
+    public partial class SlotsEditorView : UserControl
     {
-        public VariantModelEditorView()
+        public SlotsEditorView()
         {
             InitializeComponent();
         }

@@ -25,7 +25,29 @@ namespace VariantMeshEditor.Views.EditorViews
         }
     }
 
-  
+    public class TreeItemDataTemplateSelector : DataTemplateSelector
+    {
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            FrameworkElement element = container as FrameworkElement;
+
+            if (element != null && item != null && item is FileSceneElement)
+            {
+                FileSceneElement sceneElement = item as FileSceneElement;
+                switch (sceneElement.Type)
+                {
+                    case FileSceneElementEnum.Slot:
+                        return element.FindResource("SlotTreeItemTemplate") as HierarchicalDataTemplate; ;
+
+                    default:
+                        return element.FindResource("DefaultTreeItemTemplate") as HierarchicalDataTemplate;
+                }
+
+            }
+
+            return null;
+        }
+    }
 
     public class BindableSelectedItemBehavior : Behavior<TreeView>
     {

@@ -31,35 +31,35 @@ namespace VariantMeshEditor.Controls.EditorControllers
             //_viewModel.SlotName.Text = "Name:" + _slotElement.SlotName;
             _viewModel.AddButton.Click += AddButton_Click;
 
-            _viewModel.AttachmentPointComboBox.Items.Add("");
-            _viewModel.AttachmentPointComboBox.SelectionChanged += AttachmentPointComboBox_SelectionChanged;
-            if (_skeletonElement != null)
-            {
-                foreach (var bone in _skeletonElement.SkeletonFile.Bones)
-                    _viewModel.AttachmentPointComboBox.Items.Add(bone.Name);
-
-                if (!string.IsNullOrWhiteSpace(_slotElement.AttachmentPoint))
-                {
-                    //var selectedItem = skeletonElement.SkeletonModel.Bones.FirstOrDefault(x => x.Name == _slotElement.AttachmentPoint);
-                    //if (selectedItem != null)
-                        _viewModel.AttachmentPointComboBox.SelectedItem = _slotElement.AttachmentPoint;
-                }
-            }
+            //_viewModel.AttachmentPointComboBox.Items.Add("");
+            //_viewModel.AttachmentPointComboBox.SelectionChanged += AttachmentPointComboBox_SelectionChanged;
+            //if (_skeletonElement != null)
+            //{
+            //    foreach (var bone in _skeletonElement.SkeletonFile.Bones)
+            //        _viewModel.AttachmentPointComboBox.Items.Add(bone.Name);
+            //
+            //    if (!string.IsNullOrWhiteSpace(_slotElement.AttachmentPoint))
+            //    {
+            //        //var selectedItem = skeletonElement.SkeletonModel.Bones.FirstOrDefault(x => x.Name == _slotElement.AttachmentPoint);
+            //        //if (selectedItem != null)
+            //            _viewModel.AttachmentPointComboBox.SelectedItem = _slotElement.AttachmentPoint;
+            //    }
+            //}
 
             CreateMeshList();
         }
 
         private void AttachmentPointComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            var selectedItem = _viewModel.AttachmentPointComboBox.SelectedItem as string;
-            if (string.IsNullOrWhiteSpace(selectedItem))
-            {
-                AttachmentBoneIndex = -1;
-            }
-            else
-            {
-                AttachmentBoneIndex = _skeletonElement.Skeleton.GetBoneIndex(selectedItem);
-            }  
+           // var selectedItem = _viewModel.AttachmentPointComboBox.SelectedItem as string;
+           // if (string.IsNullOrWhiteSpace(selectedItem))
+           // {
+           //     AttachmentBoneIndex = -1;
+           // }
+           // else
+           // {
+           //     AttachmentBoneIndex = _skeletonElement.Skeleton.GetBoneIndex(selectedItem);
+           // }  
         }
 
         void CreateMeshList()
@@ -86,17 +86,17 @@ namespace VariantMeshEditor.Controls.EditorControllers
 
         private void AddButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            VariantMeshElement newSlot = new VariantMeshElement(_slotElement, "New");
-            _slotElement.Children.Add(newSlot);
-            //_sceneTreeView.CreateNode(newSlot, false, _slotElement);
-            CreateMeshList();
+          // VariantMeshElement newSlot = new VariantMeshElement(_slotElement, "New");
+          // _slotElement.Children.Add(newSlot);
+          // //_sceneTreeView.CreateNode(newSlot, false, _slotElement);
+          // CreateMeshList();
         }
 
         private void RemoveButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var button = sender as System.Windows.Controls.Button;
-            var parent = button.Tag as FileSceneElement;
-
+           // var button = sender as System.Windows.Controls.Button;
+           // var parent = button.Tag as FileSceneElement;
+           //
 
             //_sceneTreeView.RemoveNode();
         }

@@ -50,6 +50,19 @@ namespace VariantMeshEditor.ViewModels
         {
             SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
             var modelElement = sceneLoader.Load(path, null);
+
+            // Remove empty slots
+            var toDelete = new List<FileSceneElement>();
+            var slots = SceneElementHelper.GetFirstChild<SlotsElement>(modelElement);
+            for (int i = 0; i < slots.Children.Count(); i++)
+            {
+                if (slots.Children[i].Children.Count == 0)
+                    toDelete.Add(slots.Children[i]);
+            }
+
+            foreach (var itemToDelete in toDelete)
+                slots.Children.Remove(itemToDelete);
+
             modelElement.CreateContent(_virtualWorld, _resourceLibary);
             modelElement.IsChecked = true;
 

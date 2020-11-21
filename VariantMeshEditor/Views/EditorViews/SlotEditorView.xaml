@@ -31,6 +31,7 @@
 
             <DataTemplate DataType="{x:Type rigidViewmodels:RigidModelElement}">
             <util:BrowsableItemView 
+                DisplayPreviewButton="False"
                 LabelName="Mesh:" 
                 PathText="{Binding FullPath}"
                 PathTextReadOnly="True"
@@ -43,13 +44,12 @@
     
     
     <DockPanel LastChildFill="False">
-        <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SlotName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Center"/>
-
-        <DockPanel DockPanel.Dock="Top">
-            <TextBlock DockPanel.Dock="Left" TextWrapping="Wrap" Text="Attachment point:" VerticalAlignment="Center"/>
-            <ComboBox x:Name="AttachmentPointComboBox" DockPanel.Dock="Right"></ComboBox>
-        </DockPanel>
-
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBlock DockPanel.Dock="Top" Text="Slot: " FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SlotName, UpdateSourceTrigger=PropertyChanged}" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        
         <ListView 
             HorizontalContentAlignment="Stretch"
             DockPanel.Dock="Top" 

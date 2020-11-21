@@ -75,7 +75,6 @@
     <Compile Include="ViewModels\Skeleton\SkeletonViewModel.cs" />
     <Compile Include="ViewModels\SlotsElement.cs" />
     <Compile Include="ViewModels\VariantMesh\VariantMeshElement.cs" />
-    <Compile Include="ViewModels\VariantMesh\VariantMeshViewModel.cs" />
     <Compile Include="ViewModels\WsModelElement.cs" />
     <Compile Include="Views\EditorViews\Animation\AnimationEditorView.xaml.cs">
       <DependentUpon>AnimationEditorView.xaml</DependentUpon>
@@ -104,6 +103,9 @@
     <Compile Include="Views\EditorViews\SlotEditorView.xaml.cs">
       <DependentUpon>SlotEditorView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\SlotsEditorView.xaml.cs">
+      <DependentUpon>SlotsEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditorViews\Util\BrowsableItemView.xaml.cs">
       <DependentUpon>BrowsableItemView.xaml</DependentUpon>
     </Compile>
@@ -125,9 +127,6 @@
     <Compile Include="Views\EditorViews\Util\OptionalRadioButton.cs" />
     <Compile Include="Views\EditorViews\SceneTreeView.xaml.cs">
       <DependentUpon>SceneTreeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\EditorViews\VariantModelEditorView.xaml.cs">
-      <DependentUpon>VariantModelEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TexturePreview\TexturePreviewController.cs" />
     <Compile Include="Views\TexturePreview\TexturePreviewView.xaml.cs">
@@ -170,6 +169,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\EditorViews\SlotsEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditorViews\Util\BrowsableItemView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,10 +209,6 @@
       <DependentUpon>VariantMeshEditorControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\EditorViews\VariantModelEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Styles\FullWidthTreeViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -85,7 +85,10 @@ namespace VariantMeshEditor.Util
                 slotElement.IsChecked = true;
 
                 foreach (var mesh in slot.VariantMeshes)
-                    Load(mesh.Name, slotElement);
+                {
+                    if(mesh.Name != null)
+                        Load(mesh.Name, slotElement);
+                }
 
                 foreach (var meshReference in slot.VariantMeshReferences)
                     Load(meshReference.definition, slotElement);

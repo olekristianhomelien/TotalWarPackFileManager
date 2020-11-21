@@ -1,13 +1,17 @@
 ﻿
 using Common;
+using Filetypes.RigidModel;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.ViewModels.Animation;
 using Viewer.Scene;
 using WpfTest.Scenes;
+using static Filetypes.RigidModel.VariantMeshDefinition;
 using Game = Common.Game;
 
 namespace VariantMeshEditor.Controls
@@ -33,6 +37,39 @@ namespace VariantMeshEditor.Controls
 
             //DumpRmv2Files dumper = new DumpRmv2Files();
             //dumper.Dump(_resourceLibary, @"C:\temp\DataDump\");
+
+           //Dictionary<string, List<string>> slots = new Dictionary<string, List<string>>();
+           //
+           //var files = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "variantmeshdefinition");
+           //foreach (var file in files)
+           //{
+           //    var content = file.Data;
+           //    var fileContent = Encoding.Default.GetString(content);
+           //    try
+           //    {
+           //        VariantMeshFile meshFile = VariantMeshDefinition.Create(fileContent);
+           //
+           //        foreach (var slot in meshFile.VARIANT_MESH.SLOT)
+           //        {
+           //            var key = slot.Name;
+           //            if(slot.AttachPoint.Length != 0)
+           //                key = slot.Name + " " + slot.AttachPoint;
+           //
+           //            key = key.ToLower();
+           //            if (!slots.ContainsKey(key))
+           //                slots.Add(key, new List<string>());
+           //            slots[key].Add(file.FullPath);
+           //        }
+           //    }
+           //    catch(Exception e)
+           //    { 
+           //    }
+           //}
+           //
+           //
+           //var without = slots.Where(x => x.Key.Contains(" ") == false).ToList();
+           //var with = slots.Where(x => x.Key.Contains(" ") == true).ToList();
+
         }
 
         public void LoadModel(PackedFile model)
@@ -105,7 +142,7 @@ namespace VariantMeshEditor.Controls
 
         }
 
-        void PaladinAndDragon(RootElement rootNode, bool loadDragon = true)
+        void PaladinAndDragon(RootElement rootNode, bool loadDragon = false)
         {
             var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
                 @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");

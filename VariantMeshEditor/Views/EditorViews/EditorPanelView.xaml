@@ -19,6 +19,10 @@
             <animation:AnimationEditorView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type viewmodels:SlotsElement}">
+            <local:SlotsEditorView/>
+        </DataTemplate>
+
         <DataTemplate DataType="{x:Type viewmodels:SlotElement}">
             <local:SlotEditorView/>
         </DataTemplate>
@@ -31,12 +35,8 @@
             <local:SkeletonEditorView/>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewmodels:RootElement}">
+        <DataTemplate DataType="{x:Type viewmodels:RootElement}" >
             <local:RootEditorView/>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type variantMesh:VariantMeshElement}">
-            <local:VariantModelEditorView/>
         </DataTemplate>
     </UserControl.Resources>
 
