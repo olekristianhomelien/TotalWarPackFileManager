@@ -42,8 +42,9 @@ namespace VariantMeshEditor.ViewModels.Skeleton
                 FullPath = skeletonFilePath;
                 FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
                 Skeleton = new Viewer.Animation.Skeleton(SkeletonFile);
+                DisplayName = "Skeleton - " + FileName;
             }
-
+           
             SkeletonModel = new SkeletonModel(resourceLibary.GetEffect(ShaderTypes.Line));
             SkeletonModel.Create(animationPlayer, Skeleton);
 

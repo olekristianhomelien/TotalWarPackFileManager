@@ -52,7 +52,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             SelectedBone = null;
             Bones.Clear();
 
-            SkeletonName = _skeletonElement.DisplayName;
+            SkeletonName = _skeletonElement.FileName;
 
             foreach (var bone in _skeletonElement.SkeletonFile.Bones)
             {
@@ -78,8 +78,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             SkeletonBoneNode item = new SkeletonBoneNode
             {
                 BoneIndex = bone.Id,
-                BoneName = bone.Name + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
-                BoneRef = bone
+                BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
             };
             return item;
         }
@@ -88,7 +87,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
         {
             foreach (SkeletonBoneNode item in root)
             {
-                if (item.BoneRef == parentBone)
+                if (item.BoneIndex == parentBone.Id)
                     return item;
 
                 var result = GetParent(item.Children, parentBone);
@@ -101,8 +100,6 @@ namespace VariantMeshEditor.ViewModels.Skeleton
 
         public class SkeletonBoneNode : NotifyPropertyChangedImpl
         {
-            public AnimationFile.BoneInfo BoneRef { get; set; }
-
             string _boneName;
             public string BoneName
             {
@@ -116,6 +113,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
                 get { return _boneIndex; }
                 set { SetAndNotify(ref _boneIndex, value); }
             }
+
             public ObservableCollection<SkeletonBoneNode> Children { get; set; } = new ObservableCollection<SkeletonBoneNode>();
         }
     }

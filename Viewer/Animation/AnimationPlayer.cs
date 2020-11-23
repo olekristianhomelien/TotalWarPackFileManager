@@ -15,11 +15,15 @@ namespace Viewer.Animation
         public AnimationPlayer ExternalPlayer { get; set; }
         public int ExternalBoneIndex { get; set; } = -1;
         public bool HasAnimation { get { return ExternalPlayer != null && ExternalBoneIndex != -1; } }
+        public Matrix Transform { get; set; } = Matrix.Identity;
 
-        public Matrix UpdateNode(GameTime time)
+        public void UpdateNode(GameTime time)
         {
-            if (!HasAnimation)
-                return Matrix.Identity;
+            if (!HasAnimation || ExternalPlayer == null)
+            {
+                Transform = Matrix.Identity;
+                return;
+            }
 
             // Update if needed
             if(time != null)
@@ -29,10 +33,8 @@ namespace Viewer.Animation
             var bonePos = ExternalPlayer._skeleton.WorldTransform[ExternalBoneIndex];
 
             var animPos = ExternalPlayer.GetCurrentFrame().BoneTransforms[ExternalBoneIndex].Transform;
-            return Matrix.Multiply(bonePos, animPos);
+            Transform =  Matrix.Multiply(bonePos, animPos);
         }
-
- 
     }
 
     public class AnimationFrame
@@ -129,7 +131,9 @@ namespace Viewer.Animation
                         _currentFrame = 0;
                 }
 
-                ComputeCurrentFrame(gameTime);
+                if (ExternalAnimationRef != null)
+                    ExternalAnimationRef.UpdateNode(gameTime);
+                ComputeCurrentFrame();
             }
         }
 
@@ -161,7 +165,7 @@ namespace Viewer.Animation
         }
 
 
-        void ComputeCurrentFrame(GameTime time = null)
+        void ComputeCurrentFrame()
         {
             var currentFrame = new AnimationFrame();
             for (int i = 0; i < _skeleton.BoneCount; i++)
@@ -192,8 +196,18 @@ namespace Viewer.Animation
                 }
             }
 
+
+
+
+
+
+
+
+
+
+
             HandleFreezeAnimation(currentFrame);
-            HandleSnapToExternalAnimation(currentFrame, time);
+            HandleSnapToExternalAnimation(currentFrame);
             OffsetAnimation(currentFrame);
 
             // Move into world space
@@ -277,11 +291,11 @@ namespace Viewer.Animation
             currentFrame.BoneTransforms[0].Transform = matrix;
         }
 
-        void HandleSnapToExternalAnimation(AnimationFrame currentFrame, GameTime time)
+        void HandleSnapToExternalAnimation(AnimationFrame currentFrame)
         {
             if (ExternalAnimationRef.HasAnimation && Settings.UseAnimationSnap)
             {
-                var refTransform = ExternalAnimationRef.UpdateNode(time);
+                var refTransform = ExternalAnimationRef.Transform;
                 currentFrame.BoneTransforms[0].Transform = Matrix.CreateTranslation(refTransform.Translation); ;// * currentFrame.BoneTransforms[0].Transform ;
             }
         }

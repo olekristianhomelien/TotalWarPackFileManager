@@ -118,9 +118,9 @@
 
 
         <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding SelectedAnimationPackFile, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding FilterList, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                SelectedItem="{Binding SelectedAnimationForTargetSkeleton, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                SearchItems="{Binding AnimationsForTargetSkeleton.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
+                OnSearch="{Binding AnimationsForTargetSkeleton.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
                 LabelTotalWidth="100"   
                 DisplayMemberPath="FullPath"
@@ -129,7 +129,7 @@
                 LabelText="Target Anim">
             <filterdialog:CollapsableFilterControl.InnerContent>
                 <CheckBox 
-                        IsChecked="{Binding OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
+                        IsChecked="{Binding AnimationsForTargetSkeleton.OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
                         Content="Only list animations for current skeleton"/>
             </filterdialog:CollapsableFilterControl.InnerContent>
         </filterdialog:CollapsableFilterControl>
@@ -137,9 +137,9 @@
 
 
         <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding SelectedAnimationPackFile, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding FilterList, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                SelectedItem="{Binding SelectedExternalSkeleton, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                SearchItems="{Binding PossibleExternalSkeletons.SkeletonList, UpdateSourceTrigger=PropertyChanged}"     
+                OnSearch="{Binding PossibleExternalSkeletons.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
                 LabelTotalWidth="100"   
                 DisplayMemberPath="FullPath"
@@ -150,9 +150,9 @@
 
 
         <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding SelectedAnimationPackFile, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding FilterList, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                SelectedItem="{Binding SelectedAnimationForExternalSkeleton, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                SearchItems="{Binding AnimationsForExternalSkeleton.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
+                OnSearch="{Binding AnimationsForExternalSkeleton.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
                 LabelTotalWidth="100"   
                 DisplayMemberPath="FullPath"
@@ -161,7 +161,7 @@
                 LabelText="External Anim">
                 <filterdialog:CollapsableFilterControl.InnerContent>
                     <CheckBox 
-                        IsChecked="{Binding OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
+                        IsChecked="{Binding AnimationsForExternalSkeleton.OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
                         Content="Only list animations for current skeleton"/>
                 </filterdialog:CollapsableFilterControl.InnerContent>
             </filterdialog:CollapsableFilterControl>
@@ -189,19 +189,16 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock  Grid.Column="0" Text="{Binding BoneName}"   />
                         <ComboBox  Width="150"   Grid.Column="1"  HorizontalContentAlignment="Stretch" Margin="10,0,0,0">
-                            <ComboBoxItem IsSelected="true">Copy_all</ComboBoxItem>
+                            <ComboBoxItem IsSelected="true" Content=""></ComboBoxItem>
+                            <ComboBoxItem >Copy_all</ComboBoxItem>
                             <ComboBoxItem>Copy_transform</ComboBoxItem>
                             <ComboBoxItem>Copy_IncludeParent</ComboBoxItem>
                         </ComboBox>
 
-                        <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0">
-                            <ComboBoxItem>animroot</ComboBoxItem>
-                            <ComboBoxItem>root</ComboBoxItem>
-                            <ComboBoxItem>Spine_0</ComboBoxItem>
-                            <ComboBoxItem>Spine_1</ComboBoxItem>
-                            <ComboBoxItem>Spine_2</ComboBoxItem>
-                            <ComboBoxItem>Clav_left</ComboBoxItem>
-                            <ComboBoxItem>ork_left_arm</ComboBoxItem>
+                        <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0"
+                                   SelectedItem="{Binding MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                   ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.FlatExternalBonesList}"
+                                   DisplayMemberPath="BoneName">
 
                         </ComboBox>
                         <Button Grid.Column="3" Margin="10,0,0,0">Browse</Button>

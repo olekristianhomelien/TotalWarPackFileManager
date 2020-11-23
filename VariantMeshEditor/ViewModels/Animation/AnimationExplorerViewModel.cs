@@ -37,17 +37,6 @@ namespace VariantMeshEditor.ViewModels.Animation
             FindAllAnimations();
             AddNewAnimationNode(true);
 
-            //bool loadDebugData = true;
-            //if (loadDebugData)
-            //{
-            //    var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
-            //    AnimationList[0].SelectedAnimationPackFile = mainAnim;
-            //
-            //    AddNewAnimationNode();
-            //    var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
-            //    AnimationList[1].SelectedAnimationPackFile = handAnim;
-            //}
-
             AddNewAnimationCommand = new RelayCommand(() => { AddNewAnimationNode(); });
         }
 
@@ -90,7 +79,5 @@ namespace VariantMeshEditor.ViewModels.Animation
                     AnimationFilesForSkeleton.Add(animation);
             }
         }
-
-
     }
 }

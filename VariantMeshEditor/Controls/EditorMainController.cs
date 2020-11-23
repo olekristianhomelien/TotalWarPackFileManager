@@ -142,23 +142,26 @@ namespace VariantMeshEditor.Controls
 
         }
 
-        void PaladinAndDragon(RootElement rootNode, bool loadDragon = false)
+        void PaladinAndDragon(RootElement rootNode, bool loadPaladin = false, bool loadDragon = false, bool loadGoblin = true)
         {
-            var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-                @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
-            
-            var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
-            var paladinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(paladinMesh);
+            if (loadPaladin)
+            {
+                var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
+                    @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
 
-            //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
-            var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
-            var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
+                var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
+                var paladinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(paladinMesh);
 
-            paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-            var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
-            secondAnimNode.SelectedAnimationPackFile = handAnim;
+                //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
+                var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
+                var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
-            paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
+                paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+                var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
+                secondAnimNode.SelectedAnimationPackFile = handAnim;
+
+                paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
+            }
 
             if (loadDragon)
             {
@@ -171,6 +174,19 @@ namespace VariantMeshEditor.Controls
                 var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\attacks\dr1_breath_attack_01.anim");
 
                 dragonAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = dragonMainAnim;
+            }
+
+            if (loadGoblin)
+            {
+                var goblinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
+                 @"variantmeshes\variantmeshdefinitions\grn_forest_goblins_base.variantmeshdefinition");
+                var goblinMesh = rootNode.LoadModel(goblinFile, _resourceLibary, _scene3d);
+
+                var goblinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(goblinMesh);
+                //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
+                var goblinMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+
+                goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
             }
         }
     }
