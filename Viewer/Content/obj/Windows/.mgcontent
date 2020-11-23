@@ -4,9 +4,9 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TestShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TexturePreview.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/File.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TestShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/LineShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Ambient.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Diffuse.fx</File>

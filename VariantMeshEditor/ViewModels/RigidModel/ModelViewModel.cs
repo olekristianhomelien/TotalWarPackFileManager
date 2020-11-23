@@ -71,7 +71,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
 
         public List<AlphaMode> PossibleAlphaModes { get { return new List<AlphaMode> { AlphaMode.Alpha_Blend, AlphaMode.Alpha_Test, AlphaMode.Opaque }; } }
-        public AlphaMode SelectedAlphaMode { get { return LodModelInstance.AlphaMode; } set { LodModelInstance.AlphaMode = value; NotifyPropertyChanged();  } }
+        public AlphaMode SelectedAlphaMode { get { return LodModelInstance.AlphaMode; } set { LodModelInstance.AlphaMode = value; RenderInstance.AlphaMode = (int)value; NotifyPropertyChanged();  } }
 
         public string ShaderName { get { return LodModelInstance.ShaderName; } }
 
@@ -108,6 +108,8 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
             foreach (var texture in LodModelInstance.Textures)
                 Textures.Add(texture.Type, new FileTextureViewModel() { Path = texture.Name, RenderInstance = renderInstance });
+
+            SelectedAlphaMode = LodModelInstance.AlphaMode;
 
             BrowseCommand = new RelayCommand<FileTextureViewModel>(OnBrowseCommand);
             BrowseTextureDirCommand = new RelayCommand<FileTextureViewModel>(OnBrowseTextureDirCommand);

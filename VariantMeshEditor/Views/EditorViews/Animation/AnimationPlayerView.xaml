@@ -28,7 +28,7 @@
                 VerticalContentAlignment="Center"/>
         </StackPanel>
 
-        <Expander Header="Advance options:" BorderThickness="1" BorderBrush="Gray" Margin="0,0,0,10" IsExpanded="true">
+        <Expander Header="Advance options:" BorderThickness="1" BorderBrush="Gray" Margin="0,0,0,10">
             <StackPanel>
 
                 <!-- Sync animation -->

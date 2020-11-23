@@ -50,11 +50,7 @@ namespace Viewer.Animation
 
                 Translation[i] = new Vector3(skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][0], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][1], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][2]);
 
-                var scale = Matrix.CreateScale(1);
-                //if(i == 0)
-                //    scale = Matrix.CreateScale(-1, 1, 1);
-                
-                var transform = scale * rotationMatrix * translationMatrix;
+                var transform = rotationMatrix * translationMatrix;
 
                 Transform[i] = transform;
                 WorldTransform[i] = transform;

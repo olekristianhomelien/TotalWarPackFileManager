@@ -154,8 +154,8 @@ namespace VariantMeshEditor.Controls
             var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
             var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
-            paladinAnim.AnimationExplorer.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-            var secondAnimNode = paladinAnim.AnimationExplorer.AddNewAnimationNode();
+            paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+            var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
             secondAnimNode.SelectedAnimationPackFile = handAnim;
 
             paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
@@ -170,7 +170,7 @@ namespace VariantMeshEditor.Controls
                 //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
                 var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\attacks\dr1_breath_attack_01.anim");
 
-                dragonAnim.AnimationExplorer.AnimationList[0].SelectedAnimationPackFile = dragonMainAnim;
+                dragonAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = dragonMainAnim;
             }
         }
     }

@@ -11,10 +11,12 @@ namespace VariantMeshEditor.ViewModels.Animation
 {
     public class AnimationElement : FileSceneElement
     {
-        public AnimationExplorerViewModel AnimationExplorer { get; set; }
-        public AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
+        public AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
+
+        public AnimationExplorerViewModel AnimationExplorerViewModel { get; set; }    
         public FragmentExplorerViewModel AnimationFragmentExplorerViewModel { get; set; }
+        public AnimationSplicerViewModel AnimationSplicerViewModel { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Animation;
         
@@ -30,8 +32,9 @@ namespace VariantMeshEditor.ViewModels.Animation
             if (skeleton.Count == 1)
             {
                 AnimationPlayerViewModel = new AnimationPlayerViewModel(this);
-                AnimationExplorer = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
+                AnimationExplorerViewModel = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
                 AnimationFragmentExplorerViewModel = new FragmentExplorerViewModel(resourceLibary, AnimationPlayerViewModel);
+                AnimationSplicerViewModel = new AnimationSplicerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
             }
         }
 

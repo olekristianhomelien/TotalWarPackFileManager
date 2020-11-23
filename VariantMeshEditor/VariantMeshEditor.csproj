@@ -62,6 +62,7 @@
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationPlayerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicerViewModel.cs" />
     <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
@@ -87,6 +88,9 @@
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationPlayerView.xaml.cs">
       <DependentUpon>AnimationPlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerView.xaml.cs">
+      <DependentUpon>AnimationSplicerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\EditorPanelView.xaml.cs">
       <DependentUpon>EditorPanelView.xaml</DependentUpon>
@@ -146,6 +150,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

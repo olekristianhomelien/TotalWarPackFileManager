@@ -36,8 +36,8 @@ sampler2D DiffuseSampler = sampler_state {
     Texture = (DiffuseTexture);
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 bool HasSpecular = false;
@@ -46,8 +46,8 @@ sampler2D SpecularSampler = sampler_state {
     Texture = (SpecularTexture);
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 bool HasMask = false;
@@ -56,8 +56,8 @@ sampler2D MaskSampler = sampler_state {
     Texture = (MaskTexture);
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 // -----------------
 
@@ -67,8 +67,8 @@ sampler2D textureSampler = sampler_state {
     Texture = (ModelTexture);
     MinFilter = Linear;
     MagFilter = Linear;
-    AddressU = Clamp;
-    AddressV = Clamp;
+    AddressU = Wrap;
+    AddressV = Wrap;
 };
 
 struct VertexShaderInput
@@ -86,6 +86,12 @@ struct VertexShaderOutput
     float4 Color : COLOR0;
     float3 eyeVec : TEXCOORD1;
 };
+
+
+int AlphaMode;
+
+
+void AlphaProcess(float alphaValue);
 
 
 float ComputeIndirectDiffuse(float3 normal)
@@ -131,8 +137,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
      if(HasDiffuse) 
          diffuseColour = tex2D(DiffuseSampler, input.TextureCoordinate);
 
-     if (diffuseColour.a != 1)
-         clip(-1);
+     AlphaProcess(diffuseColour.a);
 
      half oneMinusReflectivity = 1 - Reflectivity;
      diffuseColour.xyz = lerp(0, diffuseColour.xyz, oneMinusReflectivity);
@@ -156,7 +161,18 @@ float4 PixelShaderFunction(VertexShaderOutput input) : SV_TARGET0
      return finalColour;
 }
 
+void AlphaProcess(float alphaValue)
+{
+    // Opaque = 0,
+    // Alpha_Test = 1,
+    // Alpha_Blend = -1
 
+    if (AlphaMode != 0)
+    {
+        if (alphaValue != 1)
+            clip(-1);
+    }
+}
 
 
 technique Diffuse

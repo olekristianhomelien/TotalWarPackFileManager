@@ -264,7 +264,7 @@ namespace WpfTest.Scenes
 
     public class TextureMeshRenderItem : MeshRenderItem
     {
-
+        public int AlphaMode { get; set; } = 0;
         public Dictionary<TexureType, Texture2D> Textures { get; set; } = new Dictionary<TexureType, Texture2D>();
 
         public TextureMeshRenderItem(MeshModel model, Effect shader) : base(model, shader)
@@ -279,11 +279,11 @@ namespace WpfTest.Scenes
 
             var hasSpecular = Textures.TryGetValue(TexureType.Specular, out var specularTexture);
             _shader.Parameters["HasSpecular"].SetValue(hasSpecular);
-            if (hasDiffuse)
+            if (hasSpecular)
                 _shader.Parameters["SpecularTexture"].SetValue(specularTexture);
 
 
-
+            _shader.Parameters["AlphaMode"].SetValue(AlphaMode);
             
             /*var hasSpecular = Textures.TryGetValue(TexureType.Specular, out var specularTexture);
             _shader.Parameters["HasSpecular"].SetValue(hasSpecular);

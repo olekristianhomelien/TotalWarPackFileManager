@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:util="clr-namespace:VariantMeshEditor.Views.EditorViews.Util" 
+
              xmlns:animationviews="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" 
              xmlns:animation="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation"
              mc:Ignorable="d" 
@@ -26,15 +26,15 @@
         <animationviews:AnimationPlayerView  DataContext="{Binding Path=AnimationPlayerViewModel}" DockPanel.Dock="Top"/>
 
         <TabControl DockPanel.Dock="Top">
-            <TabItem Header="Animation Explorer" IsSelected="{Binding AnimationExplorer.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            <TabItem Header="Animation Explorer"  IsSelected="{Binding AnimationExplorerViewModel.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <DockPanel>
-                    <Button Command="{Binding AnimationExplorer.AddNewAnimationCommand}" 
+                    <Button Command="{Binding AnimationExplorerViewModel.AddNewAnimationCommand}" 
                             DockPanel.Dock="Bottom"
                             Content="Add Animation"/>
 
                     <TreeView  
                         AlternationCount="2"
-                        ItemsSource="{Binding Path=AnimationExplorer.AnimationList, UpdateSourceTrigger=PropertyChanged}"  
+                        ItemsSource="{Binding Path=AnimationExplorerViewModel.AnimationList, UpdateSourceTrigger=PropertyChanged}"  
                         ItemContainerStyle="{StaticResource FullWidthTreeViewStyle}"
                         Padding="1" 
                         BorderThickness="0">
@@ -54,6 +54,10 @@
             </TabItem>
             <TabItem Header="Fragment Explorer" IsSelected="{Binding AnimationFragmentExplorerViewModel.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                 <animationviews:AnimationFragmentExplorerView DataContext="{Binding AnimationFragmentExplorerViewModel}"></animationviews:AnimationFragmentExplorerView>
+            </TabItem>
+
+            <TabItem Header="Animation Splicer" IsSelected="{Binding AnimationSplicerViewModel.IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <animation:AnimationSplicerView DataContext="{Binding AnimationSplicerViewModel}"></animation:AnimationSplicerView>
             </TabItem>
         </TabControl>
 

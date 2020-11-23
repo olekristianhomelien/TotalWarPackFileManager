@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Net.Sockets;
 using Viewer.Animation;
 using WpfTest.Scenes;
-using static Viewer.Animation.AnimationClip;
+
 
 namespace Viewer.GraphicModels
 {

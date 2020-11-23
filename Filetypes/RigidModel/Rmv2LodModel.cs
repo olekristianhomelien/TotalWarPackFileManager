@@ -118,7 +118,7 @@ namespace Filetypes.RigidModel
         public byte[] Unknown_Shaderarameters { get; set; }
         public byte[] AllZero_Shaderarameters { get; set; }
         public string ModelName { get; set; }
-        
+
         public string TextureDirectory { get; set; }
 
         public BoundingBox BoundingBox { get; set; }
@@ -154,7 +154,7 @@ namespace Filetypes.RigidModel
             lodModel.MaterialId = (GroupTypeEnum)chunk.ReadUInt32();
             lodModel.ModelSize = chunk.ReadUInt32();
 
-            lodModel.VertexOffset = chunk.ReadUInt32() ;
+            lodModel.VertexOffset = chunk.ReadUInt32();
             lodModel.VertexCount = chunk.ReadUInt32();
             lodModel.FaceOffset = chunk.ReadUInt32();
             lodModel.FaceCount = chunk.ReadUInt32();
@@ -169,9 +169,9 @@ namespace Filetypes.RigidModel
 
             lodModel.VertexFormatValue = chunk.ReadUShort();
             lodModel.VertexFormat = (VertexFormat)lodModel.VertexFormatValue;
-            lodModel.ModelName = Util.SanatizeFixedString(chunk.ReadFixedLength(32));   
-                                                                                        
-            lodModel.TextureDirectory = Util.SanatizeFixedString(chunk.ReadFixedLength(256));  
+            lodModel.ModelName = Util.SanatizeFixedString(chunk.ReadFixedLength(32));
+
+            lodModel.TextureDirectory = Util.SanatizeFixedString(chunk.ReadFixedLength(256));
             lodModel.ZeroPadding0 = chunk.ReadBytes(256);
 
             lodModel.Unknown2_val0 = chunk.ReadByte();
@@ -198,7 +198,7 @@ namespace Filetypes.RigidModel
 
             lodModel.VertexArray = CreateVertexArray(lodModel, chunk, lodModel.VertexCount, lodModel.VertexFormatValue);
             lodModel.IndicesBuffer = CreateIndexArray(chunk, (int)lodModel.FaceCount);
-     
+
             return lodModel;
         }
 
@@ -213,7 +213,7 @@ namespace Filetypes.RigidModel
         static Transformation LoadTransformations(ByteChunk chunk)
         {
             var output = new Transformation();
-            output.Pivot.X= chunk.ReadSingle();
+            output.Pivot.X = chunk.ReadSingle();
             output.Pivot.Y = chunk.ReadSingle();
             output.Pivot.Z = chunk.ReadSingle();
 
@@ -228,7 +228,7 @@ namespace Filetypes.RigidModel
                     matrix.Matrix[row].W = chunk.ReadSingle();
                 }
             }
-            
+
             return output;
         }
 
@@ -305,66 +305,68 @@ namespace Filetypes.RigidModel
                 output[i] = vertex;
             }
             return output;
-  
+
         }
 
         static Vertex[] CreateCinematicVertex(ByteChunk chunk, uint count)
         {
             Vertex[] output = new Vertex[count];
 
-                for (int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
+            {
+                var bytes = chunk.ReadBytes(32);
+                var subChucnk = new ByteChunk(bytes);
+                var vertex = new Vertex();
+
+                vertex.Position.X = subChucnk.ReadFloat16();   //0
+                vertex.Position.Y = subChucnk.ReadFloat16();    //2
+                vertex.Position.Z = subChucnk.ReadFloat16();    //4
+
+                var ukn = subChucnk.ReadFloat16();  //6
+                var bone0 = subChucnk.ReadByte();   //8
+                var bone1 = subChucnk.ReadByte();   //9
+                var bone2 = subChucnk.ReadByte();   //10
+                var bone3 = subChucnk.ReadByte();   //11
+
+
+                var weight0 = subChucnk.ReadByte(); //12
+                var weight1 = subChucnk.ReadByte(); //13
+                var weight2 = subChucnk.ReadByte(); //14
+                var weight3 = subChucnk.ReadByte(); //15
+
+                vertex.Normal.X = ((subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f);    //16
+                vertex.Normal.Y = (subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f;    //17
+                vertex.Normal.Z = (subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f;    //18
+
+                var x = 255.0f;
+                vertex.BoneInfos.Add(new Vertex.BoneInfo()
                 {
-                    var bytes = chunk.ReadBytes(32);
-                    var subChucnk = new ByteChunk(bytes);
-                    var vertex = new Vertex();
+                    BoneIndex = bone0,
+                    BoneWeight = (float)weight0 / x
+                });
+                vertex.BoneInfos.Add(new Vertex.BoneInfo()
+                {
+                    BoneIndex = bone1,
+                    BoneWeight = (float)weight1 / x
+                });
+                vertex.BoneInfos.Add(new Vertex.BoneInfo()
+                {
+                    BoneIndex = bone2,
+                    BoneWeight = (float)weight2 / x
+                });
+                vertex.BoneInfos.Add(new Vertex.BoneInfo()
+                {
+                    BoneIndex = bone3,
+                    BoneWeight = (float)weight3 / x
+                });
 
-                    vertex.Position.X = subChucnk.ReadFloat16();   //0
-                    vertex.Position.Y = subChucnk.ReadFloat16();    //2
-                    vertex.Position.Z = subChucnk.ReadFloat16();    //4
-
-                    var ukn = subChucnk.ReadFloat16();  //6
-                    var bone0 = subChucnk.ReadByte();   //8
-                    var bone1 = subChucnk.ReadByte();   //9
-                    var bone2 = subChucnk.ReadByte();   //10
-                    var bone3 = subChucnk.ReadByte();   //11
+                var ukn1 = subChucnk.ReadByte();           // 19
+                vertex.Uv0 = subChucnk.ReadFloat16();      // 20
+                vertex.Uv1 = subChucnk.ReadFloat16();      // 22
 
 
-                    var weight0 = subChucnk.ReadByte(); //12
-                    var weight1 = subChucnk.ReadByte(); //13
-                    var weight2 = subChucnk.ReadByte(); //14
-                    var weight3 = subChucnk.ReadByte(); //15
-
-                    vertex.Normal.X = ((subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f);    //16
-                    vertex.Normal.Y = (subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f;    //17
-                    vertex.Normal.Z = (subChucnk.ReadByte() / 255.0f * 2.0f) - 1.0f;    //18
-
-                    var x = 255.0f;
-                    vertex.BoneInfos.Add(new Vertex.BoneInfo()
-                    {
-                        BoneIndex = bone0,
-                        BoneWeight = (float)weight0 / x
-                    });
-                    vertex.BoneInfos.Add(new Vertex.BoneInfo()
-                    {
-                        BoneIndex = bone1,
-                        BoneWeight = (float)weight1 / x
-                    });
-                    vertex.BoneInfos.Add(new Vertex.BoneInfo()
-                    {
-                        BoneIndex = bone2,
-                        BoneWeight = (float)weight2 / x
-                    });
-                    vertex.BoneInfos.Add(new Vertex.BoneInfo()
-                    {
-                        BoneIndex = bone3,
-                        BoneWeight = (float)weight3 / x
-                    });
-
-                    var ukn1 = subChucnk.ReadByte();           // 19
-                    vertex.Uv0 = subChucnk.ReadFloat16();      // 20
-                    vertex.Uv1 = subChucnk.ReadFloat16();      // 22
-                    output[i] = vertex;
-                }
+                output[i] = vertex;
+            }
             return output;
         }
 
@@ -449,7 +451,7 @@ namespace Filetypes.RigidModel
 
         public bool IsAllZero()
         {
-            if (X == 0 &&  Y == 0 && Z == 0 && W == 0)
+            if (X == 0 && Y == 0 && Z == 0 && W == 0)
                 return true;
             return false;
         }
@@ -458,7 +460,7 @@ namespace Filetypes.RigidModel
     public class Vertex
     {
         public class BoneInfo
-        { 
+        {
             public byte BoneIndex { get; set; }
             public float BoneWeight { get; set; }
 
