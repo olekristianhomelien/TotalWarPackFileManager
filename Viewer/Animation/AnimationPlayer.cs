@@ -81,7 +81,7 @@ namespace Viewer.Animation
         public AnimationPlayerSettings Settings { get; set; } = new AnimationPlayerSettings();
         public ExternalAnimationAttachmentResolver ExternalAnimationRef { get; set; } = new ExternalAnimationAttachmentResolver();
 
-        AnimationFile[] _animations;
+        //AnimationFile[] _animations;
         public Skeleton _skeleton;
         int _currentFrame;
         TimeSpan _timeAtCurrentFrame;
@@ -102,7 +102,7 @@ namespace Viewer.Animation
                 if (value < 0)
                     value = 0;
                 
-                if(_animations != null)
+                if(_newAnimations != null)
                 {
                     if (value >= FrameCount() - 1)
                         value = FrameCount() - 2;
@@ -117,7 +117,7 @@ namespace Viewer.Animation
 
         public void Update(GameTime gameTime)
         {
-            if (_animations != null && IsPlaying)
+            if (_newAnimations != null && IsPlaying)
             {
                 _timeAtCurrentFrame += gameTime.ElapsedGameTime;
                 _animationInterpolation = _timeAtCurrentFrame.TotalMilliseconds / (FrameRate * 1000);
@@ -137,14 +137,18 @@ namespace Viewer.Animation
             }
         }
 
+        List<AnimationClip> _newAnimations;
 
-        public void SetAnimation(AnimationFile[] animation, Skeleton skeleton)
+        public void SetAnimation(List<AnimationClip> animation, Skeleton skeleton)
         {
             _skeleton = skeleton;
             IsPlaying = true;
             _currentFrame = 0;
             _animationInterpolation = 0;
-            _animations = animation;
+
+            _newAnimations = animation;
+
+            //_animations = animation;
             _timeAtCurrentFrame = TimeSpan.FromSeconds(0);
         }
 
@@ -159,8 +163,8 @@ namespace Viewer.Animation
 
         public int FrameCount()
         {
-            if (_animations != null)
-                return _animations[0].DynamicFrames.Count();
+            if (_newAnimations != null)
+                return _newAnimations[0].DynamicFrames.Count();
             return 0;
         }
 
@@ -182,17 +186,17 @@ namespace Viewer.Animation
 
             if (ApplyStaticFrame)
             {
-                foreach (var animation in _animations)
+                foreach (var animation in _newAnimations)
                     ApplyAnimation(animation.StaticFrame, null, (float)_animationInterpolation, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, currentFrame);
             }
 
             if (ApplyDynamicFrames)
             {
-                if (_animations[0].DynamicFrames.Count > _currentFrame)
+                if (_newAnimations[0].DynamicFrames.Count > _currentFrame)
                 {
-                    var currentFrameKeys = _animations[0].DynamicFrames[_currentFrame];
-                    var nextFrameKeys = _animations[0].DynamicFrames[_currentFrame + 1];
-                    ApplyAnimation(currentFrameKeys, nextFrameKeys, (float)_animationInterpolation, _animations[0].DynamicTranslationMappingID, _animations[0].DynamicRotationMappingID, currentFrame);
+                    var currentFrameKeys = _newAnimations[0].DynamicFrames[_currentFrame];
+                    var nextFrameKeys = _newAnimations[0].DynamicFrames[_currentFrame + 1];
+                    ApplyAnimation(currentFrameKeys, nextFrameKeys, (float)_animationInterpolation, _newAnimations[0].DynamicTranslationMappingID, _newAnimations[0].DynamicRotationMappingID, currentFrame);
                 }
             }
 
@@ -300,31 +304,31 @@ namespace Viewer.Animation
             }
         }
 
-        Quaternion ComputeRotationsCurrentFrame(int boneIndex, AnimationFile.Frame currentFrame, AnimationFile.Frame nextFrame, float animationInterpolation)
+        Quaternion ComputeRotationsCurrentFrame(int boneIndex, AnimationClip.KeyFrame currentFrame, AnimationClip.KeyFrame nextFrame, float animationInterpolation)
         {
-            var animationValueCurrentFrame = QuaternionFromFloatArray(currentFrame.Quaternion[boneIndex]);
+            var animationValueCurrentFrame = currentFrame.Rotation[boneIndex];
             if (nextFrame != null)
             {
-                var animationValueNextFrame = QuaternionFromFloatArray(nextFrame.Quaternion[boneIndex]);
+                var animationValueNextFrame = nextFrame.Rotation[boneIndex];
                 animationValueCurrentFrame = Quaternion.Slerp(animationValueCurrentFrame, animationValueNextFrame, animationInterpolation);
             }
             animationValueCurrentFrame.Normalize();
             return animationValueCurrentFrame;
         }
 
-        Vector3 ComputeTranslationCurrentFrame(int boneIndex, AnimationFile.Frame currentFrame, AnimationFile.Frame nextFrame, float animationInterpolation)
+        Vector3 ComputeTranslationCurrentFrame(int boneIndex, AnimationClip.KeyFrame currentFrame, AnimationClip.KeyFrame nextFrame, float animationInterpolation)
         {
-            var animationValueCurrentFrame = VectorFromFloatArray(currentFrame.Transforms[boneIndex]);
+            var animationValueCurrentFrame = currentFrame.Translation[boneIndex];
             if (nextFrame != null)
             {
-                var animationValueNextFrame = VectorFromFloatArray(nextFrame.Transforms[boneIndex]);
+                var animationValueNextFrame = nextFrame.Translation[boneIndex];
                 animationValueCurrentFrame = Vector3.Lerp(animationValueCurrentFrame, animationValueNextFrame, animationInterpolation);
             }
 
             return animationValueCurrentFrame;
         }
 
-        void ApplyAnimation(AnimationFile.Frame currentFrame , AnimationFile.Frame nextFrame, float animationInterpolation, List<int> translationMappings, List<int> rotationMapping, AnimationFrame finalAnimationFrame)
+        void ApplyAnimation(AnimationClip.KeyFrame currentFrame , AnimationClip.KeyFrame nextFrame, float animationInterpolation, List<int> translationMappings, List<int> rotationMapping, AnimationFrame finalAnimationFrame)
         {
             if (currentFrame == null)
                 return;

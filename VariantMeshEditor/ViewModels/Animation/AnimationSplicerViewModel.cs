@@ -2,22 +2,26 @@
 using CommonDialogs.Common;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
+using GalaSoft.MvvmLight.CommandWpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using VariantMeshEditor.ViewModels.Skeleton;
+using Viewer.Animation;
 using Viewer.Scene;
 using static CommonDialogs.FilterDialog.FilterUserControl;
+using static Filetypes.RigidModel.AnimationFile;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.ViewModels.Animation
 {
 
 
-    public  class FilterableAnimations : NotifyPropertyChangedImpl
+    public  class FilterableAnimationsViewModel : NotifyPropertyChangedImpl
     {
         List<PackedFile> _filterList;
 
@@ -26,6 +30,9 @@ namespace VariantMeshEditor.ViewModels.Animation
         List<PackedFile> AnimationsForCurrentSkeleton { get; set; } = new List<PackedFile>();
         public OnSeachDelegate FilterItemOnSearch { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
 
+        public event ValueChangedDelegate<PackedFile> SelectionChanged;
+        PackedFile _selectedAnimation;
+        public PackedFile SelectedItem { get { return _selectedAnimation; } set { SetAndNotify(ref _selectedAnimation, value, SelectionChanged); } }
 
         bool _onlyDisplayAnimationsForCurrentSkeleton = true;
         public bool OnlyDisplayAnimationsForCurrentSkeleton
@@ -58,158 +65,268 @@ namespace VariantMeshEditor.ViewModels.Animation
     }
 
 
-    public class FilterableSkeletons : NotifyPropertyChangedImpl
+    public class FilterableSkeletonsViewModel : NotifyPropertyChangedImpl
     {
+        public AnimationFile SkeletonFile { get; set; }
+
         public List<PackedFile> SkeletonList { get; set; } = new List<PackedFile>();
         public OnSeachDelegate FilterItemOnSearch { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
+
+
+        public event ValueChangedDelegate<PackedFile> SelectionChanged;
+        PackedFile _selectedSkeleton;
+        public PackedFile SelectedItem { get { return _selectedSkeleton; } set { SetAndNotify(ref _selectedSkeleton, value); OnSkeletonSelected(); } }
+
+
+        public ObservableCollection<SkeletonBoneNode> SelectedSkeletonBonesFlattened { get; set; } = new ObservableCollection<SkeletonBoneNode>();
 
         public void FindAllSkeletons(ResourceLibary resourceLibary)
         {
             var allFilesInFolder = PackFileLoadHelper.GetAllFilesInDirectory(resourceLibary.PackfileContent, "animations\\skeletons");
             SkeletonList = allFilesInFolder.Where(x => x.FileExtention == "anim").ToList();
         }
+
+        void OnSkeletonSelected()
+        {
+            SelectedSkeletonBonesFlattened.Clear();
+            if (SelectedItem != null)
+            {
+                SkeletonFile = Create(new ByteChunk(SelectedItem.Data));
+                SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = -1, BoneName = ""});
+                foreach (var bone in SkeletonFile.Bones)
+                    SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = bone.Id, BoneName = bone.Name });
+            }
+
+            SelectionChanged?.Invoke(SelectedItem);
+        }
     }
 
     public class AnimationSplicerViewModel : NotifyPropertyChangedImpl
     {
         ResourceLibary _resourceLibary;
-        SkeletonElement _skeletonNode;
+        SkeletonElement _targetSkeletonNode;
         AnimationPlayerViewModel _animationPlayer;
-
-        PackedFile _selectedAnimationForTargetSkeleton;
-        public PackedFile SelectedAnimationForTargetSkeleton { get { return _selectedAnimationForTargetSkeleton; } set{SetAndNotify(ref _selectedAnimationForTargetSkeleton, value);} }
-
-        PackedFile _selectedExternalSkeleton;
-        public PackedFile SelectedExternalSkeleton { get { return _selectedExternalSkeleton; } set { SetAndNotify(ref _selectedExternalSkeleton, value); ExternalSkeletonSelected(); } }
-
-        PackedFile _selectedAnimationForExternalSkeleton;
-        public PackedFile SelectedAnimationForExternalSkeleton { get { return _selectedAnimationForExternalSkeleton; } set { SetAndNotify(ref _selectedAnimationForExternalSkeleton, value); } }
-
-        public FilterableAnimations AnimationsForTargetSkeleton { get; set; } = new FilterableAnimations();
-        public FilterableSkeletons PossibleExternalSkeletons { get; set; } = new FilterableSkeletons();
-        public FilterableAnimations AnimationsForExternalSkeleton { get; set; } = new FilterableAnimations();
-
-
-
-        AnimationFile _externalSkeletonFile;
-        Viewer.Animation.Skeleton _externalSkeleton;
-
 
         bool _isSelected;
         public bool IsSelected { get { return _isSelected; } set { SetAndNotify(ref _isSelected, value); IsInFocus(IsSelected); } }
-        public ObservableCollection<AdvSkeletonBoneNode> Bones { get; set; } = new ObservableCollection<AdvSkeletonBoneNode>();
+
+        public FilterableAnimationsViewModel TargetAnimation { get; set; } = new FilterableAnimationsViewModel();
+        public FilterableSkeletonsViewModel ExternalSkeleton { get; set; } = new FilterableSkeletonsViewModel();
+        public FilterableAnimationsViewModel ExternalAnimation { get; set; } = new FilterableAnimationsViewModel();
+
+        ObservableCollection<MappableSkeletonBone> _targetSkeletonBones;
+        public ObservableCollection<MappableSkeletonBone> TargetSkeletonBones { get { return _targetSkeletonBones; } set{ SetAndNotify(ref _targetSkeletonBones, value);}}
 
 
-        public ObservableCollection<SkeletonBoneNode> FlatExternalBonesList { get; set; } = new ObservableCollection<SkeletonBoneNode>();
+        public ICommand ForceComputeCommand { get; set; } 
 
 
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer)
         {
             _resourceLibary = resourceLibary;
-            _skeletonNode = skeletonNode;
+            _targetSkeletonNode = skeletonNode;
             _animationPlayer = animationPlayer;
 
-            AnimationsForTargetSkeleton.FindAllAnimations(_resourceLibary, _skeletonNode.SkeletonFile.Header.SkeletonName);
-            PossibleExternalSkeletons.FindAllSkeletons(_resourceLibary);
+            TargetAnimation.SelectionChanged += AnimationsForTargetSkeleton_SelectionChanged;
+            ExternalSkeleton.SelectionChanged += PossibleExternalSkeletons_SelectionChanged;
+            ExternalAnimation.SelectionChanged += AnimationsForExternalSkeleton_SelectionChanged;
 
-            foreach (var bone in _skeletonNode.SkeletonFile.Bones)
-            {
-                if (bone.ParentId == -1)
-                {
-                    Bones.Add(CreateNode(bone));
-                }
-                else
-                {
-                    var parentBone = _skeletonNode.SkeletonFile.Bones[bone.ParentId];
-                    var treeParent = GetParent(Bones, parentBone);
+            // Initial init
+            TargetAnimation.FindAllAnimations(_resourceLibary, _targetSkeletonNode.SkeletonFile.Header.SkeletonName);
+            ExternalSkeleton.FindAllSkeletons(_resourceLibary);
+            TargetSkeletonBones = MappableSkeletonBone.Create(_targetSkeletonNode.SkeletonFile.Bones);
 
-                    if (treeParent != null)
-                        treeParent.Children.Add(CreateNode(bone));
-                }
-            }
+            ForceComputeCommand = new RelayCommand(Rebuild);
 
-            SelectedAnimationForTargetSkeleton = AnimationsForTargetSkeleton.CurrentItems
-                .Find(x => x.FullPath == @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-      
-            SelectedExternalSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-            SelectedAnimationForExternalSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+            // Temp - Populate with debug data. 
+            TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+            ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+            ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+
+            
         }
 
+
+        class MappingItem
+        { 
+            public string OriginalName { get; set; }
+            public int OriginalId { get; set; }
+
+            public string NewName { get; set; }
+            public int NewId { get; set; }
+        }
+
+        List<int> RemapListTest(List<int> mappingList, List<MappingItem> animMapping)
+        {
+            List<int> output = new List<int>();
+            for (int i = 0; i < mappingList.Count; i++)
+            {
+                var orgBoneId = mappingList[i];
+                var mappingItem = animMapping.FirstOrDefault(x=>x.NewId == orgBoneId);
+                if(mappingItem != null)
+                    output.Add(mappingItem.OriginalId);
+
+            }
+            return output;
+        }
+
+        void Rebuild()
+        {
+            if (ExternalAnimation.SelectedItem == null)
+                return;
+
+            var currentsSkeltonBoneCount = _targetSkeletonNode.Skeleton.BoneCount;
+            List<MappingItem> mappingList = new List<MappingItem>();
+            FillMappingValue(TargetSkeletonBones, mappingList);
+
+
+            var externalAnim = AnimationFile.Create(new ByteChunk(ExternalAnimation.SelectedItem.Data));
+            var externalAnimationClip = new AnimationClip(externalAnim);
+
+            var outputAnimationFile = new AnimationClip();
+            //outputAnimationFile.DynamicRotationMappingID = new List<int>();
+            //outputAnimationFile.DynamicTranslationMappingID = new List<int>();
+            for (int i = 0; i < currentsSkeltonBoneCount; i++)
+            {
+                outputAnimationFile.DynamicRotationMappingID.Add(i);
+                outputAnimationFile.DynamicTranslationMappingID.Add(i);
+            }
+        
+            for (int frameIndex = 0; frameIndex < externalAnimationClip.DynamicFrames.Count(); frameIndex++)
+            {
+                var currentOutputFrame = new AnimationClip.KeyFrame();
+
+                for (int boneIndex = 0; boneIndex < currentsSkeltonBoneCount; boneIndex++)
+                {
+                    var skeletonPosRotation = _targetSkeletonNode.Skeleton.Rotation[boneIndex];
+                    var skeletonPosTranslation = _targetSkeletonNode.Skeleton.Translation[boneIndex];
+
+                    var boneToGetAnimDataFrom = mappingList.FirstOrDefault(x => x.OriginalId == boneIndex && x.NewId != -1);
+                    if (boneToGetAnimDataFrom != null)
+                    {
+                        var boneRotationIndexInExternal = externalAnimationClip.DynamicRotationMappingID.IndexOf(boneToGetAnimDataFrom.NewId);
+                        bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
+                        if (hasBoneRotationInExternal)
+                        {
+                            currentOutputFrame.Rotation.Add(externalAnimationClip.DynamicFrames[frameIndex].Rotation[boneRotationIndexInExternal]);
+                        }
+                        else
+                        { 
+                            currentOutputFrame.Rotation.Add(skeletonPosRotation); 
+                        }
+                        
+                         var boneTranslationIndexInExternal = externalAnimationClip.DynamicTranslationMappingID.IndexOf(boneToGetAnimDataFrom.NewId);
+                         bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
+                        if (hasBoneTranslationInExternal)
+                        {
+                            currentOutputFrame.Translation.Add(externalAnimationClip.DynamicFrames[frameIndex].Translation[boneTranslationIndexInExternal]);
+                        }
+                        else
+                        { 
+                            currentOutputFrame.Translation.Add(skeletonPosTranslation);
+                        }
+                    }
+                    else
+                    {
+                        currentOutputFrame.Translation.Add(skeletonPosTranslation);
+                        currentOutputFrame.Rotation.Add(skeletonPosRotation);
+                    }
+                }
+                outputAnimationFile.DynamicFrames.Add(currentOutputFrame);
+            }
+            _animationPlayer.SetAnimationClip(new List<AnimationClip>() { outputAnimationFile }, _targetSkeletonNode.Skeleton);
+            return;
+        }
+
+        private void PossibleExternalSkeletons_SelectionChanged(PackedFile newSelectedSkeleton)
+        {
+            ExternalAnimation.SelectedItem = null;
+            if (ExternalSkeleton.SelectedItem != null)
+            {
+                ExternalAnimation.FindAllAnimations(_resourceLibary, ExternalSkeleton.SkeletonFile.Header.SkeletonName);
+                PrefilBoneMappingBasedOnName(TargetSkeletonBones, ExternalSkeleton.SelectedSkeletonBonesFlattened);
+            }
+        }
+
+        private void AnimationsForExternalSkeleton_SelectionChanged(PackedFile newSelectedSkeleton)
+        {
+            Rebuild();
+        }
+
+
+        private void AnimationsForTargetSkeleton_SelectionChanged(PackedFile newSelectedSkeleton)
+        {
+            Rebuild();
+        }
+
+        void FillMappingValue(IEnumerable<MappableSkeletonBone> nodes, List<MappingItem> mappingList)
+        {
+            foreach (var node in nodes)
+            {
+                if (node.MappedBone != null)
+                {
+                    mappingList.Add(
+                        new MappingItem()
+                        { 
+                            OriginalId = node.BoneIndex,
+                            OriginalName = node.BoneName,
+
+                            NewId = node.MappedBone.BoneIndex,
+                            NewName = node.MappedBone.BoneName,
+                        }
+                    );
+                }
+                FillMappingValue(node.Children, mappingList);
+            }
+        }
 
         void ExternalSkeletonSelected()
         {
-            SelectedAnimationForExternalSkeleton = null;
-            _externalSkeleton = null;
-            if (SelectedExternalSkeleton != null)
-            {
-                _externalSkeletonFile = AnimationFile.Create(new ByteChunk(SelectedExternalSkeleton.Data));
-                AnimationsForExternalSkeleton.FindAllAnimations(_resourceLibary, _externalSkeletonFile.Header.SkeletonName);
-
-                FlatExternalBonesList.Clear();
-                foreach (var bone in _externalSkeletonFile.Bones)
-                {
-                    SkeletonBoneNode item = new SkeletonBoneNode
-                    {
-                        BoneIndex = bone.Id,
-                        BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
-                    };
-
-                    FlatExternalBonesList.Add(item);
-                }
-
-                PrefilBoneMappingBasedOnName(Bones, FlatExternalBonesList);
-            }
+            ExternalAnimation.SelectedItem = null;
         }
 
-        void PrefilBoneMappingBasedOnName(IEnumerable<AdvSkeletonBoneNode> nodes, ObservableCollection<SkeletonBoneNode> externalBonesList)
+        void PrefilBoneMappingBasedOnName(IEnumerable<MappableSkeletonBone> nodes, ObservableCollection<SkeletonBoneNode> externalBonesList)
         {
             foreach(var node in nodes)
             {
-                node.MappedBone = externalBonesList.FirstOrDefault(x => x.BoneName == node.BoneName);
-                PrefilBoneMappingBasedOnName(node.Children, externalBonesList);
-
+                if (node != null)
+                {
+                    node.MappedBone = externalBonesList.FirstOrDefault(x => x?.BoneName == node.BoneName);
+                    PrefilBoneMappingBasedOnName(node.Children, externalBonesList);
+                }
             }
         }
-
-        // Copy pasted from skeletonViewModel
-        AdvSkeletonBoneNode CreateNode(AnimationFile.BoneInfo bone)
-        {
-            AdvSkeletonBoneNode item = new AdvSkeletonBoneNode
-            {
-                BoneIndex = bone.Id,
-                BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
-            };
-            return item;
-        }
-
-        AdvSkeletonBoneNode GetParent(ObservableCollection<AdvSkeletonBoneNode> root, AnimationFile.BoneInfo parentBone)
-        {
-            foreach (AdvSkeletonBoneNode item in root)
-            {
-                if (item.BoneIndex == parentBone.Id)
-                    return item;
-
-                var result = GetParent(item.Children, parentBone);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
-        // ----------------------------
 
         void ApplyCurrentAnimation()
         {
-            _animationPlayer.SetAnimationClip(null, null);
+            //_animationPlayer.SetAnimationClip(null, null);
         }
 
         void IsInFocus(bool isInFocus)
         {
             if (isInFocus)
                 ApplyCurrentAnimation();
+
+            //if (value == true)
+            //{
+            //    _animationPlayer._animationNode.AnimationPlayer.GoblinSkeleton = _skeletonNode.Skeleton;
+            //
+            //    _animationPlayer._animationNode.AnimationPlayer.SkinkSkeleton = new Viewer.Animation.Skeleton(_externalSkeletonFile);
+            //    _animationPlayer._animationNode.AnimationPlayer.SkinAnimFile = AnimationFile.Create(new ByteChunk(SelectedAnimationForExternalSkeleton.Data));
+            //    _animationPlayer._animationNode.AnimationPlayer.MappingValues = new List<int>(_skeletonNode.Skeleton.BoneCount);
+            //    for (int i = 0; i < _skeletonNode.Skeleton.BoneCount; i++)
+            //        _animationPlayer._animationNode.AnimationPlayer.MappingValues.Add(-1);
+            //
+            //    FillMappingValue(Bones, _animationPlayer._animationNode.AnimationPlayer.MappingValues);
+            //}
         }
+
+
+       
     }
 
-    public class AdvSkeletonBoneNode : NotifyPropertyChangedImpl
+
+    public class MappableSkeletonBone : NotifyPropertyChangedImpl
     {
         string _boneName;
         public string BoneName
@@ -227,6 +344,52 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         SkeletonBoneNode _mappedBone;
         public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
-        public ObservableCollection<AdvSkeletonBoneNode> Children { get; set; } = new ObservableCollection<AdvSkeletonBoneNode>();
+        public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
+
+
+        public static ObservableCollection<MappableSkeletonBone> Create(BoneInfo[] bones)
+        {
+           var output = new ObservableCollection<MappableSkeletonBone>();
+            foreach (var bone in bones)
+            {
+                if (bone.ParentId == -1)
+                {
+                    output.Add(CreateNode(bone));
+                }
+                else
+                {
+                    var parentBone = bones[bone.ParentId];
+                    var treeParent = GetParent(output, parentBone);
+
+                    if (treeParent != null)
+                        treeParent.Children.Add(CreateNode(bone));
+                }
+            }
+            return output;
+        }
+
+        static MappableSkeletonBone CreateNode(BoneInfo bone)
+        {
+            MappableSkeletonBone item = new MappableSkeletonBone
+            {
+                BoneIndex = bone.Id,
+                BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
+            };
+            return item;
+        }
+
+        static MappableSkeletonBone GetParent(ObservableCollection<MappableSkeletonBone> root, AnimationFile.BoneInfo parentBone)
+        {
+            foreach (MappableSkeletonBone item in root)
+            {
+                if (item.BoneIndex == parentBone.Id)
+                    return item;
+
+                var result = GetParent(item.Children, parentBone);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
     }
 }

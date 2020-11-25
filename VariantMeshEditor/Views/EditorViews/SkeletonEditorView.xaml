@@ -43,6 +43,8 @@
                     <StackPanel Orientation="Horizontal">
 
                         <TextBlock Text="{Binding BoneName, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text=" - "></TextBlock>
+                        <TextBlock Text="{Binding BoneIndex, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>

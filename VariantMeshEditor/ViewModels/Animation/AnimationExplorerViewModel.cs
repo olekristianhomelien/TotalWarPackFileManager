@@ -47,7 +47,7 @@ namespace VariantMeshEditor.ViewModels.Animation
                 .Select(x => x.AnimationFile);
 
             if (animationFiles.Any())
-                _animationPlayer.SetAnimationClip(animationFiles.ToArray(), _skeletonNode.Skeleton);
+                _animationPlayer.SetAnimationClip(animationFiles.Select(x => new AnimationClip(x)).ToList(), _skeletonNode.Skeleton);
             else
                 _animationPlayer.SetAnimationClip(null, null);
         }

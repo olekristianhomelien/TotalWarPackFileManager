@@ -43,7 +43,7 @@ namespace VariantMeshEditor.ViewModels.Animation
         public ICommand LastFrameCommand { get; set; }
 
 
-        AnimationElement _animationNode;
+        public AnimationElement _animationNode; // <--- Temp publc
         public AnimationPlayerViewModel(AnimationElement animationNode)
         {
             _animationNode = animationNode;
@@ -134,14 +134,15 @@ namespace VariantMeshEditor.ViewModels.Animation
         }
 
 
-        
 
-        public void SetAnimationClip(IEnumerable<AnimationFile> animationFiles, Viewer.Animation.Skeleton skeleton)
+        public void SetAnimationClip(IEnumerable<AnimationClip> animationFiles, Viewer.Animation.Skeleton skeleton)
         {
             if (animationFiles == null || animationFiles.Any() == false)
                 _animationNode.AnimationPlayer.SetAnimation(null, null);
             else
-                _animationNode.AnimationPlayer.SetAnimation(animationFiles.ToArray(), skeleton);
+            {
+                _animationNode.AnimationPlayer.SetAnimation(animationFiles.ToList(), skeleton);
+            }
 
             MaxFames = _animationNode.AnimationPlayer.FrameCount();
             CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame+1;
