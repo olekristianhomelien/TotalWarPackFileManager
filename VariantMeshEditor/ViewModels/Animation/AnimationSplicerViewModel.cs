@@ -1,5 +1,6 @@
 ﻿using Common;
 using CommonDialogs.Common;
+using CommonDialogs.MathViews;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -118,7 +119,15 @@ namespace VariantMeshEditor.ViewModels.Animation
         public ObservableCollection<MappableSkeletonBone> TargetSkeletonBones { get { return _targetSkeletonBones; } set{ SetAndNotify(ref _targetSkeletonBones, value);}}
 
 
-        public ICommand ForceComputeCommand { get; set; } 
+        public ICommand ForceComputeCommand { get; set; }
+        public MappableSkeletonBone _selectedNode;
+        public MappableSkeletonBone SelectedNode {get { return _selectedNode; }set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
+
+
+        void OnItemSelected(MappableSkeletonBone bone)
+        {
+            _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
+        }
 
 
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer)
@@ -134,7 +143,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             // Initial init
             TargetAnimation.FindAllAnimations(_resourceLibary, _targetSkeletonNode.SkeletonFile.Header.SkeletonName);
             ExternalSkeleton.FindAllSkeletons(_resourceLibary);
-            TargetSkeletonBones = MappableSkeletonBone.Create(_targetSkeletonNode.SkeletonFile.Bones);
+            TargetSkeletonBones = MappableSkeletonBone.Create(_targetSkeletonNode);
 
             ForceComputeCommand = new RelayCommand(Rebuild);
 
@@ -142,10 +151,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
             ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
             ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
-
-            
         }
-
 
         class MappingItem
         { 
@@ -326,8 +332,20 @@ namespace VariantMeshEditor.ViewModels.Animation
     }
 
 
+   
+
+
+
     public class MappableSkeletonBone : NotifyPropertyChangedImpl
     {
+        SkeletonElement _targetSkeletonNode;
+        public BoneInfo OriginalBone { get; set; }
+
+        public MappableSkeletonBone(SkeletonElement targetSkeletonNode)
+        {
+            _targetSkeletonNode = targetSkeletonNode;
+        }
+
         string _boneName;
         public string BoneName
         {
@@ -342,19 +360,37 @@ namespace VariantMeshEditor.ViewModels.Animation
             set { SetAndNotify(ref _boneIndex, value); }
         }
 
+        Vector3ViewModel _contantTranslationOffset = new Vector3ViewModel();
+        public Vector3ViewModel ContantTranslationOffset
+        {
+            get { return _contantTranslationOffset; }
+            set { SetAndNotify(ref _contantTranslationOffset, value); }
+        }
+
+        Vector4ViewModel _contantRotationOffset = new Vector4ViewModel();
+        public Vector4ViewModel ContantRotationOffset
+        {
+            get { return _contantRotationOffset; }
+            set { SetAndNotify(ref _contantRotationOffset, value); }
+        }
+
         SkeletonBoneNode _mappedBone;
         public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
         public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
 
-        public static ObservableCollection<MappableSkeletonBone> Create(BoneInfo[] bones)
+
+
+        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
         {
+             Build from viewmodel so that we get stutt right
            var output = new ObservableCollection<MappableSkeletonBone>();
+            var bones = skeletonNode.SkeletonFile.Bones;
             foreach (var bone in bones)
             {
                 if (bone.ParentId == -1)
                 {
-                    output.Add(CreateNode(bone));
+                    output.Add(CreateNode(bone, skeletonNode));
                 }
                 else
                 {
@@ -362,18 +398,19 @@ namespace VariantMeshEditor.ViewModels.Animation
                     var treeParent = GetParent(output, parentBone);
 
                     if (treeParent != null)
-                        treeParent.Children.Add(CreateNode(bone));
+                        treeParent.Children.Add(CreateNode(bone, skeletonNode));
                 }
             }
             return output;
         }
 
-        static MappableSkeletonBone CreateNode(BoneInfo bone)
+        static MappableSkeletonBone CreateNode(BoneInfo bone, SkeletonElement skeletonNode)
         {
-            MappableSkeletonBone item = new MappableSkeletonBone
+            MappableSkeletonBone item = new MappableSkeletonBone(skeletonNode)
             {
                 BoneIndex = bone.Id,
-                BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
+                BoneName = bone.Name,
+                OriginalBone = bone
             };
             return item;
         }

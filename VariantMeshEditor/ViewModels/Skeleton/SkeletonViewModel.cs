@@ -38,7 +38,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
         {
             get { return _selectedBone; }
             set { SetAndNotify(ref _selectedBone, value); }
-        }
+        } 
 
         public SkeletonViewModel(SkeletonElement skeletonElement)
         {

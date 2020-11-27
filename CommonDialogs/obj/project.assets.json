@@ -75,6 +75,17 @@
           "lib/net45/Serilog.Sinks.File.dll": {}
         }
       },
+      "System.Windows.Interactivity.WPF/2.0.20525": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        }
+      },
       "Common/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
@@ -164,6 +175,17 @@
         },
         "runtime": {
           "lib/net45/Serilog.Sinks.File.dll": {}
+        }
+      },
+      "System.Windows.Interactivity.WPF/2.0.20525": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
         }
       },
       "Common/1.0.0": {
@@ -257,6 +279,17 @@
           "lib/net45/Serilog.Sinks.File.dll": {}
         }
       },
+      "System.Windows.Interactivity.WPF/2.0.20525": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        }
+      },
       "Common/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.7.2",
@@ -346,6 +379,17 @@
         },
         "runtime": {
           "lib/net45/Serilog.Sinks.File.dll": {}
+        }
+      },
+      "System.Windows.Interactivity.WPF/2.0.20525": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Expression.Interactions.dll": {},
+          "lib/net40/System.Windows.Interactivity.dll": {}
         }
       },
       "Common/1.0.0": {
@@ -455,6 +499,21 @@
         "serilog.sinks.file.nuspec"
       ]
     },
+    "System.Windows.Interactivity.WPF/2.0.20525": {
+      "sha512": "0r+Le4E7hCm4zToUvBzjSUyTcuU3rFeoPa7JyTdWIzR/F7wH6+O/pWkjHIG40hIA0z1wvRdZayvoizA4wcK1dg==",
+      "type": "package",
+      "path": "system.windows.interactivity.wpf/2.0.20525",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net40/Microsoft.Expression.Interactions.dll",
+        "lib/net40/Microsoft.Expression.Interactions.xml",
+        "lib/net40/System.Windows.Interactivity.dll",
+        "lib/net40/System.Windows.Interactivity.xml",
+        "system.windows.interactivity.wpf.2.0.20525.nupkg.sha512",
+        "system.windows.interactivity.wpf.nuspec"
+      ]
+    },
     "Common/1.0.0": {
       "type": "project",
       "path": "../Common/Common.csproj",
@@ -464,7 +523,8 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.7.2": [
       "AdamsLair.TreeViewAdv >= 1.7.7",
-      "Common >= 1.0.0"
+      "Common >= 1.0.0",
+      "System.Windows.Interactivity.WPF >= 2.0.20525"
     ]
   },
   "packageFolders": {
@@ -507,6 +567,10 @@
           "AdamsLair.TreeViewAdv": {
             "target": "Package",
             "version": "[1.7.7, )"
+          },
+          "System.Windows.Interactivity.WPF": {
+            "target": "Package",
+            "version": "[2.0.20525, )"
           }
         }
       }

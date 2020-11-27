@@ -45,6 +45,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\TextBoxInputBehavior.cs" />
     <Compile Include="CheckedComboBox\CCBoxItem.cs" />
     <Compile Include="CheckedComboBox\CheckedComboBox.cs">
       <SubType>Component</SubType>
@@ -89,6 +90,15 @@
     <Compile Include="LoadedPackFileBrowser.Designer.cs">
       <DependentUpon>LoadedPackFileBrowser.cs</DependentUpon>
     </Compile>
+    <Compile Include="MathViews\DoubleViewModel.cs" />
+    <Compile Include="MathViews\Vector3View.xaml.cs">
+      <DependentUpon>Vector3View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MathViews\Vector3ViewModel.cs" />
+    <Compile Include="MathViews\Vector4View.xaml.cs">
+      <DependentUpon>Vector4View.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MathViews\Vector4ViewModel.cs" />
     <Compile Include="PackedTreeView\PackedTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -133,6 +143,9 @@
     <PackageReference Include="AdamsLair.TreeViewAdv">
       <Version>1.7.7</Version>
     </PackageReference>
+    <PackageReference Include="System.Windows.Interactivity.WPF">
+      <Version>2.0.20525</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="CollapsableButton.xaml">
@@ -144,6 +157,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FilterDialog\FilterUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MathViews\Vector3View.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MathViews\Vector4View.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

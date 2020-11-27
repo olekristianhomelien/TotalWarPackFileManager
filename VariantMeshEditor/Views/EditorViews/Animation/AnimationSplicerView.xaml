@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib"
+             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib" xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -111,9 +111,23 @@
     </UserControl.Resources>
 
 
-    <StackPanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            
+            
+   
+        
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <TextBlock>Target Skeleton -> </TextBlock>
+            <TextBlock>Target Skeleton -></TextBlock>
             <TextBlock>Humanoid01</TextBlock>
         </StackPanel>
 
@@ -161,157 +175,82 @@
                 DockPanel.Dock="top"
                 MaxHeight="400"
                 LabelText="External Anim">
-                <filterdialog:CollapsableFilterControl.InnerContent>
-                    <CheckBox 
+            <filterdialog:CollapsableFilterControl.InnerContent>
+                <CheckBox 
                         IsChecked="{Binding ExternalAnimation.OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
                         Content="Only list animations for current skeleton"/>
-                </filterdialog:CollapsableFilterControl.InnerContent>
-            </filterdialog:CollapsableFilterControl>
+            </filterdialog:CollapsableFilterControl.InnerContent>
+        </filterdialog:CollapsableFilterControl>
 
 
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Scale skeleton " Width="100" DockPanel.Dock="Left" Height="20"/>
+                <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
+            </DockPanel>
 
+          
 
-        <Button DockPanel.Dock="Top" Command="{Binding ForceComputeCommand}">Test</Button>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Merge type" Width="100" DockPanel.Dock="Left"/>
+                <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                <ComboBox DockPanel.Dock="Right" >
+                    <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
+                    <ComboBoxItem>Loop</ComboBoxItem>
+                    <ComboBoxItem>Time scale</ComboBoxItem>
+                </ComboBox>
+            </DockPanel>
+            
+        
+            <Button DockPanel.Dock="Top" Command="{Binding ForceComputeCommand}">Test</Button>
+        </DockPanel>
 
-        <Grid DockPanel.Dock="Top">
+        <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-      
-        <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
+
+            <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
                   ItemsSource="{Binding TargetSkeletonBones}" 
                   ItemContainerStyle="{StaticResource TreeViewItemStyle1}" >
-            
-            <TreeView.ItemTemplate>
 
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="auto"   />
-                    
-      
+                <i:Interaction.Behaviors>
+                    <editorviews:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
 
+                <TreeView.ItemTemplate>
 
-                        </Grid.ColumnDefinitions>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
                             <TextBlock  Grid.Column="0" Text="{Binding BoneName}"   />
                             <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0"
                                    SelectedItem="{Binding MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalSkeleton.SelectedSkeletonBonesFlattened}"
                                    DisplayMemberPath="BoneName">
 
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="SelectionChanged">
-                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ForceComputeCommand}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ComboBox>
-            
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ForceComputeCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ComboBox>
 
-                    </Grid>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+                        </Grid>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
 
-
-
-            <Grid Grid.IsSharedSizeScope="True" Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                
-                <!-- header -->
-                <Grid Grid.Column="0" Margin="0,10,10,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition  Width="Auto" SharedSizeGroup="CheckBoxColumn" />
-                        <ColumnDefinition  Width="Auto" SharedSizeGroup="HeaderColumn" />
-                        <ColumnDefinition  Width="Auto" SharedSizeGroup="SubHeaderColumn" />
-                        <ColumnDefinition  Width="Auto" SharedSizeGroup="ValueColumn" />
-                        <ColumnDefinition  Width="Auto" SharedSizeGroup="ExtraColoumn" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                        <RowDefinition></RowDefinition>
-                    </Grid.RowDefinitions>
-
-                    <CheckBox  Grid.Row="0" Grid.Column="0"/> 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="Mapping Target"/>
-                    <ComboBox  Grid.Row="0" Grid.Column="3"/>
-
-                    <CheckBox  Grid.Row="1" Grid.Column="0"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="Constant offset"/>
-
-                    <TextBlock Grid.Row="2" Grid.Column="2"  Text="Rot" TextAlignment="Right"/>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3">
-                        <TextBox MinWidth="60"></TextBox>
-                        <TextBox MinWidth="60"></TextBox>
-                        <TextBox MinWidth="60"></TextBox>
-                    </StackPanel>
-
-                    <TextBlock Grid.Row="3" Grid.Column="2"  Text="Trans" TextAlignment="Right"/>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="3">
-                        <TextBox MinWidth="60"></TextBox>
-                        <TextBox MinWidth="60"></TextBox>
-                        <TextBox MinWidth="60"></TextBox>
-                    </StackPanel>
-
-                    <Button  Grid.Row="3" Grid.Column="5">X</Button>
-
-                    <CheckBox Grid.Row="4" Grid.Column="0" Margin="0,15,0,0"></CheckBox>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Text="Key Frames" Margin="0,15,0,0"/>
-                </Grid>
-                
-                <!-- rows -->
-
-                <ScrollViewer Grid.Column="1"  Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <ListView  ItemsSource="{Binding ExternalSkeleton.SkeletonList}"  VerticalAlignment="Stretch">
-                        <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition  Width="Auto" SharedSizeGroup="CheckBoxColumn" />
-                                    <ColumnDefinition  Width="Auto" SharedSizeGroup="HeaderColumn" />
-                                    <ColumnDefinition  Width="Auto" SharedSizeGroup="SubHeaderColumn" />
-                                    <ColumnDefinition  Width="Auto" SharedSizeGroup="ValueColumn" />
-                                    <ColumnDefinition  Width="Auto" SharedSizeGroup="ExtraColoumn" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
-                                    <RowDefinition></RowDefinition>
- 
-                                </Grid.RowDefinitions>
-
-                               
-                                <CheckBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Content="Frame 11"/>
-
-                                <TextBlock Grid.Row="1" Grid.Column="2"  Text="Rot" TextAlignment="Right"/>
-                                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="3">
-                                    <TextBox MinWidth="60"></TextBox>
-                                    <TextBox MinWidth="60"></TextBox>
-                                    <TextBox MinWidth="60"></TextBox>
-                                </StackPanel>
-
-                                <TextBlock Grid.Row="2" Grid.Column="2"  Text="Trans" TextAlignment="Right"/>
-                                <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="3">
-                                    <TextBox MinWidth="60"></TextBox>
-                                    <TextBox MinWidth="60"></TextBox>
-                                    <TextBox MinWidth="60"></TextBox>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-                </ScrollViewer>
-            </Grid>
+            <local:AnimationSplicerSelectedBoneEditor Grid.Column="1" Grid.Row="1" 
+                                                      TargetBoneList="{Binding ExternalSkeleton.SelectedSkeletonBonesFlattened, UpdateSourceTrigger=PropertyChanged}"
+                                                      TargetBoneListDisplayName="BoneName"
+                                                      SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"/>
 
         </Grid>
 
-    </StackPanel>
+    </Grid>
 </UserControl>

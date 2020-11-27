@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "md+aToJcu7t70/Bhy9jXmfAJW3cHl4Yo6HxugD5LNDR4w47jJvMlAgh5iqaVEE2hseHzi3zyWf0kY+3tWV88Og==",
+  "dgSpecHash": "/t91jsTueUcQ7kWAjbbRQm5gbgUZbJnC/RY9Hp3m92J9L59Ax9BKwvTJS8vQwY+jkCAY1Eqp3SIobZr3vMOwXA==",
   "success": true,
   "projectFilePath": "C:\\Users\\ole_k\\source\\repos\\TotalWarPackFileManager\\CommonDialogs\\CommonDialogs.csproj",
   "expectedPackageFiles": [
@@ -8,7 +8,8 @@
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog\\2.9.0\\serilog.2.9.0.nupkg.sha512",
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog.enrichers.thread\\3.1.0\\serilog.enrichers.thread.3.1.0.nupkg.sha512",
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog.sinks.console\\3.1.1\\serilog.sinks.console.3.1.1.nupkg.sha512",
-    "C:\\Users\\ole_k\\.nuget\\packages\\serilog.sinks.file\\4.1.0\\serilog.sinks.file.4.1.0.nupkg.sha512"
+    "C:\\Users\\ole_k\\.nuget\\packages\\serilog.sinks.file\\4.1.0\\serilog.sinks.file.4.1.0.nupkg.sha512",
+    "C:\\Users\\ole_k\\.nuget\\packages\\system.windows.interactivity.wpf\\2.0.20525\\system.windows.interactivity.wpf.2.0.20525.nupkg.sha512"
   ],
   "logs": []
 }

@@ -74,7 +74,6 @@ namespace CommonDialogs.FilterDialog
         public static readonly DependencyProperty LabelTotalWidthProperty =
             DependencyProperty.Register("LabelTotalWidth", typeof(int), typeof(CollapsableFilterControl), new PropertyMetadata(null));
 
-
         public string LabelText
         {
             get { return (string)GetValue(LabelTextProperty); }
