@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Windows;
 using VariantMeshEditor.Util;
@@ -23,7 +24,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation")
         {
-            ApplyElementCheckboxVisability = Visibility.Hidden;
+            ApplyElementCheckboxVisability = Visibility.Collapsed;
+            IsChecked = true;   // Triggers update and render
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
@@ -43,6 +45,13 @@ namespace VariantMeshEditor.ViewModels.Animation
             AnimationPlayer.Update(time);
             if (AnimationPlayerViewModel != null)
                 AnimationPlayerViewModel.Update();
+
+            AnimationSplicerViewModel.UpdateNode(time);
+        }
+
+        protected override void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
+        {
+            AnimationSplicerViewModel.DrawNode(device, parentTransform, commonShaderParameters);
         }
     }
 }

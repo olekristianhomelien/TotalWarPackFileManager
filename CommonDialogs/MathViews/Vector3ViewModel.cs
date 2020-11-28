@@ -11,6 +11,13 @@ namespace CommonDialogs.MathViews
     {
         virtual public event ValueChangedDelegate<Vector3ViewModel> OnValueChanged;
 
+        public Vector3ViewModel(double x = 0, double y = 0, double z = 0)
+        {
+            X.Value = x;
+            Y.Value = y;
+            Z.Value = z;
+        }
+
         DoubleViewModel _x = new DoubleViewModel();
         public DoubleViewModel X
         {

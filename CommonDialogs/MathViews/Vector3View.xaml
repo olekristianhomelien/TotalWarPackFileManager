@@ -20,6 +20,7 @@
         </Grid.RowDefinitions>
 
         <Border x:Name="b" Grid.Row="0" Grid.Column="0" />
+        <Border x:Name="b2" Grid.Row="0" Grid.Column="0" Margin="3,0,3,0"/>
         <TextBox 
             Width="{Binding ActualWidth, ElementName=b}" 
             Grid.Row="0" Grid.Column="0" 
@@ -31,7 +32,7 @@
         </TextBox>
 
         <TextBox 
-            Width="{Binding ActualWidth, ElementName=b}" 
+            Width="{Binding ActualWidth, ElementName=b2}" 
             Grid.Row="0" Grid.Column="1"
             Margin="3,0,3,0"
             Text="{Binding Vector3.Y.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 

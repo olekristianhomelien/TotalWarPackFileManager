@@ -47,6 +47,22 @@ namespace VariantMeshEditor.ViewModels.Skeleton
         }
 
 
+        public SkeletonBoneNode GetBoneFromIndex(int index, ObservableCollection<SkeletonBoneNode> boneList)
+        {
+            foreach (var bone in boneList)
+            {
+                if (bone.BoneIndex == index)
+                    return bone;
+      
+                var res = GetBoneFromIndex(index, bone.Children);
+                if (res != null)
+                    return res;
+                
+            }
+
+            return null;
+        }
+
         void CreateBoneOverview()
         {
             SelectedBone = null;
@@ -78,7 +94,8 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             SkeletonBoneNode item = new SkeletonBoneNode
             {
                 BoneIndex = bone.Id,
-                BoneName = bone.Name// + " [" + bone.Id + "]" + " P[" + bone.ParentId + "]",
+                BoneName = bone.Name,
+                ParentBoneIndex = bone.ParentId
             };
             return item;
         }
@@ -112,6 +129,14 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             {
                 get { return _boneIndex; }
                 set { SetAndNotify(ref _boneIndex, value); }
+            }
+
+
+            int _parentBoneIndex;
+            public int ParentBoneIndex
+            {
+                get { return _parentBoneIndex; }
+                set { SetAndNotify(ref _parentBoneIndex, value); }
             }
 
             public ObservableCollection<SkeletonBoneNode> Children { get; set; } = new ObservableCollection<SkeletonBoneNode>();

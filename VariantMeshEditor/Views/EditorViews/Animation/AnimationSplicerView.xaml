@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib" xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews"
+             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation" xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib" xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews" xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -138,7 +138,7 @@
                 SearchItems="{Binding TargetAnimation.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
                 OnSearch="{Binding TargetAnimation.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
-                LabelTotalWidth="100"   
+                LabelTotalWidth="104"   
                 DisplayMemberPath="FullPath"
                 DockPanel.Dock="top"
                 MaxHeight="400"
@@ -157,7 +157,7 @@
                 SearchItems="{Binding ExternalSkeleton.SkeletonList, UpdateSourceTrigger=PropertyChanged}"     
                 OnSearch="{Binding ExternalSkeleton.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
-                LabelTotalWidth="100"   
+                LabelTotalWidth="104"   
                 DisplayMemberPath="FullPath"
                 DockPanel.Dock="top"
                 MaxHeight="400"
@@ -170,7 +170,7 @@
                 SearchItems="{Binding ExternalAnimation.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
                 OnSearch="{Binding ExternalAnimation.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
                 IsManipulationEnabled="False"
-                LabelTotalWidth="100"   
+                LabelTotalWidth="104"   
                 DisplayMemberPath="FullPath"
                 DockPanel.Dock="top"
                 MaxHeight="400"
@@ -184,7 +184,7 @@
 
 
             <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="Scale skeleton " Width="100" DockPanel.Dock="Left" Height="20"/>
+                <TextBlock Text="Scale animation" Width="105" DockPanel.Dock="Left" Height="20"/>
                 <TextBlock Text=" : " DockPanel.Dock="Left"/>
                 <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
             </DockPanel>
@@ -192,7 +192,7 @@
           
 
             <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="Merge type" Width="100" DockPanel.Dock="Left"/>
+                <TextBlock Text="Merge type" Width="105" DockPanel.Dock="Left"/>
                 <TextBlock Text=" : " DockPanel.Dock="Left"/>
                 <ComboBox DockPanel.Dock="Right" >
                     <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
@@ -200,8 +200,50 @@
                     <ComboBoxItem>Time scale</ComboBoxItem>
                 </ComboBox>
             </DockPanel>
-            
-        
+
+
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="External skeleton " Width="105" DockPanel.Dock="Left" VerticalAlignment="Top" Height="20" />
+                <TextBlock Text=" : " DockPanel.Dock="Left"/>
+
+                <Expander DockPanel.Dock="Left">
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" >
+                            <CheckBox IsChecked="{Binding UseAnimation, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Expander.Header>
+
+
+                    <Grid DockPanel.Dock="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Offset"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
+                        <mathviews:Vector3View 
+                            Grid.Row="0" Grid.Column="3"  VerticalContentAlignment="Center"
+                            Vector3="{Binding ExternalSkeletonSettings.SkeletonOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                            FieldWidth="60"
+                            NumbersMaxLength="80" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Draw line"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
+                        <CheckBox  Grid.Row="1" Grid.Column="2" />
+                    </Grid>
+                </Expander>
+
+            </DockPanel>
+
+
+
             <Button DockPanel.Dock="Top" Command="{Binding ForceComputeCommand}">Test</Button>
         </DockPanel>
 
@@ -227,7 +269,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock  Grid.Column="0" Text="{Binding BoneName}"   />
+                            <TextBlock  Grid.Column="0" Text="{Binding OriginalBone.BoneName}"   />
                             <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0"
                                    SelectedItem="{Binding MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                    ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalSkeleton.SelectedSkeletonBonesFlattened}"

@@ -4,6 +4,8 @@ using CommonDialogs.MathViews;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +16,7 @@ using System.Windows.Input;
 using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Animation;
 using Viewer.Scene;
+using WpfTest.Scenes;
 using static CommonDialogs.FilterDialog.FilterUserControl;
 using static Filetypes.RigidModel.AnimationFile;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
@@ -100,6 +103,63 @@ namespace VariantMeshEditor.ViewModels.Animation
 
             SelectionChanged?.Invoke(SelectedItem);
         }
+
+  
+    }
+
+    public class ExternalSkeletonViewModel : NotifyPropertyChangedImpl
+    {
+        Vector3ViewModel _skeletonOffset = new Vector3ViewModel(3,0,0);
+        public Vector3ViewModel SkeletonOffset
+        {
+            get { return _skeletonOffset; }
+            set { SetAndNotify(ref _skeletonOffset, value); }
+        }
+
+        bool _drawSkeleton = true;
+        public bool DrawSkeleton
+        {
+            get { return _drawSkeleton; }
+            set { SetAndNotify(ref _drawSkeleton, value); }
+        }
+
+        bool _drawLine = false;
+        public bool DrawLine
+        {
+            get { return _drawLine; }
+            set { SetAndNotify(ref _drawLine, value); }
+        }
+
+        SkeletonElement _externalElement;
+        public void Create(ResourceLibary resourceLibary, string skeletonName)
+        {
+            if (_externalElement != null)
+                _externalElement.Dispose();
+
+            _externalElement = new SkeletonElement(null, "");
+            _externalElement.IsChecked = true;
+            AnimationPlayer animationPlayer = new AnimationPlayer();
+            _externalElement.Create(animationPlayer, resourceLibary, skeletonName);
+        }
+
+        public void SetSelectedBone(int index)
+        {
+            if (_externalElement != null)
+            {
+                _externalElement.ViewModel.SelectedBone = _externalElement.ViewModel.GetBoneFromIndex(index, _externalElement.ViewModel.Bones);
+            }
+        }
+
+        public void UpdateNode(GameTime time)
+        {
+            _externalElement?.Update(time);
+        }
+
+        public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
+        {
+            var matrix = Matrix.CreateTranslation((float)_skeletonOffset.X.Value, (float)_skeletonOffset.Y.Value, (float)_skeletonOffset.Z.Value);
+            _externalElement?.Render(device, matrix, commonShaderParameters);
+        }
     }
 
     public class AnimationSplicerViewModel : NotifyPropertyChangedImpl
@@ -115,6 +175,8 @@ namespace VariantMeshEditor.ViewModels.Animation
         public FilterableSkeletonsViewModel ExternalSkeleton { get; set; } = new FilterableSkeletonsViewModel();
         public FilterableAnimationsViewModel ExternalAnimation { get; set; } = new FilterableAnimationsViewModel();
 
+        public ExternalSkeletonViewModel ExternalSkeletonSettings { get; set; } = new ExternalSkeletonViewModel();
+
         ObservableCollection<MappableSkeletonBone> _targetSkeletonBones;
         public ObservableCollection<MappableSkeletonBone> TargetSkeletonBones { get { return _targetSkeletonBones; } set{ SetAndNotify(ref _targetSkeletonBones, value);}}
 
@@ -127,6 +189,11 @@ namespace VariantMeshEditor.ViewModels.Animation
         void OnItemSelected(MappableSkeletonBone bone)
         {
             _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
+
+            if(bone != null && bone.MappedBone != null)
+                ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
+            else
+                ExternalSkeletonSettings.SetSelectedBone(-1);
         }
 
 
@@ -145,6 +212,8 @@ namespace VariantMeshEditor.ViewModels.Animation
             ExternalSkeleton.FindAllSkeletons(_resourceLibary);
             TargetSkeletonBones = MappableSkeletonBone.Create(_targetSkeletonNode);
 
+            SelectedNode = TargetSkeletonBones.FirstOrDefault();
+
             ForceComputeCommand = new RelayCommand(Rebuild);
 
             // Temp - Populate with debug data. 
@@ -152,6 +221,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
             ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
         }
+
 
         class MappingItem
         { 
@@ -162,19 +232,6 @@ namespace VariantMeshEditor.ViewModels.Animation
             public int NewId { get; set; }
         }
 
-        List<int> RemapListTest(List<int> mappingList, List<MappingItem> animMapping)
-        {
-            List<int> output = new List<int>();
-            for (int i = 0; i < mappingList.Count; i++)
-            {
-                var orgBoneId = mappingList[i];
-                var mappingItem = animMapping.FirstOrDefault(x=>x.NewId == orgBoneId);
-                if(mappingItem != null)
-                    output.Add(mappingItem.OriginalId);
-
-            }
-            return output;
-        }
 
         void Rebuild()
         {
@@ -251,6 +308,8 @@ namespace VariantMeshEditor.ViewModels.Animation
             {
                 ExternalAnimation.FindAllAnimations(_resourceLibary, ExternalSkeleton.SkeletonFile.Header.SkeletonName);
                 PrefilBoneMappingBasedOnName(TargetSkeletonBones, ExternalSkeleton.SelectedSkeletonBonesFlattened);
+
+                ExternalSkeletonSettings.Create(_resourceLibary, newSelectedSkeleton.Name);
             }
         }
 
@@ -274,8 +333,8 @@ namespace VariantMeshEditor.ViewModels.Animation
                     mappingList.Add(
                         new MappingItem()
                         { 
-                            OriginalId = node.BoneIndex,
-                            OriginalName = node.BoneName,
+                            OriginalId = node.OriginalBone.BoneIndex,
+                            OriginalName = node.OriginalBone.BoneName,
 
                             NewId = node.MappedBone.BoneIndex,
                             NewName = node.MappedBone.BoneName,
@@ -297,7 +356,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             {
                 if (node != null)
                 {
-                    node.MappedBone = externalBonesList.FirstOrDefault(x => x?.BoneName == node.BoneName);
+                    node.MappedBone = externalBonesList.FirstOrDefault(x => x?.BoneName == node.OriginalBone.BoneName);
                     PrefilBoneMappingBasedOnName(node.Children, externalBonesList);
                 }
             }
@@ -305,30 +364,26 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         void ApplyCurrentAnimation()
         {
-            //_animationPlayer.SetAnimationClip(null, null);
+        
         }
 
         void IsInFocus(bool isInFocus)
         {
-            if (isInFocus)
-                ApplyCurrentAnimation();
 
-            //if (value == true)
-            //{
-            //    _animationPlayer._animationNode.AnimationPlayer.GoblinSkeleton = _skeletonNode.Skeleton;
-            //
-            //    _animationPlayer._animationNode.AnimationPlayer.SkinkSkeleton = new Viewer.Animation.Skeleton(_externalSkeletonFile);
-            //    _animationPlayer._animationNode.AnimationPlayer.SkinAnimFile = AnimationFile.Create(new ByteChunk(SelectedAnimationForExternalSkeleton.Data));
-            //    _animationPlayer._animationNode.AnimationPlayer.MappingValues = new List<int>(_skeletonNode.Skeleton.BoneCount);
-            //    for (int i = 0; i < _skeletonNode.Skeleton.BoneCount; i++)
-            //        _animationPlayer._animationNode.AnimationPlayer.MappingValues.Add(-1);
-            //
-            //    FillMappingValue(Bones, _animationPlayer._animationNode.AnimationPlayer.MappingValues);
-            //}
+
+
         }
 
+        public void UpdateNode(GameTime time)
+        {
+            ExternalSkeletonSettings?.UpdateNode(time);
+        }
 
-       
+        public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
+        {
+            ExternalSkeletonSettings?.DrawNode(device, parentTransform, commonShaderParameters);
+        }
+
     }
 
 
@@ -338,27 +393,17 @@ namespace VariantMeshEditor.ViewModels.Animation
 
     public class MappableSkeletonBone : NotifyPropertyChangedImpl
     {
-        SkeletonElement _targetSkeletonNode;
-        public BoneInfo OriginalBone { get; set; }
+        public SkeletonBoneNode OriginalBone { get; set; }
+        public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
-        public MappableSkeletonBone(SkeletonElement targetSkeletonNode)
+
+        private bool _useContantOffset = true;
+        public bool UseConstantOffset
         {
-            _targetSkeletonNode = targetSkeletonNode;
+            get { return _useContantOffset; }
+            set { SetAndNotify(ref _useContantOffset, value); }
         }
 
-        string _boneName;
-        public string BoneName
-        {
-            get { return _boneName; }
-            set { SetAndNotify(ref _boneName, value); }
-        }
-
-        int _boneIndex;
-        public int BoneIndex
-        {
-            get { return _boneIndex; }
-            set { SetAndNotify(ref _boneIndex, value); }
-        }
 
         Vector3ViewModel _contantTranslationOffset = new Vector3ViewModel();
         public Vector3ViewModel ContantTranslationOffset
@@ -374,55 +419,67 @@ namespace VariantMeshEditor.ViewModels.Animation
             set { SetAndNotify(ref _contantRotationOffset, value); }
         }
 
+        private bool _useMapping = true;
+        public bool UseMapping
+        {
+            get { return _useMapping; }
+            set { SetAndNotify(ref _useMapping, value); }
+        }
+
         SkeletonBoneNode _mappedBone;
         public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
-        public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
 
+        public ICommand RestoreDefaultMapping { get; set; }
 
 
         public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
         {
-             Build from viewmodel so that we get stutt right
-           var output = new ObservableCollection<MappableSkeletonBone>();
-            var bones = skeletonNode.SkeletonFile.Bones;
-            foreach (var bone in bones)
-            {
-                if (bone.ParentId == -1)
-                {
-                    output.Add(CreateNode(bone, skeletonNode));
-                }
-                else
-                {
-                    var parentBone = bones[bone.ParentId];
-                    var treeParent = GetParent(output, parentBone);
-
-                    if (treeParent != null)
-                        treeParent.Children.Add(CreateNode(bone, skeletonNode));
-                }
-            }
+            var output = new ObservableCollection<MappableSkeletonBone>();
+            foreach (var bone in skeletonNode.ViewModel.Bones)
+                RecuseiveCreate(bone, output);
             return output;
         }
 
-        static MappableSkeletonBone CreateNode(BoneInfo bone, SkeletonElement skeletonNode)
+        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList)
         {
-            MappableSkeletonBone item = new MappableSkeletonBone(skeletonNode)
+
+            if (bone.ParentBoneIndex == -1)
             {
-                BoneIndex = bone.Id,
-                BoneName = bone.Name,
+                outputList.Add(CreateNode(bone));
+            }
+            else
+            {
+                var treeParent = GetParent(outputList, bone.ParentBoneIndex);
+
+                if (treeParent != null)
+                    treeParent.Children.Add(CreateNode(bone));
+            }
+
+
+            foreach (var item in bone.Children)
+            {
+                RecuseiveCreate(item, outputList);
+            }
+        }
+
+        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone)
+        {
+            MappableSkeletonBone item = new MappableSkeletonBone()
+            {
                 OriginalBone = bone
             };
             return item;
         }
 
-        static MappableSkeletonBone GetParent(ObservableCollection<MappableSkeletonBone> root, AnimationFile.BoneInfo parentBone)
+        static MappableSkeletonBone GetParent(ObservableCollection<MappableSkeletonBone> root, int parentBoneIndex)
         {
             foreach (MappableSkeletonBone item in root)
             {
-                if (item.BoneIndex == parentBone.Id)
+                if (item.OriginalBone.BoneIndex == parentBoneIndex)
                     return item;
 
-                var result = GetParent(item.Children, parentBone);
+                var result = GetParent(item.Children, parentBoneIndex);
                 if (result != null)
                     return result;
             }

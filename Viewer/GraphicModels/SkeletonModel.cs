@@ -79,7 +79,7 @@ namespace Viewer.GraphicModels
                     device.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
 
-                DrawCube(device, commonShaderParameters, world * Matrix.CreateScale(0.05f) * _drawPositions[i], drawColour);
+                DrawCube(device, commonShaderParameters, Matrix.CreateScale(0.05f) * _drawPositions[i] * world, drawColour);
             }
         }
 
