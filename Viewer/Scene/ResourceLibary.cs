@@ -1,6 +1,7 @@
 ﻿using Common;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Pfim;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,8 @@ namespace Viewer.Scene
     { 
         Line,
         Mesh,
-        TexturePreview
+        TexturePreview,
+        Phazer
     }
 
     public class ResourceLibary
@@ -53,31 +55,67 @@ namespace Viewer.Scene
 
         Texture2D LoadTextureAsTexture2d(string fileName, GraphicsDevice device)
         {
-            var file = PackFileLoadHelper.FindFile(_loadedContent, fileName);
-            if (file == null)
-                return null;
 
-            var content = file.Data;
-            using (MemoryStream stream = new MemoryStream(content))
+            try
             {
-                var image = Pfim.Dds.Create(stream, new Pfim.PfimConfig(32768, Pfim.TargetFormat.Native, false));
-                if (image as Pfim.Dxt1Dds != null)
+                //r content = File.ReadAllBytes(@"C:\Users\ole_k\Desktop\New folder\rad_rustig.dds");
+                var file = PackFileLoadHelper.FindFile(_loadedContent, fileName);
+                if (file == null)
+                    return null;
+                
+                var content = file.Data;
+                using (MemoryStream stream = new MemoryStream(content))
                 {
-                    var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Dxt1);
-                    texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
-                    return texture;
-                }
-                else if (image as Pfim.Dxt5Dds != null)
-                {
-                    var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Dxt5);
-                    texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
-                    return texture;
-                }
-                else
-                {
-                    throw new Exception("Unknow texture format: " + image.ToString());
+                    var image = Pfim.Dds.Create(stream, new Pfim.PfimConfig(32768, Pfim.TargetFormat.Native, false));
+                    if (image as Pfim.Dxt1Dds != null)
+                    {
+                        var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Dxt1);
+                        
+                        texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
+                        return texture;
+                    }
+                    else if (image as Pfim.Dxt5Dds != null)
+                    {
+                        var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Dxt5);
+                        texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
+                        return texture;
+                    }
+                    else if (image as Pfim.Dxt3Dds != null)
+                    {
+                        var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Dxt3);
+                        texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
+                        return texture;
+                    }
+                    else if (image as Pfim.dds.Bc6hDds != null)
+                    {
+                        var d = image as Pfim.dds.Bc6hDds;
+                       // d.Decompress();
+
+
+
+
+                        byte[] newData;
+
+                      
+                        var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Vector4); // ColorSRgb
+
+
+                        texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize * 4);
+
+                        SaveTexture(texture, @"c:\temp\TestImage0.png");
+                        return texture;
+                    }
+                    else
+                    {
+                        throw new Exception("Unknow texture format: " + image.ToString());
+                    }
                 }
             }
+            catch (Exception e)
+            { 
+            
+            }
+            return null;
         }
 
         public Effect LoadEffect(string fileName, ShaderTypes type)

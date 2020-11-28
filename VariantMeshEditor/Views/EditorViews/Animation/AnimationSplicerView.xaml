@@ -188,8 +188,13 @@
                 <TextBlock Text=" : " DockPanel.Dock="Left"/>
                 <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
             </DockPanel>
+            
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Copy only animation" Width="105" DockPanel.Dock="Left" Height="20"/>
+                <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
+            </DockPanel>
 
-          
 
             <DockPanel DockPanel.Dock="Top">
                 <TextBlock Text="Merge type" Width="105" DockPanel.Dock="Left"/>

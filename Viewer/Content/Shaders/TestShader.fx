@@ -73,10 +73,11 @@ sampler2D textureSampler = sampler_state {
 
 struct VertexShaderInput
 {
-    float3 Position : SV_POSITION;    
+    float4 Position : SV_POSITION;    
     float3 Normal : NORMAL0;
 	float2 TextureCoordinate : TEXCOORD0;
 };
+
 
 struct VertexShaderOutput
 {
@@ -113,7 +114,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 {
     VertexShaderOutput output;
 
-    float4 worldPosition = mul(float4(input.Position, 1), World);
+    float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
 

@@ -60,7 +60,7 @@ namespace MonoGame.Framework.WpfInterop
 
         public GraphicsDevice GraphicsDevice { get; }
 
-        public bool PreferMultiSampling { get; set; }
+        public bool PreferMultiSampling { get; set; } = true;
 
         /// <summary>
         /// Gets the scaling factor that is applied to the attached gamecontrol.

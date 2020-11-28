@@ -265,7 +265,6 @@ namespace MonoGame.Framework.WpfInterop
 
 
 
-
                     };
                     var gd = CreateSharedGraphicsDevice(presentationParameters);
                     if (UseASingleSharedGraphicsDevice)

@@ -141,7 +141,7 @@ namespace VariantMeshEditor.ViewModels.Animation
                 _animationNode.AnimationPlayer.SetAnimation(null, null);
             else
             {
-                _animationNode.AnimationPlayer.SetAnimation(animationFiles.ToList(), skeleton);
+                _animationNode.AnimationPlayer.SetAnimationArray(animationFiles.ToList(), skeleton);
             }
 
             MaxFames = _animationNode.AnimationPlayer.FrameCount();

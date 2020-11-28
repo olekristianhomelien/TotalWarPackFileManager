@@ -13,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VariantMeshEditor.Services;
+using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Animation;
 using Viewer.Scene;
@@ -131,6 +133,7 @@ namespace VariantMeshEditor.ViewModels.Animation
         }
 
         SkeletonElement _externalElement;
+        AnimationPlayer _animationPlayer;
         public void Create(ResourceLibary resourceLibary, string skeletonName)
         {
             if (_externalElement != null)
@@ -138,8 +141,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 
             _externalElement = new SkeletonElement(null, "");
             _externalElement.IsChecked = true;
-            AnimationPlayer animationPlayer = new AnimationPlayer();
-            _externalElement.Create(animationPlayer, resourceLibary, skeletonName);
+            _animationPlayer = new AnimationPlayer();
+            _externalElement.Create(_animationPlayer, resourceLibary, skeletonName);
         }
 
         public void SetSelectedBone(int index)
@@ -148,6 +151,17 @@ namespace VariantMeshEditor.ViewModels.Animation
             {
                 _externalElement.ViewModel.SelectedBone = _externalElement.ViewModel.GetBoneFromIndex(index, _externalElement.ViewModel.Bones);
             }
+        }
+
+
+        public void SetFrame(int currentFrame)
+        {
+            _animationPlayer.CurrentFrame = currentFrame;
+        }
+
+        public void SetAnimation(AnimationClip clip)
+        {
+            _animationPlayer.SetAnimation(clip, _externalElement.Skeleton);
         }
 
         public void UpdateNode(GameTime time)
@@ -203,9 +217,9 @@ namespace VariantMeshEditor.ViewModels.Animation
             _targetSkeletonNode = skeletonNode;
             _animationPlayer = animationPlayer;
 
-            TargetAnimation.SelectionChanged += AnimationsForTargetSkeleton_SelectionChanged;
+            TargetAnimation.SelectionChanged += x => Rebuild();
             ExternalSkeleton.SelectionChanged += PossibleExternalSkeletons_SelectionChanged;
-            ExternalAnimation.SelectionChanged += AnimationsForExternalSkeleton_SelectionChanged;
+            ExternalAnimation.SelectionChanged += ExternalAnimation_SelectionChanged;
 
             // Initial init
             TargetAnimation.FindAllAnimations(_resourceLibary, _targetSkeletonNode.SkeletonFile.Header.SkeletonName);
@@ -217,88 +231,55 @@ namespace VariantMeshEditor.ViewModels.Animation
             ForceComputeCommand = new RelayCommand(Rebuild);
 
             // Temp - Populate with debug data. 
+            //TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+            //ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+            //ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+
             TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-            ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-            ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+            ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
+            ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
         }
 
+        private void ExternalAnimation_SelectionChanged(PackedFile newSelectedSkeleton)
+        {
+            Rebuild();
+            if (newSelectedSkeleton != null)
+            {
+                var externalAnim = AnimationFile.Create(new ByteChunk(newSelectedSkeleton.Data));
+                var externalAnimationClip = new AnimationClip(externalAnim);
 
-        class MappingItem
-        { 
-            public string OriginalName { get; set; }
-            public int OriginalId { get; set; }
-
-            public string NewName { get; set; }
-            public int NewId { get; set; }
+                //var externalSkeletonFile = AnimationFile.Create(new ByteChunk(ExternalSkeleton.SelectedItem.Data));
+                //Viewer.Animation.Skeleton externalSkeleton = new Viewer.Animation.Skeleton(externalSkeletonFile);
+                ExternalSkeletonSettings.SetAnimation(externalAnimationClip);
+            }
         }
-
 
         void Rebuild()
         {
-            if (ExternalAnimation.SelectedItem == null)
-                return;
-
-            var currentsSkeltonBoneCount = _targetSkeletonNode.Skeleton.BoneCount;
-            List<MappingItem> mappingList = new List<MappingItem>();
-            FillMappingValue(TargetSkeletonBones, mappingList);
-
-
-            var externalAnim = AnimationFile.Create(new ByteChunk(ExternalAnimation.SelectedItem.Data));
-            var externalAnimationClip = new AnimationClip(externalAnim);
-
-            var outputAnimationFile = new AnimationClip();
-            //outputAnimationFile.DynamicRotationMappingID = new List<int>();
-            //outputAnimationFile.DynamicTranslationMappingID = new List<int>();
-            for (int i = 0; i < currentsSkeltonBoneCount; i++)
+            try
             {
-                outputAnimationFile.DynamicRotationMappingID.Add(i);
-                outputAnimationFile.DynamicTranslationMappingID.Add(i);
-            }
-        
-            for (int frameIndex = 0; frameIndex < externalAnimationClip.DynamicFrames.Count(); frameIndex++)
-            {
-                var currentOutputFrame = new AnimationClip.KeyFrame();
-
-                for (int boneIndex = 0; boneIndex < currentsSkeltonBoneCount; boneIndex++)
+                AnimationBuilderService.AnimationBuilderSettings settings = new AnimationBuilderService.AnimationBuilderSettings()
                 {
-                    var skeletonPosRotation = _targetSkeletonNode.Skeleton.Rotation[boneIndex];
-                    var skeletonPosTranslation = _targetSkeletonNode.Skeleton.Translation[boneIndex];
+                    ExternalAnimationFile = ExternalAnimation.SelectedItem,
+                    ExternalSkeletonFile = ExternalSkeleton.SelectedItem,
 
-                    var boneToGetAnimDataFrom = mappingList.FirstOrDefault(x => x.OriginalId == boneIndex && x.NewId != -1);
-                    if (boneToGetAnimDataFrom != null)
-                    {
-                        var boneRotationIndexInExternal = externalAnimationClip.DynamicRotationMappingID.IndexOf(boneToGetAnimDataFrom.NewId);
-                        bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
-                        if (hasBoneRotationInExternal)
-                        {
-                            currentOutputFrame.Rotation.Add(externalAnimationClip.DynamicFrames[frameIndex].Rotation[boneRotationIndexInExternal]);
-                        }
-                        else
-                        { 
-                            currentOutputFrame.Rotation.Add(skeletonPosRotation); 
-                        }
-                        
-                         var boneTranslationIndexInExternal = externalAnimationClip.DynamicTranslationMappingID.IndexOf(boneToGetAnimDataFrom.NewId);
-                         bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
-                        if (hasBoneTranslationInExternal)
-                        {
-                            currentOutputFrame.Translation.Add(externalAnimationClip.DynamicFrames[frameIndex].Translation[boneTranslationIndexInExternal]);
-                        }
-                        else
-                        { 
-                            currentOutputFrame.Translation.Add(skeletonPosTranslation);
-                        }
-                    }
-                    else
-                    {
-                        currentOutputFrame.Translation.Add(skeletonPosTranslation);
-                        currentOutputFrame.Rotation.Add(skeletonPosRotation);
-                    }
-                }
-                outputAnimationFile.DynamicFrames.Add(currentOutputFrame);
+                    TargetSkeletonBones = TargetSkeletonBones,
+                    SourceSkeleton = _targetSkeletonNode.Skeleton,
+                    SourceAnimationFile = TargetAnimation.SelectedItem
+                };
+
+                AnimationBuilderService builder = new AnimationBuilderService();
+                var animation = builder.CreateMergedAnimation(settings);
+
+                if (animation != null)
+                    _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.Skeleton);
+                else
+                    _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.Skeleton);
             }
-            _animationPlayer.SetAnimationClip(new List<AnimationClip>() { outputAnimationFile }, _targetSkeletonNode.Skeleton);
-            return;
+            catch (Exception e)
+            { 
+            
+            }
         }
 
         private void PossibleExternalSkeletons_SelectionChanged(PackedFile newSelectedSkeleton)
@@ -313,37 +294,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             }
         }
 
-        private void AnimationsForExternalSkeleton_SelectionChanged(PackedFile newSelectedSkeleton)
-        {
-            Rebuild();
-        }
 
-
-        private void AnimationsForTargetSkeleton_SelectionChanged(PackedFile newSelectedSkeleton)
-        {
-            Rebuild();
-        }
-
-        void FillMappingValue(IEnumerable<MappableSkeletonBone> nodes, List<MappingItem> mappingList)
-        {
-            foreach (var node in nodes)
-            {
-                if (node.MappedBone != null)
-                {
-                    mappingList.Add(
-                        new MappingItem()
-                        { 
-                            OriginalId = node.OriginalBone.BoneIndex,
-                            OriginalName = node.OriginalBone.BoneName,
-
-                            NewId = node.MappedBone.BoneIndex,
-                            NewName = node.MappedBone.BoneName,
-                        }
-                    );
-                }
-                FillMappingValue(node.Children, mappingList);
-            }
-        }
 
         void ExternalSkeletonSelected()
         {
@@ -377,6 +328,8 @@ namespace VariantMeshEditor.ViewModels.Animation
         public void UpdateNode(GameTime time)
         {
             ExternalSkeletonSettings?.UpdateNode(time);
+            ExternalSkeletonSettings.SetFrame(_animationPlayer.CurrentFrame);
+            
         }
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
@@ -412,8 +365,8 @@ namespace VariantMeshEditor.ViewModels.Animation
             set { SetAndNotify(ref _contantTranslationOffset, value); }
         }
 
-        Vector4ViewModel _contantRotationOffset = new Vector4ViewModel();
-        public Vector4ViewModel ContantRotationOffset
+        Vector3ViewModel _contantRotationOffset = new Vector3ViewModel();
+        public Vector3ViewModel ContantRotationOffset
         {
             get { return _contantRotationOffset; }
             set { SetAndNotify(ref _contantRotationOffset, value); }

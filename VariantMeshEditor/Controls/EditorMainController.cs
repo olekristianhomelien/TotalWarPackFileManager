@@ -143,20 +143,22 @@ namespace VariantMeshEditor.Controls
         }
 
         void PaladinAndDragon(RootElement rootNode,
-            bool loadPaladin = false,
+            bool loadPaladin = true,
             bool loadDragon = false, 
-            bool loadGoblin = true)
+            bool loadGoblin = false,
+            bool loadArkan = false)
         {
             if (loadPaladin)
             {
                 var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
                     @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
-
+                //chs_mirror_guard
+                //brt_paladin
                 var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
                 var paladinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(paladinMesh);
 
-                //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
-                var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
+                var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
+                //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
                 var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
                 paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
@@ -164,6 +166,7 @@ namespace VariantMeshEditor.Controls
                 secondAnimNode.SelectedAnimationPackFile = handAnim;
 
                 paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
+                paladinAnim.AnimationPlayer.Pause();
             }
 
             if (loadDragon)
@@ -190,6 +193,21 @@ namespace VariantMeshEditor.Controls
                 var goblinMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
 
                 goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
+            }
+
+            if (loadArkan)
+            {
+
+                var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
+               @"variantmeshes\variantmeshdefinitions\tmb_ch_arkhan.variantmeshdefinition");
+                var mesh = rootNode.LoadModel(file, _resourceLibary, _scene3d);
+
+                //var animNode = SceneElementHelper.GetFirstChild<AnimationElement>(goblinMesh);
+                //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
+                //var animFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+
+               // goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
+
             }
         }
     }

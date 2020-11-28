@@ -139,7 +139,15 @@ namespace Viewer.Animation
 
         List<AnimationClip> _newAnimations;
 
-        public void SetAnimation(List<AnimationClip> animation, Skeleton skeleton)
+        public void SetAnimation(AnimationClip animation, Skeleton skeleton)
+        {
+            if(animation == null)
+                SetAnimationArray(null, skeleton);
+            else
+                SetAnimationArray(new List<AnimationClip>() { animation }, skeleton);
+        }
+
+        public void SetAnimationArray(List<AnimationClip> animation, Skeleton skeleton)
         {
             _skeleton = skeleton;
             IsPlaying = true;

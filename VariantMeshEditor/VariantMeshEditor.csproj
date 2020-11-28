@@ -55,8 +55,9 @@
     <Compile Include="Controls\EditorControllers\SkeletonController.cs" />
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
-    <Compile Include="Services\AnimationService.cs" />
+    <Compile Include="Services\AnimationBuilderService.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
+    <Compile Include="Util\MathConverter.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
     <Compile Include="ViewModels\Animation\AnimationElement.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />

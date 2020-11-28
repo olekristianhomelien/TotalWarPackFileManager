@@ -4,11 +4,24 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Phazer/Main.fx</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/fresnel2.png</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_BGR8.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_rgba32f_raw.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rad_rustig_BGR8.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rad_rustig_rgba32f_raw.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TestShader.fx</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/rad_rustig.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Ambient.fx</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/PaperMill_E_3k.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/skyboxCubemap.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/NarrowPath_Env.hdr</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/NewStuff/AnimatedModelShader.fx</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/SkyBox.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TexturePreview.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/File.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/LineShader.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Ambient.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Diffuse.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/NormalMap.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Reflection.fx</File>
@@ -25,7 +38,6 @@
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/ColorMap.jpg</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/HelicopterNormalMap.png</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/HelicopterTexture.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/SkyBox.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Sunset.dds</File>
   </SourceFiles>
   <DestFiles>

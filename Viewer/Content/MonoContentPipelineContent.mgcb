@@ -125,11 +125,41 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/LineShader.fx
 
+#begin Shaders/NewStuff/AnimatedModelShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/NewStuff/AnimatedModelShader.fx
+
+#begin Shaders/NewStuff/helper.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/NewStuff/helper.fx
+
 #begin Shaders/NormalMap.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/NormalMap.fx
+
+#begin Shaders/Phazer/Main.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Debug
+/build:Shaders/Phazer/Main.fx
+
+#begin Shaders/Phazer/pbr_lib.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Phazer/pbr_lib.fx
+
+#begin Shaders/Phazer/tone_mapping.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Phazer/tone_mapping.fx
 
 #begin Shaders/Reflection.fx
 /importer:EffectImporter
@@ -179,6 +209,11 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/Transparency.fx
 
+#begin Textures/Chiricahua_NarrowPath.ibl
+/importer:
+/processor:
+/build:Textures/Chiricahua_NarrowPath.ibl
+
 #begin Textures/ColorMap.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -190,6 +225,23 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/ColorMap.jpg
+
+#begin Textures/Factory.dds
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Factory.dds
+
+#begin Textures/fresnel2.png
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/fresnel2.png
 
 #begin Textures/HelicopterNormalMap.png
 /importer:TextureImporter
@@ -215,6 +267,106 @@
 /processorParam:TextureFormat=Color
 /build:Textures/HelicopterTexture.png
 
+#begin Textures/NarrowPath_3k.hdr
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/NarrowPath_3k.hdr
+
+#begin Textures/NarrowPath_8k.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/NarrowPath_8k.jpg
+
+#begin Textures/NarrowPath_Env.hdr
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=True
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/NarrowPath_Env.hdr
+
+#begin Textures/NarrowPath_preview.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/NarrowPath_preview.jpg
+
+#begin Textures/NarrowPath_thumb.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/NarrowPath_thumb.jpg
+
+#begin Textures/PaperMill_E_3k.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/PaperMill_E_3k.dds
+
+#begin Textures/Phazer/Brdf_rgba32f_raw.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/Phazer/Brdf_rgba32f_raw.dds
+
+#begin Textures/Phazer/irr_rustig_BGR8.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/Phazer/irr_rustig_BGR8.dds
+
+#begin Textures/Phazer/irr_rustig_rgba32f_raw.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/Phazer/irr_rustig_rgba32f_raw.dds
+
+#begin Textures/Phazer/rad_rustig_BGR8.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/Phazer/rad_rustig_BGR8.dds
+
+#begin Textures/Phazer/rad_rustig_rgba32f_raw.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/Phazer/rad_rustig_rgba32f_raw.dds
+
+#begin Textures/rad_rustig.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/rad_rustig.dds
+
+#begin Textures/rad_rustig_rgba16f_raw.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/rad_rustig_rgba16f_raw.dds
+
 #begin Textures/SkyBox.dds
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -226,6 +378,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/SkyBox.dds
+
+#begin Textures/skyboxCubemap.dds
+/importer:TextureImporter
+/processor:PassThroughProcessor
+/build:Textures/skyboxCubemap.dds
 
 #begin Textures/Sunset.dds
 /importer:TextureImporter

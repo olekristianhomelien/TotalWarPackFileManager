@@ -13,8 +13,8 @@ namespace Viewer.NHew
     public class ArcBallCamera
     {
 
-        public ArcBallCamera(float aspectRation, Vector3 lookAt)
-            : this(aspectRation, MathHelper.PiOver4, lookAt, Vector3.Up, 0.1f, float.MaxValue) { }
+        public ArcBallCamera(float aspectRation, Vector3 lookAt) 
+           : this(aspectRation, MathHelper.PiOver4, lookAt, Vector3.Up, 0.1f, float.MaxValue) { }
 
         public ArcBallCamera(float aspectRatio, float fieldOfView, Vector3 lookAt, Vector3 up, float nearPlane, float farPlane)
         {

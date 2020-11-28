@@ -1319,6 +1319,7 @@ namespace PackFileManager
                 Text = string.Format (
                     "\r\nPack File Manager {0} by daniu\r\n" +
                     "\r\nBased on original work by Matt Chambers\r\n" +
+                    "\r\nRendering Tech coded by Phazer\r\n" +
                     "\r\nPack File Manager Update for NTW by erasmus777\r\n" +
                     "\r\nPack File Manager Update for TWS2 by Lord Maximus and Porphyr\r\n" +
                     "Copyright 2009-2013 Distributed under the Simple Public License 2.0\r\n" +

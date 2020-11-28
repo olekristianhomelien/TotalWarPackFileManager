@@ -10,13 +10,14 @@ namespace Viewer.GraphicModels
     public class Rmv2RenderModel : MeshModel
     {
         Rmv2LodModel _model;
-        VertexPositionNormalTexture[] _bufferArray;
+        VertexPositionNormalTextureCustom[] _bufferArray;
         
         public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2LodModel lodModel)
         {
             _animationPlayer = animationPlayer;
             _model = lodModel;
-            _bufferArray = new VertexPositionNormalTexture[_model.VertexArray.Length];
+            
+            _bufferArray = new VertexPositionNormalTextureCustom[_model.VertexArray.Length];
             for (int i = 0; i < _model.VertexArray.Length; i++)
             {
                 var vertex = _model.VertexArray[i];
@@ -49,8 +50,11 @@ namespace Viewer.GraphicModels
                 var vertex = _model.VertexArray[index];
                 var transformSum = GetAnimationVertex(vertex);
 
-                _bufferArray[index].Normal = ApplyAnimation(vertex.Normal, transformSum, true);
-                _bufferArray[index].Position = ApplyAnimation(vertex.Position, transformSum);
+                var transpose = Matrix.Transpose(transformSum);
+                _bufferArray[index].BiNormal = ApplyAnimation2(vertex.BiNormal, transpose, true);
+                _bufferArray[index].Tangent = ApplyAnimation2(vertex.Tanget, transpose, true);
+                _bufferArray[index].Normal = ApplyAnimation2(vertex.Normal, transpose, true);
+                _bufferArray[index].Position = new Vector4(ApplyAnimation(vertex.Position, transformSum), 1);
             }
 
             _vertexBuffer.SetData(_bufferArray);
@@ -58,17 +62,27 @@ namespace Viewer.GraphicModels
 
         Vector3 ApplyAnimation(FileVector3 vertex, Matrix animationTransform, bool normalize = false)
         {
-            Vector3 vector = new Vector3
+   
+            var vector = new Vector3
             {
                 X = vertex.X * animationTransform.M11 + vertex.Y * animationTransform.M21 + vertex.Z * animationTransform.M31 + animationTransform.M41,
-                Y = vertex.X * animationTransform.M12 + vertex.Y * animationTransform.M22 + vertex.Z * animationTransform.M32 + animationTransform.M42,
-                Z = vertex.X * animationTransform.M13 + vertex.Y * animationTransform.M23 + vertex.Z * animationTransform.M33 + animationTransform.M43
+                Y = vertex.X * animationTransform.M12 + vertex.Y * animationTransform.M22 + vertex.Z * animationTransform.M32 + animationTransform.M42-1,
+                Z = vertex.X * animationTransform.M13 + vertex.Y * animationTransform.M23 + vertex.Z * animationTransform.M33 + animationTransform.M43,
             };
             if (normalize)
                 vector.Normalize();
             return vector;
         }
 
+
+        Vector3 ApplyAnimation2(FileVector3 vertex, Matrix animationTransform, bool normalize = false)
+        {
+
+            var vector = Vector3.Transform(new Vector3(vertex.X, vertex.Y, vertex.Z), animationTransform);
+            if (normalize)
+                vector.Normalize();
+            return vector;
+        }
 
         Matrix GetAnimationVertex(Vertex vertex)
         {
