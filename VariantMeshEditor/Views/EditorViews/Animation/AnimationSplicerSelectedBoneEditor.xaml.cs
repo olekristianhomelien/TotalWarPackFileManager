@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.Views.EditorViews.Animation

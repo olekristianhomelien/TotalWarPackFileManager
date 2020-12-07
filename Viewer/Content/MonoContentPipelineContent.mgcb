@@ -101,24 +101,6 @@
 /processorParam:TextureFormat=Compressed
 /build:DebugModels/UntexturedSphere.FBX
 
-#begin Shaders/Ambient.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Ambient.fx
-
-#begin Shaders/Diffuse.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Diffuse.fx
-
-#begin Shaders/File.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/File.fx
-
 #begin Shaders/LineShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -136,12 +118,6 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/NewStuff/helper.fx
-
-#begin Shaders/NormalMap.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/NormalMap.fx
 
 #begin Shaders/Phazer/Main.fx
 /importer:EffectImporter
@@ -161,12 +137,6 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/Phazer/tone_mapping.fx
 
-#begin Shaders/Reflection.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Reflection.fx
-
 #begin Shaders/Skybox.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -179,35 +149,17 @@
 /processorParam:DebugMode=Auto
 /build:Shaders/SkyboxShader.fx
 
-#begin Shaders/Specular.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Specular.fx
-
 #begin Shaders/TestShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/TestShader.fx
 
-#begin Shaders/Textured.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Textured.fx
-
 #begin Shaders/TexturePreview.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/TexturePreview.fx
-
-#begin Shaders/Transparency.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Shaders/Transparency.fx
 
 #begin Textures/Chiricahua_NarrowPath.ibl
 /importer:
@@ -327,11 +279,6 @@
 /processorParam:TextureFormat=Color
 /build:Textures/NarrowPath_thumb.jpg
 
-#begin Textures/PaperMill_E_3k.dds
-/importer:TextureImporter
-/processor:PassThroughProcessor
-/build:Textures/PaperMill_E_3k.dds
-
 #begin Textures/Phazer/Brdf_rgba32f_raw.dds
 /importer:TextureImporter
 /processor:PassThroughProcessor
@@ -356,16 +303,6 @@
 /importer:TextureImporter
 /processor:PassThroughProcessor
 /build:Textures/Phazer/rad_rustig_rgba32f_raw.dds
-
-#begin Textures/rad_rustig.dds
-/importer:TextureImporter
-/processor:PassThroughProcessor
-/build:Textures/rad_rustig.dds
-
-#begin Textures/rad_rustig_rgba16f_raw.dds
-/importer:TextureImporter
-/processor:PassThroughProcessor
-/build:Textures/rad_rustig_rgba16f_raw.dds
 
 #begin Textures/SkyBox.dds
 /importer:TextureImporter

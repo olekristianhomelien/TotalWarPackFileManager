@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_rgba32f_raw.dds</SourceFile>
   <SourceTime>2020-12-04T13:33:03.3182158+01:00</SourceTime>
   <DestFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/bin/Windows/Textures/Phazer/irr_rustig_rgba32f_raw.xnb</DestFile>
-  <DestTime>2020-12-04T23:48:36.1635169+01:00</DestTime>
+  <DestTime>2020-12-06T13:02:34.1565868+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>PassThroughProcessor</Processor>

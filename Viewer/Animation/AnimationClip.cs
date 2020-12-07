@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Filetypes.RigidModel.AnimationFile;
 
 namespace Viewer.Animation
 {
@@ -17,25 +18,21 @@ namespace Viewer.Animation
         }
 
 
-        public List<int> StaticTranslationMappingID = new List<int>();
-        public List<int> StaticRotationMappingID = new List<int>();
         public KeyFrame StaticFrame { get; set; } = null;
-
-
-        // Keyframes/default pose
-        public List<int> DynamicTranslationMappingID = new List<int>();
-        public List<int> DynamicRotationMappingID = new List<int>();
         public List<KeyFrame> DynamicFrames = new List<KeyFrame>();
+
+        public List<AnimationBoneMapping> RotationMappings { get; set; } = new List<AnimationBoneMapping>();
+        public List<AnimationBoneMapping> TranslationMappings { get; set; } = new List<AnimationBoneMapping>();
+
+        public bool UseStaticFrame { get; set; } = true;
+        public bool UseDynamicFames { get; set; } = true;
 
         public AnimationClip() { }
 
         public AnimationClip(AnimationFile file)
         {
-            StaticTranslationMappingID = file.StaticTranslationMappingID.ToList();
-            StaticRotationMappingID = file.StaticRotationMappingID.ToList();
-
-            DynamicTranslationMappingID = file.DynamicTranslationMappingID.ToList();
-            DynamicRotationMappingID = file.DynamicRotationMappingID.ToList();
+            RotationMappings = file.RotationMappings.ToList();
+            TranslationMappings = file.TranslationMappings.ToList();
 
             if (file.StaticFrame != null)
                 StaticFrame = CreateKeyFrame(file.StaticFrame);
@@ -48,48 +45,32 @@ namespace Viewer.Animation
         {
             var output = new KeyFrame();
             foreach (var translation in frame.Transforms)
-                output.Translation.Add(new Vector3(translation[0], translation[1], translation[2]));
+                output.Translation.Add(new Vector3(translation.X, translation.Y, translation.Z));
 
             foreach (var rotation in frame.Quaternion)
                 output.Rotation.Add(new Quaternion(rotation[0], rotation[1], rotation[2], rotation[3]));
             return output;
         }
+
+
+        public AnimationFile ConvertToFileFormat(Skeleton skeleton)
+        {
+            AnimationFile output = new AnimationFile();
+            output.Header.AnimationType = 20;
+            output.Header.AnimationTotalPlayTimeInSec = DynamicFrames.Count() / output.Header.FrameRate;
+            output.Header.SkeletonName = skeleton.SkeletonName;
+
+            // Mappings
+
+            // Static
+
+            // Dynamic
+
+
+            return output;
+        }
+
+
     }
 
-
 }
-
-
-/*
-         public class Frame
-        {
-            public List<float[]> Transforms { get; set; } = new List<float[]>();
-            public List<short[]> Quaternion { get; set; } = new List<short[]>();
-        }
-
-        public class AnimationHeader
-        {
-            public uint AnimationType { get; set; }
-            public uint Unknown0_alwaysOne { get; set; }
-            public float FrameRate { get; set; }
-            public string SkeletonName { get; set; }
-            public uint Unknown1_alwaysZero { get; set; }
-        }
-
-        public BoneInfo[] Bones;
-
-        // Version 7 spesific 
-        public float AnimationTotalPlayTimeInSec { get; set; }
-
-        public List<int> StaticTranslationMappingID = new List<int>();
-        public List<int> StaticRotationMappingID = new List<int>();
-        public Frame StaticFrame { get; set; } = null;
-
-
-        // Keyframes/default pose
-        public List<int> DynamicTranslationMappingID = new List<int>();
-        public List<int> DynamicRotationMappingID = new List<int>();
-        public List<Frame> DynamicFrames = new List<Frame>();
- 
- 
- */

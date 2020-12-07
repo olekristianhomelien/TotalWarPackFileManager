@@ -118,7 +118,7 @@ namespace WpfTest.Scenes
             _resourceLibary.LoadEffect("Shaders\\Phazer\\main", ShaderTypes.Phazer);
 
 
-            skyboxCube = _resourceLibary.XnaContentManager.Load<TextureCube>("textures//rad_rustig");
+            //skyboxCube = _resourceLibary.XnaContentManager.Load<TextureCube>("textures//rad_rustig");
             fresnelMap = _resourceLibary.XnaContentManager.Load<Texture2D>("textures//fresnel2");
 
 
@@ -223,7 +223,7 @@ namespace WpfTest.Scenes
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
-            _skyBox.Draw(_camera.ViewMatrix, _camera.ProjectionMatrix, _camera.Position);
+            //_skyBox.Draw(_camera.ViewMatrix, _camera.ProjectionMatrix, _camera.Position);
 
             CommonShaderParameters commonShaderParameters = new CommonShaderParameters()
             {
@@ -304,30 +304,36 @@ float3 CameraPosition;
 
         protected void ApplyCommonShaderParameters(CommonShaderParameters commonShaderParameters, Matrix world)
         {
-    
-          //_shader.Parameters["WorldInverseTranspose"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
-          
-          if (this as MeshRenderItem != null)
+
+            _shader.Parameters["View"].SetValue(commonShaderParameters.View);
+            _shader.Parameters["Projection"].SetValue(commonShaderParameters.Projection);
+
+            if (_model != null)
+                world = Matrix.CreateTranslation(_model.Pivot) * world;
+            _shader.Parameters["World"].SetValue(world);
+            //_shader.Parameters["WorldInverseTranspose"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
+
+            if (this as MeshRenderItem != null)
           {
-                _shader.Parameters["WorldViewProjection"].SetValue(world * commonShaderParameters.View * commonShaderParameters.Projection);
-                _shader.Parameters["Projection"].SetValue(commonShaderParameters.Projection);
+              //  _shader.Parameters["WorldViewProjection"].SetValue(world * commonShaderParameters.View * commonShaderParameters.Projection);
+              //  _shader.Parameters["Projection"].SetValue(commonShaderParameters.Projection);
 
-                if (_model != null)
-                    world = Matrix.CreateTranslation(_model.Pivot) * world;
-                _shader.Parameters["Transform"].SetValue(world);
+                //if (_model != null)
+                  //  world = Matrix.CreateTranslation(_model.Pivot) * world;
+                //_shader.Parameters["Transform"].SetValue(world);
 
-                _shader.Parameters["CameraPosition"].SetValue(commonShaderParameters.CameraPosition);
-                // _shader.Parameters["cameraLookAt"].SetValue(commonShaderParameters.CameraLookAt);
+                _shader.Parameters["cameraPosition"].SetValue(commonShaderParameters.CameraPosition);
+                 _shader.Parameters["cameraLookAt"].SetValue(commonShaderParameters.CameraLookAt);
 
-                // _shader.Parameters["ViewInverse"].SetValue(Matrix.Invert(commonShaderParameters.View));
+                 _shader.Parameters["ViewInverse"].SetValue(Matrix.Invert(commonShaderParameters.View));
                 //
-                // _shader.Parameters["mRotEnv"].SetValue((Matrix.CreateRotationY(commonShaderParameters.EnvRotate)));
-                // _shader.Parameters["rot_x"].SetValue(Matrix.Identity);
-                // _shader.Parameters["rot_y"].SetValue(Matrix.Identity);
+                 _shader.Parameters["mRotEnv"].SetValue((Matrix.CreateRotationY(commonShaderParameters.EnvRotate)));
+                 _shader.Parameters["rot_x"].SetValue(Matrix.Identity);
+                 _shader.Parameters["rot_y"].SetValue(Matrix.Identity);
 
                 _shader.Parameters["tex_cube_specular"].SetValue(commonShaderParameters.pbrSpecular);
                 _shader.Parameters["specularBRDF_LUT"].SetValue(commonShaderParameters.BRDF_LUT);
-                //_shader.Parameters["tex_cube_diffuse"].SetValue(commonShaderParameters.pbrDiffuse);
+                _shader.Parameters["tex_cube_diffuse"].SetValue(commonShaderParameters.pbrDiffuse);
                 //_shader.Parameters["tex_cube_diffuse"].SetValue(commonShaderParameters.pbrDiffuse);
                 //_shader.Parameters["IBLTexture"].SetValue(commonShaderParameters.IBLMap);
             }

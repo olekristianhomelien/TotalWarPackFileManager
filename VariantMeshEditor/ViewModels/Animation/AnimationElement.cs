@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 using System.Windows;
 using VariantMeshEditor.Util;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
 using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Animation;
 using Viewer.Scene;

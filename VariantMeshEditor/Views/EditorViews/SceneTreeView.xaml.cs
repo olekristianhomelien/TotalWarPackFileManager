@@ -67,7 +67,6 @@ namespace VariantMeshEditor.Views.EditorViews
             var item = e.NewValue as TreeViewItem;
             if (item != null)
             {
-                
                 item.SetValue(TreeViewItem.IsSelectedProperty, true);
             }
         }

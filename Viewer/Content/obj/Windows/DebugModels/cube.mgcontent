@@ -3,7 +3,7 @@
   <SourceFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/cube.FBX</SourceFile>
   <SourceTime>2020-09-14T10:09:01.3625467+02:00</SourceTime>
   <DestFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/bin/Windows/DebugModels/cube.xnb</DestFile>
-  <DestTime>2020-09-14T23:05:51.4503896+02:00</DestTime>
+  <DestTime>2020-12-06T13:04:56.8231454+01:00</DestTime>
   <Importer>FbxImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>ModelProcessor</Processor>

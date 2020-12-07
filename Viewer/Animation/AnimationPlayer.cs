@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using static Filetypes.RigidModel.AnimationFile;
 
 namespace Viewer.Animation
 {
@@ -60,7 +61,6 @@ namespace Viewer.Animation
         public float TranslationOffsetY { get; set; } = 0;
         public float TranslationOffsetZ { get; set; } = 0;
 
-
         public bool UseRotationOffset { get; set; } = false;
         public float RotationOffsetX { get; set; } = 0;
         public float RotationOffsetY { get; set; } = 0;
@@ -70,7 +70,6 @@ namespace Viewer.Animation
         public bool FreezeAnimationRoot { get; set; } = false;
         public bool FreezeAnimationBone { get; set; } = false;
         public int FreezeAnimationBoneIndex { get; set; } = -1;
-
 
         public bool UseAnimationSnap { get; set; } = false;
         public bool OnlySnapTranslations { get; set; } = false;
@@ -102,7 +101,7 @@ namespace Viewer.Animation
                 if (value < 0)
                     value = 0;
                 
-                if(_newAnimations != null)
+                if(_animationClips != null)
                 {
                     if (value >= FrameCount() - 1)
                         value = FrameCount() - 2;
@@ -117,7 +116,7 @@ namespace Viewer.Animation
 
         public void Update(GameTime gameTime)
         {
-            if (_newAnimations != null && IsPlaying)
+            if (_animationClips != null && IsPlaying)
             {
                 _timeAtCurrentFrame += gameTime.ElapsedGameTime;
                 _animationInterpolation = _timeAtCurrentFrame.TotalMilliseconds / (FrameRate * 1000);
@@ -133,11 +132,12 @@ namespace Viewer.Animation
 
                 if (ExternalAnimationRef != null)
                     ExternalAnimationRef.UpdateNode(gameTime);
-                ComputeCurrentFrame();
             }
+
+            ComputeCurrentFrame();
         }
 
-        List<AnimationClip> _newAnimations;
+        List<AnimationClip> _animationClips;
 
         public void SetAnimation(AnimationClip animation, Skeleton skeleton)
         {
@@ -150,13 +150,13 @@ namespace Viewer.Animation
         public void SetAnimationArray(List<AnimationClip> animation, Skeleton skeleton)
         {
             _skeleton = skeleton;
-            IsPlaying = true;
+
+            if(_animationClips == null)
+                IsPlaying = true;
+
             _currentFrame = 0;
             _animationInterpolation = 0;
-
-            _newAnimations = animation;
-
-            //_animations = animation;
+            _animationClips = animation;
             _timeAtCurrentFrame = TimeSpan.FromSeconds(0);
         }
 
@@ -171,14 +171,16 @@ namespace Viewer.Animation
 
         public int FrameCount()
         {
-            if (_newAnimations != null)
-                return _newAnimations[0].DynamicFrames.Count();
+            if (_animationClips != null)
+                return _animationClips[0].DynamicFrames.Count();
             return 0;
         }
 
-
         void ComputeCurrentFrame()
         {
+            if (_skeleton == null)
+                return;
+
             var currentFrame = new AnimationFrame();
             for (int i = 0; i < _skeleton.BoneCount; i++)
             {
@@ -192,32 +194,32 @@ namespace Viewer.Animation
                 });
             }
 
-            if (ApplyStaticFrame)
+            if (_animationClips != null)
             {
-                foreach (var animation in _newAnimations)
-                    ApplyAnimation(animation.StaticFrame, null, (float)_animationInterpolation, animation.StaticTranslationMappingID, animation.StaticRotationMappingID, currentFrame);
-            }
-
-            if (ApplyDynamicFrames)
-            {
-                if (_newAnimations[0].DynamicFrames.Count > _currentFrame)
+                if (ApplyStaticFrame)
                 {
-                    var currentFrameKeys = _newAnimations[0].DynamicFrames[_currentFrame];
-                    var nextFrameKeys = _newAnimations[0].DynamicFrames[_currentFrame + 1];
-                    ApplyAnimation(currentFrameKeys, nextFrameKeys, (float)_animationInterpolation, _newAnimations[0].DynamicTranslationMappingID, _newAnimations[0].DynamicRotationMappingID, currentFrame);
+                    foreach (var animation in _animationClips)
+                    {
+                        if (animation.UseStaticFrame)
+                            ApplyAnimation(animation.StaticFrame, null, (float)_animationInterpolation, currentFrame, animation.RotationMappings, animation.TranslationMappings, AnimationBoneMappingType.Static);
+                    }
+                }
+
+                if (ApplyDynamicFrames)
+                {
+                    if (_animationClips.Any() && _animationClips[0].UseDynamicFames)
+                    {
+                        if (_animationClips[0].DynamicFrames.Count > _currentFrame)
+                        {
+                            var currentFrameKeys = _animationClips[0].DynamicFrames[_currentFrame];
+                            var nextFrameKeys = _animationClips[0].DynamicFrames[_currentFrame + 1];
+                            ApplyAnimation(currentFrameKeys, nextFrameKeys, (float)_animationInterpolation, currentFrame, _animationClips[0].RotationMappings, _animationClips[0].TranslationMappings, AnimationBoneMappingType.Dynamic);
+                        }
+                    }
                 }
             }
 
-
-
-
-
-
-
-
-
-
-
+            // Should be moved out, to an animation "creator"
             HandleFreezeAnimation(currentFrame);
             HandleSnapToExternalAnimation(currentFrame);
             OffsetAnimation(currentFrame);
@@ -225,6 +227,10 @@ namespace Viewer.Animation
             // Move into world space
             for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
             {
+                Quaternion rotation = currentFrame.BoneTransforms[i].Rotation;
+                Vector3 translation = currentFrame.BoneTransforms[i].Translation;
+                currentFrame.BoneTransforms[i].Transform = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateTranslation(translation);
+
                 var parentindex = currentFrame.BoneTransforms[i].ParentBoneIndex;
                 if (parentindex == -1)
                 {
@@ -336,36 +342,20 @@ namespace Viewer.Animation
             return animationValueCurrentFrame;
         }
 
-        void ApplyAnimation(AnimationClip.KeyFrame currentFrame , AnimationClip.KeyFrame nextFrame, float animationInterpolation, List<int> translationMappings, List<int> rotationMapping, AnimationFrame finalAnimationFrame)
+        void ApplyAnimation(AnimationClip.KeyFrame currentFrame, AnimationClip.KeyFrame nextFrame, float animationInterpolation, 
+            AnimationFrame finalAnimationFrame, List<AnimationBoneMapping> rotMapping, List<AnimationBoneMapping> transMapping, AnimationBoneMappingType boneMappingMode)
         {
             if (currentFrame == null)
                 return;
 
             for (int i = 0; i < finalAnimationFrame.BoneTransforms.Count(); i++)
             {
-                Quaternion rotation = finalAnimationFrame.BoneTransforms[i].Rotation;
-                Vector3 translation = finalAnimationFrame.BoneTransforms[i].Translation;
+                if (transMapping[i].MappingType == boneMappingMode)
+                    finalAnimationFrame.BoneTransforms[i].Translation = ComputeTranslationCurrentFrame(transMapping[i].Id, currentFrame, nextFrame, animationInterpolation);
 
-                var translationIndex = translationMappings.IndexOf(i);
-                if (translationIndex != -1)
-                    translation = ComputeTranslationCurrentFrame(translationIndex, currentFrame, nextFrame, animationInterpolation);
-
-                var rotationIndex = rotationMapping.IndexOf(i);
-                if (rotationIndex != -1)
-                    rotation = ComputeRotationsCurrentFrame(rotationIndex, currentFrame, nextFrame, animationInterpolation);
-
-                finalAnimationFrame.BoneTransforms[i].Transform = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateTranslation(translation);
+                if (rotMapping[i].MappingType == boneMappingMode)
+                    finalAnimationFrame.BoneTransforms[i].Rotation = ComputeRotationsCurrentFrame(rotMapping[i].Id, currentFrame, nextFrame, animationInterpolation);
             }
-        }
-
-        Vector3 VectorFromFloatArray(float[] array)
-        {
-            return new Vector3(array[0], array[1], array[2]);
-        }
-
-        Quaternion QuaternionFromFloatArray(short[] array)
-        {
-            return new Quaternion(array[0], array[1], array[2], array[3]);
         }
     }
 }

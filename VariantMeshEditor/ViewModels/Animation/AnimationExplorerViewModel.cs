@@ -44,12 +44,22 @@ namespace VariantMeshEditor.ViewModels.Animation
         {
             var animationFiles = AnimationList
                 .Where(x => x.UseAnimation == true && x.HasErrorMessage == false && x.AnimationFile != null)
-                .Select(x => x.AnimationFile);
+                .Select(x => x);
 
             if (animationFiles.Any())
-                _animationPlayer.SetAnimationClip(animationFiles.Select(x => new AnimationClip(x)).ToList(), _skeletonNode.Skeleton);
+            {
+                var animations = animationFiles.Select(x =>
+                {
+                    var clip = new AnimationClip(x.AnimationFile);
+                    clip.UseDynamicFames = x.IsDynamicFramesEnabled;
+                    clip.UseStaticFrame = x.IsStaticFrameEnabled;
+                    return clip;
+                });
+
+                _animationPlayer.SetAnimationClip(animations.ToList(), _skeletonNode.Skeleton);
+            }
             else
-                _animationPlayer.SetAnimationClip(null, null);
+                _animationPlayer.SetAnimationClip(null, _skeletonNode.Skeleton);
         }
 
         void IsInFocus(bool isInFocus)

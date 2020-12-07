@@ -25,5 +25,25 @@ namespace VariantMeshEditor.Views.EditorViews.Animation
         {
             InitializeComponent();
         }
+
+        private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+           //TreeViewItem treeViewItem = VisualUpwardSearch(e.OriginalSource as DependencyObject);
+           //
+           //if (treeViewItem != null)
+           //{
+           //    treeViewItem.IsSelected = true;
+           //    treeViewItem.Focus();
+           //    e.Handled = true;
+           //}
+        }  //
+
+        static TreeViewItem VisualUpwardSearch(DependencyObject source)
+        {
+            while (source != null && !(source is TreeViewItem))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source as TreeViewItem;
+        }
     }
 }

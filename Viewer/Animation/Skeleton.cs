@@ -13,6 +13,7 @@ namespace Viewer.Animation
         public int[] ParentBoneId { get; private set; }
         public string[] BoneNames { get; private set; }
         public int BoneCount { get; set; }
+        public string SkeletonName { get; set; }
 
         public Skeleton(AnimationFile skeletonFile)
         {
@@ -23,6 +24,7 @@ namespace Viewer.Animation
             WorldTransform = new Matrix[BoneCount];
             ParentBoneId = new int[BoneCount];
             BoneNames = new string[BoneCount];
+            SkeletonName = skeletonFile.Header.SkeletonName;
 
             for (int i = 0; i < BoneCount; i++)
             {
@@ -39,16 +41,19 @@ namespace Viewer.Animation
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][2],
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][3]);
                 quat.Normalize();
-
+              
                 Rotation[i] = quat;
 
                 var rotationMatrix = Matrix.CreateFromQuaternion(quat);
                 var translationMatrix =  Matrix.CreateTranslation(
-                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][0],
-                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][1],
-                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][2]);
+                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X,
+                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y,
+                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Z);
 
-                Translation[i] = new Vector3(skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][0], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][1], skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i][2]);
+                Translation[i] = new Vector3(
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X,
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y, 
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Z);
 
                 var transform = rotationMatrix * translationMatrix;
 

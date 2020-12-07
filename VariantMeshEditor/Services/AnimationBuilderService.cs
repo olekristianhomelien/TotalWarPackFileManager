@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
 using Viewer.Animation;
 
 namespace VariantMeshEditor.Services
@@ -65,94 +66,96 @@ namespace VariantMeshEditor.Services
 
         public AnimationClip CreateMergedAnimation(AnimationBuilderSettings  settings)
         {
-            // Validate
-            if (Validate(settings) == false)
-                return null;
-
-            var currentsSkeltonBoneCount = settings.SourceSkeleton.BoneCount;
-            Viewer.Animation.Skeleton externalSkeleton = CreateSkeleton(settings.ExternalSkeletonFile);
-            var externalAnimationClip = CreateAnimation(settings.ExternalAnimationFile);
-
-
-            var sourceAnimationClip = CreateAnimation(settings.SourceAnimationFile);
-
-            var outputAnimationFile = new AnimationClip();
-            for (int i = 0; i < currentsSkeltonBoneCount; i++)
-            {
-                outputAnimationFile.DynamicRotationMappingID.Add(i);
-                outputAnimationFile.DynamicTranslationMappingID.Add(i);
-            }
-
-            for (int frameIndex = 0; frameIndex < externalAnimationClip.DynamicFrames.Count(); frameIndex++)
-            {
-                var currentOutputFrame = new AnimationClip.KeyFrame();
-
-                for (int boneIndex = 0; boneIndex < currentsSkeltonBoneCount; boneIndex++)
-                {
-                    var boneToGetAnimDataFrom = GetMappedBone(settings.TargetSkeletonBones, boneIndex);
-
-                    var skeletonPosRotation = settings.SourceSkeleton.Rotation[boneIndex];
-                    var skeletonPosTranslation = settings.SourceSkeleton.Translation[boneIndex];
-
-                    if (boneToGetAnimDataFrom.MappedBone != null && boneToGetAnimDataFrom.UseMapping && boneToGetAnimDataFrom.MappedBone.BoneIndex != -1)
-                    {
-                        if (true)   // Animation skeleton scale?
-                        {
-                            skeletonPosRotation = externalSkeleton.Rotation[boneToGetAnimDataFrom.MappedBone.BoneIndex];
-                            skeletonPosTranslation = externalSkeleton.Translation[boneToGetAnimDataFrom.MappedBone.BoneIndex];
-                        }
-
-                        var boneRotationIndexInExternal = externalAnimationClip.DynamicRotationMappingID.IndexOf(boneToGetAnimDataFrom.MappedBone.BoneIndex);
-                        bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
-                        if (hasBoneRotationInExternal)
-                        {
-                            skeletonPosRotation = externalAnimationClip.DynamicFrames[frameIndex].Rotation[boneRotationIndexInExternal];
-                        }
-
-                        var boneTranslationIndexInExternal = externalAnimationClip.DynamicTranslationMappingID.IndexOf(boneToGetAnimDataFrom.MappedBone.BoneIndex);
-                        bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
-                        if (hasBoneTranslationInExternal)
-                        {
-                            skeletonPosTranslation = externalAnimationClip.DynamicFrames[frameIndex].Translation[boneTranslationIndexInExternal];
-                        }
-                    }
-                    else
-                    {
-
-                        var localAnimFrameIndex = frameIndex;
-                        if (localAnimFrameIndex > sourceAnimationClip.DynamicFrames.Count() - 1)
-                            localAnimFrameIndex = sourceAnimationClip.DynamicFrames.Count() - 1;
-
-                        var boneRotationIndexInExternal = sourceAnimationClip.DynamicRotationMappingID.IndexOf(boneIndex);
-                        bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
-                        if (hasBoneRotationInExternal)
-                        {
-                            skeletonPosRotation = sourceAnimationClip.DynamicFrames[localAnimFrameIndex].Rotation[boneRotationIndexInExternal];
-                        }
-
-                        var boneTranslationIndexInExternal = sourceAnimationClip.DynamicTranslationMappingID.IndexOf(boneIndex);
-                        bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
-                        if (hasBoneTranslationInExternal)
-                        {
-                            skeletonPosTranslation = sourceAnimationClip.DynamicFrames[localAnimFrameIndex].Translation[boneTranslationIndexInExternal];
-                        }
-                    }
-
-                    if (boneToGetAnimDataFrom.UseConstantOffset)
-                    {
-                        skeletonPosTranslation += MathConverter.ToVector(boneToGetAnimDataFrom.ContantTranslationOffset);
-                        var rot = MathConverter.ToQuaternion(boneToGetAnimDataFrom.ContantRotationOffset);
-                        skeletonPosRotation *= rot;
-                        skeletonPosRotation.Normalize();
-                    }
-
-                    currentOutputFrame.Translation.Add(skeletonPosTranslation);
-                    currentOutputFrame.Rotation.Add(skeletonPosRotation);
-                }
-                outputAnimationFile.DynamicFrames.Add(currentOutputFrame);
-            }
-          
-            return outputAnimationFile;
+            throw new NotImplementedException();
+           //return null;
+           //// Validate
+           //if (Validate(settings) == false)
+           //    return null;
+           //
+           //var currentsSkeltonBoneCount = settings.SourceSkeleton.BoneCount;
+           //Viewer.Animation.Skeleton externalSkeleton = CreateSkeleton(settings.ExternalSkeletonFile);
+           //var externalAnimationClip = CreateAnimation(settings.ExternalAnimationFile);
+           //
+           //
+           //var sourceAnimationClip = CreateAnimation(settings.SourceAnimationFile);
+           //
+           //var outputAnimationFile = new AnimationClip();
+           //for (int i = 0; i < currentsSkeltonBoneCount; i++)
+           //{
+           //    outputAnimationFile.DynamicRotationMappingID.Add(i);
+           //    outputAnimationFile.DynamicTranslationMappingID.Add(i);
+           //}
+           //
+           //for (int frameIndex = 0; frameIndex < externalAnimationClip.DynamicFrames.Count(); frameIndex++)
+           //{
+           //    var currentOutputFrame = new AnimationClip.KeyFrame();
+           //
+           //    for (int boneIndex = 0; boneIndex < currentsSkeltonBoneCount; boneIndex++)
+           //    {
+           //        var boneToGetAnimDataFrom = GetMappedBone(settings.TargetSkeletonBones, boneIndex);
+           //
+           //        var skeletonPosRotation = settings.SourceSkeleton.Rotation[boneIndex];
+           //        var skeletonPosTranslation = settings.SourceSkeleton.Translation[boneIndex];
+           //
+           //        if (boneToGetAnimDataFrom.MappedBone != null && boneToGetAnimDataFrom.UseMapping && boneToGetAnimDataFrom.MappedBone.BoneIndex != -1)
+           //        {
+           //            if (true)   // Animation skeleton scale?
+           //            {
+           //                skeletonPosRotation = externalSkeleton.Rotation[boneToGetAnimDataFrom.MappedBone.BoneIndex];
+           //                skeletonPosTranslation = externalSkeleton.Translation[boneToGetAnimDataFrom.MappedBone.BoneIndex];
+           //            }
+           //
+           //            var boneRotationIndexInExternal = externalAnimationClip.DynamicRotationMappingID.IndexOf(boneToGetAnimDataFrom.MappedBone.BoneIndex);
+           //            bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
+           //            if (hasBoneRotationInExternal)
+           //            {
+           //                skeletonPosRotation = externalAnimationClip.DynamicFrames[frameIndex].Rotation[boneRotationIndexInExternal];
+           //            }
+           //
+           //            var boneTranslationIndexInExternal = externalAnimationClip.DynamicTranslationMappingID.IndexOf(boneToGetAnimDataFrom.MappedBone.BoneIndex);
+           //            bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
+           //            if (hasBoneTranslationInExternal)
+           //            {
+           //                skeletonPosTranslation = externalAnimationClip.DynamicFrames[frameIndex].Translation[boneTranslationIndexInExternal];
+           //            }
+           //        }
+           //        else
+           //        {
+           //
+           //            var localAnimFrameIndex = frameIndex;
+           //            if (localAnimFrameIndex > sourceAnimationClip.DynamicFrames.Count() - 1)
+           //                localAnimFrameIndex = sourceAnimationClip.DynamicFrames.Count() - 1;
+           //
+           //            var boneRotationIndexInExternal = sourceAnimationClip.DynamicRotationMappingID.IndexOf(boneIndex);
+           //            bool hasBoneRotationInExternal = boneRotationIndexInExternal != -1;
+           //            if (hasBoneRotationInExternal)
+           //            {
+           //                skeletonPosRotation = sourceAnimationClip.DynamicFrames[localAnimFrameIndex].Rotation[boneRotationIndexInExternal];
+           //            }
+           //
+           //            var boneTranslationIndexInExternal = sourceAnimationClip.DynamicTranslationMappingID.IndexOf(boneIndex);
+           //            bool hasBoneTranslationInExternal = boneTranslationIndexInExternal != -1;
+           //            if (hasBoneTranslationInExternal)
+           //            {
+           //                skeletonPosTranslation = sourceAnimationClip.DynamicFrames[localAnimFrameIndex].Translation[boneTranslationIndexInExternal];
+           //            }
+           //        }
+           //
+           //        if (boneToGetAnimDataFrom.UseConstantOffset)
+           //        {
+           //            skeletonPosTranslation += MathConverter.ToVector(boneToGetAnimDataFrom.ContantTranslationOffset);
+           //            var rot = MathConverter.ToQuaternion(boneToGetAnimDataFrom.ContantRotationOffset);
+           //            skeletonPosRotation *= rot;
+           //            skeletonPosRotation.Normalize();
+           //        }
+           //
+           //        currentOutputFrame.Translation.Add(skeletonPosTranslation);
+           //        currentOutputFrame.Rotation.Add(skeletonPosRotation);
+           //    }
+           //    outputAnimationFile.DynamicFrames.Add(currentOutputFrame);
+           //}
+           //
+           //return outputAnimationFile;
         }
 
 

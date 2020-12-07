@@ -9,6 +9,7 @@ using System.Text;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Scene;
 using WpfTest.Scenes;
 using static Filetypes.RigidModel.VariantMeshDefinition;
@@ -156,17 +157,35 @@ namespace VariantMeshEditor.Controls
                 //brt_paladin
                 var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
                 var paladinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(paladinMesh);
-
+                var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(paladinMesh);
                 var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
+
+            // var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
+            // try
+            // {
+            //        var file = new Viewer.Animation.AnimationClip(testAnim);
+            //        var fileToSave = file.ConvertToFileFormat(skeleton.Skeleton);
+            //        AnimationFile.Write(fileToSave);
+            // }
+            // catch (Exception e)
+            // { 
+            // 
+            // }
+            //
+            //
                 //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
                 var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
-                paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-                var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
-                secondAnimNode.SelectedAnimationPackFile = handAnim;
 
-                paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
-                paladinAnim.AnimationPlayer.Pause();
+
+                
+
+                paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+                //var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
+                //secondAnimNode.SelectedAnimationPackFile = handAnim;
+
+               // paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
+                //paladinAnim.AnimationPlayer.Pause();
             }
 
             if (loadDragon)

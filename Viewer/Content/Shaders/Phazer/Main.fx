@@ -12,7 +12,7 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 
-
+float3 cameraPosition;
 float3 cameraLookAt;
 
 float4x4  ViewInverse;    // Inverse view?
@@ -82,63 +82,173 @@ SamplerState s_normal
 
 //
 
-
-
-struct VertexShaderInput
+struct VertexInputType
 {
-	float4 Position : POSITION0;
-	float3 Normal : NORMAL0;
-	float2 UVCoord : TEXCOORD0;
-	float4 Tangent : TANGENT0;
+	float4 position : POSITION;
+	float3 normal : NORMAL0;
+	float2 tex : TEXCOORD0;
+
+
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+};
+
+
+
+struct PixelInputType
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD0;
+
+	float3 normal : NORMAL0;
+	float3 normal2 : NORMAL1;
+	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
 
+	float3 viewDirection : TEXCOORD1;
+	float3 worldPosition : TEXCOORD5;
+
 };
 
-struct VertexShaderOutput
+float get_cube_env_scale_factor()
 {
-	float4 Position : SV_POSITION;
-	float3 Normal : NORMAL0;
-	float2 SampleUV : TEXCOORD0;
-	float3 WorldPos : TEXCOORD1;
-	float3 Tangent : TANGENT0;
-	float3 Bitangent : BITANGENT0;
-};
-
-float3 LightDir = float3(-1, 0, 0);
-matrix WorldViewProjection;
-matrix Transform;
-float AmbientBrightness;
-float3 CameraPosition;
-int FlipCulling = -1;
-
-VertexShaderOutput MainVS(in VertexShaderInput input)
-{
-	VertexShaderOutput output = (VertexShaderOutput)0;
-
-	output.Position = mul(mul(input.Position, Transform), WorldViewProjection);
-	output.WorldPos = input.Position; //mul(input.Position, Transform).xyz;
-	output.Normal = normalize(mul(input.Normal, (float3x3)Transform));
-
-	float3 tangent = normalize(mul(input.Tangent.xyz, (float3x3)Transform));
-	float3 bitangent = cross(tangent.xyz, output.Normal.xyz).xyz * input.Tangent.w;
-	output.Tangent = normalize(tangent);
-	output.Bitangent = normalize(bitangent);
-	output.SampleUV = input.UVCoord;// *UVTiling;
-
-	return output;
+	return 1.0f;
 }
+
+float adjust_linear_smoothness(in const float linear_smoothness)
+{
+	//	return get_cubic_spline_adjusted_value(linear_smoothness, curve_y1_ctrl_pnt_env_smoothness, curve_y2_ctrl_pnt_env_smoothness, curve_y3_ctrl_pnt_env_smoothness);
+	return linear_smoothness * linear_smoothness;
+}
+
+float3 texcoordEnvSwizzle(in float3 ref)
+{
+	//this should match the order of the basis
+	return float3(-ref.x, ref.z, -ref.y);
+}
+
+
+
+float3 get_environment_colour(in float3 direction, in float lod)
+{
+	return (tex_cube_specular.SampleLevel(SampleType, direction  /*texcoordEnvSwizzle(direction)*/, lod).rgb);
+}
+
+
+float3 sample_environment_specular(in float roughness_in, in float3 reflected_view_vec)
+{
+#if 1
+	//const float env_lod_pow = 1.8f;    
+	const float env_lod_pow = 1.8f;
+	const float env_map_lod_smoothness = adjust_linear_smoothness(1 - roughness_in);
+	const float roughness = 1.0f - pow(env_map_lod_smoothness, env_lod_pow);
+
+	float texture_num_lods = 6;
+	float env_map_lod = roughness * (texture_num_lods - 1);
+	float3 environment_colour = get_environment_colour(reflected_view_vec, env_map_lod);
+#else
+	const float roughness = roughness_in;
+	float texture_num_lods = 6.0f;
+	float env_map_lod = roughness * (texture_num_lods - 1);
+	env_map_lod += offset;
+	float3 environment_colour = get_environment_colour(reflected_view_vec, env_map_lod);
+#endif
+
+	float3 result = environment_colour * 1;
+
+	return result;
+}
+
+
 
 // --------------------- Vertex shader
-float GetAtten(float3 normal, float3 worldPos)
+PixelInputType main(in VertexInputType input) // main is the default function name
 {
-	return saturate(dot(normal, -LightDir));
-}
+	PixelInputType output;
 
-float4 NormalToColor(float3 val)
-{
-	return float4(val * 0.5 + 0.5, 1.0);
-}
+	output.normal = input.normal;
+	output.tangent = input.tangent;
+	output.binormal = input.binormal;
+	output.normal2 = input.normal;
 
+	output.position = input.position;
+	output.position = mul(output.position, rot_y);
+	output.position = mul(output.position, rot_x);
+	output.position = mul(output.position, World);
+
+	float4 _V2 = output.position;
+	float3 worldPosition = output.position.xyz;
+
+
+	output.normal2 = float4(mul(input.normal, (float3x3) mRotEnv), 0).xyz;
+
+	output.position = mul(output.position, View);
+	output.position = mul(output.position, Projection);
+
+	// Store the texture coordinates for the pixel shader.
+	output.tex.x = input.tex.x;
+	output.tex.y = input.tex.y;
+
+
+	//-----------------------------------------------------------------------------
+	//          Normal
+	//-----------------------------------------------------------------------------                
+	output.normal = mul(output.normal, (float3x3) rot_y);
+	output.normal = normalize(output.normal);
+
+	output.normal = mul(output.normal, (float3x3) rot_x);
+	output.normal = normalize(output.normal);
+
+	output.normal = mul(output.normal, (float3x3) World);
+	output.normal = normalize(output.normal);
+
+
+	output.normal2 = mul(output.normal2, (float3x3) rot_y);
+	output.normal2 = normalize(output.normal2);
+
+	output.normal2 = mul(output.normal2, (float3x3) rot_x);
+	output.normal2 = normalize(output.normal2);
+
+	output.normal2 = mul(output.normal2, (float3x3) World);
+	output.normal2 = normalize(output.normal2);
+
+
+	//-----------------------------------------------------------------------------
+	//          Tangent
+	//-----------------------------------------------------------------------------        
+	output.tangent = mul(output.tangent, (float3x3) rot_y);
+	output.tangent = normalize(output.tangent);
+
+	output.tangent = mul(output.tangent, (float3x3) rot_x);
+	output.tangent = normalize(output.tangent);
+
+	output.tangent = mul(output.tangent, (float3x3) World);
+	output.tangent = normalize(output.tangent);
+
+	//-----------------------------------------------------------------------------
+	//          Binormal
+	//-----------------------------------------------------------------------------        
+	output.binormal = mul(output.binormal, (float3x3) rot_y);
+	output.binormal = normalize(output.binormal);
+
+	output.binormal = mul(output.binormal, (float3x3) rot_x);
+	output.binormal = normalize(output.binormal);
+
+	output.binormal = mul(output.binormal, (float3x3) World);
+	output.binormal = normalize(output.binormal);
+
+	// Calculate the position of the vertex in the world.
+	float3 camW = mul(float4(cameraPosition, 1), World).xyz;
+	camW = cameraPosition.xyz;
+	output.worldPosition = worldPosition;
+
+	output.viewDirection = cameraLookAt - _V2.xyz;
+	output.viewDirection.xyz = normalize((float3) ViewInverse[3] - worldPosition);
+	output.viewDirection = normalize(output.viewDirection);
+	output.viewDirection = -normalize(worldPosition - float4(cameraPosition, 1));
+	return output;
+
+}
 // --------------------- Vertex shader End
 
 // --------------------- Pixel shader
@@ -163,348 +273,141 @@ void alpha_test(in const float pixel_alpha)
 	clip(pixel_alpha - texture_alpha_ref);
 }
 
-//------
 
-float GetMipFromRoughness(float roughness)
+float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV_TARGET0
 {
-	return ((roughness) * 7.0);// - pow(roughness, 7.0) * 1.5;
+	PixelInputType input;
+	input = _input;
+
+
+	if (bIsFrontFace)
+	{
+		input.normal *= -1;
+		input.tangent *= -1;
+		input.binormal *= -1;
+	}
+
+	float4 DiffuseTex = DiffuseTexture.Sample(SampleType, input.tex);
+
+
+	float4 GlossTex = GlossTexture.Sample(SampleType, input.tex);
+
+
+	float4 SpecTex = SpecularTexture.Sample(SampleType, input.tex);
+
+
+	DiffuseTex = pow(DiffuseTex,  2.2);
+	GlossTex = pow(GlossTex,  2.2);
+	SpecTex = pow(SpecTex,  2.2);
+
+
+	float alpha = DiffuseTex.a;
+
+
+			float4 NormalTex = NormalTexture.Sample(s_normal, input.tex);
+
+
+			float smoothness = GlossTex.r;
+		   smoothness = substance_smoothness_get_our_smoothness(smoothness);
+		   float roughness = saturate((1 - smoothness) * light0_roughnessFactor);
+
+		   // Sample the pixel in the bump tex_cube_specular.
+		   float3x3 basis = float3x3(normalize(input.tangent), normalize(input.normal), normalize(input.binormal)); // -- WOWRK2!pp§
+		   float3x3 basis2 = float3x3(normalize(input.tangent), normalize(input.normal2), normalize(input.binormal)); // -- WOWRK2!pp§
+
+
+		   // Deccode the TW nortex_cube_specular with orthogonal projection
+		   float3 Np;
+
+		   Np.x = NormalTex.r * NormalTex.a;
+		   Np.y = NormalTex.g;
+		   Np = (Np * 2.0f) - 1.0f;
+		   Np.z = sqrt(1 - Np.x * Np.x - Np.y * Np.y);
+
+
+		   float3 _N = Np.yzx; // Works
+
+		   float3 bumpNormal = normalize(mul(normalize(_N), basis));
+		   float3 bumpNormal2 = normalize(mul(normalize(_N), basis2));
+		   // ************************************************************************
+			   //bumpNormal = input.normal; // enable to DISABLE normal tex_cube_specular
+			   //bumpNormal2 = input.normal2; // enable to DISABLE normal tex_cube_specular
+		   // ************************************************************************	
+
+			   float3 N = normalize(bumpNormal);
+
+			   float3 N2 = normalize(bumpNormal2);
+			   N2 = mul(N, (float3x3) mRotEnv);
+			   N2 = normalize(N2);
+
+			   float3 Lo = normalize(input.viewDirection);
+
+
+
+			   // Angle between surface normal and outgoing light direction.
+			   float cosLo = max(0.0, dot(N, Lo));
+
+			   // Specular reflection vector.
+			   float3 Lr = 2.0 * cosLo * N - Lo;
+			   //float3 Lr = reflect(N, Lo); test code
+
+			   Lr = mul(Lr, (float3x3) mRotEnv);
+
+			   // Fresnel reflectance at normal incidence (for metals use albedo color).
+			   float3 F0 = SpecTex.rgb;//lerp(Fdielectric, albedo, metalness);
+
+
+
+			 //float3 irradiance = tex_cube_diffuse.Sample(SampleType, N2).rgb;
+			 float3 irradiance = tex_cube_diffuse.Sample(SampleType, N2).rgb; // DEBUG CODE
+			 float3 specularIrradiance = sample_environment_specular(roughness, normalize(Lr));
+
+
+			 irradiance = pow(irradiance,  2.2);
+			 specularIrradiance = pow(specularIrradiance,  2.2);
+			 //
+			  float3 F = fresnelSchlickRoughness(max(dot(N, Lo), 0.0), F0, roughness); // TEST CODE
+			  float3 kS = F;
+			  float3 kD = 1.0 - kS;
+			  float3 diffuseIBL = kD * DiffuseTex.rgb * irradiance;
+
+
+
+
+			  // specularIrradiance = AverageValue(specularIrradiance);
+
+			   float2 brdf = specularBRDF_LUT.Sample(spBRDF_Sampler, float2(cosLo, 1.0 - roughness)).xy;
+			   float3 specularIBL = F0 * (brdf.x + brdf.y) * specularIrradiance;
+
+
+
+			   float3 ambientLighting = (specularIBL + diffuseIBL); // * light0_ambientFactor;		
+
+
+
+		   float3 hdrColor = ((ambientLighting * exposure));
+
+		   // if (debug)
+		   //	  return float4(diffuseIBL, 1);
+			 hdrColor = lumaBasedReinhardToneMapping(hdrColor);
+			 // hdrColor = pow(hdrColor, 2.2);
+			 hdrColor = pow(hdrColor, 1 / 2.2);
+			  return float4(hdrColor, 1);
 }
-
-#define SPECULAR
-#define M_PI 3.141596
-#define M_EPSILON 0.0001
-#define ROUGHNESS_FLOOR 0.004
-#define METALNESS_FLOOR 0.03
-#define GAMMA 2.2
-
-float3 FixCubeLookup(float3 v)
-{
-	float M = max(max(abs(v.x), abs(v.y)), abs(v.z));
-	float scale = (128 - 1) / 128;
-
-	if (abs(v.x) != M) v.x += scale;
-	if (abs(v.y) != M) v.y += scale;
-	if (abs(v.z) != M) v.z += scale;
-
-	return v;
-}
-
-float2 GetIBLBrdf(in float ndv, in float roughness)
-{
-	return (specularBRDF_LUT.Sample(spBRDF_Sampler, float2(ndv, 1.0 - roughness))).xy;
-}
-
-
-
-
-float4 FromGamma(float4 val)
-{
-	return pow(val, 2.2);
-}
-
-float3 FromGamma(float3 val)
-{
-	return pow(val, 2.2);
-}
-
-float4 ToGamma(float4 val)
-{
-	return pow(val, 1.0 / 2.2);
-}
-
-float3 ToGamma(float3 val)
-{
-	return pow(val, 1.0 / 2.2);
-}
-
-float FromGamma(float val)
-{
-	return pow(val, 2.2);
-}
-
-float3 GetMetalnessSpecular(float4 diffColor, float metalness)
-{
-	return lerp(0.04, diffColor.rgb, clamp(metalness, 0, 1.0));
-}
-
-float4 GetMetalnessDiffuse(float4 diffColor, float metalness, float roughness)
-{
-	return float4(max(diffColor.rgb - diffColor.rgb * metalness, 0.04), diffColor.a);
-}
-
-
-float3 SchlickFresnel(float3 specular, float VdotH)
-{
-	return specular + (float3(1.0, 1.0, 1.0) - specular) * pow(1.0 - VdotH, 5.0);
-}
-
-float3 SchlickFresnelCustom(float3 specular, float LdotH)
-{
-	float ior = 0.25;
-	float airIor = 1.000277;
-	float f0 = (ior - airIor) / (ior + airIor);
-	const float max_ior = 2.5;
-	f0 = clamp(f0 * f0, 0.0, (max_ior - airIor) / (max_ior + airIor));
-	return specular * (f0 + (1 - f0) * pow(2, (-5.55473 * LdotH - 6.98316) * LdotH));
-}
-
-//Get Fresnel
-//specular  = the rgb specular color value of the pixel
-//VdotH     = the dot product of the camera view direction and the half vector 
-float3 Fresnel(float3 specular, float VdotH, float LdotH)
-{
-	//return SchlickFresnelCustom(specular, LdotH);
-	return SchlickFresnel(specular, VdotH);
-}
-
-// Smith GGX corrected Visibility
-// NdotL        = the dot product of the normal and direction to the light
-// NdotV        = the dot product of the normal and the camera view direction
-// roughness    = the roughness of the pixel
-float SmithGGXSchlickVisibility(float NdotL, float NdotV, float roughness)
-{
-	float rough2 = roughness * roughness;
-	float lambdaV = NdotL * sqrt((-NdotV * rough2 + NdotV) * NdotV + rough2);
-	float lambdaL = NdotV * sqrt((-NdotL * rough2 + NdotL) * NdotL + rough2);
-
-	return 0.5 / (lambdaV + lambdaL);
-}
-
-float NeumannVisibility(float NdotV, float NdotL)
-{
-	return NdotL * NdotV / max(1e-7, max(NdotL, NdotV));
-}
-
-// Get Visibility
-// NdotL        = the dot product of the normal and direction to the light
-// NdotV        = the dot product of the normal and the camera view direction
-// roughness    = the roughness of the pixel
-float Visibility(float NdotL, float NdotV, float roughness)
-{
-	return NeumannVisibility(NdotV, NdotL);
-	//return SmithGGXSchlickVisibility(NdotL, NdotV, roughness);
-}
-
-// GGX Distribution
-// NdotH        = the dot product of the normal and the half vector
-// roughness    = the roughness of the pixel
-float GGXDistribution(float NdotH, float roughness)
-{
-	float rough2 = roughness * roughness;
-	float tmp = (NdotH * rough2 - NdotH) * NdotH + 1;
-	return rough2 / (tmp * tmp);
-}
-
-// Get Distribution
-// NdotH        = the dot product of the normal and the half vector
-// roughness    = the roughness of the pixel
-float Distribution(float NdotH, float roughness)
-{
-	return GGXDistribution(NdotH, roughness);
-}
-
-// Custom Lambertian Diffuse
-// diffuseColor = the rgb color value of the pixel
-// roughness    = the roughness of the pixel
-// NdotV        = the normal dot with the camera view direction
-// NdotL        = the normal dot with the light direction
-// VdotH        = the camera view direction dot with the half vector
-float3 CustomLambertianDiffuse(float3 diffuseColor, float NdotV, float roughness)
-{
-	return diffuseColor * (1.0 / M_PI) * pow(NdotV, 0.5 + 0.3 * roughness);
-}
-
-// Burley Diffuse
-// diffuseColor = the rgb color value of the pixel
-// roughness    = the roughness of the pixel
-// NdotV        = the normal dot with the camera view direction
-// NdotL        = the normal dot with the light direction
-// VdotH        = the camera view direction dot with the half vector
-float3 BurleyDiffuse(float3 diffuseColor, float roughness, float NdotV, float NdotL, float VdotH)
-{
-	const float energyBias = lerp(0, 0.5, roughness);
-	const float energyFactor = lerp(1.0, 1.0 / 1.51, roughness);
-	const float fd90 = energyBias + 2.0 * VdotH * VdotH * roughness;
-	const float f0 = 1.0;
-	const float lightScatter = f0 + (fd90 - f0) * pow(1.0f - NdotL, 5.0f);
-	const float viewScatter = f0 + (fd90 - f0) * pow(1.0f - NdotV, 5.0f);
-
-	return diffuseColor * lightScatter * viewScatter * energyFactor;
-}
-
-//Get Diffuse
-// diffuseColor = the rgb color value of the pixel
-// roughness    = the roughness of the pixel
-// NdotV        = the normal dot with the camera view direction
-// NdotL        = the normal dot with the light direction
-// VdotH        = the camera view direction dot with the half vector
-float3 Diffuse(float3 diffuseColor, float roughness, float NdotV, float NdotL, float VdotH)
-{
-	//return LambertianDiffuse(diffuseColor);
-	//return CustomLambertianDiffuse(diffuseColor, NdotV, roughness);
-	return BurleyDiffuse(diffuseColor, roughness, NdotV, NdotL, VdotH);
-}
-
-
-float3 GetSpecularDominantDir(float3 normal, float3 reflection, float roughness)
-{
-	const float smoothness = 1.0 - roughness;
-	const float lerpFactor = smoothness * (sqrt(smoothness) + roughness);
-	return lerp(normal, reflection, lerpFactor);
-}
-
-//Return the PBR BRDF value
-// lightDir  = the vector to the light
-// lightVec  = normalised lightDir
-// toCamera  = vector to the camera
-// normal    = surface normal of the pixel
-// roughness = roughness of the pixel
-// diffColor = the rgb color of the pixel
-// specColor = the rgb specular color of the pixel
-float3 GetBRDF(float3 worldPos, float3 lightDir, float3 lightVec, float3 toCamera, float3 normal, float roughness, float3 diffColor, float3 specColor)
-{
-	const float3 Hn = normalize(toCamera + lightDir);
-	const float vdh = clamp((dot(toCamera, Hn)), M_EPSILON, 1.0);
-	const float ndh = clamp((dot(normal, Hn)), M_EPSILON, 1.0);
-	float ndl = clamp((dot(normal, lightVec)), M_EPSILON, 1.0);
-	const float ndv = clamp((dot(normal, toCamera)), M_EPSILON, 1.0);
-	const float ldh = clamp((dot(lightVec, Hn)), M_EPSILON, 1.0);
-
-	const float3 diffuseFactor = Diffuse(diffColor, roughness, ndv, ndl, vdh) * ndl;
-	float3 specularFactor = 0;
-
-	const float3 fresnelTerm = Fresnel(specColor, vdh, ldh);
-	const float distTerm = Distribution(ndh, roughness);
-	const float visTerm = Visibility(ndl, ndv, roughness);
-	specularFactor = distTerm * visTerm * fresnelTerm * ndl / M_PI;
-	return diffuseFactor + specularFactor;
-}
-
-
-float3 get_environment_colourSpec(in float3 direction, in float lod)
-{
-	float3 value = AverageValue(saturate((tex_cube_specular.SampleLevel(SampleType, direction  /*texcoordEnvSwizzle(direction)*/, lod).rgb)));
-
-	float powFactor = 2.2;	// 2.2  1 / 2.2
-	return pow(value, powFactor);
-}
-
-float3 get_environment_colourDif(in float3 direction, in float lod)
-{
-	return saturate((tex_cube_diffuse.SampleLevel(SampleType, direction  /*texcoordEnvSwizzle(direction)*/, lod).rgb));
-}
-
-/// Calculate IBL contributation
-///     reflectVec: reflection vector for cube sampling
-///     wsNormal: surface normal in word space
-///     toCamera: normalized direction from surface point to camera
-///     roughness: surface roughness
-///     ambientOcclusion: ambient occlusion
-float3 ImageBasedLighting(in float3 reflectVec, in float3 wsNormal, in float3 toCamera, in float3 diffColor, in float3 specColor, in float roughness, inout float3 reflectionCubeColor)
-{
-	const float ndv = abs(dot(-toCamera, wsNormal)) + 0.001;
-
-	const float mipSelect = GetMipFromRoughness(roughness);
-	float3 cube = get_environment_colourSpec(FixCubeLookup(reflectVec), mipSelect);
-	float3 cubeD = get_environment_colourSpec(FixCubeLookup(wsNormal), 7);
-	//float3 cube = (texCUBElod(IBLSampler, float4(FixCubeLookup(reflectVec), )).rgb);
-	//float3 cubeD = (texCUBElod(IBLSampler, float4(FixCubeLookup(wsNormal), 7.0)).rgb);
-
-	const float3 Hn = normalize(toCamera + reflectVec);
-	const float vdh = clamp((dot(toCamera, Hn)), M_EPSILON, 1.0);
-	const float3 fresnelTerm = max(Fresnel(cube, vdh, vdh) * specColor, 0);
-
-	const float2 brdf = GetIBLBrdf(ndv, roughness);
-	const float3 environmentSpecular = (specColor * brdf.x + brdf.y) * cube;
-	const float3 environmentDiffuse = cubeD * diffColor;
-
-	return (environmentDiffuse * 1) + (environmentSpecular * 1) + (fresnelTerm * 1);
-}
-
-
-
-
 
 // --------------------- Pixel shader End
 
-
-
-float4 PBRCommon(VertexShaderOutput input, float4 diffuse, float3 specColor, float roughness) : SV_TARGET0
+float4 SimplePixel(in PixelInputType _input/*, bool bIsFrontFace : SV_IsFrontFace*/) : SV_TARGET0
 {
-
-
-
-	float3 normVal = NormalTexture.Sample(s_normal, input.SampleUV).xyz * 2.0 - 1.0;;
-
-	//float3 normVal = tex2D(NormalMapSampler, input.SampleUV).xyz * 2.0 - 1.0;
-	float3 eyeToPixel = normalize(input.WorldPos - CameraPosition);
-
-	const float3x3 tbn = transpose(float3x3(input.Tangent, input.Bitangent * FlipCulling, input.Normal));
-	float3 norm = normalize(mul(tbn, normVal).xyz);
-	//float3 norm = perturb_normal(input.Normal, eyeToPixel, NormalMapSampler, input.SampleUV);
-
-	float atten = GetAtten(norm, input.WorldPos);
-	float4 oColor = float4(GetBRDF(input.WorldPos, -LightDir, normalize(-LightDir), -eyeToPixel, norm, roughness, diffuse.rgb, specColor), diffuse.a);
-
-	float3 reflectVec = normalize(reflect(eyeToPixel, norm));
-	float3 reflectionCubeColor = float3(0.25, 0.25, 0.25);
-	float3 ibl = ImageBasedLighting(reflectVec, norm, -eyeToPixel, diffuse.rgb, specColor, roughness, reflectionCubeColor);
-
-	float AOValue = 1;
-	AOValue = AOValue < 0.001 ? 1.0 : AOValue;
-	float emissive = 1;
-
-
-
-
-	/// ambient term + direct-light + ibl
-	float4 valu =
-		diffuse +
-		//float4(
-		//(AmbientBrightness + emissive) * AOValue,
-		//(AmbientBrightness + emissive) * AOValue,
-		//(AmbientBrightness + emissive) * AOValue,
-		//1) + 
-		(oColor + float4(ibl, 1));
-
-	float3 finalCol = valu.xyz;
-	//finalCol = lumaBasedReinhardToneMapping(finalCol);
-	finalCol = pow(valu,  1 / 2.2);
-
-	return float4(finalCol,1);
+	return float4(1,0,0,1);
 }
 
-
-float4 RoughSpecularPS(VertexShaderOutput input) : COLOR
-{
-		float powFactor = 2.2;	// 2.2  1 / 2.2
-
-	float4 diffuse = DiffuseTexture.Sample(SampleType, input.SampleUV);
-	float roughness = GlossTexture.Sample(SampleType, input.SampleUV).r;
-	//roughness = 0;
-	float3 specColor = SpecularTexture.Sample(SampleType, input.SampleUV).rgb;
-
-
-	diffuse = pow(diffuse, powFactor);
-	roughness = 1 - pow(roughness, powFactor);// *debugVal;
-	specColor = pow(specColor, powFactor);
-
-
-
-	//float4 diffuse = tex2D(DiffuseSampler, input.SampleUV);
-	//float roughness = tex2D(RoughnessSampler, input.SampleUV).r;
-	//roughness *= roughness;
-	//roughness = max(roughness, 0.01);
-	//float3 specColor = tex2D(MetalnessSampler, input.SampleUV).rgb;
-
-	return PBRCommon(input, diffuse, specColor, roughness);
-}
 
 technique BasicColorDrawing
 {
 	pass P0
 	{
-		VertexShader = compile vs_5_0 MainVS();
-		PixelShader = compile ps_5_0 RoughSpecularPS();
+		VertexShader = compile vs_5_0 main();
+		PixelShader = compile ps_5_0 mainPs();
 	}
 };

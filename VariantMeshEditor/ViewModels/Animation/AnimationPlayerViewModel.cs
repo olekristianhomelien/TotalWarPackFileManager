@@ -138,7 +138,9 @@ namespace VariantMeshEditor.ViewModels.Animation
         public void SetAnimationClip(IEnumerable<AnimationClip> animationFiles, Viewer.Animation.Skeleton skeleton)
         {
             if (animationFiles == null || animationFiles.Any() == false)
-                _animationNode.AnimationPlayer.SetAnimation(null, null);
+            {
+                _animationNode.AnimationPlayer.SetAnimation(null, skeleton);
+            }
             else
             {
                 _animationNode.AnimationPlayer.SetAnimationArray(animationFiles.ToList(), skeleton);

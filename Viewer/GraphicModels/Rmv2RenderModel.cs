@@ -66,7 +66,7 @@ namespace Viewer.GraphicModels
             var vector = new Vector3
             {
                 X = vertex.X * animationTransform.M11 + vertex.Y * animationTransform.M21 + vertex.Z * animationTransform.M31 + animationTransform.M41,
-                Y = vertex.X * animationTransform.M12 + vertex.Y * animationTransform.M22 + vertex.Z * animationTransform.M32 + animationTransform.M42-1,
+                Y = vertex.X * animationTransform.M12 + vertex.Y * animationTransform.M22 + vertex.Z * animationTransform.M32 + animationTransform.M42,
                 Z = vertex.X * animationTransform.M13 + vertex.Y * animationTransform.M23 + vertex.Z * animationTransform.M33 + animationTransform.M43,
             };
             if (normalize)

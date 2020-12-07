@@ -63,7 +63,11 @@
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationPlayerViewModel.cs" />
-    <Compile Include="ViewModels\Animation\AnimationSplicerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\AnimationSplicerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableSkeletonsViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\MappableSkeletonBone.cs" />
     <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
