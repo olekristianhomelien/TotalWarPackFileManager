@@ -160,29 +160,33 @@ namespace VariantMeshEditor.Controls
                 var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(paladinMesh);
                 var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
 
-            // var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
-            // try
-            // {
-            //        var file = new Viewer.Animation.AnimationClip(testAnim);
-            //        var fileToSave = file.ConvertToFileFormat(skeleton.Skeleton);
-            //        AnimationFile.Write(fileToSave);
-            // }
-            // catch (Exception e)
-            // { 
-            // 
-            // }
-            //
-            //
-                //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
+              
+           
+       //        var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
+       //    try
+       //    {
+       //           var file = new Viewer.Animation.AnimationClip(testAnim);
+       //           var fileToSave = file.ConvertToFileFormat(skeleton.Skeleton);
+       //           AnimationFile.Write(testAnim, @"C:\temp\Animation\animationFileTest2.anim");
+       //    }
+       //    catch (Exception e)
+       //    { 
+       //    
+       //    }
+           
+          //
+          //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
                 var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
 
-
-                
+                //var mainAnim = Filetypes.ByteParsing.ByteChunk.FromFile(@"C:\temp\Animation\animationFileTest.anm");
+                //var file = AnimationFile.Create(mainAnim);
+                //var clip = new Viewer.Animation.AnimationClip(file);
+                //paladinAnim.AnimationPlayer.SetAnimation(clip, skeleton.Skeleton);
 
                 paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-                //var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
-                //secondAnimNode.SelectedAnimationPackFile = handAnim;
+                var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
+                secondAnimNode.SelectedAnimationPackFile = handAnim;
 
                // paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
                 //paladinAnim.AnimationPlayer.Pause();
@@ -221,11 +225,21 @@ namespace VariantMeshEditor.Controls
                @"variantmeshes\variantmeshdefinitions\tmb_ch_arkhan.variantmeshdefinition");
                 var mesh = rootNode.LoadModel(file, _resourceLibary, _scene3d);
 
-                //var animNode = SceneElementHelper.GetFirstChild<AnimationElement>(goblinMesh);
+
+
+                var animNode = SceneElementHelper.GetFirstChild<AnimationElement>(mesh);
+                var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(mesh);
+
+                //var mainAnim = Filetypes.ByteParsing.ByteChunk.FromFile(@"C:\temp\Animation\floatyBoi.anim");
+                //var inimFile = AnimationFile.Create(mainAnim);
+                //var clip = new Viewer.Animation.AnimationClip(inimFile);
+                //animNode.AnimationPlayer.SetAnimation(clip, skeleton.Skeleton);
+
+
                 //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
                 //var animFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
 
-               // goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
+                // goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
 
             }
         }

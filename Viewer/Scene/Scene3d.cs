@@ -218,8 +218,8 @@ namespace WpfTest.Scenes
 
 
             
-            GraphicsDevice.Clear(new Microsoft.Xna.Framework.Color(0.02f, 0.02f, 0.03f, 1));
-            //GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
+            //GraphicsDevice.Clear(new Microsoft.Xna.Framework.Color(0.02f, 0.02f, 0.03f, 1));
+            GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 

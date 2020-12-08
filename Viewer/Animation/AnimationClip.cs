@@ -48,7 +48,7 @@ namespace Viewer.Animation
                 output.Translation.Add(new Vector3(translation.X, translation.Y, translation.Z));
 
             foreach (var rotation in frame.Quaternion)
-                output.Rotation.Add(new Quaternion(rotation[0], rotation[1], rotation[2], rotation[3]));
+                output.Rotation.Add(new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W));
             return output;
         }
 
@@ -56,18 +56,47 @@ namespace Viewer.Animation
         public AnimationFile ConvertToFileFormat(Skeleton skeleton)
         {
             AnimationFile output = new AnimationFile();
-            output.Header.AnimationType = 20;
+            output.Header.AnimationType = 7;
             output.Header.AnimationTotalPlayTimeInSec = DynamicFrames.Count() / output.Header.FrameRate;
             output.Header.SkeletonName = skeleton.SkeletonName;
 
+
+            output.Bones = new BoneInfo[skeleton.BoneCount];
+            for (int i = 0; i < skeleton.BoneCount; i++)
+            {
+                output.Bones[i] = new BoneInfo()
+                {
+                    Id = i,
+                    Name = skeleton.BoneNames[i],
+                    ParentId = skeleton.ParentBoneId[i]
+                };
+            }
+
             // Mappings
+            output.RotationMappings = RotationMappings.ToList();
+            output.TranslationMappings = TranslationMappings.ToList();
 
             // Static
+            if (StaticFrame != null)
+                output.StaticFrame = CreateFrameFromKeyFrame(StaticFrame);
 
             // Dynamic
-
+            foreach (var frame in DynamicFrames)
+                output.DynamicFrames.Add(CreateFrameFromKeyFrame(frame));
 
             return output;
+        }
+
+        Frame CreateFrameFromKeyFrame(KeyFrame keyFrame)
+        {
+            var frame = new Frame();
+            foreach (var trans in keyFrame.Translation)
+                frame.Transforms.Add(new FileVector3(trans.X, trans.Y, trans.Z));
+
+            foreach (var rot in keyFrame.Rotation)
+                frame.Quaternion.Add(new FileVector4(rot.X, rot.Y, rot.Z, rot.W));
+
+            return frame;
         }
 
 

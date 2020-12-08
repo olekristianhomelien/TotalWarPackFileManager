@@ -36,11 +36,11 @@ namespace Viewer.Animation
             for (int i = 0; i < BoneCount; i++)
             {
                 var quat = new Quaternion(
-                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][0],
-                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][1],
-                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][2],
-                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i][3]);
-                quat.Normalize();
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].X,
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].Y,
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].Z,
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].W);
+                //quat.Normalize();
               
                 Rotation[i] = quat;
 

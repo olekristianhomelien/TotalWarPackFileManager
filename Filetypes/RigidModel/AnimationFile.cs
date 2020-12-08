@@ -17,7 +17,7 @@ namespace Filetypes.RigidModel
         public class Frame
         {
             public List<FileVector3> Transforms { get; set; } = new List<FileVector3>();
-            public List<float[]> Quaternion { get; set; } = new List<float[]>();
+            public List<FileVector4> Quaternion { get; set; } = new List<FileVector4>();
         }
 
         public class AnimationHeader
@@ -66,8 +66,6 @@ namespace Filetypes.RigidModel
             Static,
             None
         }
-
-        
 
         public class AnimationBoneMapping
         {
@@ -168,7 +166,7 @@ namespace Filetypes.RigidModel
             return output;
         }
 
-        public static void Write(AnimationFile input)
+        public static void Write(AnimationFile input, string path)
         {
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -236,7 +234,7 @@ namespace Filetypes.RigidModel
                         writer.Write((int)3);   // Frame count, why 3 when empty?
                     }
 
-                    using (var fileStream = File.Create(@"C:\temp\Animation\animationFileTest.anm"))
+                    using (var fileStream = File.Create(path))
                     {
                         memoryStream.WriteTo(fileStream);
                     }
@@ -254,13 +252,12 @@ namespace Filetypes.RigidModel
                 writer.Write(frame.Transforms[i].Z);
             }
 
-
             for (int i = 0; i < frame.Quaternion.Count(); i++)
             {
-                writer.Write((short)(frame.Quaternion[i][0] * short.MaxValue));
-                writer.Write((short)(frame.Quaternion[i][1] * short.MaxValue));
-                writer.Write((short)(frame.Quaternion[i][2] * short.MaxValue));
-                writer.Write((short)(frame.Quaternion[i][3] * short.MaxValue));
+                writer.Write((short)(frame.Quaternion[i].X * short.MaxValue));
+                writer.Write((short)(frame.Quaternion[i].Y * short.MaxValue));
+                writer.Write((short)(frame.Quaternion[i].Z * short.MaxValue));
+                writer.Write((short)(frame.Quaternion[i].W * short.MaxValue));
             }
         }
 
@@ -277,8 +274,9 @@ namespace Filetypes.RigidModel
             {
                 var maxValue = 1.0f / (float)short.MaxValue;
                 var quat = new short[4] { chunk.ReadShort(), chunk.ReadShort(), chunk.ReadShort(), chunk.ReadShort() };
-                var quatFloat = new float[4] { quat[0] * maxValue, quat[1] * maxValue, quat[2] * maxValue, quat[3] * maxValue };
-                frame.Quaternion.Add(quatFloat);
+
+                var quaternion = new FileVector4(quat[0] * maxValue, quat[1] * maxValue, quat[2] * maxValue, quat[3] * maxValue);
+                frame.Quaternion.Add(quaternion);
             }
             return frame;
         }

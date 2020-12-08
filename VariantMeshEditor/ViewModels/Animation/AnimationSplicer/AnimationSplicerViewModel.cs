@@ -45,6 +45,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ICommand LoadTestDataCommand { get; set; }
         public ICommand ClearBindingSelfCommand { get; set; }
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
+        public ICommand SaveAnimationCommand { get; set; }
 
 
         public MappableSkeletonBone _selectedNode;
@@ -84,8 +85,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void CreateCommands()
         {
-            ForceComputeCommand = new RelayCommand(BuildAnimation);
+            ForceComputeCommand = new RelayCommand(() => BuildAnimation());
             LoadTestDataCommand = new RelayCommand(LoadTestData);
+            SaveAnimationCommand = new RelayCommand(SaveAnimation);
 
             ClearBindingSelfCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelf);
             ClearBindingSelfAndChildrenCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelfAndChildren);
@@ -98,14 +100,44 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             //ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
             //ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
 
-            TargetAnimation.SelectedItem = /*TargetAnimation.CurrentItems.FirstOrDefault(x => x.FullPath == @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");//*/  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+            TargetAnimation.SelectedItem =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
             ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
             ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
         }
 
 
+        void SaveAnimation()
+        {
+            try
+            {
+                var anim = BuildAnimation();
+                if (anim != null)
+                {
+                    var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
+                    AnimationFile.Write(fileFormat, @"C:\temp\Animation\floatyBoi.anim");
+                }
+            }
+            catch (Exception e)
+            { 
+            
+            }
+            //
+            //    var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
+            //try
+            //{
+            //       var file = new Viewer.Animation.AnimationClip(testAnim);
+            //       var fileToSave = file.ConvertToFileFormat(skeleton.Skeleton);
+            //       AnimationFile.Write(testAnim);
+            //}
+            //catch (Exception e)
+            //{ 
+            //
+            //}
+            //
+        }
 
-        void BuildAnimation()
+
+        AnimationClip BuildAnimation()
         {
             try
             {
@@ -126,11 +158,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                     _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.Skeleton);
                 else
                     _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.Skeleton);
+
+                return animation;
             }
             catch (Exception e)
             {
                 var error = $"Error creating new animation: {e.Message}";
                 _logger.Error(error);
+                return null;
             }
         }
 

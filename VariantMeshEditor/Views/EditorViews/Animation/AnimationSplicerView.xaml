@@ -253,7 +253,7 @@
 
             </DockPanel>
 
-
+            <Button DockPanel.Dock="Top" Command="{Binding SaveAnimationCommand}">Save animation</Button>
             <Button DockPanel.Dock="Top" Command="{Binding LoadTestDataCommand}">Load Test Data</Button>
             <Button DockPanel.Dock="Top" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
         </DockPanel>
@@ -277,8 +277,11 @@
 
                 <TreeView.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header ="Clear binding"  
+                        <MenuItem Header ="Clear binding - Self"  
                                   Command="{Binding ClearBindingSelfCommand}" 
+                                  CommandParameter="{Binding SelectedNode}"/>
+                        <MenuItem Header ="Clear binding - Self and children"  
+                                  Command="{Binding ClearBindingSelfAndChildrenCommand}" 
                                   CommandParameter="{Binding SelectedNode}"/>
                     </ContextMenu>
                 </TreeView.ContextMenu>

@@ -81,6 +81,7 @@ namespace VariantMeshEditor.ViewModels.Animation
         {
             _animationNode.AnimationPlayer.Pause();
             _animationNode.AnimationPlayer.CurrentFrame++;
+            int f = _animationNode.AnimationPlayer.CurrentFrame;
         }
 
         void OnPrivFrame()
@@ -103,7 +104,7 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         void HandleAnimationSpeedChanged()
         {
-            _animationNode.AnimationPlayer.FrameRate = SelectedAnimationSpeed.FrameRate;
+            _animationNode.AnimationPlayer.SpeedMultiplication = SelectedAnimationSpeed.FrameRate;
         }
 
         //void HandleSyncAllAnimations()
