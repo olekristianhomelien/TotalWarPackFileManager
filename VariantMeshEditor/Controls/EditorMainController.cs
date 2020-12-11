@@ -184,9 +184,9 @@ namespace VariantMeshEditor.Controls
                 //var clip = new Viewer.Animation.AnimationClip(file);
                 //paladinAnim.AnimationPlayer.SetAnimation(clip, skeleton.Skeleton);
 
-                paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-                var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
-                secondAnimNode.SelectedAnimationPackFile = handAnim;
+             paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+             var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
+             secondAnimNode.SelectedAnimationPackFile = handAnim;
 
                // paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
                 //paladinAnim.AnimationPlayer.Pause();

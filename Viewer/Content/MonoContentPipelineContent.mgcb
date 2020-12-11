@@ -279,30 +279,20 @@
 /processorParam:TextureFormat=Color
 /build:Textures/NarrowPath_thumb.jpg
 
-#begin Textures/Phazer/Brdf_rgba32f_raw.dds
+#begin Textures/Phazer/Brdf_rgba32f_raw.DDS
 /importer:TextureImporter
 /processor:PassThroughProcessor
-/build:Textures/Phazer/Brdf_rgba32f_raw.dds
+/build:Textures/Phazer/Brdf_rgba32f_raw.DDS
 
-#begin Textures/Phazer/irr_rustig_BGR8.dds
+#begin Textures/Phazer/rustig_koppie_DiffuseHDR.DDS
 /importer:TextureImporter
 /processor:PassThroughProcessor
-/build:Textures/Phazer/irr_rustig_BGR8.dds
+/build:Textures/Phazer/rustig_koppie_DiffuseHDR.DDS
 
-#begin Textures/Phazer/irr_rustig_rgba32f_raw.dds
+#begin Textures/Phazer/rustig_koppie_SpecularHDR.DDS
 /importer:TextureImporter
 /processor:PassThroughProcessor
-/build:Textures/Phazer/irr_rustig_rgba32f_raw.dds
-
-#begin Textures/Phazer/rad_rustig_BGR8.dds
-/importer:TextureImporter
-/processor:PassThroughProcessor
-/build:Textures/Phazer/rad_rustig_BGR8.dds
-
-#begin Textures/Phazer/rad_rustig_rgba32f_raw.dds
-/importer:TextureImporter
-/processor:PassThroughProcessor
-/build:Textures/Phazer/rad_rustig_rgba32f_raw.dds
+/build:Textures/Phazer/rustig_koppie_SpecularHDR.DDS
 
 #begin Textures/SkyBox.dds
 /importer:TextureImporter

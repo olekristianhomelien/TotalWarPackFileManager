@@ -5,6 +5,9 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Phazer/Main.fx</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.DDS</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rustig_koppie_DiffuseHDR.DDS</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rustig_koppie_SpecularHDR.DDS</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/NewStuff/AnimatedModelShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/cube.FBX</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/Helicopter.fbx</File>
@@ -12,7 +15,6 @@
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/HelicopterTexture.png</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/UntexturedSphere.FBX</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/fresnel2.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_BGR8.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_rgba32f_raw.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rad_rustig_BGR8.dds</File>

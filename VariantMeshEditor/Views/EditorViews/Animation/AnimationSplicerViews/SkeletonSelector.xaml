@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.SkeletonSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews"
+             xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs"
+             mc:Ignorable="d" >
+    <GroupBox>
+        <Expander DockPanel.Dock="Top">
+            <Expander.Header>
+                <TextBlock VerticalAlignment="Bottom">
+                    <Run FontSize="14" FontWeight="Bold">Other skeleton: </Run>
+                    <Run Text="Skeletons\Humanoid_01.anim"/>
+                </TextBlock>
+            </Expander.Header>
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0">
+                    <TextBlock Text="Skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <filterdialog:CollapsableFilterControl  
+                            SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SearchItems="{Binding SkeletonList, UpdateSourceTrigger=PropertyChanged}"     
+                            OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                            IsManipulationEnabled="False"
+                            LabelTotalWidth="0"   
+                            DisplayMemberPath="FullPath"
+                            ShowLabel="False"
+                            LabelText="External Skeleton"/>
+                </DockPanel>
+
+                <DockPanel  Grid.Row="1">
+                    <TextBlock Text="Scale skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <CheckBox VerticalContentAlignment="Center"/>
+                </DockPanel>
+            </Grid>
+        </Expander>
+    </GroupBox>
+</UserControl>

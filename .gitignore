@@ -82,3 +82,12 @@
 /VariantMeshEditor/obj
 /Viewer/Content/Textures/Phazer/rad_rustig_rgba32f_raw.dds
 /Viewer/Content/bin/Windows
+/Viewer/Content/obj/Windows/Textures/Phazer/rustig_koppie_SpecularHDR.mgcontent
+/Viewer/Content/obj/Windows/Textures/Phazer/rustig_koppie_DiffuseHDR.mgcontent
+/Viewer/Content/Textures/Phazer/Backup/Brdf_rgba32f_raw.dds
+/Viewer/Content/Textures/Phazer/Backup/irr_rustig_BGR8.dds
+/Viewer/Content/Textures/Phazer/Backup/irr_rustig_rgba32f_raw.dds
+/Viewer/Content/Textures/Phazer/Backup/rad_rustig_BGR8.dds
+/Viewer/Content/Textures/Phazer/Backup/rad_rustig_rgba32f_raw.dds
+/Viewer/Content/Textures/Phazer/rustig_koppie_SpecularHDR.DDS
+/Viewer/Content/Textures/Phazer/rustig_koppie_DiffuseHDR.DDS

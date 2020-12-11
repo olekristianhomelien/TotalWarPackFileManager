@@ -15,8 +15,36 @@ using static Filetypes.RigidModel.AnimationFile;
 
 namespace VariantMeshEditor.Services
 {
+    public enum FrameTypes
+    {
+        Both,
+        Static,
+        Dynamic,
+    }
+
+    public enum TransformTypes
+    {
+        Both,
+        Rotation,
+        Translation,
+    }
+
+    public enum MatchMethod
+    {
+        TimeFit,
+        HoldLastFrame
+    }
+
+    public enum MergeMethod
+    {
+        Replace
+    }
+
     public class AnimationBuilderService
     {
+       
+
+
 
         public class AnimationBuilderSettings
         {
@@ -100,12 +128,14 @@ namespace VariantMeshEditor.Services
                     if (HasValidMapping(boneToGetAnimDataFrom))
                     {
                         ComputeAnimationContribution(frameIndex, externalSkeleton, externalAnimationClip, boneToGetAnimDataFrom.MappedBone.BoneIndex, ref rotation, ref position);
-                        ComputeMappedBoneAttributeContributions(boneToGetAnimDataFrom, ref rotation, ref position);
+                      
                     }
                     else
                     {
                         ComputeAnimationContribution(frameIndex, settings.SourceSkeleton, sourceAnimationClip, boneIndex, ref rotation, ref position);
                     }
+
+                    ComputeMappedBoneAttributeContributions(boneToGetAnimDataFrom, ref rotation, ref position);
 
                     rotation.Normalize();
                     outputAnimationFile.DynamicFrames[frameIndex].Rotation.Add(rotation);

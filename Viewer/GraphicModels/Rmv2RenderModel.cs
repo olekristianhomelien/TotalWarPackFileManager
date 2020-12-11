@@ -50,7 +50,9 @@ namespace Viewer.GraphicModels
                 var vertex = _model.VertexArray[index];
                 var transformSum = GetAnimationVertex(vertex);
 
-                var transpose = Matrix.Transpose(transformSum);
+                var transpose = transformSum;
+                transpose.Translation = new Vector3(0, 0, 0);
+                transpose.M44 = 1;
                 _bufferArray[index].BiNormal = ApplyAnimation2(vertex.BiNormal, transpose, true);
                 _bufferArray[index].Tangent = ApplyAnimation2(vertex.Tanget, transpose, true);
                 _bufferArray[index].Normal = ApplyAnimation2(vertex.Normal, transpose, true);
@@ -78,7 +80,7 @@ namespace Viewer.GraphicModels
         Vector3 ApplyAnimation2(FileVector3 vertex, Matrix animationTransform, bool normalize = false)
         {
 
-            var vector = Vector3.Transform(new Vector3(vertex.X, vertex.Y, vertex.Z), animationTransform);
+            var vector = Vector3.Transform(new Vector3(-vertex.X, vertex.Y, vertex.Z), animationTransform);
             if (normalize)
                 vector.Normalize();
             return vector;

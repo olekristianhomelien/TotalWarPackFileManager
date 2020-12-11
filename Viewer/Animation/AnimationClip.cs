@@ -60,7 +60,6 @@ namespace Viewer.Animation
             output.Header.AnimationTotalPlayTimeInSec = DynamicFrames.Count() / output.Header.FrameRate;
             output.Header.SkeletonName = skeleton.SkeletonName;
 
-
             output.Bones = new BoneInfo[skeleton.BoneCount];
             for (int i = 0; i < skeleton.BoneCount; i++)
             {

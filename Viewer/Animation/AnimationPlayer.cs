@@ -155,8 +155,11 @@ namespace Viewer.Animation
 
         void UpdateAnimationFrame()
         {
+            float sampleT = 0;
             float animationLengthMs = GetAnimationLengthMs();
-            _currentAnimFrame = AnimationSampler.Sample((float)(_timeSinceStart.TotalMilliseconds / animationLengthMs), _skeleton, _animationClips, ApplyStaticFrame, ApplyDynamicFrames);
+            if (animationLengthMs != 0)
+                sampleT = (float)(_timeSinceStart.TotalMilliseconds / animationLengthMs);
+            _currentAnimFrame = AnimationSampler.Sample(sampleT, _skeleton, _animationClips, ApplyStaticFrame, ApplyDynamicFrames);
         }
 
 

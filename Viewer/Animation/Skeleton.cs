@@ -35,6 +35,10 @@ namespace Viewer.Animation
             int skeletonWeirdIndex = 0;
             for (int i = 0; i < BoneCount; i++)
             {
+                float scale = 1;
+                if (i == 0)
+                    scale = -1;
+
                 var quat = new Quaternion(
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].X,
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].Y,
@@ -46,12 +50,12 @@ namespace Viewer.Animation
 
                 var rotationMatrix = Matrix.CreateFromQuaternion(quat);
                 var translationMatrix =  Matrix.CreateTranslation(
-                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X,
+                            skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X* scale,
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y,
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Z);
 
                 Translation[i] = new Vector3(
-                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X,
+                    skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X* scale,
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y, 
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Z);
 

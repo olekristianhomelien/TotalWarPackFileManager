@@ -100,6 +100,15 @@
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerView.xaml.cs">
       <DependentUpon>AnimationSplicerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\AnimationSelector.xaml.cs">
+      <DependentUpon>AnimationSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\SkeletonSelector.xaml.cs">
+      <DependentUpon>SkeletonSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\VisualizationHelperView.xaml.cs">
+      <DependentUpon>VisualizationHelperView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditorViews\EditorPanelView.xaml.cs">
       <DependentUpon>EditorPanelView.xaml</DependentUpon>
     </Compile>
@@ -166,6 +175,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationSplicerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\AnimationSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\SkeletonSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\VisualizationHelperView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

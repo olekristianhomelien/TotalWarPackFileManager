@@ -8,7 +8,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:collections="clr-namespace:System.Collections;assembly=mscorlib" 
              xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews" 
-             xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:animationsplicerviews="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -114,6 +114,103 @@
             </Setter>
         </Style>
 
+
+
+
+        <UserControl x:Key="SeletAnimationView">
+            <Expander DockPanel.Dock="Top">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontWeight="Bold" Margin="0,0,5,0">Source Animation:</TextBlock>
+                        <TextBlock>Somefolder/dog01/run_and_jmp</TextBlock>
+                    </StackPanel>
+                </Expander.Header>
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <TextBlock>Humanoid01</TextBlock>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Animation" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+
+                        <filterdialog:CollapsableFilterControl  
+                                SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SearchItems="{Binding CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
+                                OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                                IsManipulationEnabled="False"
+                                LabelTotalWidth="0"   
+                                DisplayMemberPath="FullPath"
+                                DockPanel.Dock="top"
+                                MaxHeight="400"
+                                ShowLabel="false"
+                                LabelText="Target Anim">
+                            <filterdialog:CollapsableFilterControl.InnerContent>
+                                <CheckBox 
+                                        IsChecked="{Binding OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
+                                        Content="Only list animations for current skeleton"/>
+                            </filterdialog:CollapsableFilterControl.InnerContent>
+                        </filterdialog:CollapsableFilterControl>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Frame types to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <ComboBox>
+                            <ComboBoxItem IsSelected="True">Both</ComboBoxItem>
+                            <ComboBoxItem>Static</ComboBoxItem>
+                            <ComboBoxItem>Dynamic</ComboBoxItem>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Tramsforms to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <ComboBox>
+                            <ComboBoxItem IsSelected="True">Both</ComboBoxItem>
+                            <ComboBoxItem>Rotation</ComboBoxItem>
+                            <ComboBoxItem>Translation</ComboBoxItem>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Speed multiplier" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <ComboBox>
+                            <ComboBoxItem>0.5x</ComboBoxItem>
+                            <ComboBoxItem IsSelected="True">1.0x</ComboBoxItem>
+                            <ComboBoxItem>1.5x</ComboBoxItem>
+                            <ComboBoxItem>2.0x</ComboBoxItem>
+                            <ComboBoxItem>2.5x</ComboBoxItem>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Match method" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <ComboBox>
+                            <ComboBoxItem IsSelected="True">Time Fit</ComboBoxItem>
+                            <ComboBoxItem IsSelected="True">Hold last frame</ComboBoxItem>
+                        </ComboBox>
+                    </DockPanel>
+
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Merge method" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <ComboBox>
+                            <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
+                        </ComboBox>
+                    </DockPanel>
+                </DockPanel>
+            </Expander>
+        </UserControl>
+
+
+      
+
+
     </UserControl.Resources>
 
 
@@ -127,136 +224,53 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
             
-            
-   
-        
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <TextBlock>Target Skeleton -></TextBlock>
-            <TextBlock>Humanoid01</TextBlock>
-        </StackPanel>
+            <animationsplicerviews:AnimationSelector 
+                Grid.Row="0"
+                DataContext="{Binding TargetAnimation, UpdateSourceTrigger=PropertyChanged}"/>
 
+            <animationsplicerviews:SkeletonSelector  
+                Grid.Row="1"
+                DataContext="{Binding ExternalSkeleton, UpdateSourceTrigger=PropertyChanged}"/>
 
-        <!-- Target animation-->
-        <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding TargetAnimation.SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding TargetAnimation.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding TargetAnimation.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
-                IsManipulationEnabled="False"
-                LabelTotalWidth="104"   
-                DisplayMemberPath="FullPath"
-                DockPanel.Dock="top"
-                MaxHeight="400"
-                LabelText="Target Anim">
-            <filterdialog:CollapsableFilterControl.InnerContent>
-                <CheckBox 
-                        IsChecked="{Binding TargetAnimation.OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
-                        Content="Only list animations for current skeleton"/>
-            </filterdialog:CollapsableFilterControl.InnerContent>
-        </filterdialog:CollapsableFilterControl>
+            <animationsplicerviews:AnimationSelector  
+                Grid.Row="2"
+                DataContext="{Binding ExternalAnimation, UpdateSourceTrigger=PropertyChanged}"/>
 
-
-        <!-- External Skeleton -->
-        <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding ExternalSkeleton.SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding ExternalSkeleton.SkeletonList, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding ExternalSkeleton.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
-                IsManipulationEnabled="False"
-                LabelTotalWidth="104"   
-                DisplayMemberPath="FullPath"
-                DockPanel.Dock="top"
-                MaxHeight="400"
-                LabelText="External Skeleton">
-        </filterdialog:CollapsableFilterControl>
-
-        <!-- External animation -->
-        <filterdialog:CollapsableFilterControl  
-                SelectedItem="{Binding ExternalAnimation.SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                SearchItems="{Binding ExternalAnimation.CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
-                OnSearch="{Binding ExternalAnimation.FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
-                IsManipulationEnabled="False"
-                LabelTotalWidth="104"   
-                DisplayMemberPath="FullPath"
-                DockPanel.Dock="top"
-                MaxHeight="400"
-                LabelText="External Anim">
-            <filterdialog:CollapsableFilterControl.InnerContent>
-                <CheckBox 
-                        IsChecked="{Binding ExternalAnimation.OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
-                        Content="Only list animations for current skeleton"/>
-            </filterdialog:CollapsableFilterControl.InnerContent>
-        </filterdialog:CollapsableFilterControl>
-
-
-            <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="Scale animation" Width="105" DockPanel.Dock="Left" Height="20"/>
-                <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
-            </DockPanel>
-            
-            <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="Copy only animation" Width="105" DockPanel.Dock="Left" Height="20"/>
-                <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                <CheckBox DockPanel.Dock="Right" VerticalContentAlignment="Center"></CheckBox>
-            </DockPanel>
-
-
-            <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="Merge type" Width="105" DockPanel.Dock="Left"/>
+            <DockPanel Grid.Row="3">
+                <TextBlock Text="Main animation" Width="110" DockPanel.Dock="Left"/>
                 <TextBlock Text=" : " DockPanel.Dock="Left"/>
                 <ComboBox DockPanel.Dock="Right" >
-                    <ComboBoxItem IsSelected="True">Replace</ComboBoxItem>
-                    <ComboBoxItem>Loop</ComboBoxItem>
-                    <ComboBoxItem>Time scale</ComboBoxItem>
+                    <ComboBoxItem IsSelected="True">Source</ComboBoxItem>
+                    <ComboBoxItem>Other</ComboBoxItem>
                 </ComboBox>
             </DockPanel>
 
 
-            <DockPanel DockPanel.Dock="Top">
-                <TextBlock Text="External skeleton " Width="105" DockPanel.Dock="Left" VerticalAlignment="Top" Height="20" />
-                <TextBlock Text=" : " DockPanel.Dock="Left"/>
+            <animationsplicerviews:VisualizationHelperView Grid.Row="4"/>
 
-                <Expander DockPanel.Dock="Left">
-                    <Expander.Header>
-                        <StackPanel Orientation="Horizontal" >
-                            <CheckBox IsChecked="{Binding UseAnimation, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                    </Expander.Header>
-
-
-                    <Grid DockPanel.Dock="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="300"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Offset"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
-                        <mathviews:Vector3View 
-                            Grid.Row="0" Grid.Column="3"  VerticalContentAlignment="Center"
-                            Vector3="{Binding ExternalSkeletonSettings.SkeletonOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                            FieldWidth="60"
-                            NumbersMaxLength="80" />
-
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Draw line"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
-                        <CheckBox  Grid.Row="1" Grid.Column="2" />
-                    </Grid>
-                </Expander>
-
-            </DockPanel>
-
-            <Button DockPanel.Dock="Top" Command="{Binding SaveAnimationCommand}">Save animation</Button>
-            <Button DockPanel.Dock="Top" Command="{Binding LoadTestDataCommand}">Load Test Data</Button>
-            <Button DockPanel.Dock="Top" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
-        </DockPanel>
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Command="{Binding SaveAnimationCommand}">Save animation</Button>
+                <Button Grid.Column="1" Command="{Binding LoadTestDataCommand}">Load Test Data</Button>
+                <Button Grid.Column="2" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
+                <Button Grid.Column="3" Command="{Binding ResetCommand}">Reset</Button>
+            </Grid>
+        </Grid>
 
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>

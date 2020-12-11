@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.dds</SourceFile>
-  <SourceTime>2020-12-03T14:24:28.3772709+01:00</SourceTime>
+  <SourceFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.DDS</SourceFile>
+  <SourceTime>2020-12-09T08:50:15.7576255+01:00</SourceTime>
   <DestFile>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/bin/Windows/Textures/Phazer/Brdf_rgba32f_raw.xnb</DestFile>
-  <DestTime>2020-12-06T13:02:34.1195792+01:00</DestTime>
+  <DestTime>2020-12-09T11:53:37.7590316+01:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2020-08-10T16:17:54+02:00</ImporterTime>
   <Processor>PassThroughProcessor</Processor>

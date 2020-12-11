@@ -125,8 +125,8 @@ namespace WpfTest.Scenes
             _skyBox = new Skybox("textures\\phazer\\rad_rustig_rgba32f_raw", _resourceLibary.XnaContentManager);
             
 
-            pbrDiffuse = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\irr_rustig_rgba32f_raw");
-            pbrSpecular = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rad_rustig_rgba32f_raw");
+            pbrDiffuse = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_DiffuseHDR");
+            pbrSpecular = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_SpecularHDR");
 
             //pbrDiffuse = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\irr_rustig_BGR8");
             //pbrSpecular = _resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rad_rustig_BGR8");

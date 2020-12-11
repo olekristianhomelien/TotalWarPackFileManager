@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog"
+             xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog" xmlns:common="clr-namespace:CommonDialogs.Common"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="self">
+    <UserControl.Resources>
+        <common:BoolToVisibilityConverter x:Key="BoolToHiddenConverter" TrueValue="Visible" FalseValue="Collapsed" />
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -20,8 +24,12 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  Content="{Binding LabelText, ElementName=self}" />
-        <Label Grid.Row="0" Grid.Column="1">:</Label>
+        <Label  Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  
+                Content="{Binding LabelText, ElementName=self}"
+                Visibility="{Binding ShowLabel,ElementName=self, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource BoolToHiddenConverter}}"/>
+               
+        <Label Grid.Row="0" Grid.Column="1" Content=":"
+                 Visibility="{Binding ShowLabel, ElementName=self, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource BoolToHiddenConverter}}"/>
 
         <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName" VerticalContentAlignment="Center" IsReadOnly="True"/>
         <Button Grid.Row="0" Grid.Column="3" x:Name="BrowseButton" DockPanel.Dock="Right" Width="70">Browse</Button>
