@@ -78,7 +78,11 @@ namespace WpfTest.Scenes
             TextureToTextureRenderer = new TextureToTextureRenderer(GraphicsDevice, _spriteBatch, _resourceLibary);
 
             On3dWorldReady?.Invoke(GraphicsDevice);
+
+            _grid = new LineRenderItem(new LineGrid(), _resourceLibary.GetEffect(ShaderTypes.Line));
         }
+
+        LineRenderItem _grid;
 
 
         protected override void Dispose(bool disposing)
@@ -142,6 +146,10 @@ namespace WpfTest.Scenes
                 EnvRotate = envRotate
 
             };
+
+
+
+            _grid.Draw(GraphicsDevice, Matrix.Identity, commonShaderParameters);
 
             if (SceneGraphRootNode != null)
             {
@@ -248,16 +256,16 @@ namespace WpfTest.Scenes
         public int AlphaMode { get; set; } = 0;
         public Dictionary<TexureType, Texture2D> Textures { get; set; } = new Dictionary<TexureType, Texture2D>();
 
-        private TextureCube pbrDiffuse;
-        private TextureCube pbrSpecular;
-        private Texture2D BRDF_LUT;
+        private TextureCube m_pbrDiffuse;
+        private TextureCube m_pbrSpecular;
+        private Texture2D m_BRDF_LUT;
 
 
         public TextureMeshRenderItem(MeshModel model, Effect shader, ResourceLibary resourceLibary) : base(model, shader)
         {
-            pbrDiffuse = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_DiffuseHDR");
-            pbrSpecular = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_SpecularHDR");
-            BRDF_LUT = resourceLibary.XnaContentManager.Load<Texture2D>("textures\\phazer\\Brdf_rgba32f_raw");
+            m_pbrDiffuse = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_DiffuseHDR");
+            m_pbrSpecular = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_SpecularHDR");
+            m_BRDF_LUT = resourceLibary.XnaContentManager.Load<Texture2D>("textures\\phazer\\Brdf_rgba32f_raw");
         }
 
         public override void ApplyCustomShaderParams()
@@ -272,16 +280,16 @@ namespace WpfTest.Scenes
             _shader.Parameters["NormalTexture"].SetValue(normalTexture);
             _shader.Parameters["GlossTexture"].SetValue(glossTexture);
 
-            _shader.Parameters["tex_cube_specular"].SetValue(pbrDiffuse);
-            _shader.Parameters["specularBRDF_LUT"].SetValue(BRDF_LUT);
-            _shader.Parameters["tex_cube_diffuse"].SetValue(pbrSpecular);
+            _shader.Parameters["tex_cube_specular"].SetValue(m_pbrDiffuse);
+            _shader.Parameters["specularBRDF_LUT"].SetValue(m_BRDF_LUT);
+            _shader.Parameters["tex_cube_diffuse"].SetValue(m_pbrSpecular);
 
             _shader.Parameters["UseAlpha"].SetValue(AlphaMode == 1);
 
             var animatedModel = _model as Rmv2RenderModel;
             if (animatedModel != null)
             {
-                animatedModel._animationPlayer
+                animatedModel.UpdateVertexBuffer();
             }
         }
 

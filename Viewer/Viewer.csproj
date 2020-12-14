@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation\AnimationSampler.cs" />
+    <Compile Include="GraphicModels\LineGrid.cs" />
     <Compile Include="New\AnimatedModelShader.cs" />
     <Compile Include="Animation\AnimationClip.cs" />
     <Compile Include="Animation\AnimationPlayer.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="Scene\Camera.cs" />
     <Compile Include="Scene\CubemapGeneratorHelper.cs" />
     <Compile Include="Scene\Scene3d.cs" />
-    <Compile Include="Scene\ShaderConfiguration.cs" />
     <Compile Include="Scene\SceneView.xaml.cs">
       <DependentUpon>SceneView.xaml</DependentUpon>
     </Compile>

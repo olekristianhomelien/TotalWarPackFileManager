@@ -87,7 +87,6 @@ struct VertexInputType
 	float3 normal : NORMAL0;
 	float2 tex : TEXCOORD0;
 
-
 	float3 tangent : TANGENT;
 	float3 binormal : BINORMAL;
 };

@@ -39,11 +39,10 @@ namespace Viewer.GraphicModels
 
         public override void Render(GraphicsDevice device)
         {
-            UpdateVertexBuffer();
             base.Render(device);
         }
 
-        private void UpdateVertexBuffer()
+        public void UpdateVertexBuffer()
         {
             for (int index = 0; index < _model.VertexArray.Length; index++)
             {
