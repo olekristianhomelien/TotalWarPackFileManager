@@ -269,21 +269,21 @@ namespace Viewer.Scene
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                Zoom += moseSpeed * 0.1f;
+                Zoom += moseSpeed * 0.5f;
             }
 
             if (keyboardState.IsKeyDown(Keys.S))
             {
-                Zoom -= moseSpeed * 0.1f;
+                Zoom -= moseSpeed * 0.5f;
             }
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                MoveCameraUp(moseSpeed * 0.1f);
+                MoveCameraUp(moseSpeed * 0.5f);
             }
 
             if (keyboardState.IsKeyDown(Keys.E))
             {
-                MoveCameraUp(-moseSpeed * 0.1f);
+                MoveCameraUp(-moseSpeed * 0.5f);
             }
         }
 

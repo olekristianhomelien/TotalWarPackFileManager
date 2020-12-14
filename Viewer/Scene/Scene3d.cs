@@ -254,6 +254,7 @@ namespace WpfTest.Scenes
     public class TextureMeshRenderItem : MeshRenderItem
     {
         public int AlphaMode { get; set; } = 0;
+
         public Dictionary<TexureType, Texture2D> Textures { get; set; } = new Dictionary<TexureType, Texture2D>();
 
         private TextureCube m_pbrDiffuse;
@@ -285,14 +286,39 @@ namespace WpfTest.Scenes
             _shader.Parameters["tex_cube_diffuse"].SetValue(m_pbrSpecular);
 
             _shader.Parameters["UseAlpha"].SetValue(AlphaMode == 1);
+            _shader.Parameters["doAnimation"].SetValue(true);
+            
+            
 
+
+            Matrix[] data = new Matrix[256];
+            for (int i = 0; i < 256; i++)
+                data[i] = Matrix.Identity;
+           
             var animatedModel = _model as Rmv2RenderModel;
             if (animatedModel != null)
             {
-                animatedModel.UpdateVertexBuffer();
+                _shader.Parameters["WeightCount"].SetValue(animatedModel.WeightCount);
+
+                var player = animatedModel._animationPlayer;
+                if (player != null)
+                {
+                    var frame = player.GetCurrentFrame();
+                    if (frame != null)
+                    {
+                        for (int i = 0; i < frame.BoneTransforms.Count(); i++)
+                            data[i] = frame.BoneTransforms[i].Transform;
+                    }
+                }
+
+               // animatedModel.UpdateVertexBuffer();
             }
+
+           
+            _shader.Parameters["tranforms"].SetValue(data);
         }
 
+        bool isSet = false;
         public override void Dispose()
         {
             base.Dispose();

@@ -11,7 +11,8 @@ namespace Viewer.GraphicModels
     {
         Rmv2LodModel _model;
         VertexPositionNormalTextureCustom[] _bufferArray;
-        
+        public int WeightCount { get; set; } = 0;
+
         public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2LodModel lodModel)
         {
             _animationPlayer = animationPlayer;
@@ -21,7 +22,61 @@ namespace Viewer.GraphicModels
             for (int i = 0; i < _model.VertexArray.Length; i++)
             {
                 var vertex = _model.VertexArray[i];
+                _bufferArray[i].Position = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
+
+                _bufferArray[i].Normal = new Vector3(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
+                _bufferArray[i].BiNormal = new Vector3(vertex.BiNormal.X, vertex.BiNormal.Y, vertex.BiNormal.Z);
+                _bufferArray[i].Tangent = new Vector3(vertex.Tanget.X, vertex.Tanget.Y, vertex.Tanget.Z);
                 _bufferArray[i].TextureCoordinate = new Vector2(vertex.Uv0, vertex.Uv1);
+
+                _bufferArray[i].BlendIndices = Vector4.Zero;
+                _bufferArray[i].BlendWeights = Vector4.Zero;
+                
+
+                if (_model.VertexFormat == VertexFormat.Cinematic)
+                {
+                    int b0 = vertex.BoneInfos[0].BoneIndex;
+                    int b1 = vertex.BoneInfos[1].BoneIndex;
+                    int b2 = vertex.BoneInfos[2].BoneIndex;
+                    int b3 = vertex.BoneInfos[3].BoneIndex;
+
+                    _bufferArray[i].BlendIndices.X = b0;
+                    _bufferArray[i].BlendIndices.Y = b1;
+                    _bufferArray[i].BlendIndices.Z = b2;
+                    _bufferArray[i].BlendIndices.W = b3;
+
+                    float w1 = vertex.BoneInfos[0].BoneWeight;
+                    float w2 = vertex.BoneInfos[1].BoneWeight;
+                    float w3 = vertex.BoneInfos[2].BoneWeight;
+                    float w4 = vertex.BoneInfos[3].BoneWeight;
+
+                    _bufferArray[i].BlendWeights.X = w1;
+                    _bufferArray[i].BlendWeights.Y = w2;
+                    _bufferArray[i].BlendWeights.Z = w3;
+                    _bufferArray[i].BlendWeights.W = w4;
+
+                    WeightCount = 4;
+                }
+                if (_model.VertexFormat == VertexFormat.Weighted)
+                {
+                    int b0 = vertex.BoneInfos[0].BoneIndex;
+
+
+                    _bufferArray[i].BlendIndices.X = b0;
+
+
+                    float w1 = vertex.BoneInfos[0].BoneWeight;
+
+
+                    _bufferArray[i].BlendWeights.X = w1;
+
+
+                    WeightCount = 1;
+                }
+                else
+                { }
+
+                   
             }
 
             Pivot = new Vector3(_model.Transformation.Pivot.X, _model.Transformation.Pivot.Y, _model.Transformation.Pivot.Z);
@@ -39,6 +94,7 @@ namespace Viewer.GraphicModels
 
         public override void Render(GraphicsDevice device)
         {
+            //UpdateVertexBuffer();
             base.Render(device);
         }
 
