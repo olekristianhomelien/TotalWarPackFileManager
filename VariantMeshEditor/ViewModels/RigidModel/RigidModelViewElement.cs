@@ -41,7 +41,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
                     Rmv2RenderModel meshModel = new Rmv2RenderModel();
                     meshModel.Create(parentAnimationNode?.AnimationPlayer, virtualWorld.GraphicsDevice, lodModel);
 
-                    TextureMeshRenderItem meshRenderItem = new TextureMeshRenderItem(meshModel, resourceLibary.GetEffect(ShaderTypes.Phazer))
+                    TextureMeshRenderItem meshRenderItem = new TextureMeshRenderItem(meshModel, resourceLibary.GetEffect(ShaderTypes.Phazer), resourceLibary)
                     {
                         Visible = true,
                         Textures = meshModel.ResolveTextures(resourceLibary, virtualWorld.GraphicsDevice)

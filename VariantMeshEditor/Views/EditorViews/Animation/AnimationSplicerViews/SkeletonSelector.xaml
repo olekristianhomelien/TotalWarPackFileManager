@@ -35,7 +35,7 @@
                 </DockPanel>
 
                 <DockPanel  Grid.Row="1">
-                    <TextBlock Text="Scale skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
+                    <TextBlock Text="Keep skeleton size" Width="110" DockPanel.Dock="Left" Height="20"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <CheckBox VerticalContentAlignment="Center"/>
                 </DockPanel>

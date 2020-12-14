@@ -86,25 +86,6 @@ namespace Viewer.Scene
                         texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize);
                         return texture;
                     }
-                    else if (image as Pfim.dds.Bc6hDds != null)
-                    {
-                        var d = image as Pfim.dds.Bc6hDds;
-                       // d.Decompress();
-
-
-
-
-                        byte[] newData;
-
-                      
-                        var texture = new Texture2D(device, image.Width, image.Height, false, SurfaceFormat.Vector4); // ColorSRgb
-
-
-                        texture.SetData(image.Data, 0, (int)image.Header.PitchOrLinearSize * 4);
-
-                        SaveTexture(texture, @"c:\temp\TestImage0.png");
-                        return texture;
-                    }
                     else
                     {
                         throw new Exception("Unknow texture format: " + image.ToString());
@@ -131,7 +112,7 @@ namespace Viewer.Scene
         {
             if (_shaders.ContainsKey(type))
                 return _shaders[type];
-            return null; 
+            throw new Exception($"Shader not found: ShaderTypes::{type}");
         }
 
         public List<PackFile> PackfileContent { get { return _loadedContent; } }

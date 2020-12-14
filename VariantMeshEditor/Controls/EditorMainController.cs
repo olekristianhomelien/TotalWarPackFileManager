@@ -32,7 +32,8 @@ namespace VariantMeshEditor.Controls
             RootViewModel = rootViewModel;
 
             _resourceLibary = new ResourceLibary(packFile);
-            _scene3d.LoadScene += Create3dWorld;
+            _scene3d.SetResourceLibary(_resourceLibary);
+            _scene3d.On3dWorldReady += Create3dWorld;
 
 
 
@@ -82,7 +83,7 @@ namespace VariantMeshEditor.Controls
 
         void Create3dWorld(GraphicsDevice device)
         {
-            _scene3d.SetResourceLibary(_resourceLibary);
+           
             _is3dWorldCreated = true;
             LoadModelAfterWorldCreated();
         }
@@ -144,10 +145,10 @@ namespace VariantMeshEditor.Controls
         }
 
         void PaladinAndDragon(RootElement rootNode,
-            bool loadPaladin = true,
+            bool loadPaladin = false,
             bool loadDragon = false, 
             bool loadGoblin = false,
-            bool loadArkan = false)
+            bool loadArkan = true)
         {
             if (loadPaladin)
             {
@@ -221,14 +222,19 @@ namespace VariantMeshEditor.Controls
             if (loadArkan)
             {
 
-                var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-               @"variantmeshes\variantmeshdefinitions\tmb_ch_arkhan.variantmeshdefinition");
+                var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\variantmeshdefinitions\tmb_ch_arkhan.variantmeshdefinition");
                 var mesh = rootNode.LoadModel(file, _resourceLibary, _scene3d);
 
 
 
                 var animNode = SceneElementHelper.GetFirstChild<AnimationElement>(mesh);
                 var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(mesh);
+
+                /*
+                 animations\skeletons\humanoid01b.anim
+
+animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim
+                 */
 
                 //var mainAnim = Filetypes.ByteParsing.ByteChunk.FromFile(@"C:\temp\Animation\floatyBoi.anim");
                 //var inimFile = AnimationFile.Create(mainAnim);

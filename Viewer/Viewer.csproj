@@ -67,6 +67,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scene\ResourceLibary.cs" />
     <Compile Include="Scene\TextureToTextureRenderer.cs" />
+    <Compile Include="ScreenComponents\ControlsComponent.cs" />
+    <Compile Include="ScreenComponents\FpsComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ImageProcessor">

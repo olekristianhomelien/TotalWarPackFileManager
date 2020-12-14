@@ -1,46 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Profile>Reach</Profile>
+  <Profile>HiDef</Profile>
   <Platform>Windows</Platform>
-  <Config />
+  <Config>Debug</Config>
   <SourceFiles>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Phazer/Main.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/Brdf_rgba32f_raw.DDS</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rustig_koppie_DiffuseHDR.DDS</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rustig_koppie_SpecularHDR.DDS</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/NewStuff/AnimatedModelShader.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/cube.FBX</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/Helicopter.fbx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/Helicopter_a.fbx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/HelicopterTexture.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/DebugModels/UntexturedSphere.FBX</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/fresnel2.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_BGR8.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/irr_rustig_rgba32f_raw.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rad_rustig_BGR8.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Phazer/rad_rustig_rgba32f_raw.dds</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/LineShader.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Skybox.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/SkyboxShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TestShader.fx</File>
     <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/TexturePreview.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/rad_rustig.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Ambient.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/PaperMill_E_3k.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/skyboxCubemap.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/NarrowPath_Env.hdr</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/SkyBox.dds</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/File.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Diffuse.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/NormalMap.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Reflection.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Specular.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Textured.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Shaders/Transparency.fx</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/ColorMap.jpg</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/HelicopterNormalMap.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/HelicopterTexture.png</File>
-    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Textures/Sunset.dds</File>
+    <File>C:/Users/ole_k/source/repos/TotalWarPackFileManager/Viewer/Content/Fonts/DefaultFont.spritefont</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

@@ -40,6 +40,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         ObservableCollection<MappableSkeletonBone> _targetSkeletonBones;
         public ObservableCollection<MappableSkeletonBone> TargetSkeletonBones { get { return _targetSkeletonBones; } set{ SetAndNotify(ref _targetSkeletonBones, value);}}
 
+        MainAnimation _selectedMainAnimation = MainAnimation.Other;
+        public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
 
         public ICommand ForceComputeCommand { get; set; }
         public ICommand LoadTestDataCommand { get; set; }
@@ -61,7 +63,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             else
                 ExternalSkeletonSettings.SetSelectedBone(-1);
         }
-
 
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer)
         {
@@ -96,11 +97,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         void LoadTestData()
         {
             // Temp - Populate with debug data. 
-           TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-           ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-           ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
-            return;
-            TargetAnimation.SelectedItem =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
+           //TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+           //ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+           //ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+         
+           // TargetAnimation.SelectedItem =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
             ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
             ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
         }
@@ -143,12 +144,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 AnimationBuilderService.AnimationBuilderSettings settings = new AnimationBuilderService.AnimationBuilderSettings()
                 {
-                    ExternalAnimationFile = ExternalAnimation.SelectedItem,
-                    ExternalSkeletonFile = ExternalSkeleton.SelectedItem,
+                    OtherAnimationFile = ExternalAnimation.SelectedItem,
+                    OtherSkeletonFile = ExternalSkeleton.SelectedItem,
 
-                    TargetSkeletonBones = TargetSkeletonBones,
+                    BoneSettings = TargetSkeletonBones,
                     SourceSkeleton = _targetSkeletonNode.Skeleton,
-                    SourceAnimationFile = TargetAnimation.SelectedItem
+                    SourceAnimationFile = TargetAnimation.SelectedItem,
+
+                    SelectedMainAnimation = SelectedMainAnimation
                 };
 
                 AnimationBuilderService builder = new AnimationBuilderService();

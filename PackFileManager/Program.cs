@@ -34,7 +34,7 @@ namespace PackFileManager
             }
             catch (Exception exception)
             {
-                logger.Here().Fatal(exception.Message);
+                logger.Here().Fatal(exception.ToString());
                 MessageBox.Show(exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
             }
 

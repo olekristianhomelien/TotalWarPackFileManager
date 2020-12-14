@@ -17,14 +17,14 @@ using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
-namespace VariantMeshEditor.Views.EditorViews.Animation
+namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews
 {
     /// <summary>
     /// Interaction logic for AnimationSplicerSelectedBoneEditor.xaml
     /// </summary>
-    public partial class AnimationSplicerSelectedBoneEditor : UserControl
+    public partial class SelectedBoneEditor : UserControl
     {
-        public AnimationSplicerSelectedBoneEditor()
+        public SelectedBoneEditor()
         {
             InitializeComponent();
         }
@@ -36,7 +36,7 @@ namespace VariantMeshEditor.Views.EditorViews.Animation
         }
 
         public static readonly DependencyProperty TargetBoneListProperty =
-            DependencyProperty.Register("TargetBoneList", typeof(ObservableCollection<SkeletonBoneNode>), typeof(AnimationSplicerSelectedBoneEditor), new PropertyMetadata(null));
+            DependencyProperty.Register("TargetBoneList", typeof(ObservableCollection<SkeletonBoneNode>), typeof(SelectedBoneEditor), new PropertyMetadata(null));
 
 
         public string TargetBoneListDisplayName
@@ -46,7 +46,7 @@ namespace VariantMeshEditor.Views.EditorViews.Animation
         }
 
         public static readonly DependencyProperty TargetBoneListDisplayNameProperty =
-            DependencyProperty.Register("TargetBoneListDisplayName", typeof(string), typeof(AnimationSplicerSelectedBoneEditor), new PropertyMetadata(null));
+            DependencyProperty.Register("TargetBoneListDisplayName", typeof(string), typeof(SelectedBoneEditor), new PropertyMetadata(null));
 
 
 
@@ -57,6 +57,6 @@ namespace VariantMeshEditor.Views.EditorViews.Animation
         }
 
         public static readonly DependencyProperty SelectedBoneProperty =
-            DependencyProperty.Register("SelectedBone", typeof(MappableSkeletonBone), typeof(AnimationSplicerSelectedBoneEditor), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedBone", typeof(MappableSkeletonBone), typeof(SelectedBoneEditor), new PropertyMetadata(null));
     }
 }

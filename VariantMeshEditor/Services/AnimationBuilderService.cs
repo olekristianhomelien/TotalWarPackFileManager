@@ -11,7 +11,6 @@ using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
 using Viewer.Animation;
-using static Filetypes.RigidModel.AnimationFile;
 
 namespace VariantMeshEditor.Services
 {
@@ -40,56 +39,59 @@ namespace VariantMeshEditor.Services
         Replace
     }
 
+    public enum MainAnimation
+    { 
+        Source,
+        Other
+    }
+
     public class AnimationBuilderService
     {
-       
-
-
-
         public class AnimationBuilderSettings
         {
 
             public PackedFile SourceAnimationFile { get; set; }   // ExternalSkeleton.SelectedItem
-            public Viewer.Animation.Skeleton SourceSkeleton { get; set; }   //_targetSkeletonNode.Skeleton
+            public Skeleton SourceSkeleton { get; set; }   //_targetSkeletonNode.Skeleton
 
-            public PackedFile ExternalSkeletonFile { get; set; }   // ExternalSkeleton.SelectedItem
+            public PackedFile OtherSkeletonFile { get; set; }   // ExternalSkeleton.SelectedItem
 
-            public PackedFile ExternalAnimationFile { get; set; }   // ExternalAnimation.SelectedItem
+            public PackedFile OtherAnimationFile { get; set; }   // ExternalAnimation.SelectedItem
 
-            public IEnumerable<MappableSkeletonBone> TargetSkeletonBones { get; set; }
+            public IEnumerable<MappableSkeletonBone> BoneSettings { get; set; }
+
+            public MainAnimation SelectedMainAnimation { get; set; }
 
         }
 
         bool Validate(AnimationBuilderSettings settings)
         {
-            if (settings.SourceAnimationFile == null)
-                return false;
-
             if (settings.SourceSkeleton == null)
                 return false;
 
-            if (settings.ExternalSkeletonFile == null)
+            if (settings.OtherSkeletonFile == null)
                 return false;
 
-            if (settings.ExternalAnimationFile == null)
+            if (settings.OtherAnimationFile == null)
                 return false;
 
-            if (settings.TargetSkeletonBones == null || settings.TargetSkeletonBones.Count() == 0)
+            if (settings.BoneSettings == null || settings.BoneSettings.Count() == 0)
                 return false;
             return true;
         }
 
         AnimationClip CreateAnimation(PackedFile file)
         {
+            if (file == null)
+                return null;
             var anim = AnimationFile.Create(new ByteChunk(file.Data));
             var animClip = new AnimationClip(anim);
             return animClip;
         }
 
-        Viewer.Animation.Skeleton CreateSkeleton(PackedFile file)
+        Skeleton CreateSkeleton(PackedFile file)
         {
             var skeletonFile = AnimationFile.Create(new ByteChunk(file.Data));
-            Viewer.Animation.Skeleton skeleton = new Viewer.Animation.Skeleton(skeletonFile);
+            var skeleton = new Skeleton(skeletonFile);
             return skeleton;
         }
 
@@ -100,12 +102,14 @@ namespace VariantMeshEditor.Services
             if (Validate(settings) == false)
                 return null;
 
-            var currentsSkeltonBoneCount = settings.SourceSkeleton.BoneCount;
-            Viewer.Animation.Skeleton externalSkeleton = CreateSkeleton(settings.ExternalSkeletonFile);
-            var externalAnimationClip = CreateAnimation(settings.ExternalAnimationFile);
-
-
             var sourceAnimationClip = CreateAnimation(settings.SourceAnimationFile);
+            var sourceSkeleton = settings.SourceSkeleton;
+            var currentsSkeltonBoneCount = sourceSkeleton.BoneCount;
+            var otherSkeleton = CreateSkeleton(settings.OtherSkeletonFile);
+            var otherAnimationClip = CreateAnimation(settings.OtherAnimationFile);
+
+
+            int frameCount = GetAnimationFrameCount(sourceAnimationClip, otherAnimationClip, settings.SelectedMainAnimation);
 
             var outputAnimationFile = new AnimationClip();
             for (int i = 0; i < currentsSkeltonBoneCount; i++)
@@ -114,7 +118,7 @@ namespace VariantMeshEditor.Services
                 outputAnimationFile.TranslationMappings.Add(new AnimationFile.AnimationBoneMapping(i));
             }
 
-            for (int frameIndex = 0; frameIndex < externalAnimationClip.DynamicFrames.Count(); frameIndex++)
+            for (int frameIndex = 0; frameIndex < otherAnimationClip.DynamicFrames.Count(); frameIndex++)
             {
                 var currentOutputFrame = new AnimationClip.KeyFrame();
                 outputAnimationFile.DynamicFrames.Add(currentOutputFrame);
@@ -123,16 +127,21 @@ namespace VariantMeshEditor.Services
                 {
                     var rotation = Quaternion.Identity;
                     var position = Vector3.Zero;
-                    var boneToGetAnimDataFrom = GetMappedBone(settings.TargetSkeletonBones, boneIndex);
+                    var boneToGetAnimDataFrom = GetMappedBone(settings.BoneSettings, boneIndex);
 
                     if (HasValidMapping(boneToGetAnimDataFrom))
                     {
-                        ComputeAnimationContribution(frameIndex, externalSkeleton, externalAnimationClip, boneToGetAnimDataFrom.MappedBone.BoneIndex, ref rotation, ref position);
-                      
+                        var mappedBondeIndex = boneToGetAnimDataFrom.MappedBone.BoneIndex;
+                        ComputeSkeletonContribution(otherSkeleton, mappedBondeIndex, ref rotation, ref position);
+                        ComputeAnimationContribution(frameIndex, otherSkeleton, otherAnimationClip, mappedBondeIndex, ref rotation, ref position);
                     }
                     else
                     {
-                        ComputeAnimationContribution(frameIndex, settings.SourceSkeleton, sourceAnimationClip, boneIndex, ref rotation, ref position);
+                        ComputeSkeletonContribution(sourceSkeleton, boneIndex, ref rotation, ref position);
+
+                        // Source animation is not mandatary
+                        if (sourceAnimationClip != null)
+                            ComputeAnimationContribution(frameIndex, sourceSkeleton, sourceAnimationClip, boneIndex, ref rotation, ref position);
                     }
 
                     ComputeMappedBoneAttributeContributions(boneToGetAnimDataFrom, ref rotation, ref position);
@@ -155,10 +164,19 @@ namespace VariantMeshEditor.Services
             out_position = skeleton.Translation[boneIndex];
 
             // Static
-            ProcessFrame(animation.StaticFrame, boneIndex, animation.RotationMappings, animation.TranslationMappings, AnimationBoneMappingType.Static, ref out_rotation, ref out_position);
+            ProcessFrame(animation.StaticFrame, boneIndex, animation.RotationMappings, animation.TranslationMappings, 
+                AnimationFile.AnimationBoneMappingType.Static, ref out_rotation, ref out_position);
 
             // Dynamic
-            ProcessFrame(animation.DynamicFrames[safeFameIndex], boneIndex, animation.RotationMappings, animation.TranslationMappings, AnimationBoneMappingType.Dynamic, ref out_rotation, ref out_position);
+            ProcessFrame(animation.DynamicFrames[safeFameIndex], boneIndex, animation.RotationMappings, animation.TranslationMappings,
+                AnimationFile.AnimationBoneMappingType.Dynamic, ref out_rotation, ref out_position);
+        }
+
+        void ComputeSkeletonContribution(Skeleton skeleton, int boneIndex, ref Quaternion out_rotation, ref Vector3 out_position)
+        {
+            // Copy the skeleton transform as default
+            out_rotation = skeleton.Rotation[boneIndex];
+            out_position = skeleton.Translation[boneIndex];
         }
 
         void ComputeMappedBoneAttributeContributions(MappableSkeletonBone bone, ref Quaternion out_rotation, ref Vector3 out_position)
@@ -170,7 +188,10 @@ namespace VariantMeshEditor.Services
             }
         }
 
-        void ProcessFrame(AnimationClip.KeyFrame frame, int boneIndex, List<AnimationBoneMapping> rotationMapping, List<AnimationBoneMapping> translationMapping, AnimationBoneMappingType mappingType, 
+        void ProcessFrame(AnimationClip.KeyFrame frame, int boneIndex, 
+            List<AnimationFile.AnimationBoneMapping> rotationMapping, 
+            List<AnimationFile.AnimationBoneMapping> translationMapping, 
+            AnimationFile.AnimationBoneMappingType mappingType, 
             ref Quaternion out_rotation, ref Vector3 out_position)
         {
             if (frame != null)
@@ -194,6 +215,23 @@ namespace VariantMeshEditor.Services
         bool HasValidMapping(MappableSkeletonBone bone)
         {
             return bone.MappedBone != null && bone.UseMapping && bone.MappedBone.BoneIndex != -1;
+        }
+
+        int GetAnimationFrameCount(AnimationClip source, AnimationClip other, MainAnimation mainAnimationSetting)
+        {
+            if (mainAnimationSetting == MainAnimation.Source)
+            {
+                if (source == null)
+                    throw new Exception("Source can not be the main animation if there is no animation selected for source");
+                return source.DynamicFrames.Count;
+            }
+
+            if (mainAnimationSetting == MainAnimation.Other)
+            {
+                return other.DynamicFrames.Count;
+            }
+
+            throw new Exception("Unsupported value for MainAnimation provided");
         }
 
         MappableSkeletonBone GetMappedBone(IEnumerable<MappableSkeletonBone> nodes, int boneIndex)

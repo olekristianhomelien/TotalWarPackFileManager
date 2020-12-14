@@ -1,11 +1,11 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin/$(Platform)
+/outputDir:../../PackFileManager/bin/Debug/Content
 /intermediateDir:obj/$(Platform)
 /platform:Windows
-/config:
-/profile:Reach
+/config:Debug
+/profile:HiDef
 /compress:False
 
 #-------------------------------- References --------------------------------#
@@ -100,6 +100,13 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:DebugModels/UntexturedSphere.FBX
+
+#begin Fonts/DefaultFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/DefaultFont.spritefont
 
 #begin Shaders/LineShader.fx
 /importer:EffectImporter

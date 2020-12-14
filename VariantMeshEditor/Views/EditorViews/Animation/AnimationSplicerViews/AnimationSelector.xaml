@@ -6,9 +6,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews" 
              xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" 
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:services="clr-namespace:VariantMeshEditor.Services"
-             mc:Ignorable="d" >
+             mc:Ignorable="d"  >
     <UserControl.Resources>
         
         <ObjectDataProvider x:Key="FrameTypeEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
@@ -43,7 +42,7 @@
             <Expander.Header>
                 <TextBlock VerticalAlignment="Bottom">
                     <Run FontSize="14" FontWeight="Bold" Text="{Binding HeaderText, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Run Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged, Mode=OneTime}"/>
+                    <Run Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
                 </TextBlock>
             </Expander.Header>
             
@@ -95,7 +94,7 @@
                 </DockPanel>
 
                 <DockPanel Grid.Row="3">
-                    <TextBlock Text="Tramsforms to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
+                    <TextBlock Text="Transforms to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <ComboBox
                         ItemsSource="{Binding Source={StaticResource TransformTypeEnums}}"

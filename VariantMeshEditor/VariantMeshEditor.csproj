@@ -94,8 +94,8 @@
     <Compile Include="Views\EditorViews\Animation\AnimationPlayerView.xaml.cs">
       <DependentUpon>AnimationPlayerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Animation\AnimationSplicerSelectedBoneEditor.xaml.cs">
-      <DependentUpon>AnimationSplicerSelectedBoneEditor.xaml</DependentUpon>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\SelectedBoneEditor.xaml.cs">
+      <DependentUpon>SelectedBoneEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerView.xaml.cs">
       <DependentUpon>AnimationSplicerView.xaml</DependentUpon>
@@ -170,7 +170,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\EditorViews\Animation\AnimationSplicerSelectedBoneEditor.xaml">
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\SelectedBoneEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,9 +17,8 @@ float3 cameraLookAt;
 
 float4x4  ViewInverse;    // Inverse view?
 
-float4x4  mRotEnv;
-float4x4 rot_x;
-float4x4 rot_y;
+float4x4  EnvMapTransform;
+bool UseAlpha = false;
 
 bool debug = true;
 float debugVal = 0;
@@ -117,28 +116,19 @@ float get_cube_env_scale_factor()
 
 float adjust_linear_smoothness(in const float linear_smoothness)
 {
-    //	return get_cubic_spline_adjusted_value(linear_smoothness, curve_y1_ctrl_pnt_env_smoothness, curve_y2_ctrl_pnt_env_smoothness, curve_y3_ctrl_pnt_env_smoothness);
     return linear_smoothness * linear_smoothness;
-}
-
-float3 texcoordEnvSwizzle(in float3 ref)
-{
-	//this should match the order of the basis
-	return float3(-ref.x, ref.z, -ref.y);
 }
 
 
 
 float3 get_environment_colour(in float3 direction, in float lod)
 {
-	return (tex_cube_specular.SampleLevel(SampleType, direction  /*texcoordEnvSwizzle(direction)*/, lod).rgb);
+	return (tex_cube_specular.SampleLevel(SampleType, direction , lod).rgb);
 }
 
 
 float3 sample_environment_specular(in float roughness_in, in float3 reflected_view_vec)
-{
-#if 1
-    //const float env_lod_pow = 1.8f;    
+{  
     const float env_lod_pow = 1.8f;
     const float env_map_lod_smoothness = adjust_linear_smoothness(1 - roughness_in);
     const float roughness = 1.0f - pow(env_map_lod_smoothness, env_lod_pow);
@@ -146,14 +136,7 @@ float3 sample_environment_specular(in float roughness_in, in float3 reflected_vi
     float texture_num_lods = 5;
     float env_map_lod = roughness * (texture_num_lods - 1);//<------- LOWER = more reflective
     float3 environment_colour = get_environment_colour(reflected_view_vec, env_map_lod);
-#else
-    const float roughness = roughness_in;
-    const float offset = 3;
-    float texture_num_lods = 9.0f; // - offset;
-    float env_map_lod = roughness * (texture_num_lods - 1);
-    env_map_lod += offset;
-    float3 environment_colour = get_environment_colour(reflected_view_vec, env_map_lod);
-#endif
+
 
     float3 result = environment_colour * get_cube_env_scale_factor();
 
@@ -173,15 +156,13 @@ PixelInputType main(in VertexInputType input) // main is the default function na
 	output.normal2 = input.normal;
 
 	output.position = input.position;
-	output.position = mul(output.position, rot_y);
-	output.position = mul(output.position, rot_x);
 	output.position = mul(output.position, World);
 
 	float4 _V2 = output.position;
 	float3 worldPosition = output.position.xyz;
 
 
-	output.normal2 = float4(mul(input.normal, (float3x3) mRotEnv), 0).xyz;
+	output.normal2 = float4(mul(input.normal, (float3x3) EnvMapTransform), 0).xyz;
 
 	output.position = mul(output.position, View);
 	output.position = mul(output.position, Projection);
@@ -194,21 +175,15 @@ PixelInputType main(in VertexInputType input) // main is the default function na
 	//-----------------------------------------------------------------------------
 	//          Normal
 	//-----------------------------------------------------------------------------                
-	output.normal = mul(output.normal, (float3x3) rot_y);
-	output.normal = normalize(output.normal);
 
-	output.normal = mul(output.normal, (float3x3) rot_x);
-	output.normal = normalize(output.normal);
+
 
 	output.normal = mul(output.normal, (float3x3) World);
 	output.normal = normalize(output.normal);
 
 
-	output.normal2 = mul(output.normal2, (float3x3) rot_y);
-	output.normal2 = normalize(output.normal2);
 
-	output.normal2 = mul(output.normal2, (float3x3) rot_x);
-	output.normal2 = normalize(output.normal2);
+
 
 	output.normal2 = mul(output.normal2, (float3x3) World);
 	output.normal2 = normalize(output.normal2);
@@ -217,11 +192,7 @@ PixelInputType main(in VertexInputType input) // main is the default function na
 	//-----------------------------------------------------------------------------
 	//          Tangent
 	//-----------------------------------------------------------------------------        
-	output.tangent = mul(output.tangent, (float3x3) rot_y);
-	output.tangent = normalize(output.tangent);
 
-	output.tangent = mul(output.tangent, (float3x3) rot_x);
-	output.tangent = normalize(output.tangent);
 
 	output.tangent = mul(output.tangent, (float3x3) World);
 	output.tangent = normalize(output.tangent);
@@ -229,11 +200,8 @@ PixelInputType main(in VertexInputType input) // main is the default function na
 	//-----------------------------------------------------------------------------
 	//          Binormal
 	//-----------------------------------------------------------------------------        
-	output.binormal = mul(output.binormal, (float3x3) rot_y);
-	output.binormal = normalize(output.binormal);
 
-	output.binormal = mul(output.binormal, (float3x3) rot_x);
-	output.binormal = normalize(output.binormal);
+
 
 	output.binormal = mul(output.binormal, (float3x3) World);
 	output.binormal = normalize(output.binormal);
@@ -499,11 +467,11 @@ float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV
     float3 N = normalize(bumpNormal);
     float3 N2 = normalize(bumpNormal2);
 
-    float3 N_rotated = mul(N, (float3x3) mRotEnv);
+    float3 N_rotated = mul(N, (float3x3) EnvMapTransform);
     N_rotated = normalize(N_rotated);
     N_rotated = N;
 
-    N2 = mul(N, (float3x3) mRotEnv);
+    N2 = mul(N, (float3x3) EnvMapTransform);
     N2 = normalize(N2);
 
 
@@ -517,7 +485,7 @@ float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV
     float3 Lr = reflect(N, Lo); // HLSL intrisic reflection function  
 
     // rotate refletion map by rotating the reflect vector
-    Lr = mul(Lr, (float3x3) mRotEnv);
+    Lr = mul(Lr, (float3x3) EnvMapTransform);
 
     // specular    
     float3 F0 = SpecTex.rgb;
@@ -589,10 +557,10 @@ float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV
     //else
      color = float4(directLighting + ambientLighting, 1.0);
 
-     //if (has_alpha == 1)
-     //{
-     //    alpha_test(alpha);
-     //}
+     if (UseAlpha == 1)
+     {
+         alpha_test(alpha);
+     }
 
 
      color.a = alpha;

@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.SelectedBoneEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs"
+             mc:Ignorable="d" 
+             xmlns:services="clr-namespace:VariantMeshEditor.Services"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             x:Name="self">
+<UserControl.Resources>
+
+    <ObjectDataProvider x:Key="FrameTypeEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+        <ObjectDataProvider.MethodParameters>
+            <x:Type TypeName="services:FrameTypes"/>
+        </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+
+    <ObjectDataProvider x:Key="TransformTypeEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+        <ObjectDataProvider.MethodParameters>
+            <x:Type TypeName="services:TransformTypes"/>
+        </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+    
+</UserControl.Resources>
+    
+<Grid >
+    <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <!-- header -->
+    <Grid Grid.Column="0" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="Auto" SharedSizeGroup="CheckBoxColumn" />
+            <ColumnDefinition  Width="Auto" SharedSizeGroup="HeaderColumn" />
+            <ColumnDefinition  Width="Auto" SharedSizeGroup="SubHeaderColumn" />
+            <ColumnDefinition  Width="300" SharedSizeGroup="ValueColumn" />
+            <ColumnDefinition  Width="Auto" SharedSizeGroup="ValueColumn2" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="0,5,0,5">
+                <TextBlock FontSize="14" FontWeight="Bold"> Selected Bone:</TextBlock>
+                <TextBlock FontSize="14" Margin="5,0,0,0" Text="{Binding SelectedBone.OriginalBone.BoneName, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
+            </StackPanel>
+
+            <CheckBox  Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" IsChecked="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"   Text="Mapping Target"/>
+            <ComboBox  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="1"
+                        ItemsSource="{Binding TargetBoneList, ElementName=self}"
+                        DisplayMemberPath="{Binding TargetBoneListDisplayName, ElementName=self}"
+                        SelectedItem="{Binding SelectedBone.MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"
+                        IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+            <Button Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="1" Content="Default"
+                    IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+
+
+            <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"  Text="Frame types to copy"  />
+            <ComboBox  Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="1"
+                    ItemsSource="{Binding Source={StaticResource FrameTypeEnums}}"
+                    SelectedItem="{Binding SelectedBone.FrameTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+        
+            <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"  Text="Transforms to copy"  />
+            <ComboBox  Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="1"
+                    ItemsSource="{Binding Source={StaticResource TransformTypeEnums}}"
+                    SelectedItem="{Binding SelectedBone.TransformTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay }"/>
+
+            <CheckBox  Grid.Row="4" Grid.Column="0" VerticalContentAlignment="Center" Margin="3,5,3,0" IsChecked="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,5,0,0" Text="Constant offset"/>
+
+            <TextBlock  Grid.Row="5" Grid.Column="2"  Text="Trans" TextAlignment="Right" Margin="2,0,0,0"/>
+            <mathviews:Vector3View Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="1" 
+                                    Vector3="{Binding SelectedBone.ContantTranslationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+                                    FieldWidth="60"
+                                    NumbersMaxLength="80"
+                                    IsEnabled="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+
+            <TextBlock   Grid.Row="6" Grid.Column="2"  Text="Rot" TextAlignment="Right" Margin="2,0,0,0"/>
+            <mathviews:Vector3View Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="1" 
+                                    Vector3="{Binding SelectedBone.ContantRotationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+                                    FieldWidth="60"
+                                    NumbersMaxLength="80"
+                                    IsEnabled="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+
+            <Button Grid.Row="7" Grid.Column="3" Content="Reset to default" Margin="0,10,0,0"/>
+
+        </Grid>
+</Grid>
+</UserControl>

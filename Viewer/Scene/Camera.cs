@@ -7,9 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Viewer.NHew
+namespace Viewer.Scene
 {
-
     public class ArcBallCamera
     {
 
@@ -241,9 +240,9 @@ namespace Viewer.NHew
             var moseSpeed = -0.5f;
             var speed = 0.01f;
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (keyboardState.IsKeyDown(Keys.LeftAlt))
             {
-                if (_mousePressedLastFrame == false)
+                if (_isMoveKeyPressed == false)
                 {
 
                     mouseX = mouseState.X;
@@ -260,19 +259,18 @@ namespace Viewer.NHew
                     Pitch += diffY * speed;
                     
                 }
-                _mousePressedLastFrame = true;
+                _isMoveKeyPressed = true;
             }
 
-            if (mouseState.LeftButton == ButtonState.Released && _mousePressedLastFrame)
-            {
-                _mousePressedLastFrame = false;
-            }
+           if (keyboardState.IsKeyUp(Keys.LeftAlt) && _isMoveKeyPressed)
+           {
+               _isMoveKeyPressed = false;
+           }
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
                 Zoom += moseSpeed * 0.1f;
             }
-
 
             if (keyboardState.IsKeyDown(Keys.S))
             {
@@ -289,7 +287,7 @@ namespace Viewer.NHew
             }
         }
 
-        bool _mousePressedLastFrame = false;
+        bool _isMoveKeyPressed = false;
 
         float mouseX;
         float mouseY;
