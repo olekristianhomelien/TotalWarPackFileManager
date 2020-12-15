@@ -24,7 +24,7 @@
 
         <ObjectDataProvider x:Key="MatchMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:MatchMethod"/>
+                <x:Type TypeName="services:TimeMatchMethod"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
@@ -33,6 +33,13 @@
                 <x:Type TypeName="services:MergeMethod"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="BoneCopyMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="services:BoneCopyMethod"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
 
     </UserControl.Resources>
     
@@ -48,6 +55,7 @@
             
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -127,6 +135,13 @@
                     <ComboBox
                         ItemsSource="{Binding Source={StaticResource MergeMethodEnums}}"
                         SelectedItem="{Binding MergeMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </DockPanel>
+                <DockPanel Grid.Row="7">
+                    <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left" Height="20"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <ComboBox
+                        ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
+                        SelectedItem="{Binding BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
             </Grid>
         </Expander>

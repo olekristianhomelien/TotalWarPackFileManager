@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 using VariantMeshEditor.ViewModels.Skeleton;
+using VariantMeshEditor.Services;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -16,14 +17,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public SkeletonBoneNode OriginalBone { get; set; }
         public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
-
         private bool _useContantOffset = true;
         public bool UseConstantOffset
         {
             get { return _useContantOffset; }
             set { SetAndNotify(ref _useContantOffset, value); }
         }
-
 
         Vector3ViewModel _contantTranslationOffset = new Vector3ViewModel();
         public Vector3ViewModel ContantTranslationOffset
@@ -49,6 +48,30 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         SkeletonBoneNode _mappedBone;
         public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
 
+        private FrameTypes _frameTypesToCopy = FrameTypes.Both;
+        public FrameTypes FrameTypesToCopy
+        {
+            get { return _frameTypesToCopy; }
+            set { SetAndNotify(ref _frameTypesToCopy, value); }
+        }
+
+        private TransformTypes _transformTypesToCopy = TransformTypes.Both;
+        public TransformTypes TransformTypesToCopy
+        {
+            get { return _transformTypesToCopy; }
+            set { SetAndNotify(ref _transformTypesToCopy, value); }
+        }
+
+        private BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Relative;
+        public BoneCopyMethod BoneCopyMethod
+        {
+            get { return _boneCopyMethod; }
+            set { SetAndNotify(ref _boneCopyMethod, value); }
+        }
+    }
+
+    public class MappableSkeletonBoneHelper
+    {
         public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
         {
             var output = new ObservableCollection<MappableSkeletonBone>();

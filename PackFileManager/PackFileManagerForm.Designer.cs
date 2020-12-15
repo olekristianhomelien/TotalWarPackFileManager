@@ -139,6 +139,7 @@ namespace PackFileManager
             this.updateDBFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateCurrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dBDecoderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -150,7 +151,6 @@ namespace PackFileManager
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.packTreeViewToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.dBDecoderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -402,8 +402,8 @@ namespace PackFileManager
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this._packTreeView);
-            this.splitContainer1.Size = new System.Drawing.Size(964, 518);
-            this.splitContainer1.SplitterDistance = 214;
+            this.splitContainer1.Size = new System.Drawing.Size(1772, 760);
+            this.splitContainer1.SplitterDistance = 194;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 9;
             // 
@@ -412,8 +412,9 @@ namespace PackFileManager
             this._packTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this._packTreeView.Location = new System.Drawing.Point(0, 0);
             this._packTreeView.Name = "_packTreeView";
-            this._packTreeView.Size = new System.Drawing.Size(210, 514);
+            this._packTreeView.Size = new System.Drawing.Size(190, 756);
             this._packTreeView.TabIndex = 0;
+            this._packTreeView.TreeViewColourHelper = null;
             // 
             // menuStrip
             // 
@@ -428,7 +429,7 @@ namespace PackFileManager
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(961, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1769, 24);
             this.menuStrip.TabIndex = 10;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -1028,14 +1029,14 @@ namespace PackFileManager
             // reloadToolStripMenuItem
             // 
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.reloadToolStripMenuItem.Text = "Load from File";
             this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
             // saveToDirectoryToolStripMenuItem
             // 
             this.saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
-            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
             this.saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(this.saveToDirectoryToolStripMenuItem_Click);
             // 
@@ -1045,7 +1046,7 @@ namespace PackFileManager
             this.updateCurrentToolStripMenuItem,
             this.updateAllToolStripMenuItem});
             this.updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
-            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
             this.updateDBFilesToolStripMenuItem.Text = "Update DB Files";
             // 
             // updateCurrentToolStripMenuItem
@@ -1061,6 +1062,13 @@ namespace PackFileManager
             this.updateAllToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.updateAllToolStripMenuItem.Text = "Update All";
             this.updateAllToolStripMenuItem.Click += new System.EventHandler(this.updateAllToolStripMenuItem_Click);
+            // 
+            // dBDecoderToolStripMenuItem
+            // 
+            this.dBDecoderToolStripMenuItem.Name = "dBDecoderToolStripMenuItem";
+            this.dBDecoderToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.dBDecoderToolStripMenuItem.Text = "DB Decoder";
+            this.dBDecoderToolStripMenuItem.Click += new System.EventHandler(this.dBDecoderToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1121,16 +1129,16 @@ namespace PackFileManager
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.packStatusLabel,
             this.packActionProgressBar});
-            this.statusStrip.Location = new System.Drawing.Point(0, 543);
+            this.statusStrip.Location = new System.Drawing.Point(0, 785);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(961, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1769, 22);
             this.statusStrip.TabIndex = 11;
             this.statusStrip.Text = "statusStrip1";
             // 
             // packStatusLabel
             // 
             this.packStatusLabel.Name = "packStatusLabel";
-            this.packStatusLabel.Size = new System.Drawing.Size(824, 17);
+            this.packStatusLabel.Size = new System.Drawing.Size(1632, 17);
             this.packStatusLabel.Spring = true;
             this.packStatusLabel.Text = "Use the File menu to create a new pack file or open an existing one.";
             this.packStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1140,18 +1148,11 @@ namespace PackFileManager
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
             // 
-            // dBDecoderToolStripMenuItem
-            // 
-            this.dBDecoderToolStripMenuItem.Name = "dBDecoderToolStripMenuItem";
-            this.dBDecoderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.dBDecoderToolStripMenuItem.Text = "DB Decoder";
-            this.dBDecoderToolStripMenuItem.Click += new System.EventHandler(this.dBDecoderToolStripMenuItem_Click);
-            // 
             // PackFileManagerForm
             // 
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(961, 565);
+            this.ClientSize = new System.Drawing.Size(1769, 807);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip);

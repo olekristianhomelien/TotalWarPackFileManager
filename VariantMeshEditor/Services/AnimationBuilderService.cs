@@ -14,6 +14,7 @@ using Viewer.Animation;
 
 namespace VariantMeshEditor.Services
 {
+    // Per bone configurations
     public enum FrameTypes
     {
         Both,
@@ -28,7 +29,15 @@ namespace VariantMeshEditor.Services
         Translation,
     }
 
-    public enum MatchMethod
+    public enum BoneCopyMethod
+    {
+        Relative,
+        Absolute
+    }
+
+
+    // Whole animation configurations
+    public enum TimeMatchMethod
     {
         TimeFit,
         HoldLastFrame
@@ -165,11 +174,11 @@ namespace VariantMeshEditor.Services
 
             // Static
             ProcessFrame(animation.StaticFrame, boneIndex, animation.RotationMappings, animation.TranslationMappings, 
-                AnimationFile.AnimationBoneMappingType.Static, ref out_rotation, ref out_position);
+                AnimationFile.AnimationBoneMappingType.Static, skeleton, ref out_rotation, ref out_position);
 
             // Dynamic
             ProcessFrame(animation.DynamicFrames[safeFameIndex], boneIndex, animation.RotationMappings, animation.TranslationMappings,
-                AnimationFile.AnimationBoneMappingType.Dynamic, ref out_rotation, ref out_position);
+                AnimationFile.AnimationBoneMappingType.Dynamic, skeleton, ref out_rotation, ref out_position);
         }
 
         void ComputeSkeletonContribution(Skeleton skeleton, int boneIndex, ref Quaternion out_rotation, ref Vector3 out_position)
@@ -191,7 +200,8 @@ namespace VariantMeshEditor.Services
         void ProcessFrame(AnimationClip.KeyFrame frame, int boneIndex, 
             List<AnimationFile.AnimationBoneMapping> rotationMapping, 
             List<AnimationFile.AnimationBoneMapping> translationMapping, 
-            AnimationFile.AnimationBoneMappingType mappingType, 
+            AnimationFile.AnimationBoneMappingType mappingType,
+            Skeleton skeleton,
             ref Quaternion out_rotation, ref Vector3 out_position)
         {
             if (frame != null)
@@ -200,14 +210,18 @@ namespace VariantMeshEditor.Services
                 {
                     var otherRemappedId = rotationMapping[boneIndex].Id;
                     if (otherRemappedId != -1)
+                    {
                         out_rotation = frame.Rotation[otherRemappedId];
+                    }
                 }
 
                 if (translationMapping[boneIndex].MappingType == mappingType)
                 {
                     var otherRemappedId = translationMapping[boneIndex].Id;
                     if (otherRemappedId != -1)
+                    {
                         out_position = frame.Translation[otherRemappedId];
+                    }
                 }
             }
         }

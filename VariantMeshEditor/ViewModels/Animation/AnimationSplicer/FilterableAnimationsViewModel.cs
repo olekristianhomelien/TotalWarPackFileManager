@@ -55,13 +55,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public TransformTypes _defaultTransformTypesToCopy = TransformTypes.Both;
         public TransformTypes DefaultTransformTypesToCopy { get { return _defaultTransformTypesToCopy; } set { SetAndNotify(ref _defaultTransformTypesToCopy, value); } }
 
-        public MatchMethod _matchingMethod = MatchMethod.TimeFit;
-        public MatchMethod MatchingMethod { get { return _matchingMethod; } set { SetAndNotify(ref _matchingMethod, value); } }
+        public TimeMatchMethod _matchingMethod = TimeMatchMethod.TimeFit;
+        public TimeMatchMethod MatchingMethod { get { return _matchingMethod; } set { SetAndNotify(ref _matchingMethod, value); } }
 
         public MergeMethod _mergeMethod = MergeMethod.Replace;
         public MergeMethod MergeMethod { get { return _mergeMethod; } set { SetAndNotify(ref _mergeMethod, value); } }
 
+        public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Relative;
+        public BoneCopyMethod BoneCopyMethod { get { return _boneCopyMethod; } set { SetAndNotify(ref _boneCopyMethod, value); } }
 
+        
         public FilterableAnimationsViewModel(string headerText)
         {
             HeaderText = headerText;

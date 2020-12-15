@@ -79,7 +79,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             // Initial init
             TargetAnimation.FindAllAnimations(_resourceLibary, _targetSkeletonNode.SkeletonFile.Header.SkeletonName);
             ExternalSkeleton.FindAllSkeletons(_resourceLibary);
-            TargetSkeletonBones = MappableSkeletonBone.Create(_targetSkeletonNode);
+            TargetSkeletonBones = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
 
             SelectedNode = TargetSkeletonBones.FirstOrDefault();
         }
@@ -109,19 +109,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void SaveAnimation()
         {
-            try
+        
+            var anim = BuildAnimation();
+            if (anim != null)
             {
-                var anim = BuildAnimation();
-                if (anim != null)
-                {
-                    var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
-                    AnimationFile.Write(fileFormat, @"C:\temp\Animation\floatyBoi.anim");
-                }
+                var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
+                AnimationFile.Write(fileFormat, @"C:\temp\Animation\floatyBoi.anim");
             }
-            catch (Exception e)
-            { 
-            
-            }
+
             //
             //    var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
             //try
