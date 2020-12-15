@@ -97,6 +97,13 @@ namespace VariantMeshEditor.ViewModels
         {
             _animation = SceneElementHelper.GetAllOfTypeInSameVariantMesh<AnimationElement>(this).FirstOrDefault();
             _skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this).FirstOrDefault();
+
+
+
+
+         
+
+
         }
 
         protected override void UpdateNode(GameTime time)

@@ -16,10 +16,13 @@ using PackFileManager.Editors;
 using System.Linq;
 using PackFileManager.Dialogs.Settings;
 using Filetypes.DB;
+using Serilog;
 
 namespace PackFileManager
 {
-    public partial class PackFileManagerForm : Form {
+    public partial class PackFileManagerForm : Form 
+    {
+        ILogger _logger = Logging.Create<PackFileManagerForm>();
 
         public PackFileManagerForm() : this(new string[0]) {}
 
@@ -48,6 +51,7 @@ namespace PackFileManager
 
         private void CreateEditors()
         {
+            _logger.Here().Information("Loading editors");
             PackedFileEditorRegistry.Editors.Add(new AtlasFileEditorControl { Dock = DockStyle.Fill });
             PackedFileEditorRegistry.Editors.Add(WpfPackedFileEditorHost.Create<DBTableControl.DBEditorTableControl>());
             PackedFileEditorRegistry.Editors.Add(WpfPackedFileEditorHost.Create<VariantMeshEditor.VariantMeshEditorControl>());
@@ -59,6 +63,7 @@ namespace PackFileManager
 
             textFileEditorControl = WpfPackedFileEditorHost.Create<AdvancedTextFileEditorControl>();
             PackedFileEditorRegistry.Editors.Add(textFileEditorControl);
+            _logger.Here().Information("Editors loaded");
         }
 
         public PackFileManagerForm (string[] args) 
@@ -172,7 +177,9 @@ namespace PackFileManager
 
             //dBDecoderToolStripMenuItem_Click(null, null);
 
-            //
+
+
+            _logger.Here().Information("Loading pack files for Total war");
             List<PackFile> loadedContent = PackFileLoadHelper.LoadCaPackFilesForGame(Game.TWH2);
             CurrentPackFile = loadedContent.FirstOrDefault();
 
@@ -188,7 +195,15 @@ namespace PackFileManager
             }
 
 
+            if(CurrentPackFile == null)
+                _logger.Here().Error($"Pack files loaded - Pack file is null");
+            else
+                _logger.Here().Information($"Pack files loaded - {CurrentPackFile.Files.Count()} files found");
+
             var file = PackFileLoadHelper.FindFile(loadedContent, @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
+
+            if(file == null)
+                _logger.Here().Error($"Unable to find the test file that should open the editor");
             OpenPackedFileEditor(file);
             //
             //var meshEditor = new VariantMeshEditor.VariantMeshEditorControl();
@@ -1004,14 +1019,22 @@ namespace PackFileManager
         private void OpenPackedFileEditor(PackedFile packedFile) 
         {
             if (packedFile == null)
+            {
+                _logger.Here().Information("Trying to open an editor - Argument null");
                 return;
+            }
+
+            _logger.Here().Information($"Trying to open an editor - {packedFile}");
+
             PackedFileSource source = packedFile.Source as PackedFileSource;
             string sourceInfo = (source != null) ? string.Format("offset {0}", source.Offset.ToString("x2")) : "from memory";
             packStatusLabel.Text = String.Format("Viewing {0} ({1})", packedFile.Name, sourceInfo);
 
             IPackedFileEditor editor = null;
-            foreach(IPackedFileEditor e in PackedFileEditorRegistry.Editors) {
-                if (e.CanEdit(packedFile)) {
+            foreach(IPackedFileEditor e in PackedFileEditorRegistry.Editors)
+            {
+                if (e.CanEdit(packedFile)) 
+                {
                     editor = e;
                     break;
                 }
@@ -1022,7 +1045,10 @@ namespace PackFileManager
         
         private void OpenPackedFile(IPackedFileEditor editor, PackedFile packedFile) 
         {
-            if (editor != null) {
+            if (editor != null)
+            {
+                _logger.Here().Information($"Trying to open an editor - Editor:{editor} File:{packedFile}");
+
                 try 
                 {
                     editor.ReadOnly = !CanWriteCurrentPack;
@@ -1033,12 +1059,14 @@ namespace PackFileManager
                 } 
                 catch (Exception ex) 
                 {
+                    _logger.Here().Error(ex.ToString());
                     MessageBox.Show(string.Format("Failed to open {0}: {1}", Path.GetFileName(packedFile.FullPath), ex));
                 }
             }
         }
 
-        private void CloseEditors() {
+        private void CloseEditors() 
+        {
             foreach(IPackedFileEditor editor in PackedFileEditorRegistry.Editors) {
                 editor.Commit();
             }

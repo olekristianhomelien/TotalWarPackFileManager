@@ -30,7 +30,8 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
-            var parentAnimationNode = SceneElementHelper.GetAllOfTypeInSameVariantMesh<AnimationElement>(this).FirstOrDefault();
+            var topNode = SceneElementHelper.GetTopNode(this);
+            var parentAnimationNode = SceneElementHelper.GetFirstChild<AnimationElement>(topNode);
 
             for (int lodIndex = 0; lodIndex < Model.LodHeaders.Count; lodIndex++)
             {
@@ -53,7 +54,6 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
                 Lods.Add(currentLoad);
             }
-
         }
 
         protected override void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)

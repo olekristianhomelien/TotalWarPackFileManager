@@ -1,5 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Common;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Serilog;
+using System;
 using System.Linq;
 using System.Windows;
 using VariantMeshEditor.Util;
@@ -13,6 +16,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 {
     public class AnimationElement : FileSceneElement
     {
+        ILogger _logger = Logging.Create<AnimationElement>();
+
         public AnimationPlayer AnimationPlayer { get; set; } = new AnimationPlayer();
         public AnimationPlayerViewModel AnimationPlayerViewModel { get; set; }
 
@@ -38,6 +43,12 @@ namespace VariantMeshEditor.ViewModels.Animation
                 AnimationExplorerViewModel = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
                 AnimationFragmentExplorerViewModel = new FragmentExplorerViewModel(resourceLibary, AnimationPlayerViewModel);
                 AnimationSplicerViewModel = new AnimationSplicerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
+            }
+            else
+            {
+                foreach (var s in skeleton)
+                    _logger.Here().Error($"Multiple skeletons found:{s.DisplayName}");
+                throw new Exception("More then two skeletons found");
             }
         }
 

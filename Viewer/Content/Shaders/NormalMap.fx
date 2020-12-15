@@ -81,7 +81,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR
 {
     // Calculate the normal, including the information in the bump map
     float3 bump = BumpConstant * (tex2D(bumpSampler, input.TextureCoordinate) - (0.5, 0.5, 0.5));
-    float3 bumpNormal = input.Normal + (bump.x * input.Tangent + bump.y * input.Binormal);
+    //float3 bumpNormal = input.Normal + (bump.x * input.Tangent + bump.y * input.Binormal);
     bumpNormal = normalize(bumpNormal);
 
     // Calculate the diffuse light component with the bump map normal

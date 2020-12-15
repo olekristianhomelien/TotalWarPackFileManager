@@ -1,5 +1,6 @@
 ﻿using Common;
 using GalaSoft.MvvmLight.CommandWpf;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace VariantMeshEditor.ViewModels
 {
     public class RootElement : FileSceneElement
     {
+        ILogger _logger = Logging.Create<RootElement>();
+
         public override FileSceneElementEnum Type => FileSceneElementEnum.Root;
 
         Scene3d _virtualWorld;
@@ -48,6 +51,8 @@ namespace VariantMeshEditor.ViewModels
 
         public FileSceneElement LoadModel(PackedFile path, ResourceLibary resourceLibary, Scene3d virtualWorld)
         {
+            _logger.Here().Information($"Loading model - {path}");
+
             SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
             var modelElement = sceneLoader.Load(path, null);
 
@@ -68,6 +73,9 @@ namespace VariantMeshEditor.ViewModels
 
             Children.Add(modelElement);
             modelElement.Parent = this;
+
+            _logger.Here().Information($"Loading Done - {path}");
+
             return modelElement;
         }
 
@@ -75,8 +83,7 @@ namespace VariantMeshEditor.ViewModels
         {
         }
 
-            // Add remove for each child
 
-        }
+     }
 
 }

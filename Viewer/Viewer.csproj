@@ -116,6 +116,7 @@
   <ItemGroup>
     <Content Include="Content\Shaders\Ambient.fx" />
     <Content Include="Content\Shaders\Diffuse.fx" />
+    <Content Include="Content\Shaders\Main.fx" />
     <Content Include="Content\Shaders\TexturePreview.fx" />
     <Content Include="Content\Shaders\LineShader.fx" />
     <Content Include="Content\Shaders\NormalMap.fx" />

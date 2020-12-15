@@ -23,8 +23,7 @@ namespace PackFileManager
             Logging.Configure(Serilog.Events.LogEventLevel.Information);
             var logger = Logging.Create<Program>();
 
-            logger.Information("Application starting");
-
+            logger.Here().Information("Application starting");
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.CurrentDomain_UnhandledException);
             Application.EnableVisualStyles();
             try

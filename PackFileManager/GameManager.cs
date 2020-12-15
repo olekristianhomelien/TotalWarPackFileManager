@@ -5,11 +5,13 @@ using System.Windows.Forms;
 using CommonDialogs;
 using System.Linq;
 using Filetypes.DB;
+using Serilog;
 
 namespace PackFileManager
 {
     public class GameManager 
     {
+        ILogger _logger = Logging.Create<GameManager>();
 
         public delegate void GameChange();
         public event GameChange GameChanged;
@@ -59,11 +61,13 @@ namespace PackFileManager
         }
 
         // load the given game's directory from the gamedirs file
-        public static void LoadGameLocationFromFile(Game g)
+        void LoadGameLocationFromFile(Game g)
         {
             var savedGameDirectories = PackFileManagerSettingService.CurrentSettings.GameDirectories;
             var gameDir = savedGameDirectories.FirstOrDefault(x => x.Game == g.Id);
             g.GameDirectory = gameDir?.Path;
+
+            _logger.Here().Information($"Setting directory for game {g.Id} - {g.GameDirectory}");
         }
 
         // write game directories to gamedirs file
@@ -85,7 +89,9 @@ namespace PackFileManager
 
         static Game DefaultGame = Game.TWH2;
         Game _current;
-        public Game CurrentGame {
+
+        public Game CurrentGame 
+        {
             get {
                 return _current;
             }
@@ -109,7 +115,8 @@ namespace PackFileManager
             }
         }
         
-        public static void CheckGameDirectories() {
+        public static void CheckGameDirectories() 
+        {
             bool writeGameDirFile = false;
             foreach(Game g in Game.Games) {
                 if (g.GameDirectory == null) {

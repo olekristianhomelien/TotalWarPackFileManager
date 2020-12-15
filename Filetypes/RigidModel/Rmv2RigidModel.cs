@@ -1,5 +1,6 @@
 ﻿using Common;
 using Filetypes.ByteParsing;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,6 +26,9 @@ namespace Filetypes.RigidModel
 
         public static Rmv2RigidModel Create(ByteChunk chunk, out string errorMessage)
         {
+            ILogger logger = Logging.Create<Rmv2RigidModel>();
+            logger.Here().Information($"Loading Rmv2RigidModel: {chunk}");
+
             Rmv2RigidModel model = new Rmv2RigidModel
             {
                 FileType = chunk.ReadFixedLength(4),
@@ -47,7 +51,8 @@ namespace Filetypes.RigidModel
                     model.LodHeaders[i].LodModels.Add(Rmv2LodModel.Create(chunk));
            
             Validate(chunk, out errorMessage);
-           
+
+            logger.Here().Information("Loading done");
             return model;
         }
 

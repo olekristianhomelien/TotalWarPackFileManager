@@ -99,6 +99,11 @@ namespace Common {
         public int CompareTo(PackEntry entry) {
             return entry != null ? Name.CompareTo(entry.Name) : 0;
         }
+
+        public override string ToString()
+        {
+            return FullPath;
+        }
     }
 
     /*

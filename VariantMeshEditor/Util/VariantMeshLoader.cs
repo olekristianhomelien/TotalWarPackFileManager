@@ -65,10 +65,15 @@ namespace VariantMeshEditor.Util
                 parent.Children.Add(variantMeshElement);
             }
 
-            var animationElement = new AnimationElement(variantMeshElement);
-            variantMeshElement.Children.Add(animationElement);
-            var skeletonElement = new SkeletonElement(variantMeshElement, "");
-            variantMeshElement.Children.Add(skeletonElement);
+            AnimationElement animationElement = null;
+            SkeletonElement skeletonElement = null;
+            if (parent.Parent == null)
+            {
+                animationElement = new AnimationElement(variantMeshElement);
+                variantMeshElement.Children.Add(animationElement);
+                skeletonElement = new SkeletonElement(variantMeshElement, "");
+                variantMeshElement.Children.Add(skeletonElement);
+            }
 
             var slotsElement = new SlotsElement(variantMeshElement);
             variantMeshElement.Children.Add(slotsElement);
@@ -95,23 +100,28 @@ namespace VariantMeshEditor.Util
             }
 
             // Load the animation
-            var rigidModels = new List<RigidModelElement>();
-            GetAllOfType<RigidModelElement>(parent, ref rigidModels);
-            var skeletons = rigidModels
-                .Where(x=>!string.IsNullOrEmpty(x.Model.BaseSkeleton))
-                .Select(x => x.Model.BaseSkeleton)
-                .Distinct();
+            if (parent.Parent == null)
+            {
+                var rigidModels = new List<RigidModelElement>();
 
-            if (skeletons.Count() > 1)
-                throw new Exception("More the one skeleton for a veriant mesh");
-            if (skeletons.Count() == 1)
-            {
-                skeletonElement.Create(animationElement.AnimationPlayer, _resourceLibary, skeletons.First() + ".anim");
-            }
-            else
-            {
-                variantMeshElement.Children.Remove(animationElement);
-                variantMeshElement.Children.Remove(skeletonElement);
+                GetAllOfType<RigidModelElement>(parent, ref rigidModels);
+                var skeletons = rigidModels
+                    .Where(x => !string.IsNullOrEmpty(x.Model.BaseSkeleton))
+                    .Select(x => x.Model.BaseSkeleton)
+                    .Distinct()
+                    .ToList();
+
+                if (skeletons.Count() > 1)
+                    throw new Exception("More the one skeleton for a veriant mesh");
+                if (skeletons.Count() == 1)
+                {
+                    skeletonElement.Create(animationElement.AnimationPlayer, _resourceLibary, skeletons.First() + ".anim");
+                }
+                else
+                {
+                    variantMeshElement.Children.Remove(animationElement);
+                    variantMeshElement.Children.Remove(skeletonElement);
+                }
             }
         }
 

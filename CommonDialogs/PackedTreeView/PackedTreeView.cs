@@ -14,7 +14,6 @@ using System.Collections;
 
 namespace PackFileManager.PackedTreeView
 {
-
     public partial class PackedTreeView : UserControl, IPackEntryEventHandler
     {
         private class ToolTipProvider : IToolTipProvider
@@ -39,8 +38,6 @@ namespace PackFileManager.PackedTreeView
             InitializeComponent();
             _treeModel = new TreeModel();
 
-
-         
             treeViewAdv1.ItemDrag += new ItemDragEventHandler(this.packTreeView_ItemDrag);
             treeViewAdv1.NodeMouseClick += (sender, args) => treeViewAdv1.SelectedNode = args.Node;
             treeViewAdv1.Expanded += TreeViewAdv1_Expanded;
@@ -54,7 +51,6 @@ namespace PackFileManager.PackedTreeView
 
             nodeTextBox1.ToolTipProvider = new ToolTipProvider();
             nodeTextBox1.DrawText += new EventHandler<DrawTextEventArgs>(_nodeTextBox_DrawText);
-
         }
 
         class NodeComparer : IComparer
@@ -63,7 +59,20 @@ namespace PackFileManager.PackedTreeView
             {
                 var a = x as TreeNode;
                 var b = y as TreeNode;
-                return a.Text.CompareTo(b.Text);
+
+                bool isFolderA = a.Nodes.Count == 0;
+                bool isFolderB = b.Nodes.Count == 0;
+
+                // If both are folder or none of them are folder
+                bool bothFolder = isFolderA && isFolderB;
+                bool nonFolder = (!isFolderA && !isFolderB);
+                if (bothFolder || nonFolder)
+                    return a.Text.CompareTo(b.Text);
+
+                if (a.IsFolder)
+                    return -1;
+                else
+                    return 1;
             }
         }
 

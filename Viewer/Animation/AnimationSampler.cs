@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Common;
+using Microsoft.Xna.Framework;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,7 +94,8 @@ namespace Viewer.Animation
             }
             catch (Exception e)
             {
-                // Log a nice message
+                ILogger logger = Logging.Create<AnimationSampler>();
+                logger.Error(e.Message);
                 throw;
             }
         }

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Newtonsoft.Json;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -25,6 +26,20 @@ namespace PackFileManager
         public List<string> RecentUsedFiles { get; set; } = new List<string>();
         public List<GamePathPair> GameDirectories { get; set; } = new List<GamePathPair>();
         public List<CustomFileExtentionHighlightsMapping> CustomFileExtentionHighlightsMappings { get; set; } = new List<CustomFileExtentionHighlightsMapping>();
+
+        public void SaveToLog(ILogger logger)
+        {
+            logger.Here().Information("PackFileManagerSettings content");
+
+            logger.Here().Information($"CurrentGame:{CurrentGame}");
+            logger.Here().Information($"MyModDirectory:{MyModDirectory}");
+
+            foreach(var recentFile in RecentUsedFiles)
+                logger.Here().Information($"RecentUsedFiles:{recentFile}");
+
+            foreach (var gamedir in GameDirectories)
+                logger.Here().Information($"GameDirectories:{gamedir.Game} - {gamedir.Path}");
+        }
     }
 
     class PackFileManagerSettingService
@@ -70,14 +85,21 @@ namespace PackFileManager
 
         public static PackFileManagerSettings Load()
         {
+            ILogger logger = Logging.Create<PackFileManagerSettingService>();
+            logger.Here().Information("Loading settings file");
             if (File.Exists(SettingsFile))
             {
+                logger.Here().Information($"Loading existing settings file {SettingsFile}");
+                
                 var content = File.ReadAllText(SettingsFile);
                 CurrentSettings = JsonConvert.DeserializeObject<PackFileManagerSettings>(content);
+
+                CurrentSettings.SaveToLog(logger);
             }
             else
             {
                 CurrentSettings = new PackFileManagerSettings();
+                logger.Here().Warning("No settings found, creating new");
             }
 
             return CurrentSettings;

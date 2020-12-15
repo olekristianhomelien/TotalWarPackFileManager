@@ -265,7 +265,7 @@ namespace WpfTest.Scenes
         public TextureMeshRenderItem(MeshModel model, Effect shader, ResourceLibary resourceLibary) : base(model, shader)
         {
             m_pbrDiffuse = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_DiffuseHDR");
-            m_pbrSpecular = resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_SpecularHDR");
+            m_pbrSpecular = m_pbrDiffuse;// resourceLibary.XnaContentManager.Load<TextureCube>("textures\\phazer\\rustig_koppie_SpecularHDR");
             m_BRDF_LUT = resourceLibary.XnaContentManager.Load<Texture2D>("textures\\phazer\\Brdf_rgba32f_raw");
         }
 
@@ -288,9 +288,6 @@ namespace WpfTest.Scenes
             _shader.Parameters["UseAlpha"].SetValue(AlphaMode == 1);
             _shader.Parameters["doAnimation"].SetValue(true);
             
-            
-
-
             Matrix[] data = new Matrix[256];
             for (int i = 0; i < 256; i++)
                 data[i] = Matrix.Identity;
@@ -318,7 +315,6 @@ namespace WpfTest.Scenes
             _shader.Parameters["tranforms"].SetValue(data);
         }
 
-        bool isSet = false;
         public override void Dispose()
         {
             base.Dispose();

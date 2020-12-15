@@ -2,13 +2,17 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog;
 
 namespace Common {
 
     /*
      * Class sorting the packs in a directory in the order they are loaded.
      */
-    public class PackLoadSequence {
+    public class PackLoadSequence 
+    {
+        ILogger _logger = Logging.Create<PackLoadSequence>();
+
         /*
          * Predicate function that can decide whether or not to ignore a given
          * pack file altogether.
@@ -41,7 +45,10 @@ namespace Common {
         /*
          * Retrieve the packs loaded from the given directory.
          */
-        public List<string> GetPacksLoadedFrom(string directory) {
+        public List<string> GetPacksLoadedFrom(string directory) 
+        {
+            _logger.Here().Information($"Loading packs from {directory}");
+
             List<string> result = new List<string>();
             if (directory == null) {
                 return result;

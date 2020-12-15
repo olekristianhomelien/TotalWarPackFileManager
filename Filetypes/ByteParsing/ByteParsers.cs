@@ -646,5 +646,11 @@ namespace Filetypes.ByteParsing
 
             return null;
         }
+
+
+        public override string ToString()
+        {
+            return $"ByteParser[Size = {_buffer?.Length}, index = {_currentIndex}]";
+        }
     }
 }

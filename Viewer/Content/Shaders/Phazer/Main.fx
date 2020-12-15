@@ -293,13 +293,15 @@ float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV
     float3 _N = Np.yzx; // Works
 
 
-  // vec3 mapN = texture2D(normalMap, vUv).xyz;
-  // mapN.z = sqrt(1.0 - (mapN.x * mapN.x + mapN.y * mapN.y));
-  // mapN = mapN * 2.0 - 1.0;
+    //float3 bumpMap = NormalTex.xyz;
+    //bumpMap.z = sqrt(1.0 - (bumpMap.x * bumpMap.x + bumpMap.y * bumpMap.y));
+    //bumpMap = bumpMap * 2.0 - 1.0;
+    //
+    ////float3 bumpNormal = input.normal + (bumpMap.x * input.tangent + bumpMap.y * input.binormal);
+    //float3 bumpNormal = (bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal);
+    //bumpNormal = normalize(bumpNormal);
 
-   // float3 bumpnew = _N;
-   // bumpNormal = input.Normal + (bumpnew.x * input.Tangent + bumpnew.y * input.Binormal);
-   // bumpNormal = normalize(bumpNormal);
+
 
 
 

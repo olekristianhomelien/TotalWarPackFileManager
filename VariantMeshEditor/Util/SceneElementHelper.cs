@@ -32,7 +32,6 @@ namespace VariantMeshEditor.Util
             return output;
         }
 
-
         static void GetAllOfType<T>(FileSceneElement root, ref List<T> outputList) where T : FileSceneElement
         {
             if (root as T != null)
@@ -76,6 +75,26 @@ namespace VariantMeshEditor.Util
             if (item.Parent == null)
                 return item;
             return GetRoot(item.Parent);
+        }
+
+
+
+        public static FileSceneElement GetTopNode(FileSceneElement item)
+        {
+            var isParentRoot = IsParentRoot(item);
+            if (isParentRoot)
+                return item;
+
+            return GetTopNode(item.Parent);
+        }
+
+
+        public static bool IsParentRoot(FileSceneElement item)
+        {
+            if (item.Parent == null)
+                return true;
+            return false;
+
         }
     }
 }

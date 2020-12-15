@@ -86,8 +86,8 @@ namespace Common {
 
             retrievers = new RetrieveLocation[] {
                     delegate() { return gameDirectory; },
-                    delegate() { return GetInstallLocation(WOW_NODE); },
-                    delegate() { return GetInstallLocation(WIN_NODE); }
+                    //delegate() { return GetInstallLocation(WOW_NODE); },
+                    //delegate() { return GetInstallLocation(WIN_NODE); }
                 };
         }
 

@@ -2,6 +2,7 @@
 using Common;
 using Filetypes.RigidModel;
 using Microsoft.Xna.Framework.Graphics;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,8 @@ namespace VariantMeshEditor.Controls
 {
     class EditorMainController
     {
+        ILogger _logger = Logging.Create<EditorMainController>();
+
         Scene3d _scene3d;
         ResourceLibary _resourceLibary;
         PackedFile _modelToLoad;
@@ -76,20 +79,27 @@ namespace VariantMeshEditor.Controls
 
         public void LoadModel(PackedFile model)
         {
+            _logger.Here().Information("start");
+
+
             _modelToLoad = model;
             if(_is3dWorldCreated)
                 LoadModelAfterWorldCreated();
+
+            _logger.Here().Information("end");
         }
 
         void Create3dWorld(GraphicsDevice device)
         {
-           
+            _logger.Here().Information("start");
             _is3dWorldCreated = true;
             LoadModelAfterWorldCreated();
+            _logger.Here().Information("end");
         }
 
         void LoadModelAfterWorldCreated()
         {
+            _logger.Here().Information("start");
             bool isFirstTime = true;
             var existingNode = RootViewModel.SceneGraph.SceneGraphRootNodes.FirstOrDefault();
             if (existingNode != null)
@@ -113,6 +123,7 @@ namespace VariantMeshEditor.Controls
 
             _scene3d.SceneGraphRootNode = rootNode;
             RootViewModel.SceneGraph.SceneGraphRootNodes.Add(rootNode);
+            _logger.Here().Information("end");
         }
 
 
@@ -150,6 +161,7 @@ namespace VariantMeshEditor.Controls
             bool loadGoblin = false,
             bool loadArkan = false)
         {
+            _logger.Here().Information("start");
             if (loadPaladin)
             {
                 var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
@@ -248,6 +260,7 @@ animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinge
                 // goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;
 
             }
+            _logger.Here().Information("end");
         }
     }
 }

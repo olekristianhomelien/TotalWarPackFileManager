@@ -16,6 +16,7 @@ namespace PackFileManager.PackedTreeView
         public TreeNode(string text) : base(text) { }
         public Color? Colour { get; set; } = null;
         public string ToolTipText { get; set; }
+        public bool IsFolder { get; set; } = false;
     }
 
     public class TreeViewModelCreator
@@ -41,6 +42,7 @@ namespace PackFileManager.PackedTreeView
                     dir.FileAdded += eventHandler.Dir_FileAdded;
                     dir.FileRemoved += eventHandler.Dir_FileRemoved;
                 }
+                newNode.IsFolder = true;
                 newNode.Image = _treeViewIconCreator.Folder;
             }
             else

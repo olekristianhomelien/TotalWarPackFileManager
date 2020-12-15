@@ -1,4 +1,6 @@
-﻿using Filetypes.ByteParsing;
+﻿using Common;
+using Filetypes.ByteParsing;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,6 +54,7 @@ namespace Filetypes.RigidModel
 
             if (header.AnimationType == 7)
                 header.AnimationTotalPlayTimeInSec = chunk.ReadSingle(); // Play time
+
             return header;
         }
 
@@ -107,11 +110,12 @@ namespace Filetypes.RigidModel
 
         public static AnimationFile Create(ByteChunk chunk)
         {
+            ILogger logger = Logging.Create<AnimationFile>();
+            logger.Here().Information($"Loading animation: {chunk}");
+
             var output = new AnimationFile();
             chunk.Reset();
             output.Header = GetAnimationHeader(chunk);
-
-  
 
             var boneCount = chunk.ReadUInt32();
             output.Bones = new BoneInfo[boneCount];
@@ -163,6 +167,7 @@ namespace Filetypes.RigidModel
             }
             // ----------------------
 
+            logger.Here().Information("Loading completed");
             return output;
         }
 

@@ -3,6 +3,8 @@ using CommonDialogs.Common;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,6 +17,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 {
     public class AnimationExplorerViewModel : NotifyPropertyChangedImpl
     {
+        ILogger _logger = Logging.Create<AnimationExplorerViewModel>();
+
         ResourceLibary _resourceLibary;
         SkeletonElement _skeletonNode;
         AnimationPlayerViewModel _animationPlayer;
@@ -80,14 +84,26 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         void FindAllAnimations()
         {
+            _logger.Here().Information("Finding all animations");
+
             AnimationFiles = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "anim");
+            _logger.Here().Information("Animations found =" + AnimationFiles.Count());
 
             foreach (var animation in AnimationFiles)
             {
-                var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
-                if (animationSkeletonName == _skeletonNode.SkeletonFile.Header.SkeletonName)
-                    AnimationFilesForSkeleton.Add(animation);
+                try
+                {
+                    var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
+                    if (animationSkeletonName == _skeletonNode.SkeletonFile.Header.SkeletonName)
+                        AnimationFilesForSkeleton.Add(animation);
+                }
+                catch (Exception e)
+                {
+                    _logger.Here().Error("Parsing failed for " + animation.FullPath + "\n" + e.ToString());
+                }
             }
+
+            _logger.Here().Information("Finding all done");
         }
     }
 }
