@@ -48,12 +48,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         SkeletonBoneNode _mappedBone;
         public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
 
-        private FrameTypes _frameTypesToCopy = FrameTypes.Both;
-        public FrameTypes FrameTypesToCopy
-        {
-            get { return _frameTypesToCopy; }
-            set { SetAndNotify(ref _frameTypesToCopy, value); }
-        }
 
         private TransformTypes _transformTypesToCopy = TransformTypes.Both;
         public TransformTypes TransformTypesToCopy
@@ -80,9 +74,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             return output;
         }
 
+        public static void SetDefaultBoneCopyMethod(MappableSkeletonBone node, BoneCopyMethod value)
+        {
+            node.BoneCopyMethod = value;
+            foreach (var child in node.Children)
+                SetDefaultBoneCopyMethod(child, value);
+        }
+
+
         static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList)
         {
-
             if (bone.ParentBoneIndex == -1)
             {
                 outputList.Add(CreateNode(bone));

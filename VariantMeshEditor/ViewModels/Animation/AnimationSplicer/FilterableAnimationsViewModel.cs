@@ -10,11 +10,14 @@ using System.Threading.Tasks;
 using static CommonDialogs.FilterDialog.FilterUserControl;
 using Viewer.Scene;
 using VariantMeshEditor.Services;
+using Serilog;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
     public class FilterableAnimationsViewModel : NotifyPropertyChangedImpl
     {
+        ILogger _logger = Logging.Create<FilterableAnimationsViewModel>();
+
         List<PackedFile> _filterList;
 
         public List<PackedFile> CurrentItems { get { return _filterList; } set { SetAndNotify(ref _filterList, value); } }
@@ -47,22 +50,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                     CurrentItems = AllAnimations;
             }
         }
+        
 
-
-        public FrameTypes _defaultFrameTypesToCopy = FrameTypes.Both;
-        public FrameTypes DefaultFrameTypesToCopy { get { return _defaultFrameTypesToCopy; } set { SetAndNotify(ref _defaultFrameTypesToCopy, value); } }
-
-        public TransformTypes _defaultTransformTypesToCopy = TransformTypes.Both;
-        public TransformTypes DefaultTransformTypesToCopy { get { return _defaultTransformTypesToCopy; } set { SetAndNotify(ref _defaultTransformTypesToCopy, value); } }
 
         public TimeMatchMethod _matchingMethod = TimeMatchMethod.TimeFit;
         public TimeMatchMethod MatchingMethod { get { return _matchingMethod; } set { SetAndNotify(ref _matchingMethod, value); } }
 
-        public MergeMethod _mergeMethod = MergeMethod.Replace;
-        public MergeMethod MergeMethod { get { return _mergeMethod; } set { SetAndNotify(ref _mergeMethod, value); } }
-
-        public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Relative;
-        public BoneCopyMethod BoneCopyMethod { get { return _boneCopyMethod; } set { SetAndNotify(ref _boneCopyMethod, value); } }
+  
 
         
         public FilterableAnimationsViewModel(string headerText)
@@ -72,18 +66,31 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         public void FindAllAnimations(ResourceLibary resourceLibary, string skeletonName)
         {
+            _logger.Here().Information("Finding all animations");
+
             AllAnimations = PackFileLoadHelper.GetAllWithExtention(resourceLibary.PackfileContent, "anim");
             AnimationsForCurrentSkeleton.Clear();
 
+            _logger.Here().Information("Animations found =" + AllAnimations.Count());
+
             foreach (var animation in AllAnimations)
             {
-                var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
-                if (animationSkeletonName == skeletonName)
-                    AnimationsForCurrentSkeleton.Add(animation);
+                try
+                {
+                    var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
+                    if (animationSkeletonName == skeletonName)
+                        AnimationsForCurrentSkeleton.Add(animation);
+                }
+                catch (Exception e)
+                {
+                    _logger.Here().Error("Parsing failed for " + animation.FullPath + "\n" + e.ToString());
+                }
             }
 
             CurrentSkeletonName = skeletonName;
             OnlyDisplayAnimationsForCurrentSkeleton = true;
+
+            _logger.Here().Information("Finding all done");
         }
     }
 }

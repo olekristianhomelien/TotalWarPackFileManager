@@ -23,6 +23,18 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
+        <ObjectDataProvider x:Key="MergeMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="services:MergeMethod"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="BoneCopyMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="services:BoneCopyMethod"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -145,6 +157,8 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
             
                 <animationsplicerviews:AnimationSelector 
@@ -167,9 +181,25 @@
                             SelectedItem="{Binding SelectedMainAnimation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <animationsplicerviews:VisualizationHelperView Grid.Row="4"/>
+                <DockPanel Grid.Row="4">
+                    <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <ComboBox DockPanel.Dock="Right" 
+                            ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
+                            SelectedItem="{Binding DefaultBoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </DockPanel>
 
-                <Grid Grid.Row="5">
+                <DockPanel Grid.Row="5">
+                    <TextBlock Text="Merge method" Width="110" DockPanel.Dock="Left"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <ComboBox DockPanel.Dock="Right" 
+                            ItemsSource="{Binding Source={StaticResource MergeMethodEnums}}"
+                            SelectedItem="{Binding MergeMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </DockPanel>
+
+                <animationsplicerviews:VisualizationHelperView Grid.Row="6"/>
+
+                <Grid Grid.Row="7">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -233,11 +263,7 @@
                                        ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalSkeleton.SelectedSkeletonBonesFlattened}"
                                        DisplayMemberPath="BoneName">
 
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="SelectionChanged">
-                                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ForceComputeCommand}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
+                       
                                 </ComboBox>
                             </Grid>
                         </HierarchicalDataTemplate>

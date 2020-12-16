@@ -51,6 +51,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _externalElement.IsChecked = true;
             _animationPlayer = new AnimationPlayer();
             _externalElement.Create(_animationPlayer, resourceLibary, skeletonName);
+
+            _externalElement.SkeletonModel.LineColour = new Vector3(1, 0, 0);
+            _externalElement.SkeletonModel.NodeColour = new Vector3(1, 1, 1);
         }
 
         public void SetSelectedBone(int index)

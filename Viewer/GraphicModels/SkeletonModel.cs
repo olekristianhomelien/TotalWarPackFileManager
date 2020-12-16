@@ -15,8 +15,9 @@ namespace Viewer.GraphicModels
         LineBox _lineBox;
 
 
-        Vector3 _defaultColour = new Vector3(.25f, 1, .25f);
-        Vector3 _selectedColour = new Vector3(1, 0, 0);
+        public Vector3 NodeColour = new Vector3(.25f, 1, .25f);
+        public Vector3 SelectedNodeColour = new Vector3(1, 0, 0);
+        public Vector3 LineColour = new Vector3(0, 0, 0);
 
         public int? SelectedBoneIndex { get; set; }
         public SkeletonModel(Effect shader) : base(null, shader)
@@ -61,9 +62,9 @@ namespace Viewer.GraphicModels
                 if (parentIndex == -1)
                     continue;
 
-                Vector3 drawColour = _defaultColour;
+                Vector3 drawColour = NodeColour;
                 if (SelectedBoneIndex.HasValue && SelectedBoneIndex.Value == i)
-                    drawColour = _selectedColour;
+                    drawColour = SelectedNodeColour;
 
                 var vertices = new[]
                 {
@@ -74,7 +75,7 @@ namespace Viewer.GraphicModels
                 foreach (var pass in _shader.CurrentTechnique.Passes)
                 {
                     ApplyCommonShaderParameters(commonShaderParameters, Matrix.Identity);
-                    _shader.Parameters["Color"].SetValue(new Vector3(0,0,0));
+                    _shader.Parameters["Color"].SetValue(LineColour);
                     pass.Apply();
                     device.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }

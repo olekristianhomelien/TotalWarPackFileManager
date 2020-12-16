@@ -11,7 +11,7 @@
             <Expander.Header>
                 <TextBlock VerticalAlignment="Bottom">
                     <Run FontSize="14" FontWeight="Bold">Other skeleton: </Run>
-                    <Run Text="Skeletons\Humanoid_01.anim"/>
+                    <Run Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
                 </TextBlock>
             </Expander.Header>
             
@@ -32,12 +32,6 @@
                             DisplayMemberPath="FullPath"
                             ShowLabel="False"
                             LabelText="External Skeleton"/>
-                </DockPanel>
-
-                <DockPanel  Grid.Row="1">
-                    <TextBlock Text="Keep skeleton size" Width="110" DockPanel.Dock="Left" Height="20"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <CheckBox VerticalContentAlignment="Center"/>
                 </DockPanel>
             </Grid>
         </Expander>

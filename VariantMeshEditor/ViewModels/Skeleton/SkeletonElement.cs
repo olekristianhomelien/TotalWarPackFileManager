@@ -19,7 +19,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
     {
 
         public AnimationFile SkeletonFile { get; set; }
-        SkeletonModel SkeletonModel { get; set; }
+        public SkeletonModel SkeletonModel { get; set; }
         public Viewer.Animation.Skeleton Skeleton { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;

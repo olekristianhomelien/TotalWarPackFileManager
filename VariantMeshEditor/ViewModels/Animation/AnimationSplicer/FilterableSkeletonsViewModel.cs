@@ -12,6 +12,7 @@ using static CommonDialogs.Common.NotifyPropertyChangedImpl;
 using static CommonDialogs.FilterDialog.FilterUserControl;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 using Viewer.Scene;
+using VariantMeshEditor.Services;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {

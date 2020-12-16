@@ -9,38 +9,11 @@
              xmlns:services="clr-namespace:VariantMeshEditor.Services"
              mc:Ignorable="d"  >
     <UserControl.Resources>
-        
-        <ObjectDataProvider x:Key="FrameTypeEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:FrameTypes"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
-        <ObjectDataProvider x:Key="TransformTypeEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:TransformTypes"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
         <ObjectDataProvider x:Key="MatchMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="services:TimeMatchMethod"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
-
-        <ObjectDataProvider x:Key="MergeMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:MergeMethod"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
-        <ObjectDataProvider x:Key="BoneCopyMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:BoneCopyMethod"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
-
     </UserControl.Resources>
     
     
@@ -93,21 +66,7 @@
                     </filterdialog:CollapsableFilterControl>
                 </DockPanel>
 
-                <DockPanel Grid.Row="2">
-                    <TextBlock Text="Frame types to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox
-                        ItemsSource="{Binding Source={StaticResource FrameTypeEnums}}"
-                        SelectedItem="{Binding DefaultFrameTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
-
-                <DockPanel Grid.Row="3">
-                    <TextBlock Text="Transforms to copy" Width="110" DockPanel.Dock="Left" Height="20"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox
-                        ItemsSource="{Binding Source={StaticResource TransformTypeEnums}}"
-                        SelectedItem="{Binding DefaultTransformTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
+              
 
                 <DockPanel Grid.Row="4">
                     <TextBlock Text="Speed multiplier" Width="110" DockPanel.Dock="Left" Height="20"/>
@@ -129,20 +88,7 @@
                         SelectedItem="{Binding MatchingMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <DockPanel Grid.Row="6">
-                    <TextBlock Text="Merge method" Width="110" DockPanel.Dock="Left" Height="20"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox
-                        ItemsSource="{Binding Source={StaticResource MergeMethodEnums}}"
-                        SelectedItem="{Binding MergeMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
-                <DockPanel Grid.Row="7">
-                    <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left" Height="20"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox
-                        ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
-                        SelectedItem="{Binding BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
+               
             </Grid>
         </Expander>
     </GroupBox>
