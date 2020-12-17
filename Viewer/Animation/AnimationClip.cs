@@ -13,7 +13,7 @@ namespace Viewer.Animation
     {
         public class KeyFrame
         {
-            public List<Vector3> Translation { get; set; } = new List<Vector3>();
+            public List<Vector3> Position { get; set; } = new List<Vector3>();
             public List<Quaternion> Rotation { get; set; } = new List<Quaternion>();
         }
 
@@ -45,13 +45,13 @@ namespace Viewer.Animation
         {
             var output = new KeyFrame();
             foreach (var translation in frame.Transforms)
-                output.Translation.Add(new Vector3(translation.X, translation.Y, translation.Z));
+                output.Position.Add(new Vector3(translation.X, translation.Y, translation.Z));
 
             foreach (var rotation in frame.Quaternion)
                 output.Rotation.Add(new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W));
+
             return output;
         }
-
 
         public AnimationFile ConvertToFileFormat(Skeleton skeleton)
         {
@@ -89,7 +89,7 @@ namespace Viewer.Animation
         Frame CreateFrameFromKeyFrame(KeyFrame keyFrame)
         {
             var frame = new Frame();
-            foreach (var trans in keyFrame.Translation)
+            foreach (var trans in keyFrame.Position)
                 frame.Transforms.Add(new FileVector3(trans.X, trans.Y, trans.Z));
 
             foreach (var rot in keyFrame.Rotation)

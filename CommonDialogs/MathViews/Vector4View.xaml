@@ -5,52 +5,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:CommonDialogs.MathViews" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:behaviors="clr-namespace:CommonDialogs.Behaviors"
              mc:Ignorable="d" 
+             x:Name="self"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"></RowDefinition>
-            </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
 
-            <TextBox 
-                Grid.Row="0" Grid.Column="0" 
-                Text="{Binding Vector4.X.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}">
-                <i:Interaction.Behaviors>
-                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
+        <Border x:Name="b" Grid.Row="0" Grid.Column="0" />
+        <Border x:Name="b2" Grid.Row="0" Grid.Column="0" Margin="3,0,3,0"/>
+        <TextBox 
+            Width="{Binding ActualWidth, ElementName=b}" 
+            Grid.Row="0" Grid.Column="0" 
+            Text="{Binding Vector4.X.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"
+            MaxLength="{Binding NumbersMaxLength, ElementName=self}">
+            <i:Interaction.Behaviors>
+                <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
+            </i:Interaction.Behaviors>
+        </TextBox>
 
-            <TextBox 
+        <TextBox 
+            Width="{Binding ActualWidth, ElementName=b2}" 
             Grid.Row="0" Grid.Column="1"
             Margin="3,0,3,0"
-            Text="{Binding Vector4.Y.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" >
-                <i:Interaction.Behaviors>
-                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
+            Text="{Binding Vector4.Y.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+            MaxLength="{Binding NumbersMaxLength, ElementName=self}" >
+            <i:Interaction.Behaviors>
+                <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
+            </i:Interaction.Behaviors>
+        </TextBox>
 
-            <TextBox 
+        <TextBox 
+            Width="{Binding ActualWidth, ElementName=b}" 
             Grid.Row="0" Grid.Column="2" 
-            Text="{Binding Vector4.Z.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" >
-                <i:Interaction.Behaviors>
-                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
+            Text="{Binding Vector4.Z.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+            MaxLength="{Binding NumbersMaxLength, ElementName=self}">
+            <i:Interaction.Behaviors>
+                <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
+            </i:Interaction.Behaviors>
+        </TextBox>
 
-            <TextBox 
+        <TextBox 
+            Width="{Binding ActualWidth, ElementName=b}" 
             Grid.Row="0" Grid.Column="3" 
-            Text="{Binding Vector4.W.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" >
-                <i:Interaction.Behaviors>
-                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
-                </i:Interaction.Behaviors>
-            </TextBox>
+            Text="{Binding Vector4.W.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+            MaxLength="{Binding NumbersMaxLength, ElementName=self}">
+            <i:Interaction.Behaviors>
+                <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
+            </i:Interaction.Behaviors>
+        </TextBox>
 
-        </Grid>
     </Grid>
 </UserControl>

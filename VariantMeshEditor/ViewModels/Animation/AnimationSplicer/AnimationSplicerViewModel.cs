@@ -54,7 +54,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public MappableSkeletonBone SelectedNode {get { return _selectedNode; }set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
 
 
-        public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Relative;
+        public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
         public BoneCopyMethod DefaultBoneCopyMethod 
         { 
             get { return _boneCopyMethod; } 
@@ -139,6 +139,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
         }
 
+        AnimationClip _lastComputedAnimation = null;
+
 
         AnimationClip BuildAnimation()
         {
@@ -158,9 +160,15 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
                 AnimationBuilderService builder = new AnimationBuilderService();
                 var animation = builder.CreateMergedAnimation(settings);
+                _lastComputedAnimation = animation;
+
+                var currentFrame = _animationPlayer._animationNode.AnimationPlayer.CurrentFrame;
 
                 if (animation != null)
+                {
                     _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.Skeleton);
+                    _animationPlayer._animationNode.AnimationPlayer.CurrentFrame = currentFrame;
+                }
                 else
                     _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.Skeleton);
 
@@ -229,7 +237,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             ExternalSkeletonSettings.UpdateNode(time);
             ExternalSkeletonSettings.SetFrame(_animationPlayer.CurrentFrame);
-            
+
+
+            if(_lastComputedAnimation != null)
+                TargetSkeletonBones.FirstOrDefault()?.SetCurrentInformation(_animationPlayer.CurrentFrame, _lastComputedAnimation);
         }
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)

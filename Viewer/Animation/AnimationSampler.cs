@@ -65,6 +65,12 @@ namespace Viewer.Animation
                         }
                     }
                 }
+                //for (int i = 0; i < currentFrame.BoneTransforms.Count() - 1; i++)
+                //{
+                //    Quaternion rotation = Quaternion.Slerp(currentFrame.BoneTransforms[i].Rotation, currentFrame.BoneTransforms[i].Rotation, 0.5f);
+                //
+                //    currentFrame.BoneTransform[i + 1].rotation = rotation;
+                //}
 
                 for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
                 {
@@ -132,10 +138,10 @@ namespace Viewer.Animation
 
         static Vector3 ComputeTranslationCurrentFrame(int boneIndex, AnimationClip.KeyFrame currentFrame, AnimationClip.KeyFrame nextFrame, float animationInterpolation)
         {
-            var animationValueCurrentFrame = currentFrame.Translation[boneIndex];
+            var animationValueCurrentFrame = currentFrame.Position[boneIndex];
             if (nextFrame != null)
             {
-                var animationValueNextFrame = nextFrame.Translation[boneIndex];
+                var animationValueNextFrame = nextFrame.Position[boneIndex];
                 animationValueCurrentFrame = Vector3.Lerp(animationValueCurrentFrame, animationValueNextFrame, animationInterpolation);
             }
 

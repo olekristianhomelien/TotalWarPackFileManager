@@ -1,4 +1,5 @@
 ﻿using CommonDialogs.MathViews;
+using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,11 @@ namespace VariantMeshEditor.Util
             var z = Matrix.CreateRotationZ(MathHelper.ToRadians((float)vector3ViewModel.Z.Value));
             var rotationMatrix = x * y * z;
             return Quaternion.CreateFromRotationMatrix(rotationMatrix);
+        }
+
+        public static Quaternion ToQuaternion(FileVector4 vector4)
+        {
+            return new Quaternion(vector4.X, vector4.Y, vector4.Z, vector4.W);
         }
     }
 }

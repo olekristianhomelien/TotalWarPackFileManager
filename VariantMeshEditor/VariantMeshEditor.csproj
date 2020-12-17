@@ -58,6 +58,7 @@
     <Compile Include="Services\AnimationBuilderService.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\MathConverter.cs" />
+    <Compile Include="Util\MathExtentions.cs" />
     <Compile Include="Util\VariantMeshLoader.cs" />
     <Compile Include="ViewModels\Animation\AnimationElement.cs" />
     <Compile Include="ViewModels\Animation\AnimationExplorerNodeViewModel.cs" />

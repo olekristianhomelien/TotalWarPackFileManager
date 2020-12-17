@@ -36,7 +36,7 @@ namespace CommonDialogs.MathViews
             }
             set
             {
-                _textvalue = value.ToString();
+                TextValue = value.ToString();
                 _value = value;
             }
         }

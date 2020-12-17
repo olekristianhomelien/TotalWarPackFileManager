@@ -34,5 +34,23 @@ namespace CommonDialogs.MathViews
 
         public static readonly DependencyProperty Vector4Property =
             DependencyProperty.Register("Vector4", typeof(Vector4ViewModel), typeof(Vector4View), new PropertyMetadata(null));
+
+        public int FieldWidth
+        {
+            get { return (int)GetValue(FieldWidthProperty); }
+            set { SetValue(FieldWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty FieldWidthProperty =
+            DependencyProperty.Register("FieldWidth", typeof(int), typeof(Vector4View), new PropertyMetadata(60, null));
+
+        public int NumbersMaxLength
+        {
+            get { return (int)GetValue(NumbersMaxLengthProperty); }
+            set { SetValue(NumbersMaxLengthProperty, value); }
+        }
+
+        public static readonly DependencyProperty NumbersMaxLengthProperty =
+            DependencyProperty.Register("NumbersMaxLength", typeof(int), typeof(Vector4View), new PropertyMetadata(60, null));
     }
 }

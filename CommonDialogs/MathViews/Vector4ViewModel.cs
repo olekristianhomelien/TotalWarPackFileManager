@@ -17,6 +17,14 @@ namespace CommonDialogs.MathViews
             set { SetAndNotify(ref _w, value); OnValueChanged?.Invoke(this); }
         }
 
+        public void SetValue(double value)
+        {
+            X.Value = value;
+            Y.Value = value;
+            Z.Value = value;
+            W.Value = value;
+        }
+
         public override string ToString()
         {
             return $"{X}, {Y}, {Z}, {W}";

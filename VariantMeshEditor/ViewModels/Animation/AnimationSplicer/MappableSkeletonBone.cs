@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 using VariantMeshEditor.ViewModels.Skeleton;
 using VariantMeshEditor.Services;
+using Viewer.Animation;
+using VariantMeshEditor.Util;
+using Microsoft.Xna.Framework;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -56,11 +59,53 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _transformTypesToCopy, value); }
         }
 
-        private BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Relative;
+        private BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
         public BoneCopyMethod BoneCopyMethod
         {
             get { return _boneCopyMethod; }
             set { SetAndNotify(ref _boneCopyMethod, value); }
+        }
+
+        public bool _debugValue0 = false;
+        public bool DebugValue0
+        {
+            get { return _debugValue0; }
+            set { SetAndNotify(ref _debugValue0, value); }
+        }
+
+        public bool _debugValue1 = false;
+        public bool DebugValue1
+        {
+            get { return _debugValue1; }
+            set { SetAndNotify(ref _debugValue1, value); }
+        }
+
+        Vector4ViewModel _debugVector4 = new Vector4ViewModel();
+        public Vector4ViewModel DebugVector4
+        {
+            get { return _debugVector4; }
+            set { SetAndNotify(ref _debugVector4, value); }
+        }
+
+
+        public void SetCurrentInformation(int frame, AnimationClip animationClip)
+        {
+            if (animationClip != null && animationClip.DynamicFrames.Count > frame)
+            {
+                int boneIndex = OriginalBone.BoneIndex;
+                animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngle(out Vector3 axis, out float angle);
+                DebugVector4.X.Value = (double)axis.X;
+                DebugVector4.Y.Value = (double)axis.Y;
+                DebugVector4.Z.Value = (double)axis.Z;
+                DebugVector4.W.Value = (double)angle;
+            }
+            else
+            {
+                DebugVector4.SetValue(-1);
+            }
+
+            foreach (var child in Children)
+                child.SetCurrentInformation(frame, animationClip);
         }
     }
 

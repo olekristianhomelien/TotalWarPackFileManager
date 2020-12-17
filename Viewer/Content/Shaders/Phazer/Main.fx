@@ -71,6 +71,20 @@ SamplerState spBRDF_Sampler
 	AddressV = Clamp;
 };
 
+
+sampler2D DiffuseSampler = sampler_state {
+
+    Texture = <DiffuseTexture>;
+    MinFilter = LINEAR;
+    MagFilter = LINEAR;
+    Mipfilter = LINEAR;
+    Filter = Anisotropic;
+    MaxAnisotropy = 16;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
+
+
 SamplerState s_normal
 {
 	//Texture = <tex_cube_specular>;
@@ -259,7 +273,7 @@ float4 mainPs(in PixelInputType _input, bool bIsFrontFace : SV_IsFrontFace) : SV
 
 
     float4 NormalTex = NormalTexture.Sample(s_normal, input.tex);
-    float4 DiffuseTex = DiffuseTexture.Sample(SampleType, input.tex);
+    float4 DiffuseTex = tex2D(DiffuseSampler, input.tex); ;// DiffuseSampler.Sample(input.tex);// DiffuseTexture.Sample(SampleType, input.tex);
    // FactionMaskTex = shaderTextures[3].Sample(SampleType, input.tex);
     float4 SpecTex = SpecularTexture.Sample(SampleType, input.tex);
     float4 GlossTex = GlossTexture.Sample(SampleType, input.tex);
