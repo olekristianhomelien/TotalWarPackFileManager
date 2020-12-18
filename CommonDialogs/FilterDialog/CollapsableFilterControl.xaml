@@ -22,6 +22,7 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Label  Grid.Row="0" Grid.Column="0" Width="{Binding LabelTotalWidth, ElementName=self}"  
@@ -33,6 +34,7 @@
 
         <TextBox Grid.Row="0" Grid.Column="2" x:Name="SelectedFileName" VerticalContentAlignment="Center" IsReadOnly="True"/>
         <Button Grid.Row="0" Grid.Column="3" x:Name="BrowseButton" DockPanel.Dock="Right" Width="70">Browse</Button>
+        <Button Grid.Row="0" Grid.Column="4" x:Name="ClearButton" DockPanel.Dock="Right" Width="30" Margin="10,0,0,0">X</Button>
 
         <Grid Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3">
             <filterdialog:FilterUserControl  

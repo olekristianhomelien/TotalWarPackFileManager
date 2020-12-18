@@ -1,6 +1,7 @@
 ﻿using Common;
 using Filetypes.ByteParsing;
 using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,9 +42,20 @@ namespace Filetypes.RigidModel
 
 
         public AnimationHeader Header { get; set; } = new AnimationHeader();
-  
-        public static AnimationHeader GetAnimationHeader(ByteChunk chunk)
+
+        public static AnimationHeader GetAnimationHeader(PackedFile file)
         {
+            ILogger logger = Logging.Create<AnimationFile>();
+            var data = file?.Data;
+            logger.Here().Information($"Loading animation: {file} Size:{data.Length}");
+            return GetAnimationHeader(new ByteChunk(data));
+        }
+
+        static AnimationHeader GetAnimationHeader(ByteChunk chunk)
+        {
+            if (chunk.BytesLeft == 0)
+                throw new Exception("Trying to load animation header with no data, chunk size = 0");
+
             var header = new AnimationHeader();
             header.AnimationType = chunk.ReadUInt32();
             header.Unknown0_alwaysOne = chunk.ReadUInt32();        // Always 1?
@@ -54,6 +66,10 @@ namespace Filetypes.RigidModel
 
             if (header.AnimationType == 7)
                 header.AnimationTotalPlayTimeInSec = chunk.ReadSingle(); // Play time
+
+            bool isSupportedAnimationFile = header.AnimationType == 5 || header.AnimationType == 6 || header.AnimationType == 7;
+            if (!isSupportedAnimationFile)
+                throw new Exception($"Unsuported animation format: {header.AnimationType}");
 
             return header;
         }
@@ -108,11 +124,19 @@ namespace Filetypes.RigidModel
         }
 
 
-        public static AnimationFile Create(ByteChunk chunk)
+        public static AnimationFile Create(PackedFile file)
         {
             ILogger logger = Logging.Create<AnimationFile>();
-            logger.Here().Information($"Loading animation: {chunk}");
+            var data = file?.Data;
+            logger.Here().Information($"Loading animation: {file} Size:{data.Length}");
+            return Create(new ByteChunk(data));
+        }
 
+
+        static AnimationFile Create(ByteChunk chunk)
+        {
+            if (chunk.BytesLeft == 0)
+                throw new System.Exception("Trying to load animation with no data, chunk size = 0");
             var output = new AnimationFile();
             chunk.Reset();
             output.Header = GetAnimationHeader(chunk);
@@ -167,7 +191,6 @@ namespace Filetypes.RigidModel
             }
             // ----------------------
 
-            logger.Here().Information("Loading completed");
             return output;
         }
 

@@ -11,6 +11,8 @@ using static CommonDialogs.FilterDialog.FilterUserControl;
 using Viewer.Scene;
 using VariantMeshEditor.Services;
 using Serilog;
+using System.Collections.ObjectModel;
+using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -18,79 +20,91 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
     {
         ILogger _logger = Logging.Create<FilterableAnimationsViewModel>();
 
-        List<PackedFile> _filterList;
-
-        public List<PackedFile> CurrentItems { get { return _filterList; } set { SetAndNotify(ref _filterList, value); } }
-        List<PackedFile> AllAnimations { get; set; } = new List<PackedFile>();
-        List<PackedFile> AnimationsForCurrentSkeleton { get; set; } = new List<PackedFile>();
-        public OnSeachDelegate FilterItemOnSearch { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
-
+        // Animation selection
+        ObservableCollection<PackedFile> _animationList;
+        public ObservableCollection<PackedFile> AnimationsForCurrentSkeleton { get { return _animationList; } set { SetAndNotify(ref _animationList, value); } }
 
         public string _currentSkeletonName;
         public string CurrentSkeletonName { get { return _currentSkeletonName; } set { SetAndNotify(ref _currentSkeletonName, value); } }
 
         public string _headerText;
         public string HeaderText { get { return _headerText; } set { SetAndNotify(ref _headerText, value); } }
-       
 
-        public event ValueChangedDelegate<PackedFile> SelectionChanged;
+        public event ValueChangedDelegate<PackedFile> SelectedAnimationChanged;
         PackedFile _selectedAnimation;
-        public PackedFile SelectedItem { get { return _selectedAnimation; } set { SetAndNotify(ref _selectedAnimation, value, SelectionChanged); } }
-
-        bool _onlyDisplayAnimationsForCurrentSkeleton = true;
-        public bool OnlyDisplayAnimationsForCurrentSkeleton
-        {
-            get { return _onlyDisplayAnimationsForCurrentSkeleton; }
-            set
-            {
-                SetAndNotify(ref _onlyDisplayAnimationsForCurrentSkeleton, value);
-                if (value)
-                    CurrentItems = AnimationsForCurrentSkeleton;
-                else
-                    CurrentItems = AllAnimations;
-            }
-        }
-        
+        public PackedFile SelectedAnimation { get { return _selectedAnimation; } set { SetAndNotify(ref _selectedAnimation, value, SelectedAnimationChanged); } }
 
 
+
+        // Skeleton Selection
+        public AnimationFile SkeletonFile { get; set; }
+
+        public List<PackedFile> SkeletonList { get; set; } = new List<PackedFile>();
+
+        PackedFile _selectedSkeleton;
+        public PackedFile SelectedSkeleton { get { return _selectedSkeleton; } set { SetAndNotify(ref _selectedSkeleton, value); OnSkeletonSelected(_selectedSkeleton); } }
+
+        public event ValueChangedDelegate<FilterableAnimationsViewModel> SelectedSkeletonChanged;
+
+        public bool EnableSkeltonBrowsing { get; set; }
+
+
+        // Misc
+        public OnSeachDelegate FilterByFullPath { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
+        ResourceLibary _resourceLibary;
+        AnimationToSkeletonTypeHelper _animationToSkeletonTypeHelper;
+
+
+        // Mapping settings
         public TimeMatchMethod _matchingMethod = TimeMatchMethod.TimeFit;
         public TimeMatchMethod MatchingMethod { get { return _matchingMethod; } set { SetAndNotify(ref _matchingMethod, value); } }
+        public ObservableCollection<SkeletonBoneNode> SelectedSkeletonBonesFlattened { get; set; } = new ObservableCollection<SkeletonBoneNode>();
 
-  
-
-        
-        public FilterableAnimationsViewModel(string headerText)
+        void FindAllSkeletons(ResourceLibary resourceLibary)
         {
-            HeaderText = headerText;
+            var allFilesInFolder = PackFileLoadHelper.GetAllFilesInDirectory(resourceLibary.PackfileContent, "animations\\skeletons");
+            SkeletonList = allFilesInFolder.Where(x => x.FileExtention == "anim").ToList();
         }
 
-        public void FindAllAnimations(ResourceLibary resourceLibary, string skeletonName)
+        void OnSkeletonSelected(PackedFile selectedSkeleton)
         {
-            _logger.Here().Information("Finding all animations");
+            _logger.Here().Information($"Selecting a new skeleton: {selectedSkeleton}");
 
-            AllAnimations = PackFileLoadHelper.GetAllWithExtention(resourceLibary.PackfileContent, "anim");
+            SelectedSkeletonBonesFlattened.Clear();
             AnimationsForCurrentSkeleton.Clear();
+            SelectedAnimation = null;
+            CurrentSkeletonName = "";
 
-            _logger.Here().Information("Animations found =" + AllAnimations.Count());
-
-            foreach (var animation in AllAnimations)
+            if (selectedSkeleton != null)
             {
-                try
-                {
-                    var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
-                    if (animationSkeletonName == skeletonName)
-                        AnimationsForCurrentSkeleton.Add(animation);
-                }
-                catch (Exception e)
-                {
-                    _logger.Here().Error("Parsing failed for " + animation.FullPath + "\n" + e.ToString());
-                }
+                // Create the skeleton
+                SkeletonFile = AnimationFile.Create(selectedSkeleton);
+                SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = -1, BoneName = "" });
+                foreach (var bone in SkeletonFile.Bones)
+                    SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = bone.Id, BoneName = bone.Name });
+
+                // Find all the animations for this skeleton
+                var animations = _animationToSkeletonTypeHelper.GetAnimationsForSkeleton(SkeletonFile.Header.SkeletonName);
+                foreach (var animation in animations)
+                    AnimationsForCurrentSkeleton.Add(animation);
+
+                CurrentSkeletonName = SkeletonFile.Header.SkeletonName;
             }
 
-            CurrentSkeletonName = skeletonName;
-            OnlyDisplayAnimationsForCurrentSkeleton = true;
+            SelectedSkeletonChanged?.Invoke(this);
+            _logger.Here().Information("Selecting a new skeleton - Done");
+        }
 
-            _logger.Here().Information("Finding all done");
+
+        public FilterableAnimationsViewModel(string headerText, ResourceLibary resourceLibary, AnimationToSkeletonTypeHelper animationToSkeletonTypeHelper, bool enableSkeltonBrowsing)
+        {
+            HeaderText = headerText;
+            _resourceLibary = resourceLibary;
+            _animationToSkeletonTypeHelper = animationToSkeletonTypeHelper;
+            EnableSkeltonBrowsing = enableSkeltonBrowsing;
+            AnimationsForCurrentSkeleton = new ObservableCollection<PackedFile>();
+
+            FindAllSkeletons(_resourceLibary);
         }
     }
 }

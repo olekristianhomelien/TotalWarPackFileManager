@@ -3,6 +3,7 @@ using CommonDialogs.Common;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Serilog;
@@ -20,6 +21,48 @@ using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
+    public class AnimationToSkeletonTypeHelper
+    {
+        ILogger _logger = Logging.Create<AnimationSplicerViewModel>();
+        Dictionary<string, List<PackedFile>> _skeletonNameToAnimationMap = new Dictionary<string, List<PackedFile>>();
+
+        public void FindAllAnimations(ResourceLibary resourceLibary)
+        {
+            _logger.Here().Information("Finding all animations");
+
+            var AllAnimations = PackFileLoadHelper.GetAllWithExtention(resourceLibary.PackfileContent, "anim");
+
+            _logger.Here().Information("Animations found =" + AllAnimations.Count());
+
+            foreach (var animation in AllAnimations)
+            {
+                try
+                {
+                    var animationSkeletonName = AnimationFile.GetAnimationHeader(animation).SkeletonName;
+                    if (_skeletonNameToAnimationMap.ContainsKey(animationSkeletonName) == false)
+                        _skeletonNameToAnimationMap.Add(animationSkeletonName, new List<PackedFile>());
+
+                    _skeletonNameToAnimationMap[animationSkeletonName].Add(animation);
+
+                }
+                catch (Exception e)
+                {
+                    _logger.Here().Error("Parsing failed for " + animation.FullPath + "\n" + e.ToString());
+                }
+            }
+
+            _logger.Here().Information("Finding all done");
+        }
+
+        public List<PackedFile> GetAnimationsForSkeleton(string skeletonName)
+        {
+            if (_skeletonNameToAnimationMap.ContainsKey(skeletonName) == false)
+                return new List<PackedFile>();
+            return _skeletonNameToAnimationMap[skeletonName];
+        }
+    }
+
+
     public class AnimationSplicerViewModel : NotifyPropertyChangedImpl
     {
         ILogger _logger = Logging.Create<AnimationSplicerViewModel>();
@@ -27,18 +70,20 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         ResourceLibary _resourceLibary;
         SkeletonElement _targetSkeletonNode;
         AnimationPlayerViewModel _animationPlayer;
+        AnimationClip _lastComputedAnimation = null;
+        AnimationToSkeletonTypeHelper _animationToSkeletonTypeHelper = new AnimationToSkeletonTypeHelper();
+
 
         bool _isSelected;
         public bool IsSelected { get { return _isSelected; } set { SetAndNotify(ref _isSelected, value); IsInFocus(IsSelected); } }
 
-        public FilterableAnimationsViewModel TargetAnimation { get; set; } = new FilterableAnimationsViewModel("Source Animation: ");
-        public FilterableSkeletonsViewModel ExternalSkeleton { get; set; } = new FilterableSkeletonsViewModel();
-        public FilterableAnimationsViewModel ExternalAnimation { get; set; } = new FilterableAnimationsViewModel("Other Animation: ");
+        public FilterableAnimationsViewModel TargetAnimation { get; set; }
+        public FilterableAnimationsViewModel ExternalAnimation { get; set; }
 
         public ExternalSkeletonViewModel ExternalSkeletonSettings { get; set; } = new ExternalSkeletonViewModel();
 
-        ObservableCollection<MappableSkeletonBone> _targetSkeletonBones;
-        public ObservableCollection<MappableSkeletonBone> TargetSkeletonBones { get { return _targetSkeletonBones; } set{ SetAndNotify(ref _targetSkeletonBones, value);}}
+        ObservableCollection<MappableSkeletonBone> _boneMapping;
+        public ObservableCollection<MappableSkeletonBone> BoneMapping { get { return _boneMapping; } set{ SetAndNotify(ref _boneMapping, value);}}
 
         MainAnimation _selectedMainAnimation = MainAnimation.Other;
         public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
@@ -48,6 +93,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ICommand ClearBindingSelfCommand { get; set; }
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
         public ICommand SaveAnimationCommand { get; set; }
+        public ICommand ExportCommand { get; set; }
 
 
         public MappableSkeletonBone _selectedNode;
@@ -81,26 +127,28 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _targetSkeletonNode = skeletonNode;
             _animationPlayer = animationPlayer;
 
+            _animationToSkeletonTypeHelper.FindAllAnimations(_resourceLibary);
+
+            TargetAnimation  = new FilterableAnimationsViewModel("Source Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, false);
+            TargetAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, _targetSkeletonNode.FullPath);
+
+            ExternalAnimation  = new FilterableAnimationsViewModel("Target Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, true);
+            ExternalAnimation.SelectedSkeletonChanged += SetExteralSkeleton;
+            ExternalAnimation.SelectedAnimationChanged += SetExternalAnimation;
             CreateCommands();
 
-            TargetAnimation.SelectionChanged += x => BuildAnimation();
-            ExternalSkeleton.SelectionChanged += SetExteralSkeleton;
-            ExternalAnimation.SelectionChanged += SetExternalAnimation;
-
-            // Initial init
-            TargetAnimation.FindAllAnimations(_resourceLibary, _targetSkeletonNode.SkeletonFile.Header.SkeletonName);
-            ExternalSkeleton.FindAllSkeletons(_resourceLibary);
-            TargetSkeletonBones = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
+            BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
             UpdateBoneCopyMethod(DefaultBoneCopyMethod);
 
-            SelectedNode = TargetSkeletonBones.FirstOrDefault();
+            SelectedNode = BoneMapping.FirstOrDefault();
         }
 
         void CreateCommands()
         {
             ForceComputeCommand = new RelayCommand(() => BuildAnimation());
             LoadTestDataCommand = new RelayCommand(LoadTestData);
-            SaveAnimationCommand = new RelayCommand(SaveAnimation);
+            SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
+            ExportCommand = new RelayCommand(ExportCurrentConfiguration);
 
             ClearBindingSelfCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelf);
             ClearBindingSelfAndChildrenCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelfAndChildren);
@@ -108,38 +156,62 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void UpdateBoneCopyMethod(BoneCopyMethod value)
         {
-            if(TargetSkeletonBones != null)
-                MappableSkeletonBoneHelper.SetDefaultBoneCopyMethod(TargetSkeletonBones.FirstOrDefault(), value);
+            if(BoneMapping != null)
+                MappableSkeletonBoneHelper.SetDefaultBoneCopyMethod(BoneMapping.FirstOrDefault(), value);
         }
 
         void LoadTestData()
         {
             // Temp - Populate with debug data. 
-           //TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-           //ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-           //ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
-         
-           TargetAnimation.SelectedItem =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
-           ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
-           ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
+            //TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+            //ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+            //ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
 
-            //TargetAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
-            //ExternalSkeleton.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid03.anim");
-            //ExternalAnimation.SelectedItem = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid03\unarmed\cannon_crew\hu3_clap_and_order_2.anim");
+            TargetAnimation.SelectedAnimation =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
+            ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
+            ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
+
+            //TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
+            //ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid03.anim");
+            //ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid03\unarmed\cannon_crew\hu3_clap_and_order_2.anim");
         }
 
 
-        void SaveAnimation()
+        void SaveAnimationToFile()
         {
-            var anim = BuildAnimation();
-            if (anim != null)
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.DefaultExt = ".anim";
+            if (dialog.ShowDialog() == true)
             {
-                var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
-                AnimationFile.Write(fileFormat, @"C:\temp\Animation\floatyBoi.anim");
+                var anim = BuildAnimation();
+                if (anim == null)
+                {
+                    _logger.Here().Error("Animation failed to build");
+                    System.Windows.MessageBox.Show("Error - Animation failed to build");
+                }
+                else
+                {
+
+                    try
+                    {
+                        var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
+                        AnimationFile.Write(fileFormat, dialog.FileName);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Here().Error("Animation saving failed: " + e.ToString());
+                        System.Windows.MessageBox.Show("Error - Unable to save animation");
+                    }
+                }
             }
         }
 
-        AnimationClip _lastComputedAnimation = null;
+        void ExportCurrentConfiguration()
+        { 
+        
+        }
+
+        
 
 
         AnimationClip BuildAnimation()
@@ -148,12 +220,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 AnimationBuilderService.AnimationBuilderSettings settings = new AnimationBuilderService.AnimationBuilderSettings()
                 {
-                    OtherAnimationFile = ExternalAnimation.SelectedItem,
-                    OtherSkeletonFile = ExternalSkeleton.SelectedItem,
+                    OtherAnimationFile = ExternalAnimation.SelectedAnimation,
+                    OtherSkeletonFile = ExternalAnimation.SelectedSkeleton,
 
-                    BoneSettings = TargetSkeletonBones,
+                    BoneSettings = BoneMapping,
                     SourceSkeleton = _targetSkeletonNode.Skeleton,
-                    SourceAnimationFile = TargetAnimation.SelectedItem,
+                    SourceAnimationFile = TargetAnimation.SelectedAnimation,
 
                     SelectedMainAnimation = SelectedMainAnimation
                 };
@@ -182,20 +254,18 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
         }
 
-        private void SetExternalAnimation(PackedFile externalAnimationClip)
-        {
-            ExternalSkeletonSettings.SetAnimation(externalAnimationClip);
-        }
+       private void SetExternalAnimation(PackedFile externalAnimationClip)
+       {
+           ExternalSkeletonSettings.SetAnimation(externalAnimationClip);
+       }
 
-        private void SetExteralSkeleton(PackedFile newSelectedSkeleton)
+        private void SetExteralSkeleton(FilterableAnimationsViewModel newSelectedSkeleton)
         {
-            ExternalAnimation.SelectedItem = null;
-            if (ExternalSkeleton.SelectedItem != null)
+            if (newSelectedSkeleton.SelectedSkeleton != null)
             {
-                ExternalAnimation.FindAllAnimations(_resourceLibary, ExternalSkeleton.SkeletonFile.Header.SkeletonName);
-                PrefilBoneMappingBasedOnName(TargetSkeletonBones, ExternalSkeleton.SelectedSkeletonBonesFlattened);
-
-                ExternalSkeletonSettings.Create(_resourceLibary, newSelectedSkeleton.Name);
+                PrefilBoneMappingBasedOnName(BoneMapping, newSelectedSkeleton.SelectedSkeletonBonesFlattened);
+        
+                ExternalSkeletonSettings.Create(_resourceLibary, newSelectedSkeleton.SkeletonFile.Header.SkeletonName + ".anim");
             }
         }
 
@@ -240,7 +310,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
 
             if(_lastComputedAnimation != null)
-                TargetSkeletonBones.FirstOrDefault()?.SetCurrentInformation(_animationPlayer.CurrentFrame, _lastComputedAnimation);
+                BoneMapping.FirstOrDefault()?.SetCurrentInformation(_animationPlayer.CurrentFrame, _lastComputedAnimation);
         }
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)

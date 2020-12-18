@@ -85,14 +85,14 @@ namespace VariantMeshEditor.Services
         {
             if (file == null)
                 return null;
-            var anim = AnimationFile.Create(new ByteChunk(file.Data));
+            var anim = AnimationFile.Create(file);
             var animClip = new AnimationClip(anim);
             return animClip;
         }
 
         Skeleton CreateSkeleton(PackedFile file)
         {
-            var skeletonFile = AnimationFile.Create(new ByteChunk(file.Data));
+            var skeletonFile = AnimationFile.Create(file);
             var skeleton = new Skeleton(skeletonFile);
             return skeleton;
         }

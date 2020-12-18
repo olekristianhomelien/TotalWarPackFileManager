@@ -93,7 +93,7 @@ namespace VariantMeshEditor.ViewModels.Animation
             {
                 try
                 {
-                    var animationSkeletonName = AnimationFile.GetAnimationHeader(new ByteChunk(animation.Data)).SkeletonName;
+                    var animationSkeletonName = AnimationFile.GetAnimationHeader(animation).SkeletonName;
                     if (animationSkeletonName == _skeletonNode.SkeletonFile.Header.SkeletonName)
                         AnimationFilesForSkeleton.Add(animation);
                 }

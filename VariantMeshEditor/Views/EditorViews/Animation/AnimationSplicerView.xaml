@@ -158,22 +158,17 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
             
                 <animationsplicerviews:AnimationSelector 
                     Grid.Row="0"
                     DataContext="{Binding TargetAnimation, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <animationsplicerviews:SkeletonSelector  
-                    Grid.Row="1"
-                    DataContext="{Binding ExternalSkeleton, UpdateSourceTrigger=PropertyChanged}"/>
-
                 <animationsplicerviews:AnimationSelector  
-                    Grid.Row="2"
+                    Grid.Row="1"
                     DataContext="{Binding ExternalAnimation, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <DockPanel Grid.Row="3">
+                <DockPanel Grid.Row="2">
                     <TextBlock Text="Main animation" Width="110" DockPanel.Dock="Left"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <ComboBox DockPanel.Dock="Right" 
@@ -181,7 +176,7 @@
                             SelectedItem="{Binding SelectedMainAnimation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <DockPanel Grid.Row="4">
+                <DockPanel Grid.Row="3">
                     <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <ComboBox DockPanel.Dock="Right" 
@@ -189,7 +184,7 @@
                             SelectedItem="{Binding DefaultBoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <DockPanel Grid.Row="5">
+                <DockPanel Grid.Row="4">
                     <TextBlock Text="Merge method" Width="110" DockPanel.Dock="Left"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <ComboBox DockPanel.Dock="Right" 
@@ -197,9 +192,9 @@
                             SelectedItem="{Binding MergeMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <animationsplicerviews:VisualizationHelperView Grid.Row="6"/>
+                <animationsplicerviews:VisualizationHelperView Grid.Row="5"/>
 
-                <Grid Grid.Row="7">
+                <Grid Grid.Row="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -211,9 +206,9 @@
                     <Button Grid.Column="0" Command="{Binding SaveAnimationCommand}">Save animation</Button>
                     <Button Grid.Column="1" Command="{Binding LoadTestDataCommand}">Load Test Data</Button>
                     <Button Grid.Column="2" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
-                    <Button Grid.Column="3" Command="{Binding ResetCommand}">Reset</Button>
+                    <Button Grid.Column="3" Command="{Binding ResetCommand}" IsEnabled="False">Reset</Button>
                     <Button Grid.Column="4" Command="{Binding ExportCommand}">Export</Button>
-                    <Button Grid.Column="5" Command="{Binding ImportCommand}">Import</Button>
+                    <Button Grid.Column="5" Command="{Binding ImportCommand}" IsEnabled="False">Import</Button>
                 </Grid>
             </Grid>
 
@@ -224,7 +219,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
-                      ItemsSource="{Binding TargetSkeletonBones}" 
+                      ItemsSource="{Binding BoneMapping}" 
                       ItemContainerStyle="{StaticResource TreeViewItemStyle1}">
 
                     <i:Interaction.Behaviors>
@@ -260,7 +255,7 @@
 
                                 <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0"
                                        SelectedItem="{Binding MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                       ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalSkeleton.SelectedSkeletonBonesFlattened}"
+                                       ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalAnimation.SelectedSkeletonBonesFlattened}"
                                        DisplayMemberPath="BoneName">
 
                        
@@ -271,7 +266,7 @@
                 </TreeView>
 
                 <animationsplicerviews:SelectedBoneEditor Grid.Column="1" Grid.Row="1" 
-                                                          TargetBoneList="{Binding ExternalSkeleton.SelectedSkeletonBonesFlattened, UpdateSourceTrigger=PropertyChanged}"
+                                                          TargetBoneList="{Binding ExternalAnimation.SelectedSkeletonBonesFlattened, UpdateSourceTrigger=PropertyChanged}"
                                                           TargetBoneListDisplayName="BoneName"
                                                           SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"/>
 

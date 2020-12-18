@@ -16,18 +16,21 @@ namespace Filetypes.RigidModel
         public List<LodHeader> LodHeaders = new List<LodHeader>();
        
 
-        static bool Validate(ByteChunk chunk, out string errorMessage)
+        static bool Validate(ByteChunk chunk)
         {
             if (chunk.BytesLeft != 0)
-                throw new Exception("Data left!");
-            errorMessage = "";
+                throw new Exception("Data left after parsing model");
             return true;
         }
 
-        public static Rmv2RigidModel Create(ByteChunk chunk, out string errorMessage)
+        public static Rmv2RigidModel Create(PackedFile file)
         {
             ILogger logger = Logging.Create<Rmv2RigidModel>();
-            logger.Here().Information($"Loading Rmv2RigidModel: {chunk}");
+            ByteChunk chunk = new ByteChunk(file.Data);
+
+            logger.Here().Information($"Loading Rmv2RigidModel: {file}");
+            if (chunk.BytesLeft == 0)
+                throw new Exception("Trying to load Rmv2RigidModel with no data, chunk size = 0");
 
             Rmv2RigidModel model = new Rmv2RigidModel
             {
@@ -38,10 +41,7 @@ namespace Filetypes.RigidModel
             };
 
             if (model.FileType != "RMV2")
-            {
-                errorMessage = "Unsupported model format. Not Rmv2";
-                return null;
-            }
+                throw new Exception($"Unsupported model format. Not Rmv2 - {model.FileType }");
 
             for (int i = 0; i < model.LodCount; i++)
                 model.LodHeaders.Add(LodHeader.Create(chunk, model.Version));
@@ -50,7 +50,7 @@ namespace Filetypes.RigidModel
                 for(int j = 0; j < model.LodHeaders[i].MeshCount; j++)
                     model.LodHeaders[i].LodModels.Add(Rmv2LodModel.Create(chunk));
            
-            Validate(chunk, out errorMessage);
+            Validate(chunk);
 
             logger.Here().Information("Loading done");
             return model;

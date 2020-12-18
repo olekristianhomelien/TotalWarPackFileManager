@@ -30,7 +30,6 @@ namespace CommonDialogs.FilterDialog
         {
             InitializeComponent();
             SearchTextBox.TextChanged += (sender, e) => FilterConditionChanged();
-            ClearFilterButton.Click += (sender, e) => SearchTextBox.Text = "";
             ResultList.SelectionChanged += (sender, e) => OnItemSelected?.Invoke(null, null);
         }
 

@@ -163,10 +163,5 @@ namespace Viewer.Animation
                     finalAnimationFrame.BoneTransforms[i].Rotation = ComputeRotationsCurrentFrame(rotMapping[i].Id, currentFrame, nextFrame, animationInterpolation);
             }
         }
-
-
-
     }
-
-   
 }

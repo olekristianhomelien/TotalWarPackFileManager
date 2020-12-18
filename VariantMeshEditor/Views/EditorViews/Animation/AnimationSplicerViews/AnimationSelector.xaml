@@ -6,7 +6,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews" 
              xmlns:filterdialog="clr-namespace:CommonDialogs.FilterDialog;assembly=CommonDialogs" 
-             xmlns:services="clr-namespace:VariantMeshEditor.Services"
+             xmlns:services="clr-namespace:VariantMeshEditor.Services" 
+             xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs"
              mc:Ignorable="d"  >
     <UserControl.Resources>
         <ObjectDataProvider x:Key="MatchMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
@@ -14,16 +15,24 @@
                 <x:Type TypeName="services:TimeMatchMethod"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+
+
+            <common:BoolToVisibilityConverter x:Key="BoolToHiddenConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        <common:BoolToVisibilityConverter x:Key="BoolToHiddenConverterInverted" TrueValue="Collapsed" FalseValue="Visible" />
+       
+        
     </UserControl.Resources>
-    
     
     <GroupBox>
         <Expander DockPanel.Dock="Top">
             <Expander.Header>
-                <TextBlock VerticalAlignment="Bottom">
-                    <Run FontSize="14" FontWeight="Bold" Text="{Binding HeaderText, UpdateSourceTrigger=PropertyChanged}"/>
-                    <Run Text="{Binding SelectedItem.FullPath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
-                </TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding UseAnimation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <TextBlock VerticalAlignment="Bottom">
+                        <Run FontSize="14" FontWeight="Bold" Text="{Binding HeaderText, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Run Text="{Binding SelectedAnimation.FullPath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                    </TextBlock>
+                </StackPanel>
             </Expander.Header>
             
             <Grid>
@@ -37,20 +46,43 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0">
+                <DockPanel Grid.Row="0"
+                           Visibility="{Binding EnableSkeltonBrowsing, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToHiddenConverterInverted}}">
                     <TextBlock Text="Skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <TextBlock Text="{Binding CurrentSkeletonName, UpdateSourceTrigger=PropertyChanged}"/>
                 </DockPanel>
+
+
+                <Grid  Grid.Row="0" 
+                       Visibility="{Binding EnableSkeltonBrowsing, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToHiddenConverter}}">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel Grid.Row="0">
+                        <TextBlock Text="Skeleton" Width="110" DockPanel.Dock="Left" Height="20"/>
+                        <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                        <filterdialog:CollapsableFilterControl  
+                            SelectedItem="{Binding SelectedSkeleton, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            SearchItems="{Binding SkeletonList, UpdateSourceTrigger=PropertyChanged}"     
+                            OnSearch="{Binding FilterByFullPath, UpdateSourceTrigger=PropertyChanged}"   
+                            IsManipulationEnabled="False"
+                            LabelTotalWidth="0"   
+                            DisplayMemberPath="FullPath"
+                            ShowLabel="False"
+                            LabelText="External Skeleton"/>
+                    </DockPanel>
+                </Grid>
 
                 <DockPanel Grid.Row="1">
                     <TextBlock Text="Animation" Width="110" DockPanel.Dock="Left" Height="20"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
 
                     <filterdialog:CollapsableFilterControl  
-                                SelectedItem="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                SearchItems="{Binding CurrentItems, UpdateSourceTrigger=PropertyChanged}"     
-                                OnSearch="{Binding FilterItemOnSearch, UpdateSourceTrigger=PropertyChanged}"   
+                                SelectedItem="{Binding SelectedAnimation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                SearchItems="{Binding AnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"     
+                                OnSearch="{Binding FilterByFullPath, UpdateSourceTrigger=PropertyChanged}"   
                                 IsManipulationEnabled="False"
                                 LabelTotalWidth="0"   
                                 DisplayMemberPath="FullPath"
@@ -58,11 +90,7 @@
                                 MaxHeight="400"
                                 ShowLabel="false"
                                 LabelText="Target Anim">
-                        <filterdialog:CollapsableFilterControl.InnerContent>
-                            <CheckBox 
-                                        IsChecked="{Binding OnlyDisplayAnimationsForCurrentSkeleton, UpdateSourceTrigger=PropertyChanged}"
-                                        Content="Only list animations for current skeleton"/>
-                        </filterdialog:CollapsableFilterControl.InnerContent>
+                    
                     </filterdialog:CollapsableFilterControl>
                 </DockPanel>
 
@@ -88,7 +116,8 @@
                         SelectedItem="{Binding MatchingMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-               
+
+
             </Grid>
         </Expander>
     </GroupBox>

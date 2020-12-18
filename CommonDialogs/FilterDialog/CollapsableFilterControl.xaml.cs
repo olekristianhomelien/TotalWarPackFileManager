@@ -18,6 +18,7 @@ namespace CommonDialogs.FilterDialog
             FilterBox.OnItemSelected += (a, b) => HandleOnItemSelected();
             FilterBox.OnItemDoubleClicked += (a, b) => HandleItemDoubleClicked();
             BrowseButton.Click += (a, b) => ToggleSearchFiled();
+            ClearButton.Click += (a, b) => ClearSelection();
             FilterBox.Visibility = Visibility.Collapsed;
         }
 
@@ -40,6 +41,12 @@ namespace CommonDialogs.FilterDialog
             {
                 SelectedFileName.Text = "";
             }
+        }
+
+        void ClearSelection()
+        {
+            FilterBox.SelectedItem = null;
+            HandleOnItemSelected();
         }
 
         void ToggleSearchFiled()

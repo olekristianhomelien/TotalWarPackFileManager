@@ -79,7 +79,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
             else
             {
-                var externalAnim = AnimationFile.Create(new ByteChunk(animationFile.Data));
+                var externalAnim = AnimationFile.Create(animationFile);
                 var externalAnimationClip = new AnimationClip(externalAnim);
                 _animationPlayer.SetAnimation(externalAnimationClip, _externalElement.Skeleton);
             }

@@ -127,8 +127,7 @@ namespace VariantMeshEditor.Util
 
         void LoadRigidMesh(PackedFile file, ref FileSceneElement parent)
         {
-            ByteChunk chunk = new ByteChunk(file.Data);
-            var model3d = Rmv2RigidModel.Create(chunk, out string errorMessage);
+            var model3d = Rmv2RigidModel.Create(file);
             var model = new RigidModelElement(parent, model3d, file.FullPath);
             if (parent == null)
             {

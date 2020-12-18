@@ -14,14 +14,13 @@
         </Style>
     </UserControl.Resources>
 
-    <DockPanel>
-
-        <DockPanel DockPanel.Dock="Top" >
-            <Button x:Name="ClearFilterButton" DockPanel.Dock="Right" Width="70" >Clear</Button>
-            <AdornerDecorator>
-                <TextBox x:Name="SearchTextBox">
+    <DockPanel >
+        <DockPanel DockPanel.Dock="Top" Margin="0,5,0,5">
+            <Label  DockPanel.Dock="Left" Content="Filter:" VerticalContentAlignment="Center"></Label>
+            <AdornerDecorator DockPanel.Dock="Right">
+                <TextBox x:Name="SearchTextBox" Height="20">
                     <controls:WatermarkService.Watermark>
-                        <TextBox VerticalContentAlignment="Center">Search filter, regEx supported</TextBox>
+                        <TextBox VerticalContentAlignment="Center" Height="20">Search filter, regEx supported</TextBox>
                     </controls:WatermarkService.Watermark>
                 </TextBox>
             </AdornerDecorator>

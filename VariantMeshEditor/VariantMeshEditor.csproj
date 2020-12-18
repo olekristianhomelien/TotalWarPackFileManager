@@ -67,7 +67,6 @@
     <Compile Include="ViewModels\Animation\AnimationSplicer\AnimationSplicerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />
-    <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableSkeletonsViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\MappableSkeletonBone.cs" />
     <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
@@ -103,9 +102,6 @@
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\AnimationSelector.xaml.cs">
       <DependentUpon>AnimationSelector.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\SkeletonSelector.xaml.cs">
-      <DependentUpon>SkeletonSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\VisualizationHelperView.xaml.cs">
       <DependentUpon>VisualizationHelperView.xaml</DependentUpon>
@@ -180,10 +176,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\AnimationSelector.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\SkeletonSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

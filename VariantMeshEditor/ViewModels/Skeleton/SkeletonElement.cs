@@ -38,7 +38,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             var file = PackFileLoadHelper.FindFile(resourceLibary.PackfileContent, skeletonFilePath);
             if (file != null)
             {
-                SkeletonFile = AnimationFile.Create(new ByteChunk(file.Data));
+                SkeletonFile = AnimationFile.Create(file);
                 FullPath = skeletonFilePath;
                 FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
                 Skeleton = new Viewer.Animation.Skeleton(SkeletonFile);

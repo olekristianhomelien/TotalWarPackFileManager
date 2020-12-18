@@ -95,10 +95,9 @@ namespace VariantMeshEditor.Util
         {
             try
             {
-                ByteChunk chunk = new ByteChunk(file.Data);
-                var model3d = Rmv2RigidModel.Create(chunk, out string errorMessage);
+                var model3d = Rmv2RigidModel.Create(file);
                 if (model3d == null)
-                    return (false, errorMessage);
+                    return (false, "");
 
                 foreach (var lod in model3d.LodHeaders)
                 {

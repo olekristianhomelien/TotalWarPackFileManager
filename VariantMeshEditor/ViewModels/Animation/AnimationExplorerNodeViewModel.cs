@@ -183,7 +183,7 @@ namespace VariantMeshEditor.ViewModels.Animation
 
             try
             {
-                AnimationFile = AnimationFile.Create(new ByteChunk(file.Data));
+                AnimationFile = AnimationFile.Create(file);
 
                 if (IsMainAnimation)
                     AnimationName = "Main animation : " + file.Name;
