@@ -129,42 +129,35 @@ namespace VariantMeshEditor.Services
                         GetSkeletonTransform(sourceSkeleton, boneIndex, out Quaternion sourceSkeletonRotation, out Vector3 sourceSkeletonPosition);
                         GetSkeletonTransform(otherSkeleton, mappedBondeIndex, out Quaternion otherSkeletonRotation, out Vector3 otherSkeletonPosition);
 
-                        var newPosition = Vector3.Zero;
-                        var newRotation = Quaternion.Identity;
+                        Vector3 otherAnimatedPosition = otherSkeletonPosition;
+                        Quaternion otherAnimatedRotation = otherSkeletonRotation;
 
                         if (HasAnimationData(mappedBondeIndex, otherAnimationClip))
-                        {
-                            GetAnimationTransform(otherAnimationClip, frameIndex, otherSkeleton, mappedBondeIndex, out Quaternion otherAnimationRotation, out Vector3 otherAnimationPosition);
-
-                            newPosition = otherAnimationPosition;
-                            newRotation = otherAnimationRotation;
-                        }
-                        else
-                        {
-                            newPosition = otherSkeletonPosition;
-                            newRotation = otherSkeletonRotation;
-                        }
-
+                            GetAnimationTransform(otherAnimationClip, frameIndex, otherSkeleton, mappedBondeIndex, out otherAnimatedRotation, out otherAnimatedPosition);
+          
                         if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Ratio)
                         {
                             var ratio = sourceBoneLength / otherBoneLength;
                             if (float.IsNaN(ratio))
                                 ratio = 1;
+                   
+                            //otherAnimatedRotation.ToAxisAngle(out Vector3 axis, out float angle);
+                            //otherAnimatedRotation = Quaternion.CreateFromAxisAngle(axis, angle * ratio);
 
-                            var skeletonRotationDifference = sourceSkeletonRotation * Quaternion.Inverse(otherSkeletonRotation);
-
-                            position = newPosition * ratio;
-                            rotation = newRotation * skeletonRotationDifference;
+                            Quaternion skeletonRotationDifference = sourceSkeletonRotation * Quaternion.Inverse(otherSkeletonRotation);
+                            //Quaternion skeletonRotationDifference = otherSkeletonRotation * Quaternion.Inverse(sourceSkeletonRotation); 
+                            position = otherAnimatedPosition * ratio;
+                            rotation = otherAnimatedRotation * skeletonRotationDifference;
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Absolute)
                         {
-                            position = newPosition;
-                            rotation = newRotation;
+                            position = otherAnimatedPosition;
+                            rotation = otherAnimatedRotation;
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Relative)
                         {
-                            var relativeRotation = newRotation * Quaternion.Inverse(otherSkeletonRotation);
-                            var relativePosition = newPosition - otherSkeletonPosition;
+                            var relativeRotation = otherAnimatedRotation * Quaternion.Inverse(otherSkeletonRotation);
+                            var relativePosition = otherAnimatedPosition - otherSkeletonPosition;
                             rotation = (relativeRotation * sourceSkeletonRotation);
                             position = relativePosition + sourceSkeletonPosition;
                         }
@@ -292,6 +285,14 @@ namespace VariantMeshEditor.Services
         {
             if (bone.UseConstantOffset)
             {
+                if (bone.RotationOffsetAlongPrimaryAxis.Value != 0)
+                {
+                    out_rotation.ToAxisAngle(out Vector3 axis, out float angle);
+                    out_rotation = Quaternion.CreateFromAxisAngle(axis, angle + MathHelper.ToRadians((float)bone.RotationOffsetAlongPrimaryAxis.Value));
+                }
+
+
+
                 out_position += MathConverter.ToVector(bone.ContantTranslationOffset);
                 out_rotation = out_rotation * MathConverter.ToQuaternion(bone.ContantRotationOffset);
             }

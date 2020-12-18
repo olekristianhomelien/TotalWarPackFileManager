@@ -41,6 +41,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _contantRotationOffset, value); }
         }
 
+        DoubleViewModel _rotationOffsetAlongPrimaryAxis = new DoubleViewModel();
+        public DoubleViewModel RotationOffsetAlongPrimaryAxis
+        {
+            get { return _rotationOffsetAlongPrimaryAxis; }
+            set { SetAndNotify(ref _rotationOffsetAlongPrimaryAxis, value); }
+        }
+
         private bool _useMapping = true;
         public bool UseMapping
         {
@@ -92,12 +99,19 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             if (animationClip != null && animationClip.DynamicFrames.Count > frame)
             {
+                
                 int boneIndex = OriginalBone.BoneIndex;
-                animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngle(out Vector3 axis, out float angle);
+                /*animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngle(out Vector3 axis, out float angle);
                 DebugVector4.X.Value = (double)axis.X;
                 DebugVector4.Y.Value = (double)axis.Y;
                 DebugVector4.Z.Value = (double)axis.Z;
-                DebugVector4.W.Value = (double)angle;
+                DebugVector4.W.Value = (double)angle;*/
+
+                var axis = animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngleDegrees();
+                DebugVector4.X.Value = (double)axis.X;
+                DebugVector4.Y.Value = (double)axis.Y;
+                DebugVector4.Z.Value = (double)axis.Z;
+                DebugVector4.W.Value = (double)0;
             }
             else
             {

@@ -156,10 +156,10 @@ namespace VariantMeshEditor.Controls
         }
 
         void PaladinAndDragon(RootElement rootNode,
-            bool loadPaladin = true,
+            bool loadPaladin = false,
             bool loadDragon = false, 
             bool loadGoblin = false,
-            bool loadArkan = false)
+            bool loadArkan = true)
         {
             _logger.Here().Information("start");
             if (loadPaladin)
