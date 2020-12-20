@@ -45,10 +45,17 @@ namespace Filetypes.RigidModel
 
         public static AnimationHeader GetAnimationHeader(PackedFile file)
         {
-            ILogger logger = Logging.Create<AnimationFile>();
             var data = file?.Data;
-            logger.Here().Information($"Loading animation: {file} Size:{data.Length}");
-            return GetAnimationHeader(new ByteChunk(data));
+            try
+            {
+                return GetAnimationHeader(new ByteChunk(data));
+            }
+            catch (Exception e)
+            {
+                ILogger logger = Logging.Create<AnimationFile>();
+                logger.Here().Information($"Loading animation failed: {file} Size:{data.Length} Error:\n{e.ToString()}");
+                throw;
+            }
         }
 
         static AnimationHeader GetAnimationHeader(ByteChunk chunk)

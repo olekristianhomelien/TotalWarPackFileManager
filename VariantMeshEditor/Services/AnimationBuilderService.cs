@@ -36,11 +36,6 @@ namespace VariantMeshEditor.Services
         HoldLastFrame
     }
 
-    public enum MergeMethod
-    {
-        Replace
-    }
-
     public enum MainAnimation
     { 
         Source,
@@ -151,7 +146,8 @@ namespace VariantMeshEditor.Services
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Absolute)
                         {
-                            position = otherAnimatedPosition;
+                            position = otherAnimatedPosition ;
+                            
                             rotation = otherAnimatedRotation;
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Relative)

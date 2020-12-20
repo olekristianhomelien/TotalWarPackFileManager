@@ -94,6 +94,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
         public ICommand SaveAnimationCommand { get; set; }
         public ICommand ExportCommand { get; set; }
+        public ICommand ResetCommand { get; set; }
 
 
         public MappableSkeletonBone _selectedNode;
@@ -107,16 +108,17 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _boneCopyMethod, value); UpdateBoneCopyMethod(value);}
         }
 
-        public MergeMethod _mergeMethod = MergeMethod.Replace;
-        public MergeMethod MergeMethod { get { return _mergeMethod; } set { SetAndNotify(ref _mergeMethod, value); } }
 
+        public bool _useAttachmentPointFix = true;
+        public bool UseAttachmentPointFix { get { return _useAttachmentPointFix; } set { SetAndNotify(ref _useAttachmentPointFix, value); } }
 
         void OnItemSelected(MappableSkeletonBone bone)
         {
-            _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
-
-            if(bone != null && bone.MappedBone != null)
+            if (bone != null && bone.MappedBone != null)
+            {
+                _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
                 ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
+            }
             else
                 ExternalSkeletonSettings.SetSelectedBone(-1);
         }
@@ -149,6 +151,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             LoadTestDataCommand = new RelayCommand(LoadTestData);
             SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
             ExportCommand = new RelayCommand(ExportCurrentConfiguration);
+            ResetCommand = new RelayCommand(ResetAnimationMapping);
 
             ClearBindingSelfCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelf);
             ClearBindingSelfAndChildrenCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelfAndChildren);
@@ -158,6 +161,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             if(BoneMapping != null)
                 MappableSkeletonBoneHelper.SetDefaultBoneCopyMethod(BoneMapping.FirstOrDefault(), value);
+        }
+
+        void ResetAnimationMapping()
+        {
+            BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
+            UpdateBoneCopyMethod(DefaultBoneCopyMethod);
         }
 
         void LoadTestData()
@@ -179,11 +188,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void SaveAnimationToFile()
         {
+            _logger.Here().Information("Starting to save animation");
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.DefaultExt = ".anim";
             if (dialog.ShowDialog() == true)
             {
                 var anim = BuildAnimation();
+                _logger.Here().Information("Output animation created");
                 if (anim == null)
                 {
                     _logger.Here().Error("Animation failed to build");
@@ -191,10 +202,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 }
                 else
                 {
-
                     try
                     {
                         var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
+                        _logger.Here().Information("Converted to output file completed");
                         AnimationFile.Write(fileFormat, dialog.FileName);
                     }
                     catch (Exception e)
@@ -204,6 +215,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                     }
                 }
             }
+            _logger.Here().Information("Saving animation completed");
         }
 
         void ExportCurrentConfiguration()

@@ -23,12 +23,6 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
-        <ObjectDataProvider x:Key="MergeMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="services:MergeMethod"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
         <ObjectDataProvider x:Key="BoneCopyMethodEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="services:BoneCopyMethod"/>
@@ -158,6 +152,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
             
                 <animationsplicerviews:AnimationSelector 
@@ -177,6 +172,13 @@
                 </DockPanel>
 
                 <DockPanel Grid.Row="3">
+                    <TextBlock Text="Attachment point Fix" Width="110" DockPanel.Dock="Left"/>
+                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
+                    <CheckBox IsChecked="{Binding UseAttachmentPointFix, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
+                </DockPanel>
+
+                <DockPanel Grid.Row="4">
                     <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left"/>
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <ComboBox DockPanel.Dock="Right" 
@@ -184,17 +186,9 @@
                             SelectedItem="{Binding DefaultBoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <DockPanel Grid.Row="4">
-                    <TextBlock Text="Merge method" Width="110" DockPanel.Dock="Left"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox DockPanel.Dock="Right" 
-                            ItemsSource="{Binding Source={StaticResource MergeMethodEnums}}"
-                            SelectedItem="{Binding MergeMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
+                <animationsplicerviews:VisualizationHelperView Grid.Row="6"/>
 
-                <animationsplicerviews:VisualizationHelperView Grid.Row="5"/>
-
-                <Grid Grid.Row="6">
+                <Grid Grid.Row="7">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -206,8 +200,8 @@
                     <Button Grid.Column="0" Command="{Binding SaveAnimationCommand}">Save animation</Button>
                     <Button Grid.Column="1" Command="{Binding LoadTestDataCommand}">Load Test Data</Button>
                     <Button Grid.Column="2" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
-                    <Button Grid.Column="3" Command="{Binding ResetCommand}" IsEnabled="False">Reset</Button>
-                    <Button Grid.Column="4" Command="{Binding ExportCommand}">Export</Button>
+                    <Button Grid.Column="3" Command="{Binding ResetCommand}">Reset</Button>
+                    <Button Grid.Column="4" Command="{Binding ExportCommand}" IsEnabled="False">Export</Button>
                     <Button Grid.Column="5" Command="{Binding ImportCommand}" IsEnabled="False">Import</Button>
                 </Grid>
             </Grid>
