@@ -8,32 +8,38 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Viewer.Gizmo;
 using Viewer.GraphicModels;
+using Viewer.Input;
 using Viewer.Scene;
 using Viewer.ScreenComponents;
 
 namespace WpfTest.Scenes
 {
+
+
     public class Scene3d : WpfGame
     {
-        private WpfKeyboard _keyboard;
-        private WpfMouse _mouse;
-        private Matrix _projectionMatrix;
-        float envRotate = 0;
-
-        private bool _disposed;
-
+        WpfMouse _mouse;
+        Keyboard _keyboard;
         ArcBallCamera _camera;
+        LineRenderItem _grid;
+        SpriteBatch _spriteBatch;
+
+        ResourceLibary _resourceLibary;
+        float envRotate = 0;
+        bool _disposed;
+
+        
 
         public delegate void LoadSceneCallback(GraphicsDevice device);
         public LoadSceneCallback On3dWorldReady { get; set; }
-
         public ISceneGraphNode SceneGraphRootNode { get; set; }
 
-
-        ResourceLibary _resourceLibary;
+        
         public TextureToTextureRenderer TextureToTextureRenderer { get; private set; }
-        SpriteBatch _spriteBatch;
+        
+        public GizmoEditor Gizmo { get; private set; }
 
 
         protected override void Initialize()
@@ -44,17 +50,10 @@ namespace WpfTest.Scenes
             Components.Add(new FpsComponent(this));
             Components.Add(new ControlsComponent(this));
 
-            _keyboard = new WpfKeyboard(this);
+            _keyboard = new Keyboard(new WpfKeyboard(this));
             _mouse = new WpfMouse(this);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-       
-            _camera = new ArcBallCamera(1, new Vector3(0))
-            {
-                NearPlane = 0.001f,
-                Zoom = 10
-            };
 
-            RefreshProjection();
             base.Initialize();
         }
 
@@ -76,14 +75,14 @@ namespace WpfTest.Scenes
             //_skyBox = new Skybox("textures\\phazer\\rad_rustig_rgba32f_raw", _resourceLibary.XnaContentManager);
 
             TextureToTextureRenderer = new TextureToTextureRenderer(GraphicsDevice, _spriteBatch, _resourceLibary);
-
-            On3dWorldReady?.Invoke(GraphicsDevice);
+            _camera = new ArcBallCamera(1, new Vector3(0), 10, GraphicsDevice);
 
             _grid = new LineRenderItem(new LineGrid(), _resourceLibary.GetEffect(ShaderTypes.Line));
+            Gizmo = new GizmoEditor();
+            Gizmo.Create(_resourceLibary, GraphicsDevice, _keyboard, _camera);
+
+            On3dWorldReady?.Invoke(GraphicsDevice);
         }
-
-        LineRenderItem _grid;
-
 
         protected override void Dispose(bool disposing)
         {
@@ -93,63 +92,40 @@ namespace WpfTest.Scenes
             Components.Clear();
             _disposed = true;
 
-
             base.Dispose(disposing);
         }
 
-        /// <summary>
-        /// Update projection matrix values, both in the calculated matrix <see cref="_projectionMatrix"/> as well as
-        /// the <see cref="_basicEffect"/> projection.
-        /// </summary>
-        private void RefreshProjection()
-        {
-            _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(
-                MathHelper.ToRadians(45), // 45 degree angle
-                (float)GraphicsDevice.Viewport.Width /
-                (float)GraphicsDevice.Viewport.Height,
-                .01f, 150);
-        }
-
-        
         protected override void Update(GameTime gameTime)
         {
             var mouseState = _mouse.GetState();
-            var keyboardState = _keyboard.GetState();
+            _keyboard.Update();
 
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.PageUp))
+            if (_keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.PageUp))
                 envRotate += 0.06f;
 
-            if (keyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.PageDown))
+            if (_keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.PageDown))
                 envRotate -= 0.06f;
-            _camera.Update(mouseState, keyboardState);
+
+            _camera.Update(mouseState, _keyboard);
+            Gizmo.Update(gameTime, mouseState);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime time)
         {
-            RefreshProjection();
-
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 
             CommonShaderParameters commonShaderParameters = new CommonShaderParameters()
             {
-                Projection = _projectionMatrix,
+                Projection = _camera.ProjectionMatrix,
                 View = _camera.ViewMatrix,
-     
                 CameraPosition = _camera.Position,
                 CameraLookAt = _camera.LookAt,
-
-
                 EnvRotate = envRotate
-
             };
-
-
-
-            _grid.Draw(GraphicsDevice, Matrix.Identity, commonShaderParameters);
 
             if (SceneGraphRootNode != null)
             {
@@ -157,6 +133,8 @@ namespace WpfTest.Scenes
                 SceneGraphRootNode.Render(GraphicsDevice, Matrix.Identity, commonShaderParameters);
             }
 
+            _grid.Draw(GraphicsDevice, Matrix.Identity, commonShaderParameters);
+            Gizmo.Draw(GraphicsDevice, Matrix.Identity, commonShaderParameters);
             base.Draw(time);
         }
     }
@@ -204,9 +182,9 @@ namespace WpfTest.Scenes
         {
             _shader.Parameters["View"].SetValue(commonShaderParameters.View);
             _shader.Parameters["Projection"].SetValue(commonShaderParameters.Projection);
-
+    
             if (_model != null)
-                world = Matrix.CreateTranslation(_model.Pivot) * world;
+                world = Matrix.CreateTranslation(_model.Pivot) * _model.ModelMatrix *  world;
             _shader.Parameters["World"].SetValue(world);
 
             if (this as MeshRenderItem != null)

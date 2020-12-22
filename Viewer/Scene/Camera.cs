@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Framework.WpfInterop.Input;
 using System;
@@ -12,16 +13,21 @@ namespace Viewer.Scene
     public class ArcBallCamera
     {
 
-        public ArcBallCamera(float aspectRation, Vector3 lookAt) 
-           : this(aspectRation, MathHelper.PiOver4, lookAt, Vector3.Up, 0.1f, float.MaxValue) { }
+        bool _isMoveKeyPressed = false;
 
-        public ArcBallCamera(float aspectRatio, float fieldOfView, Vector3 lookAt, Vector3 up, float nearPlane, float farPlane)
+        float mouseX;
+        float mouseY;
+
+        GraphicsDevice _graphicsDevice;
+
+        public ArcBallCamera(float aspectRation, Vector3 lookAt, float currentZoom, GraphicsDevice graphicsDevice) 
+           : this(aspectRation, MathHelper.PiOver4, lookAt, Vector3.Up, 0.1f, float.MaxValue, currentZoom, graphicsDevice) { }
+
+        public ArcBallCamera(float aspectRatio, float fieldOfView, Vector3 lookAt, Vector3 up, float nearPlane, float farPlane, float currentZoom, GraphicsDevice graphicsDevice)
         {
-            this.aspectRatio = aspectRatio;
-            this.fieldOfView = fieldOfView;
-            this.lookAt = lookAt;
-            this.nearPlane = nearPlane;
-            this.farPlane = farPlane;
+            _graphicsDevice = graphicsDevice;
+            Zoom = currentZoom;
+            _lookAt = lookAt;
         }
 
         /// <summary>
@@ -33,23 +39,14 @@ namespace Viewer.Scene
             //Calculate the relative position of the camera                        
             position = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
             //Convert the relative position to the absolute position
-            position *= zoom;
-            position += lookAt;
+            position *= _zoom;
+            position += _lookAt;
 
             //Calculate a new viewmatrix
-            viewMatrix = Matrix.CreateLookAt(position, lookAt, Vector3.Up);
+            viewMatrix = Matrix.CreateLookAt(position, _lookAt, Vector3.Up);
             viewMatrixDirty = false;
         }
 
-        /// <summary>
-        /// Recreates our projection matrix, then signals that the projection
-        /// matrix is clean.
-        /// </summary>
-        private void ReCreateProjectionMatrix()
-        {
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, AspectRatio, nearPlane, farPlane);
-            projectionMatrixDirty = false;
-        }
 
         #region HelperMethods
 
@@ -68,7 +65,7 @@ namespace Viewer.Scene
 
         public void MoveCameraUp(float amount)
         {
-            lookAt.Y += amount;
+            _lookAt.Y += amount;
             viewMatrixDirty = true;
         }
 
@@ -92,7 +89,6 @@ namespace Viewer.Scene
         //We keep track if one of our matrices is dirty
         //and reacalculate that matrix when it is accesed.
         private bool viewMatrixDirty = true;
-        private bool projectionMatrixDirty = true;
 
         public float MinPitch = -MathHelper.PiOver2 + 0.3f;
         public float MaxPitch = MathHelper.PiOver2 - 0.3f;
@@ -118,60 +114,16 @@ namespace Viewer.Scene
             }
         }
 
-        private float fieldOfView;
-        public float FieldOfView
-        {
-            get { return fieldOfView; }
-            set
-            {
-                projectionMatrixDirty = true;
-                fieldOfView = value;
-            }
-        }
-
-        private float aspectRatio;
-        public float AspectRatio
-        {
-            get { return aspectRatio; }
-            set
-            {
-                projectionMatrixDirty = true;
-                aspectRatio = value;
-            }
-        }
-
-        private float nearPlane;
-        public float NearPlane
-        {
-            get { return nearPlane; }
-            set
-            {
-                projectionMatrixDirty = true;
-                nearPlane = value;
-            }
-        }
-
-        private float farPlane;
-        public float FarPlane
-        {
-            get { return farPlane; }
-            set
-            {
-                projectionMatrixDirty = true;
-                farPlane = value;
-            }
-        }
-
-        public float MinZoom = 1;
-        public float MaxZoom = float.MaxValue;
-        private float zoom = 1;
+        public static float MinZoom = 0.01f;
+        public static float MaxZoom = float.MaxValue;
+        private float _zoom = 1;
         public float Zoom
         {
-            get { return zoom; }
+            get { return _zoom; }
             set
             {
                 viewMatrixDirty = true;
-                zoom = MathHelper.Clamp(value, MinZoom, MaxZoom);
+                _zoom = MathHelper.Clamp(value, MinZoom, MaxZoom);
             }
         }
 
@@ -189,23 +141,20 @@ namespace Viewer.Scene
             }
         }
 
-        private Vector3 lookAt;
+        private Vector3 _lookAt;
         public Vector3 LookAt
         {
-            get { return lookAt; }
+            get { return _lookAt; }
             set
             {
                 viewMatrixDirty = true;
-                lookAt = value;
+                _lookAt = value;
             }
         }
         #endregion
 
         #region ICamera Members        
-        public Matrix ViewProjectionMatrix
-        {
-            get { return ViewMatrix * ProjectionMatrix; }
-        }
+
 
         private Matrix viewMatrix;
         public Matrix ViewMatrix
@@ -220,27 +169,22 @@ namespace Viewer.Scene
             }
         }
 
-        private Matrix projectionMatrix;
         public Matrix ProjectionMatrix
         {
             get
             {
-                if (projectionMatrixDirty)
-                {
-                    ReCreateProjectionMatrix();
-                }
-                return projectionMatrix;
+                return RefreshProjection();
             }
         }
         #endregion
 
-        public void Update(MouseState mouseState, KeyboardState keyboardState)
+        public void Update(MouseState mouseState, Viewer.Input.Keyboard keyboard)
         {
 
             var moseSpeed = -0.5f;
             var speed = 0.01f;
 
-            if (keyboardState.IsKeyDown(Keys.LeftAlt))
+            if (keyboard.IsKeyDown(Keys.LeftAlt))
             {
                 if (_isMoveKeyPressed == false)
                 {
@@ -262,34 +206,41 @@ namespace Viewer.Scene
                 _isMoveKeyPressed = true;
             }
 
-           if (keyboardState.IsKeyUp(Keys.LeftAlt) && _isMoveKeyPressed)
+           if (keyboard.IsKeyUp(Keys.LeftAlt) && _isMoveKeyPressed)
            {
                _isMoveKeyPressed = false;
            }
 
-            if (keyboardState.IsKeyDown(Keys.W))
+            if (keyboard.IsKeyDown(Keys.W))
             {
                 Zoom += moseSpeed * 0.5f;
             }
 
-            if (keyboardState.IsKeyDown(Keys.S))
+            if (keyboard.IsKeyDown(Keys.S))
             {
                 Zoom -= moseSpeed * 0.5f;
             }
-            if (keyboardState.IsKeyDown(Keys.Q))
+            if (keyboard.IsKeyDown(Keys.Q))
             {
                 MoveCameraUp(moseSpeed * 0.5f);
             }
 
-            if (keyboardState.IsKeyDown(Keys.E))
+            if (keyboard.IsKeyDown(Keys.E))
             {
                 MoveCameraUp(-moseSpeed * 0.5f);
             }
         }
 
-        bool _isMoveKeyPressed = false;
 
-        float mouseX;
-        float mouseY;
+        Matrix RefreshProjection()
+        {
+            return Matrix.CreatePerspectiveFieldOfView(
+                MathHelper.ToRadians(45), // 45 degree angle
+                (float)_graphicsDevice.Viewport.Width /
+                (float)_graphicsDevice.Viewport.Height,
+                .01f, 150);
+        }
     }
+
+
 }

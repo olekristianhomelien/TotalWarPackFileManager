@@ -13,6 +13,7 @@ using VariantMeshEditor.Services;
 using Serilog;
 using System.Collections.ObjectModel;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
+using VariantMeshEditor.Util;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {

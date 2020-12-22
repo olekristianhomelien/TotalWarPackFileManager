@@ -46,7 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation\AnimationSampler.cs" />
+    <Compile Include="Gizmo\Geometry.cs" />
+    <Compile Include="Gizmo\GizmoComponent.cs" />
+    <Compile Include="Gizmo\GizmoEditor.cs" />
+    <Compile Include="Gizmo\ITransformable.cs" />
     <Compile Include="GraphicModels\LineGrid.cs" />
+    <Compile Include="Input\Keyboard.cs" />
     <Compile Include="New\AnimatedModelShader.cs" />
     <Compile Include="Animation\AnimationClip.cs" />
     <Compile Include="Animation\AnimationPlayer.cs" />

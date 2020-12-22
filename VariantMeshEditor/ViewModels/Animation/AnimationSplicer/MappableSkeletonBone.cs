@@ -12,11 +12,13 @@ using VariantMeshEditor.Services;
 using Viewer.Animation;
 using VariantMeshEditor.Util;
 using Microsoft.Xna.Framework;
+using Viewer.Gizmo;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
     public class MappableSkeletonBone : NotifyPropertyChangedImpl
     {
+        public GizmoEditor SelectionGizmo { get; set; }
         public SkeletonBoneNode OriginalBone { get; set; }
         public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
@@ -125,11 +127,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
     public class MappableSkeletonBoneHelper
     {
-        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
+        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode, GizmoEditor selectionGizmo)
         {
             var output = new ObservableCollection<MappableSkeletonBone>();
             foreach (var bone in skeletonNode.ViewModel.Bones)
-                RecuseiveCreate(bone, output);
+                RecuseiveCreate(bone, output, selectionGizmo);
             return output;
         }
 
@@ -141,32 +143,29 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         }
 
 
-        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList)
+        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList, GizmoEditor selectionGizmo)
         {
             if (bone.ParentBoneIndex == -1)
             {
-                outputList.Add(CreateNode(bone));
+                outputList.Add(CreateNode(bone, selectionGizmo));
             }
             else
             {
                 var treeParent = GetParent(outputList, bone.ParentBoneIndex);
-
                 if (treeParent != null)
-                    treeParent.Children.Add(CreateNode(bone));
+                    treeParent.Children.Add(CreateNode(bone, selectionGizmo));
             }
-
 
             foreach (var item in bone.Children)
-            {
-                RecuseiveCreate(item, outputList);
-            }
+                RecuseiveCreate(item, outputList, selectionGizmo);
         }
 
-        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone)
+        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone, GizmoEditor selectionGizmo)
         {
             MappableSkeletonBone item = new MappableSkeletonBone()
             {
-                OriginalBone = bone
+                OriginalBone = bone,
+                SelectionGizmo = selectionGizmo
             };
             return item;
         }

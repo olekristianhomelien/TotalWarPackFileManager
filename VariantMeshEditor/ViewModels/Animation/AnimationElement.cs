@@ -42,7 +42,7 @@ namespace VariantMeshEditor.ViewModels.Animation
                 AnimationPlayerViewModel = new AnimationPlayerViewModel(this);
                 AnimationExplorerViewModel = new AnimationExplorerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
                 AnimationFragmentExplorerViewModel = new FragmentExplorerViewModel(resourceLibary, AnimationPlayerViewModel);
-                AnimationSplicerViewModel = new AnimationSplicerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel);
+                AnimationSplicerViewModel = new AnimationSplicerViewModel(resourceLibary, skeleton.First(), AnimationPlayerViewModel, virtualWorld.Gizmo);
             }
             else
             {

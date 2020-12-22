@@ -56,6 +56,7 @@
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
     <Compile Include="Services\AnimationBuilderService.cs" />
+    <Compile Include="Util\AnimationToSkeletonTypeHelper.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\MathConverter.cs" />
     <Compile Include="Util\MathExtentions.cs" />
