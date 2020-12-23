@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Viewer.Animation
 {
-    public class Skeleton
+    public class GameSkeleton
     {
         public Matrix[] Transform { get; private set; }
         public Vector3[] Translation { get; private set; }
@@ -15,7 +15,7 @@ namespace Viewer.Animation
         public int BoneCount { get; set; }
         public string SkeletonName { get; set; }
 
-        public Skeleton(AnimationFile skeletonFile)
+        public GameSkeleton(AnimationFile skeletonFile)
         {
             BoneCount = skeletonFile.Bones.Count();
             Transform = new Matrix[BoneCount];
@@ -39,16 +39,15 @@ namespace Viewer.Animation
                 if (i == 0)
                     scale = -1;
 
-                var quat = new Quaternion(
+                Rotation[i] = new Quaternion(
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].X,
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].Y,
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].Z,
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Quaternion[i].W);
-                //quat.Normalize();
               
-                Rotation[i] = quat;
 
-                var rotationMatrix = Matrix.CreateFromQuaternion(quat);
+
+                
                 var translationMatrix =  Matrix.CreateTranslation(
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].X* scale,
                             skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y,
@@ -59,6 +58,7 @@ namespace Viewer.Animation
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Y, 
                     skeletonFile.DynamicFrames[skeletonWeirdIndex].Transforms[i].Z);
 
+                var rotationMatrix = Matrix.CreateFromQuaternion(Rotation[i]);
                 var transform = rotationMatrix * translationMatrix;
 
                 Transform[i] = transform;

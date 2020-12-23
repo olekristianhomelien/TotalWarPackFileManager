@@ -19,8 +19,8 @@ namespace VariantMeshEditor.ViewModels.Skeleton
     {
 
         public AnimationFile SkeletonFile { get; set; }
-        public SkeletonModel SkeletonModel { get; set; }
-        public Viewer.Animation.Skeleton Skeleton { get; set; }
+        public SkeletonRender SkeletonModel { get; set; }
+        public Viewer.Animation.GameSkeleton Skeleton { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
@@ -41,11 +41,11 @@ namespace VariantMeshEditor.ViewModels.Skeleton
                 SkeletonFile = AnimationFile.Create(file);
                 FullPath = skeletonFilePath;
                 FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
-                Skeleton = new Viewer.Animation.Skeleton(SkeletonFile);
+                Skeleton = new Viewer.Animation.GameSkeleton(SkeletonFile);
                 DisplayName = "Skeleton - " + FileName;
             }
            
-            SkeletonModel = new SkeletonModel(resourceLibary.GetEffect(ShaderTypes.Line));
+            SkeletonModel = new SkeletonRender(resourceLibary.GetEffect(ShaderTypes.Line));
             SkeletonModel.Create(animationPlayer, Skeleton);
 
             ViewModel = new SkeletonViewModel(this);

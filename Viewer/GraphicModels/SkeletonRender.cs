@@ -7,10 +7,10 @@ using WpfTest.Scenes;
 
 namespace Viewer.GraphicModels
 {
-    public class SkeletonModel : RenderItem
+    public class SkeletonRender : RenderItem
     {
         AnimationPlayer _animationPlayer;
-        Skeleton _skeleton;
+        GameSkeleton _skeleton;
         Matrix[] _drawPositions;
         LineBox _lineBox;
 
@@ -20,11 +20,11 @@ namespace Viewer.GraphicModels
         public Vector3 LineColour = new Vector3(0, 0, 0);
 
         public int? SelectedBoneIndex { get; set; }
-        public SkeletonModel(Effect shader) : base(null, shader)
+        public SkeletonRender(Effect shader) : base(null, shader)
         {
         }
 
-        public void Create(AnimationPlayer animationPlayer, Skeleton skeleton)
+        public void Create(AnimationPlayer animationPlayer, GameSkeleton skeleton)
         {
             _lineBox = new LineBox();
             _skeleton = skeleton;

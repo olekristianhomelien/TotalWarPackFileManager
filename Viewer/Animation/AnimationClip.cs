@@ -53,7 +53,7 @@ namespace Viewer.Animation
             return output;
         }
 
-        public AnimationFile ConvertToFileFormat(Skeleton skeleton)
+        public AnimationFile ConvertToFileFormat(GameSkeleton skeleton)
         {
             AnimationFile output = new AnimationFile();
             output.Header.AnimationType = 7;

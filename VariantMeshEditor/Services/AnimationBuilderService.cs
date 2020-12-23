@@ -48,7 +48,7 @@ namespace VariantMeshEditor.Services
         {
 
             public PackedFile SourceAnimationFile { get; set; }   // ExternalSkeleton.SelectedItem
-            public Skeleton SourceSkeleton { get; set; }   //_targetSkeletonNode.Skeleton
+            public GameSkeleton SourceSkeleton { get; set; }   //_targetSkeletonNode.Skeleton
 
             public PackedFile OtherSkeletonFile { get; set; }   // ExternalSkeleton.SelectedItem
 
@@ -85,10 +85,10 @@ namespace VariantMeshEditor.Services
             return animClip;
         }
 
-        Skeleton CreateSkeleton(PackedFile file)
+        GameSkeleton CreateSkeleton(PackedFile file)
         {
             var skeletonFile = AnimationFile.Create(file);
-            var skeleton = new Skeleton(skeletonFile);
+            var skeleton = new GameSkeleton(skeletonFile);
             return skeleton;
         }
 
@@ -220,7 +220,7 @@ namespace VariantMeshEditor.Services
             return outputAnimationFile;
         }
 
-        AnimationClip CreateOutputAnimation(Skeleton sourceSkeleton, AnimationClip otherAnimationClip)
+        AnimationClip CreateOutputAnimation(GameSkeleton sourceSkeleton, AnimationClip otherAnimationClip)
         {
             var outputAnimationFile = new AnimationClip();
             for (int i = 0; i < sourceSkeleton.BoneCount; i++)
@@ -255,7 +255,7 @@ namespace VariantMeshEditor.Services
             return true;
         }
 
-        void GetAnimationTransform(AnimationClip animation, int frameIndex, Skeleton skeleton, int boneIndex, out Quaternion out_rotation, out Vector3 out_position)
+        void GetAnimationTransform(AnimationClip animation, int frameIndex, GameSkeleton skeleton, int boneIndex, out Quaternion out_rotation, out Vector3 out_position)
         {
             var safeFameIndex = frameIndex % animation.DynamicFrames.Count();
 
@@ -271,7 +271,7 @@ namespace VariantMeshEditor.Services
                 AnimationFile.AnimationBoneMappingType.Dynamic, ref out_rotation, ref out_position);
         }
 
-        void GetSkeletonTransform(Skeleton skeleton, int boneIndex, out Quaternion out_rotation, out Vector3 out_position)
+        void GetSkeletonTransform(GameSkeleton skeleton, int boneIndex, out Quaternion out_rotation, out Vector3 out_position)
         {
             out_rotation = skeleton.Rotation[boneIndex];
             out_position = skeleton.Translation[boneIndex];
@@ -353,7 +353,7 @@ namespace VariantMeshEditor.Services
             return null;
         }
 
-        float GetBoneLength(Skeleton skeleton, int boneId)
+        float GetBoneLength(GameSkeleton skeleton, int boneId)
         {
             var parentBoneId = skeleton.ParentBoneId[boneId];
             if (parentBoneId == -1)

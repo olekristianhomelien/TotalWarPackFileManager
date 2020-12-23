@@ -89,6 +89,12 @@ namespace Viewer.Gizmo
             transformable.Orientation = Quaternion.CreateFromRotationMatrix(Matrix.CreateFromQuaternion(transformable.Orientation) * (Matrix)e.Value);
         }
 
+        public void SelectItem(ITransformable item)
+        {
+            _gizmo.Selection.Clear();
+            _gizmo.Selection.Add(item);
+        }
+
         //private void GizmoScaleEvent(ITransformable transformable, TransformationEventArgs e)
         //{
         //    Vector3 delta = (Vector3)e.Value;

@@ -12,7 +12,7 @@ namespace Viewer.Animation
 {
     class AnimationSampler
     {
-        public static AnimationFrame Sample(float t, Skeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
+        public static AnimationFrame Sample(float t, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Viewer.Animation
                 {
                     currentFrame.BoneTransforms.Add(new AnimationFrame.BoneKeyFrame()
                     {
-                        Transform = skeleton.Transform[i],
+                        //Transform = skeleton.Transform[i],
                         Translation = skeleton.Translation[i],
                         Rotation = skeleton.Rotation[i],
                         BoneIndex = i,

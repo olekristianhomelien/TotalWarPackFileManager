@@ -78,6 +78,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
                 ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
+
+                //SkeletonModel
+                GizmoItemWrapper item = new GizmoItemWrapper();
+                item.Position = _targetSkeletonNode.Skeleton.WorldTransform[bone.MappedBone.BoneIndex].Translation;
+                _selectionGizmo.SelectItem(item);
+
             }
             else
                 ExternalSkeletonSettings.SetSelectedBone(-1);

@@ -76,7 +76,7 @@ namespace Viewer.Animation
         public AnimationPlayerSettings Settings { get; set; } = new AnimationPlayerSettings();
         public ExternalAnimationAttachmentResolver ExternalAnimationRef { get; set; } = new ExternalAnimationAttachmentResolver();
 
-        public Skeleton _skeleton;
+        public GameSkeleton _skeleton;
         TimeSpan _timeSinceStart;
         AnimationFrame _currentAnimFrame;
         List<AnimationClip> _animationClips;
@@ -105,7 +105,7 @@ namespace Viewer.Animation
             }
         }
 
-        public void SetAnimation(AnimationClip animation, Skeleton skeleton)
+        public void SetAnimation(AnimationClip animation, GameSkeleton skeleton)
         {
             if (animation == null)
                 SetAnimationArray(null, skeleton);
@@ -113,7 +113,7 @@ namespace Viewer.Animation
                 SetAnimationArray(new List<AnimationClip>() { animation }, skeleton);
         }
 
-        public void SetAnimationArray(List<AnimationClip> animation, Skeleton skeleton)
+        public void SetAnimationArray(List<AnimationClip> animation, GameSkeleton skeleton)
         {
             _skeleton = skeleton;
 
