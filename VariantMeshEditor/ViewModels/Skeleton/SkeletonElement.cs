@@ -1,13 +1,8 @@
 ﻿using Common;
-using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 using System.IO;
-using System.Windows.Controls;
-using VariantMeshEditor.Controls.EditorControllers;
-using VariantMeshEditor.Views.EditorViews;
 using Viewer.Animation;
 using Viewer.GraphicModels;
 using Viewer.Scene;
@@ -17,10 +12,9 @@ namespace VariantMeshEditor.ViewModels.Skeleton
 {
     public class SkeletonElement : FileSceneElement
     {
-
         public AnimationFile SkeletonFile { get; set; }
-        public SkeletonRender SkeletonModel { get; set; }
-        public Viewer.Animation.GameSkeleton Skeleton { get; set; }
+        public SkeletonRender SkeletonRenderer { get; set; }
+        public GameSkeleton GameSkeleton { get; set; }
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.Skeleton;
 
@@ -28,7 +22,6 @@ namespace VariantMeshEditor.ViewModels.Skeleton
 
         public SkeletonElement(FileSceneElement parent, string fullPath) : base(parent, "", fullPath, "Skeleton")
         {
-
         }
 
         public void Create(AnimationPlayer animationPlayer, ResourceLibary resourceLibary, string skeletonName)
@@ -41,12 +34,10 @@ namespace VariantMeshEditor.ViewModels.Skeleton
                 SkeletonFile = AnimationFile.Create(file);
                 FullPath = skeletonFilePath;
                 FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
-                Skeleton = new Viewer.Animation.GameSkeleton(SkeletonFile);
+                GameSkeleton = new GameSkeleton(SkeletonFile, animationPlayer);
+                SkeletonRenderer = new SkeletonRender(resourceLibary.GetEffect(ShaderTypes.Line), GameSkeleton);
                 DisplayName = "Skeleton - " + FileName;
             }
-           
-            SkeletonModel = new SkeletonRender(resourceLibary.GetEffect(ShaderTypes.Line));
-            SkeletonModel.Create(animationPlayer, Skeleton);
 
             ViewModel = new SkeletonViewModel(this);
         }
@@ -54,13 +45,13 @@ namespace VariantMeshEditor.ViewModels.Skeleton
 
         protected override void UpdateNode(GameTime time)
         {
-            SkeletonModel.Update(time);
+            GameSkeleton.Update();
         }
 
         protected override void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
-            SkeletonModel.SelectedBoneIndex = ViewModel.SelectedBone?.BoneIndex;
-            SkeletonModel.Draw(device, parentTransform, commonShaderParameters);
+            SkeletonRenderer.SelectedBoneIndex = ViewModel.SelectedBone?.BoneIndex;
+            SkeletonRenderer.Draw(device, parentTransform, commonShaderParameters);
         }
     }
 }

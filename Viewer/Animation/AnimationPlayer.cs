@@ -22,18 +22,13 @@ namespace Viewer.Animation
             if (!HasAnimation || ExternalPlayer == null)
             {
                 Transform = Matrix.Identity;
-                return;
             }
-
-            // Update if needed
-            if(time != null)
-                ExternalPlayer.Update(time);
-
-        
-            var bonePos = ExternalPlayer._skeleton.WorldTransform[ExternalBoneIndex];
-
-            var animPos = ExternalPlayer.GetCurrentFrame().BoneTransforms[ExternalBoneIndex].Transform;
-            Transform =  Matrix.Multiply(bonePos, animPos);
+            else
+            {
+                if(time != null)
+                    ExternalPlayer.Update(time);
+                Transform = ExternalPlayer._skeleton.GetAnimatedWorldTranform(ExternalBoneIndex);
+            }
         }
     }
 
@@ -45,7 +40,7 @@ namespace Viewer.Animation
             public int ParentBoneIndex { get; set; }
             public Quaternion Rotation { get; set; }
             public Vector3 Translation { get; set; }
-            public Matrix Transform { get; set; }
+            public Matrix WorldTransform { get; set; }
         }
 
         public List<BoneKeyFrame> BoneTransforms = new List<BoneKeyFrame>();
@@ -185,6 +180,7 @@ namespace Viewer.Animation
         
 
         //-------------Move to somewhere else
+        /*
         void OffsetAnimation(AnimationFrame currentFrame)
         {
             var translationMatrix = Matrix.Identity;
@@ -196,9 +192,9 @@ namespace Viewer.Animation
             if (Settings.UseRotationOffset)
                 roationMatrix = Matrix.CreateRotationX(MathHelper.ToRadians(Settings.RotationOffsetX)) * Matrix.CreateRotationY(MathHelper.ToRadians(Settings.RotationOffsetY)) * Matrix.CreateRotationZ(MathHelper.ToRadians(Settings.RotationOffsetZ));
 
-            var matrix = currentFrame.BoneTransforms[0].Transform;
+            var matrix = currentFrame.BoneTransforms[0].WorldTransform;
             matrix = roationMatrix * translationMatrix * matrix;
-            currentFrame.BoneTransforms[0].Transform = matrix;
+            currentFrame.BoneTransforms[0].WorldTransform = matrix;
         }
 
         void HandleSnapToExternalAnimation(AnimationFrame currentFrame)
@@ -206,7 +202,7 @@ namespace Viewer.Animation
             if (ExternalAnimationRef.HasAnimation && Settings.UseAnimationSnap)
             {
                 var refTransform = ExternalAnimationRef.Transform;
-                currentFrame.BoneTransforms[0].Transform = Matrix.CreateTranslation(refTransform.Translation); ;// * currentFrame.BoneTransforms[0].Transform ;
+                currentFrame.BoneTransforms[0].WorldTransform = Matrix.CreateTranslation(refTransform.Translation); ;// * currentFrame.BoneTransforms[0].Transform ;
             }
         }
 
@@ -220,20 +216,20 @@ namespace Viewer.Animation
                 {
                     if (boneTransform.BoneIndex == 0)
                     {
-                        var matrix = boneTransform.Transform;
-                        animRootOffset += boneTransform.Transform.Translation;
+                        var matrix = boneTransform.WorldTransform;
+                        animRootOffset += boneTransform.WorldTransform.Translation;
                         matrix.Translation = new Vector3(0, 0, 0);
-                        boneTransform.Transform = Matrix.Identity;
+                        boneTransform.WorldTransform = Matrix.Identity;
                     }
 
                     if (Settings.FreezeAnimationBone)
                     {
                         if (boneTransform.BoneIndex == 7)
                         {
-                            var matrix = boneTransform.Transform;
-                            rootOfset += boneTransform.Transform.Translation;
+                            var matrix = boneTransform.WorldTransform;
+                            rootOfset += boneTransform.WorldTransform.Translation;
                             matrix.Translation = new Vector3(0, 0, 0);
-                            boneTransform.Transform = Matrix.Identity;
+                            boneTransform.WorldTransform = Matrix.Identity;
                         }
                     }
                 }
@@ -243,13 +239,14 @@ namespace Viewer.Animation
                     bool test = Settings.FreezeAnimationBone && boneTransform.BoneIndex != 7;
                     if (boneTransform.ParentBoneIndex == 0 && test)
                     {
-                        var matrix = boneTransform.Transform;
+                        var matrix = boneTransform.WorldTransform;
                         matrix.Translation -= rootOfset;
-                        boneTransform.Transform = Matrix.Identity;
+                        boneTransform.WorldTransform = Matrix.Identity;
                     }
                 }
             }
         }
+        */
         ////
     }
 }

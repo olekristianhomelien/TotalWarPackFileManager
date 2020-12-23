@@ -52,8 +52,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _animationPlayer = new AnimationPlayer();
             _externalElement.Create(_animationPlayer, resourceLibary, skeletonName);
 
-            _externalElement.SkeletonModel.LineColour = new Vector3(1, 0, 0);
-            _externalElement.SkeletonModel.NodeColour = new Vector3(1, 1, 1);
+            _externalElement.SkeletonRenderer.LineColour = new Vector3(1, 0, 0);
+            _externalElement.SkeletonRenderer.NodeColour = new Vector3(1, 1, 1);
         }
 
         public void SetSelectedBone(int index)
@@ -75,13 +75,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             if (animationFile == null)
             {
-                _animationPlayer?.SetAnimation(null, _externalElement?.Skeleton);
+                _animationPlayer?.SetAnimation(null, _externalElement?.GameSkeleton);
             }
             else
             {
                 var externalAnim = AnimationFile.Create(animationFile);
                 var externalAnimationClip = new AnimationClip(externalAnim);
-                _animationPlayer.SetAnimation(externalAnimationClip, _externalElement.Skeleton);
+                _animationPlayer.SetAnimation(externalAnimationClip, _externalElement.GameSkeleton);
             }
         }
 

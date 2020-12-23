@@ -19,20 +19,20 @@ namespace Viewer.Gizmo
         GizmoComponent _gizmo;
         SpriteBatch _spriteBatch;
 
-        LineBox _testItem;
-        LineRenderItem _testRenderItem;
-        GizmoItemWrapper _wrapperItem;
+        //LineBox _testItem;
+        //LineRenderItem _testRenderItem;
+        //GizmoItemWrapper _wrapperItem;
 
         Keyboard _keyboard;
         ArcBallCamera _camera;
 
         public void Create(ResourceLibary resourceLibary, GraphicsDevice graphicsDevice, Keyboard keyboard, ArcBallCamera camera)
         {
-            _testItem = new LineBox();
-            _wrapperItem = new GizmoItemWrapper();
-            _testRenderItem = new LineRenderItem(_testItem, resourceLibary.GetEffect(ShaderTypes.Line));
-            
-            _wrapperItem.OnTranformChanged += _wrapperItem_OnTranformChanged;
+           //_testItem = new LineBox();
+           //_wrapperItem = new GizmoItemWrapper();
+           //_testRenderItem = new LineRenderItem(_testItem, resourceLibary.GetEffect(ShaderTypes.Line));
+           //
+           //_wrapperItem.OnTranformChanged += _wrapperItem_OnTranformChanged;
 
             _keyboard = keyboard;
             _camera = camera;
@@ -44,14 +44,14 @@ namespace Viewer.Gizmo
             _gizmo.TranslateEvent += GizmoTranslateEvent;
             _gizmo.RotateEvent += GizmoRotateEvent;
             //_gizmo.ScaleEvent += GizmoScaleEvent;
-            _gizmo.Selection.Add(_wrapperItem);
+           // _gizmo.Selection.Add(_wrapperItem);
             _gizmo.ActivePivot = PivotType.ObjectCenter;
             _gizmo.SelectionBoxesIsVisible = false;
         }
 
         private void _wrapperItem_OnTranformChanged(GizmoItemWrapper item)
         {
-            _testItem.ModelMatrix = Matrix.CreateScale(1) * Matrix.CreateFromQuaternion(item.Orientation) * Matrix.CreateTranslation(item.Position);
+           // _testItem.ModelMatrix = Matrix.CreateScale(1) * Matrix.CreateFromQuaternion(item.Orientation) * Matrix.CreateTranslation(item.Position);
         }
 
         public void Update(GameTime time, MouseState mouseState)
@@ -75,7 +75,7 @@ namespace Viewer.Gizmo
 
         public void Draw(GraphicsDevice device, Matrix world, CommonShaderParameters commonShaderParameters)
         {
-            _testRenderItem.Draw(device, world, commonShaderParameters);
+            //_testRenderItem.Draw(device, world, commonShaderParameters);
             _gizmo.Draw();
         }
 
@@ -108,10 +108,11 @@ namespace Viewer.Gizmo
         //}
     }
 
-    public delegate void TransformChanged(GizmoItemWrapper item);  
+    public delegate void TransformChanged(GizmoItemWrapper item);
     public class GizmoItemWrapper : ITransformable
     {
         public event TransformChanged OnTranformChanged;
+  
 
         Vector3 _position = Vector3.Zero;
         public Vector3 Position { get { return _position; } set { _position = value; OnTranformChanged?.Invoke(this); } }

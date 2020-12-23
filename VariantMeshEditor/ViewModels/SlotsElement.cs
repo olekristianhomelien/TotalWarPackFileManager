@@ -97,48 +97,23 @@ namespace VariantMeshEditor.ViewModels
         {
             _animation = SceneElementHelper.GetAllOfTypeInSameVariantMesh<AnimationElement>(this).FirstOrDefault();
             _skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this).FirstOrDefault();
-
-
-
-
-         
-
-
         }
 
         protected override void UpdateNode(GameTime time)
         {
             var boneIndex = -1;
-
-            for (int i = 0; i < _skeleton?.Skeleton?.BoneNames.Length; i++)
+            for (int i = 0; i < _skeleton?.GameSkeleton?.BoneNames.Length; i++)
             {
-                if (_skeleton.Skeleton.BoneNames[i] == AttachmentPoint)
+                if (_skeleton.GameSkeleton.BoneNames[i] == AttachmentPoint)
                 {
                     boneIndex = i;
                     break;
                 }
             }
 
+            WorldTransform = Matrix.Identity;
             if (boneIndex != -1)
-            {
-                var bonePos = _skeleton.Skeleton.WorldTransform[boneIndex];
-                WorldTransform = Matrix.Multiply(bonePos, GetAnimatedBone(boneIndex));
-            }
-            else
-            {
-                WorldTransform = Matrix.Identity;
-            }
-        }
-
-        public Matrix GetAnimatedBone(int index)
-        {
-            if (index == -1)
-                return Matrix.Identity;
-            var currentFrame = _animation.AnimationPlayer.GetCurrentFrame();
-            if (currentFrame == null)
-                return Matrix.Identity;
-
-            return currentFrame.BoneTransforms[index].Transform;
+                WorldTransform = _skeleton.GameSkeleton.GetAnimatedWorldTranform(boneIndex);    
         }
 
         void SetDisplayName(string attachmentPointName)

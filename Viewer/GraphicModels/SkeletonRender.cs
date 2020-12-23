@@ -1,54 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Net.Sockets;
 using Viewer.Animation;
 using WpfTest.Scenes;
-
 
 namespace Viewer.GraphicModels
 {
     public class SkeletonRender : RenderItem
     {
-        AnimationPlayer _animationPlayer;
-        GameSkeleton _skeleton;
-        Matrix[] _drawPositions;
+        GameSkeleton _gameSkeleton;
         LineBox _lineBox;
-
 
         public Vector3 NodeColour = new Vector3(.25f, 1, .25f);
         public Vector3 SelectedNodeColour = new Vector3(1, 0, 0);
         public Vector3 LineColour = new Vector3(0, 0, 0);
 
         public int? SelectedBoneIndex { get; set; }
-        public SkeletonRender(Effect shader) : base(null, shader)
-        {
-        }
-
-        public void Create(AnimationPlayer animationPlayer, GameSkeleton skeleton)
+        public SkeletonRender(Effect shader, GameSkeleton skeleton) : base(null, shader)
         {
             _lineBox = new LineBox();
-            _skeleton = skeleton;
-            _animationPlayer = animationPlayer;
-            _drawPositions = new Matrix[_skeleton.BoneCount];
-        }
-
-        public override void Update(GameTime time)
-        {
-            AnimationFrame frame = _animationPlayer.GetCurrentFrame();
-
-            for (int i = 0; i < _skeleton.BoneCount; i++)
-            {
-                var parentIndex = _skeleton.ParentBoneId[i];
-                if (parentIndex == -1)
-                    continue;
-
-                _drawPositions[i] = _skeleton.WorldTransform[i];
-                if (frame != null)
-                {
-                    var currentBoneAnimationoffset = frame.BoneTransforms[i].Transform;
-                    _drawPositions[i] = _drawPositions[i] * currentBoneAnimationoffset;
-                }
-            }
+            _gameSkeleton = skeleton;
         }
 
         public override void Draw(GraphicsDevice device, Matrix world, CommonShaderParameters commonShaderParameters)
@@ -56,9 +26,9 @@ namespace Viewer.GraphicModels
             if (!Visible)
                 return;
 
-            for (int i = 0; i < _skeleton.BoneCount; i++)
+            for (int i = 0; i < _gameSkeleton.BoneCount; i++)
             {
-                var parentIndex = _skeleton.ParentBoneId[i];
+                var parentIndex = _gameSkeleton.GetParentBone(i);
                 if (parentIndex == -1)
                     continue;
 
@@ -66,10 +36,13 @@ namespace Viewer.GraphicModels
                 if (SelectedBoneIndex.HasValue && SelectedBoneIndex.Value == i)
                     drawColour = SelectedNodeColour;
 
+                var boneMatrix = _gameSkeleton.GetAnimatedWorldTranform(i);
+                var parentBoneMatrix = _gameSkeleton.GetAnimatedWorldTranform(parentIndex);
+
                 var vertices = new[]
                 {
-                    new VertexPosition(Vector3.Transform(_drawPositions[i].Translation, world)),
-                    new VertexPosition(Vector3.Transform(_drawPositions[parentIndex].Translation, world))
+                    new VertexPosition(Vector3.Transform(boneMatrix.Translation, world)),
+                    new VertexPosition(Vector3.Transform(parentBoneMatrix.Translation, world))
                 };
 
                 foreach (var pass in _shader.CurrentTechnique.Passes)
@@ -80,7 +53,7 @@ namespace Viewer.GraphicModels
                     device.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
 
-                DrawCube(device, commonShaderParameters, Matrix.CreateScale(0.05f) * _drawPositions[i] * world, drawColour);
+                DrawCube(device, commonShaderParameters, Matrix.CreateScale(0.05f) * boneMatrix * world, drawColour);
             }
         }
 

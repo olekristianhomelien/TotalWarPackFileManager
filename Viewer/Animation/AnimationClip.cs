@@ -67,7 +67,7 @@ namespace Viewer.Animation
                 {
                     Id = i,
                     Name = skeleton.BoneNames[i],
-                    ParentId = skeleton.ParentBoneId[i]
+                    ParentId = skeleton.GetParentBone(i)
                 };
             }
 

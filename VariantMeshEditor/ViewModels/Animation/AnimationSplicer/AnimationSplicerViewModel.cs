@@ -34,7 +34,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         GizmoEditor _selectionGizmo;
         AnimationToSkeletonTypeHelper _animationToSkeletonTypeHelper = new AnimationToSkeletonTypeHelper();
 
-
+        SkeletonBoneGizmoItemWrapper _currentGizmoItem;
         bool _isSelected;
         public bool IsSelected { get { return _isSelected; } set { SetAndNotify(ref _isSelected, value); IsInFocus(IsSelected); } }
 
@@ -80,13 +80,31 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
 
                 //SkeletonModel
-                GizmoItemWrapper item = new GizmoItemWrapper();
-                item.Position = _targetSkeletonNode.Skeleton.WorldTransform[bone.MappedBone.BoneIndex].Translation;
-                _selectionGizmo.SelectItem(item);
+                _currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.OriginalBone.BoneIndex);
+                _selectionGizmo.SelectItem(_currentGizmoItem);
 
             }
             else
                 ExternalSkeletonSettings.SetSelectedBone(-1);
+        }
+
+        class SkeletonBoneGizmoItemWrapper : GizmoItemWrapper
+        {
+            GameSkeleton _skeleton;
+            int _boneIndex;
+
+            public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex)
+            {
+                _skeleton = skeleton;
+                _boneIndex = boneIndex;
+            }
+
+            public void Update()
+            {
+                var transform = _skeleton.GetAnimatedWorldTranform(_boneIndex);
+                Orientation = Quaternion.CreateFromRotationMatrix(transform);
+                Position = transform.Translation;
+            }
         }
 
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer, GizmoEditor selectionGizmo)
@@ -155,12 +173,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         void SaveAnimationToFile()
         {
             _logger.Here().Information("Starting to save animation");
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.DefaultExt = ".anim";
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                DefaultExt = ".anim"
+            };
             if (dialog.ShowDialog() == true)
             {
                 var anim = BuildAnimation();
-                _logger.Here().Information("Output animation created");
                 if (anim == null)
                 {
                     _logger.Here().Error("Animation failed to build");
@@ -170,8 +189,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 {
                     try
                     {
-                        var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.Skeleton);
-                        _logger.Here().Information("Converted to output file completed");
+                        var fileFormat = anim.ConvertToFileFormat(_targetSkeletonNode.GameSkeleton);
                         AnimationFile.Write(fileFormat, dialog.FileName);
                     }
                     catch (Exception e)
@@ -200,7 +218,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                     OtherSkeletonFile = ExternalAnimation.SelectedSkeleton,
 
                     BoneSettings = BoneMapping,
-                    SourceSkeleton = _targetSkeletonNode.Skeleton,
+                    SourceSkeleton = _targetSkeletonNode.GameSkeleton,
                     SourceAnimationFile = TargetAnimation.SelectedAnimation,
 
                     SelectedMainAnimation = SelectedMainAnimation
@@ -214,11 +232,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
                 if (animation != null)
                 {
-                    _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.Skeleton);
+                    _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.GameSkeleton);
                     _animationPlayer._animationNode.AnimationPlayer.CurrentFrame = currentFrame;
                 }
                 else
-                    _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.Skeleton);
+                    _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.GameSkeleton);
 
                 return animation;
             }
@@ -281,9 +299,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             ExternalSkeletonSettings.UpdateNode(time);
             ExternalSkeletonSettings.SetFrame(_animationPlayer.CurrentFrame);
 
-
             if(_lastComputedAnimation != null)
-                BoneMapping.FirstOrDefault()?.SetCurrentInformation(_animationPlayer.CurrentFrame, _lastComputedAnimation);
+                BoneMapping.FirstOrDefault()?.Update(_animationPlayer.CurrentFrame, _lastComputedAnimation);
+
+            if(_animationPlayer.IsPlaying() == false)
+                _currentGizmoItem?.Update();
         }
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)

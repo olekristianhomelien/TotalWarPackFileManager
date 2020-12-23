@@ -60,10 +60,10 @@ namespace VariantMeshEditor.ViewModels.Animation
                     return clip;
                 });
 
-                _animationPlayer.SetAnimationClip(animations.ToList(), _skeletonNode.Skeleton);
+                _animationPlayer.SetAnimationClip(animations.ToList(), _skeletonNode.GameSkeleton);
             }
             else
-                _animationPlayer.SetAnimationClip(null, _skeletonNode.Skeleton);
+                _animationPlayer.SetAnimationClip(null, _skeletonNode.GameSkeleton);
         }
 
         void IsInFocus(bool isInFocus)

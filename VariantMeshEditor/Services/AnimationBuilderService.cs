@@ -88,7 +88,7 @@ namespace VariantMeshEditor.Services
         GameSkeleton CreateSkeleton(PackedFile file)
         {
             var skeletonFile = AnimationFile.Create(file);
-            var skeleton = new GameSkeleton(skeletonFile);
+            var skeleton = new GameSkeleton(skeletonFile, null);
             return skeleton;
         }
 
@@ -355,12 +355,12 @@ namespace VariantMeshEditor.Services
 
         float GetBoneLength(GameSkeleton skeleton, int boneId)
         {
-            var parentBoneId = skeleton.ParentBoneId[boneId];
+            var parentBoneId = skeleton.GetParentBone(boneId);
             if (parentBoneId == -1)
                 return 0;
 
-            var p0 = Vector3.Transform(Vector3.Zero, skeleton.WorldTransform[boneId]);
-            var p1 = Vector3.Transform(Vector3.Zero, skeleton.WorldTransform[parentBoneId]);
+            var p0 = Vector3.Transform(Vector3.Zero, skeleton.GetWorldTransform(boneId));
+            var p1 = Vector3.Transform(Vector3.Zero, skeleton.GetWorldTransform(parentBoneId));
 
             var dist = Vector3.Distance(p0, p1);
 

@@ -97,7 +97,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         }
 
 
-        public void SetCurrentInformation(int frame, AnimationClip animationClip)
+        public void Update(int frame, AnimationClip animationClip)
         {
             if (animationClip != null && animationClip.DynamicFrames.Count > frame)
             {
@@ -121,7 +121,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
 
             foreach (var child in Children)
-                child.SetCurrentInformation(frame, animationClip);
+                child.Update(frame, animationClip);
         }
     }
 

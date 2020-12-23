@@ -77,11 +77,12 @@ namespace VariantMeshEditor.ViewModels.Animation
                 player.Play();
         }
 
+
+
         void OnNextFrame()
         {
             _animationNode.AnimationPlayer.Pause();
             _animationNode.AnimationPlayer.CurrentFrame++;
-            int f = _animationNode.AnimationPlayer.CurrentFrame;
         }
 
         void OnPrivFrame()
@@ -134,7 +135,10 @@ namespace VariantMeshEditor.ViewModels.Animation
             CurrentFrame = _animationNode.AnimationPlayer.CurrentFrame+1;
         }
 
-
+        public bool IsPlaying()
+        {
+            return _animationNode.AnimationPlayer.IsPlaying;
+        }
 
         public void SetAnimationClip(IEnumerable<AnimationClip> animationFiles, Viewer.Animation.GameSkeleton skeleton)
         {

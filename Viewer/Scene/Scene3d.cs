@@ -176,8 +176,6 @@ namespace WpfTest.Scenes
             }
         }
 
-
-
         protected void ApplyCommonShaderParameters(CommonShaderParameters commonShaderParameters, Matrix world)
         {
             _shader.Parameters["View"].SetValue(commonShaderParameters.View);
@@ -282,7 +280,7 @@ namespace WpfTest.Scenes
                     if (frame != null)
                     {
                         for (int i = 0; i < frame.BoneTransforms.Count(); i++)
-                            data[i] = frame.BoneTransforms[i].Transform;
+                            data[i] = frame.BoneTransforms[i].WorldTransform;
                     }
                 }
 

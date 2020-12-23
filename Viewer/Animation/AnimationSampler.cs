@@ -27,11 +27,10 @@ namespace Viewer.Animation
                 {
                     currentFrame.BoneTransforms.Add(new AnimationFrame.BoneKeyFrame()
                     {
-                        //Transform = skeleton.Transform[i],
                         Translation = skeleton.Translation[i],
                         Rotation = skeleton.Rotation[i],
                         BoneIndex = i,
-                        ParentBoneIndex = skeleton.ParentBoneId[i],
+                        ParentBoneIndex = skeleton.GetParentBone(i),
                     });
                 }
 
@@ -65,36 +64,28 @@ namespace Viewer.Animation
                         }
                     }
                 }
-                //for (int i = 0; i < currentFrame.BoneTransforms.Count() - 1; i++)
-                //{
-                //    Quaternion rotation = Quaternion.Slerp(currentFrame.BoneTransforms[i].Rotation, currentFrame.BoneTransforms[i].Rotation, 0.5f);
-                //
-                //    currentFrame.BoneTransform[i + 1].rotation = rotation;
-                //}
 
                 for (int i = 0; i < currentFrame.BoneTransforms.Count(); i++)
                 {
                     Quaternion rotation = currentFrame.BoneTransforms[i].Rotation;
                     Vector3 translation = currentFrame.BoneTransforms[i].Translation;
-                    //  translation.X = -translation.X;
-                    currentFrame.BoneTransforms[i].Transform = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateTranslation(translation);
+                    currentFrame.BoneTransforms[i].WorldTransform = Matrix.CreateFromQuaternion(rotation) * Matrix.CreateTranslation(translation);
 
                     var parentindex = currentFrame.BoneTransforms[i].ParentBoneIndex;
                     if (parentindex == -1)
                     {
                         var scale = Matrix.CreateScale(-1, 1, 1);
-                        currentFrame.BoneTransforms[i].Transform = (scale * currentFrame.BoneTransforms[i].Transform);
+                        currentFrame.BoneTransforms[i].WorldTransform = (scale * currentFrame.BoneTransforms[i].WorldTransform);
                         continue;
                     }
 
-                    currentFrame.BoneTransforms[i].Transform = currentFrame.BoneTransforms[i].Transform * currentFrame.BoneTransforms[parentindex].Transform;
+                    currentFrame.BoneTransforms[i].WorldTransform = currentFrame.BoneTransforms[i].WorldTransform * currentFrame.BoneTransforms[parentindex].WorldTransform;
                 }
 
-                // Mult with inverse bind matrix, in worldspace
                 for (int i = 0; i < skeleton.BoneCount; i++)
                 {
-                    var inv = Matrix.Invert(skeleton.WorldTransform[i]);
-                    currentFrame.BoneTransforms[i].Transform = Matrix.Multiply(inv, currentFrame.BoneTransforms[i].Transform);
+                    var inv = Matrix.Invert(skeleton.GetWorldTransform(i));
+                    currentFrame.BoneTransforms[i].WorldTransform = Matrix.Multiply(inv, currentFrame.BoneTransforms[i].WorldTransform);
                 }
                 return currentFrame;
             }

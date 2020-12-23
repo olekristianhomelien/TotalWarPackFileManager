@@ -98,7 +98,7 @@ namespace Viewer.GraphicModels
             base.Render(device);
         }
 
-        public void UpdateVertexBuffer()
+        /*public void UpdateVertexBuffer()
         {
             for (int index = 0; index < _model.VertexArray.Length; index++)
             {
@@ -115,7 +115,7 @@ namespace Viewer.GraphicModels
             }
 
             _vertexBuffer.SetData(_bufferArray);
-        }
+        }*/
 
         Vector3 ApplyAnimation(FileVector3 vertex, Matrix animationTransform, bool normalize = false)
         {
@@ -141,7 +141,7 @@ namespace Viewer.GraphicModels
             return vector;
         }
 
-        Matrix GetAnimationVertex(Vertex vertex)
+        /*Matrix GetAnimationVertex(Vertex vertex)
         {
             var transformSum = Matrix.Identity;
             var animationData = _animationPlayer?.GetCurrentFrame();
@@ -159,10 +159,10 @@ namespace Viewer.GraphicModels
                     float w3 = vertex.BoneInfos[2].BoneWeight;
                     float w4 = vertex.BoneInfos[3].BoneWeight;
 
-                    Matrix m1 = animationData.BoneTransforms[b0].Transform;
-                    Matrix m2 = animationData.BoneTransforms[b1].Transform;
-                    Matrix m3 = animationData.BoneTransforms[b2].Transform;
-                    Matrix m4 = animationData.BoneTransforms[b3].Transform;
+                    Matrix m1 = animationData.BoneTransforms[b0].WorldTransform;
+                    Matrix m2 = animationData.BoneTransforms[b1].WorldTransform;
+                    Matrix m3 = animationData.BoneTransforms[b2].WorldTransform;
+                    Matrix m4 = animationData.BoneTransforms[b3].WorldTransform;
                     transformSum.M11 = (m1.M11 * w1) + (m2.M11 * w2) + (m3.M11 * w3) + (m4.M11 * w4);
                     transformSum.M12 = (m1.M12 * w1) + (m2.M12 * w2) + (m3.M12 * w3) + (m4.M12 * w4);
                     transformSum.M13 = (m1.M13 * w1) + (m2.M13 * w2) + (m3.M13 * w3) + (m4.M13 * w4);
@@ -181,7 +181,7 @@ namespace Viewer.GraphicModels
                 {
                     int b0 = vertex.BoneInfos[0].BoneIndex;
                     float w1 = vertex.BoneInfos[0].BoneWeight;
-                    Matrix m1 = animationData.BoneTransforms[b0].Transform;
+                    Matrix m1 = animationData.BoneTransforms[b0].WorldTransform;
 
                     transformSum.M11 = (m1.M11 * w1);
                     transformSum.M12 = (m1.M12 * w1);
@@ -199,7 +199,7 @@ namespace Viewer.GraphicModels
             }
             return transformSum;
         }
-
+        */
             
         
     }
