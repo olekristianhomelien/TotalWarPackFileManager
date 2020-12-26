@@ -92,8 +92,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
-            var matrix = Matrix.CreateTranslation((float)_skeletonOffset.X.Value, (float)_skeletonOffset.Y.Value, (float)_skeletonOffset.Z.Value);
-            _externalElement?.Render(device, matrix, commonShaderParameters);
+            if (DrawSkeleton)
+            {
+                var matrix = Matrix.CreateTranslation((float)_skeletonOffset.X.Value, (float)_skeletonOffset.Y.Value, (float)_skeletonOffset.Z.Value);
+                _externalElement?.Render(device, matrix, commonShaderParameters);
+            }
         }
     }
 }

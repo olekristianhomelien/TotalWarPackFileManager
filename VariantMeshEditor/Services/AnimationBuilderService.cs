@@ -179,44 +179,6 @@ namespace VariantMeshEditor.Services
                 }
             }
 
-           //for (int boneIndex = 0; boneIndex < currentsSkeltonBoneCount; boneIndex++)
-           //{
-           //    for (int frameIndex = 0; frameIndex < outputAnimationFile.DynamicFrames.Count() -1; frameIndex++)
-           //    {
-           //       
-           //
-           //        float ratio = 1;
-           //       var boneToGetAnimDataFrom = GetMappedBone(settings.BoneSettings, boneIndex);
-           //       if (HasValidMapping(boneToGetAnimDataFrom))
-           //       {
-           //           if (boneToGetAnimDataFrom.OriginalBone.BoneName.Contains("lowerleg_left"))
-           //           { 
-           //           }
-           //       
-           //           var mappedBondeIndex = boneToGetAnimDataFrom.MappedBone.BoneIndex;
-           //       
-           //           var boneLength = GetBoneLength(sourceSkeleton, boneIndex);
-           //           var otherBoneLength = GetBoneLength(otherSkeleton, mappedBondeIndex);
-           //       
-           //           ratio =  boneLength / otherBoneLength;
-           //           if (float.IsNaN(ratio))
-           //               ratio = 1;
-           //       
-           //           if (boneToGetAnimDataFrom.UseConstantOffset)
-           //               ratio = 1;
-           //           else
-           //           {
-           //                ratio =  ratio;// 1 / ratio;// 1 - ratio;// 0.5f;
-           //           }
-           //       }
-           //
-           //
-           //        var current = outputAnimationFile.DynamicFrames[frameIndex].Rotation[boneIndex];
-           //        var next = outputAnimationFile.DynamicFrames[frameIndex + 1].Rotation[boneIndex];
-           //        outputAnimationFile.DynamicFrames[frameIndex + 1].Rotation[boneIndex] = Quaternion.Slerp(current, next, ratio);  
-           //    }
-           //}
-
             return outputAnimationFile;
         }
 
@@ -287,10 +249,14 @@ namespace VariantMeshEditor.Services
                 //    out_rotation = Quaternion.CreateFromAxisAngle(axis, angle + MathHelper.ToRadians((float)bone.RotationOffsetAlongPrimaryAxis.Value));
                 //}
 
+                var x = Matrix.CreateRotationX(MathHelper.ToRadians((float)bone.ContantRotationOffset.X.Value));
+                var y = Matrix.CreateRotationY(MathHelper.ToRadians((float)bone.ContantRotationOffset.Y.Value));
+                var z = Matrix.CreateRotationZ(MathHelper.ToRadians((float)bone.ContantRotationOffset.Z.Value));
+                var rotationMatrix = x * y * z;
+                var rotationoffset =  Quaternion.CreateFromRotationMatrix(rotationMatrix);
 
-
-                out_position += MathConverter.ToVector(bone.ContantTranslationOffset);
-                out_rotation = out_rotation * MathConverter.ToQuaternion(bone.ContantRotationOffset);
+                out_position += MathConverter.ToVector3(bone.ContantTranslationOffset);
+                out_rotation = out_rotation * rotationoffset;
             }
         }
 

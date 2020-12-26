@@ -13,7 +13,7 @@
         <Expander DockPanel.Dock="Left">
             <Expander.Header>
                 <StackPanel Orientation="Horizontal" >
-                    <CheckBox IsChecked="{Binding UseAnimation, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding ExternalSkeletonVisualizationHelper.DrawSkeleton, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </Expander.Header>
 
@@ -33,13 +33,9 @@
                 <TextBlock Grid.Row="0" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
                 <mathviews:Vector3View 
                             Grid.Row="0" Grid.Column="3"  VerticalContentAlignment="Center"
-                            Vector3="{Binding ExternalSkeletonSettings.SkeletonOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                            Vector3="{Binding ExternalSkeletonVisualizationHelper.SkeletonOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                             FieldWidth="60"
                             NumbersMaxLength="80" />
-
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Draw line"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text=":" Margin="3,0,3,0"/>
-                <CheckBox  Grid.Row="1" Grid.Column="2" />
             </Grid>
         </Expander>
 

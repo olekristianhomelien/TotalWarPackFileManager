@@ -539,10 +539,6 @@ namespace Viewer.Gizmo
 
                                 if (ActiveMode == GizmoMode.Translate)
                                 {
-                                    if (delta.Length() != 0)
-                                    { 
-                                    
-                                    }
                                     // transform (local or world)
                                     delta = Vector3.Transform(delta, _rotationMatrix);
                                     _translationDelta = delta;
@@ -608,9 +604,14 @@ namespace Viewer.Gizmo
                 }
                 else
                 {
+
+
+                    ResetDeltas();
+
                     if (_currentMouseState.LeftButton == ButtonState.Released &&
                         _currentMouseState.RightButton == ButtonState.Released)
                         SelectAxis(mousePosition);
+
                 }
 
                 SetGizmoPosition();
@@ -995,7 +996,7 @@ namespace Viewer.Gizmo
         }
 
         #region Draw
-        public void Draw()
+        public void Draw(bool drawHelperText)
         {
             if (!_isActive) return;
             _graphics.DepthStencilState = DepthStencilState.None;
@@ -1162,7 +1163,8 @@ namespace Viewer.Gizmo
             //if (_showLines)
             //  _lineRenderer.Draw(_gizmoWorld);
 
-            Draw2D();
+            if(drawHelperText)
+                Draw2D();
         }
 
         private void Draw2D()

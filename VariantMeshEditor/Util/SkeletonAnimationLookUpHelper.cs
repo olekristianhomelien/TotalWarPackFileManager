@@ -11,7 +11,7 @@ using Viewer.Scene;
 
 namespace VariantMeshEditor.Util
 {
-    public class AnimationToSkeletonTypeHelper
+    public class SkeletonAnimationLookUpHelper
     {
         ILogger _logger = Logging.Create<AnimationSplicerViewModel>();
         Dictionary<string, List<PackedFile>> _skeletonNameToAnimationMap = new Dictionary<string, List<PackedFile>>();

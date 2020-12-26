@@ -18,7 +18,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
     public class MappableSkeletonBone : NotifyPropertyChangedImpl
     {
-        public GizmoEditor SelectionGizmo { get; set; }
         public SkeletonBoneNode OriginalBone { get; set; }
         public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
 
@@ -36,19 +35,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _contantTranslationOffset, value); }
         }
 
-        Vector4ViewModel _contantRotationOffset = new Vector4ViewModel();
-        public Vector4ViewModel ContantRotationOffset
+        Vector3ViewModel _contantRotationOffset = new Vector3ViewModel();
+        public Vector3ViewModel ContantRotationOffset
         {
             get { return _contantRotationOffset; }
             set { SetAndNotify(ref _contantRotationOffset, value); }
         }
 
-        DoubleViewModel _rotationOffsetAlongPrimaryAxis = new DoubleViewModel();
-        public DoubleViewModel RotationOffsetAlongPrimaryAxis
-        {
-            get { return _rotationOffsetAlongPrimaryAxis; }
-            set { SetAndNotify(ref _rotationOffsetAlongPrimaryAxis, value); }
-        }
 
         private bool _useMapping = true;
         public bool UseMapping
@@ -73,20 +66,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             get { return _boneCopyMethod; }
             set { SetAndNotify(ref _boneCopyMethod, value); }
-        }
-
-        public bool _debugValue0 = false;
-        public bool DebugValue0
-        {
-            get { return _debugValue0; }
-            set { SetAndNotify(ref _debugValue0, value); }
-        }
-
-        public bool _debugValue1 = false;
-        public bool DebugValue1
-        {
-            get { return _debugValue1; }
-            set { SetAndNotify(ref _debugValue1, value); }
         }
 
         Vector4ViewModel _debugVector4 = new Vector4ViewModel();
@@ -127,11 +106,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
     public class MappableSkeletonBoneHelper
     {
-        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode, GizmoEditor selectionGizmo)
+        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
         {
             var output = new ObservableCollection<MappableSkeletonBone>();
             foreach (var bone in skeletonNode.ViewModel.Bones)
-                RecuseiveCreate(bone, output, selectionGizmo);
+                RecuseiveCreate(bone, output);
             return output;
         }
 
@@ -143,29 +122,28 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         }
 
 
-        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList, GizmoEditor selectionGizmo)
+        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList)
         {
             if (bone.ParentBoneIndex == -1)
             {
-                outputList.Add(CreateNode(bone, selectionGizmo));
+                outputList.Add(CreateNode(bone));
             }
             else
             {
                 var treeParent = GetParent(outputList, bone.ParentBoneIndex);
                 if (treeParent != null)
-                    treeParent.Children.Add(CreateNode(bone, selectionGizmo));
+                    treeParent.Children.Add(CreateNode(bone));
             }
 
             foreach (var item in bone.Children)
-                RecuseiveCreate(item, outputList, selectionGizmo);
+                RecuseiveCreate(item, outputList);
         }
 
-        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone, GizmoEditor selectionGizmo)
+        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone)
         {
             MappableSkeletonBone item = new MappableSkeletonBone()
             {
                 OriginalBone = bone,
-                SelectionGizmo = selectionGizmo
             };
             return item;
         }

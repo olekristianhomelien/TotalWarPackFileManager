@@ -33,7 +33,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         AnimationPlayerViewModel _animationPlayer;
         AnimationClip _lastComputedAnimation = null;
         GizmoEditor _selectionGizmo;
-        AnimationToSkeletonTypeHelper _animationToSkeletonTypeHelper = new AnimationToSkeletonTypeHelper();
+        SkeletonAnimationLookUpHelper _animationToSkeletonTypeHelper = new SkeletonAnimationLookUpHelper();
 
         SkeletonBoneGizmoItemWrapper _currentGizmoItem;
         bool _isSelected;
@@ -42,7 +42,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public FilterableAnimationsViewModel TargetAnimation { get; set; }
         public FilterableAnimationsViewModel ExternalAnimation { get; set; }
 
-        public ExternalSkeletonViewModel ExternalSkeletonSettings { get; set; } = new ExternalSkeletonViewModel();
+        public ExternalSkeletonViewModel ExternalSkeletonVisualizationHelper { get; set; } = new ExternalSkeletonViewModel();
 
         ObservableCollection<MappableSkeletonBone> _boneMapping;
         public ObservableCollection<MappableSkeletonBone> BoneMapping { get { return _boneMapping; } set{ SetAndNotify(ref _boneMapping, value);}}
@@ -51,12 +51,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
 
         public ICommand ForceComputeCommand { get; set; }
-        public ICommand LoadTestDataCommand { get; set; }
         public ICommand ClearBindingSelfCommand { get; set; }
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
         public ICommand SaveAnimationCommand { get; set; }
         public ICommand ExportCommand { get; set; }
-        public ICommand ResetCommand { get; set; }
+        public ICommand ResetMappingBackToDefaultCommand { get; set; }
+        public ICommand ClearAllMappingsCommand { get; set; }
+
+        public ICommand LoadTestData_FloatingHumanCommand { get; set; }
+        public ICommand LoadTestData_BlowPipeGoblinCommand { get; set; }
+        public ICommand LoadTestData_DancingDwarfCommand { get; set; }
 
 
         public MappableSkeletonBone _selectedNode;
@@ -70,7 +74,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _boneCopyMethod, value); UpdateBoneCopyMethod(value);}
         }
 
-        public bool _useAttachmentPointFix = true;
+        public bool _useAttachmentPointFix = false;
         public bool UseAttachmentPointFix { get { return _useAttachmentPointFix; } set { SetAndNotify(ref _useAttachmentPointFix, value); } }
 
         void OnItemSelected(MappableSkeletonBone bone)
@@ -78,9 +82,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             if (bone != null && bone.MappedBone != null)
             {
                 _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
-                ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
+                ExternalSkeletonVisualizationHelper.SetSelectedBone(bone.MappedBone.BoneIndex);
 
-                //SkeletonModel
                 _currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.OriginalBone.BoneIndex, bone);
                 _selectionGizmo.SelectItem(_currentGizmoItem);
 
@@ -92,7 +95,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
             }
             else
-                ExternalSkeletonSettings.SetSelectedBone(-1);
+                ExternalSkeletonVisualizationHelper.SetSelectedBone(-1);
         }
 
         private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
@@ -109,67 +112,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             BuildAnimation();
         }
 
-        class SkeletonBoneGizmoItemWrapper : GizmoItemWrapper
-        {
-            GameSkeleton _skeleton;
-            int _boneIndex;
-            MappableSkeletonBone _mappableSkeletonBone;
-
-            public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappableSkeletonBone mappableSkeletonBone)
-            {
-                _skeleton = skeleton;
-                _boneIndex = boneIndex;
-                _mappableSkeletonBone = mappableSkeletonBone;
-            }
-
-            public void OnRotate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
-            {
-                var boneTransform = Matrix.CreateScale(-1, 1, 1) * _skeleton.GetAnimatedWorldTranform(_boneIndex);
-                boneTransform.Decompose(out Vector3 _, out Quaternion boneRot, out Vector3 _);
-                var invBoneRotation = Matrix.Invert(axisMatrix);
-     
-                Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
-                relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
-
-                currentBoneRotation.ToAxisAngle(out Vector3 rotationAxis, out float rotationAngle);
-                var boneLocalRotationAxis = Vector3.Transform(rotationAxis, invBoneRotation);
-                var boneLocalRotation = Quaternion.CreateFromAxisAngle(boneLocalRotationAxis, rotationAngle);
-
-                var currentStoredOffset = MathConverter.ToQuaternion(_mappableSkeletonBone.ContantRotationOffset);
-                var newOffset = currentStoredOffset * boneLocalRotation;
-
-                MathConverter.AssignFromQuaternion(_mappableSkeletonBone.ContantRotationOffset, newOffset);
-            }
-
-            public void OnTranslate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
-            {
-                var boneTransform = /*Matrix.CreateScale(-1, 1, 1) * */_skeleton.GetAnimatedWorldTranform(_boneIndex);
-                boneTransform.Decompose(out Vector3 _, out Quaternion boneRot, out Vector3 _);
-                var invBoneRotation = Matrix.Invert(axisMatrix);// Quaternion.Inverse(boneRot);
-
-                //Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
-                //relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
-                var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value;
-                gismoValue.X *= -1;
-                 var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
-                var current = MathConverter.ToVector(_mappableSkeletonBone.ContantTranslationOffset);
-                MathConverter.AssignFromVector3(_mappableSkeletonBone.ContantTranslationOffset, boneLocalRotation + current);
-
-            }
-
-            public bool isFIrstTime = true;
-            public void Update()
-            {
-                if (isFIrstTime)
-                {
-                    var transform = Matrix.CreateScale(-1,1,1)* _skeleton.GetAnimatedWorldTranform(_boneIndex);
-                    transform.Decompose(out Vector3 _, out Quaternion rot, out Vector3 translation);
-                    Position = translation;
-                    Orientation = rot;
-                    isFIrstTime = false;
-                }
-            }
-        }
+        
 
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer, GizmoEditor selectionGizmo)
         {
@@ -196,10 +139,15 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         void CreateCommands()
         {
             ForceComputeCommand = new RelayCommand(() => BuildAnimation());
-            LoadTestDataCommand = new RelayCommand(LoadTestData);
+
+            LoadTestData_FloatingHumanCommand = new RelayCommand(LoadTestData_FloatingHuman);
+            LoadTestData_BlowPipeGoblinCommand = new RelayCommand(LoadTestData_BlowPipeGoblin);
+            LoadTestData_DancingDwarfCommand = new RelayCommand(LoadTestData_DancingDwarf);
+
             SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
             ExportCommand = new RelayCommand(ExportCurrentConfiguration);
-            ResetCommand = new RelayCommand(ResetAnimationMapping);
+            ResetMappingBackToDefaultCommand = new RelayCommand(ResetAnimationMappingBackToDefault);
+            ClearAllMappingsCommand = new RelayCommand(ResetAnimationMapping);
 
             ClearBindingSelfCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelf);
             ClearBindingSelfAndChildrenCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelfAndChildren);
@@ -213,26 +161,38 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void ResetAnimationMapping()
         {
-            BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode, _selectionGizmo);
+            BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
             UpdateBoneCopyMethod(DefaultBoneCopyMethod);
         }
 
-        void LoadTestData()
+        void ResetAnimationMappingBackToDefault()
         {
-            // Temp - Populate with debug data. 
-            //TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-            //ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-            //ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+            BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
+            UpdateBoneCopyMethod(DefaultBoneCopyMethod);
+            if(ExternalAnimation != null)
+                PrefilBoneMappingBasedOnName(BoneMapping, ExternalAnimation.SelectedSkeletonBonesFlattened);
+        }
 
+        void LoadTestData_FloatingHuman()
+        {
             TargetAnimation.SelectedAnimation =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
             ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
             ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
-
-            //TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
-            //ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid03.anim");
-            //ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid03\unarmed\cannon_crew\hu3_clap_and_order_2.anim");
         }
 
+        void LoadTestData_BlowPipeGoblin()
+        {
+            TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+            ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+            ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+        }
+
+        void LoadTestData_DancingDwarf()
+        {
+            TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
+            ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid03.anim");
+            ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid03\unarmed\cannon_crew\hu3_clap_and_order_2.anim");
+        }
 
         void SaveAnimationToFile()
         {
@@ -298,6 +258,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 {
                     _animationPlayer.SetAnimationClip(new List<AnimationClip>() { animation }, _targetSkeletonNode.GameSkeleton);
                     _animationPlayer._animationNode.AnimationPlayer.CurrentFrame = currentFrame;
+                    _currentGizmoItem?.Update(true);
                 }
                 else
                     _animationPlayer.SetAnimationClip(null, _targetSkeletonNode.GameSkeleton);
@@ -314,7 +275,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
        private void SetExternalAnimation(PackedFile externalAnimationClip)
        {
-           ExternalSkeletonSettings.SetAnimation(externalAnimationClip);
+           ExternalSkeletonVisualizationHelper.SetAnimation(externalAnimationClip);
        }
 
         private void SetExteralSkeleton(FilterableAnimationsViewModel newSelectedSkeleton)
@@ -322,7 +283,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             if (newSelectedSkeleton.SelectedSkeleton != null)
             {
                 PrefilBoneMappingBasedOnName(BoneMapping, newSelectedSkeleton.SelectedSkeletonBonesFlattened);
-                ExternalSkeletonSettings.Create(_resourceLibary, newSelectedSkeleton.SkeletonFile.Header.SkeletonName + ".anim");
+                ExternalSkeletonVisualizationHelper.Create(_resourceLibary, newSelectedSkeleton.SkeletonFile.Header.SkeletonName + ".anim");
             }
         }
 
@@ -360,8 +321,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         #region Real time stuff, needed to update the external skeleton if it is visible
         public void UpdateNode(GameTime time)
         {
-            ExternalSkeletonSettings.UpdateNode(time);
-            ExternalSkeletonSettings.SetFrame(_animationPlayer.CurrentFrame);
+            ExternalSkeletonVisualizationHelper.UpdateNode(time);
+            ExternalSkeletonVisualizationHelper.SetFrame(_animationPlayer.CurrentFrame);
 
             if(_lastComputedAnimation != null)
                 BoneMapping.FirstOrDefault()?.Update(_animationPlayer.CurrentFrame, _lastComputedAnimation);
@@ -372,7 +333,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         public void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
-            ExternalSkeletonSettings?.DrawNode(device, parentTransform, commonShaderParameters);
+            ExternalSkeletonVisualizationHelper?.DrawNode(device, parentTransform, commonShaderParameters);
         }
         #endregion
     }

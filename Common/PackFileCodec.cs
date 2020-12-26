@@ -99,7 +99,10 @@ namespace Common {
         /*
          * Encodes given pack file to given path.
          */
-        public void WriteToFile(string FullPath, PackFile packFile) {
+        public void WriteToFile(string FullPath, PackFile packFile) 
+        {
+            throw new Exception("Saving is disbaled for now");
+
             using (BinaryWriter writer = new BinaryWriter(new FileStream(FullPath, FileMode.Create), Encoding.ASCII)) {
                 writer.Write (packFile.Header.PackIdentifier.ToCharArray ());
                 writer.Write ((int)packFile.Header.PrecedenceByte);

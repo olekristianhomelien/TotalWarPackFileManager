@@ -646,7 +646,10 @@ namespace PackFileManager
             }
         }
 
-        void SaveAsFile(string filename) {
+        void SaveAsFile(string filename) 
+        {
+            MessageBox.Show("This is disabled for now :)");
+            return;
             if (!CanWriteCurrentPack) {
                 MessageBox.Show(CA_FILE_WARNING);
             } else {

@@ -56,7 +56,7 @@
     <Compile Include="Controls\EditorControllers\SlotController.cs" />
     <Compile Include="Controls\EditorMainController.cs" />
     <Compile Include="Services\AnimationBuilderService.cs" />
-    <Compile Include="Util\AnimationToSkeletonTypeHelper.cs" />
+    <Compile Include="Util\SkeletonAnimationLookUpHelper.cs" />
     <Compile Include="Util\AnimMeta_temp.cs" />
     <Compile Include="Util\MathConverter.cs" />
     <Compile Include="Util\MathExtentions.cs" />
@@ -69,6 +69,8 @@
     <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\MappableSkeletonBone.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\Settings\AnimationSplicerSettings.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\SkeletonBoneGizmoItemWrapper.cs" />
     <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />
     <Compile Include="ViewModels\FileSceneElement.cs" />
     <Compile Include="ViewModels\RigidModel\FileTextureViewModel.cs" />
@@ -309,6 +311,9 @@
   <ItemGroup>
     <PackageReference Include="MvvmLightLibs">
       <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Pfim">
       <Version>0.9.1</Version>

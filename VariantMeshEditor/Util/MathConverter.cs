@@ -11,7 +11,7 @@ namespace VariantMeshEditor.Util
 {
     public static class MathConverter
     {
-        public static Vector3 ToVector(Vector3ViewModel vector3ViewModel)
+        public static Vector3 ToVector3(Vector3ViewModel vector3ViewModel)
         {
             float x = (float)Math.Round(vector3ViewModel.X.Value, 10);
             float y = (float)Math.Round(vector3ViewModel.Y.Value, 10);
@@ -21,11 +21,7 @@ namespace VariantMeshEditor.Util
 
         public static Quaternion ToQuaternion(Vector4ViewModel vector4ViewModel)
         {
-            //var x = Matrix.CreateRotationX(MathHelper.ToRadians((float)vector3ViewModel.X.Value));
-            //var y = Matrix.CreateRotationY(MathHelper.ToRadians((float)vector3ViewModel.Y.Value));
-            //var z = Matrix.CreateRotationZ(MathHelper.ToRadians((float)vector3ViewModel.Z.Value));
-            //var rotationMatrix = x * y * z;
-            //return Quaternion.CreateFromRotationMatrix(rotationMatrix);
+
 
             var q = new Quaternion((float)vector4ViewModel.X.Value, (float)vector4ViewModel.Y.Value, (float)vector4ViewModel.Z.Value, (float)vector4ViewModel.W.Value);
             q.Normalize();
