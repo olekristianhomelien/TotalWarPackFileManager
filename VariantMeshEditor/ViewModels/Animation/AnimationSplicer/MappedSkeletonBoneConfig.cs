@@ -16,10 +16,10 @@ using Viewer.Gizmo;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
-    public class MappableSkeletonBone : NotifyPropertyChangedImpl
+    public class MappedSkeletonBoneConfig : NotifyPropertyChangedImpl
     {
         public SkeletonBoneNode OriginalBone { get; set; }
-        public ObservableCollection<MappableSkeletonBone> Children { get; set; } = new ObservableCollection<MappableSkeletonBone>();
+        public ObservableCollection<MappedSkeletonBoneConfig> Children { get; set; } = new ObservableCollection<MappedSkeletonBoneConfig>();
 
         private bool _useContantOffset = true;
         public bool UseConstantOffset
@@ -68,61 +68,29 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _boneCopyMethod, value); }
         }
 
-        Vector4ViewModel _debugVector4 = new Vector4ViewModel();
-        public Vector4ViewModel DebugVector4
-        {
-            get { return _debugVector4; }
-            set { SetAndNotify(ref _debugVector4, value); }
-        }
-
-
         public void Update(int frame, AnimationClip animationClip)
         {
-            if (animationClip != null && animationClip.DynamicFrames.Count > frame)
-            {
-                
-                int boneIndex = OriginalBone.BoneIndex;
-                /*animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngle(out Vector3 axis, out float angle);
-                DebugVector4.X.Value = (double)axis.X;
-                DebugVector4.Y.Value = (double)axis.Y;
-                DebugVector4.Z.Value = (double)axis.Z;
-                DebugVector4.W.Value = (double)angle;*/
-
-                var axis = animationClip.DynamicFrames[frame].Rotation[boneIndex].ToAxisAngleDegrees();
-                DebugVector4.X.Value = (double)axis.X;
-                DebugVector4.Y.Value = (double)axis.Y;
-                DebugVector4.Z.Value = (double)axis.Z;
-                DebugVector4.W.Value = (double)0;
-            }
-            else
-            {
-                DebugVector4.SetValue(-1);
-            }
-
-            foreach (var child in Children)
-                child.Update(frame, animationClip);
-        }
+        } 
     }
 
     public class MappableSkeletonBoneHelper
     {
-        public static ObservableCollection<MappableSkeletonBone> Create(SkeletonElement skeletonNode)
+        public static ObservableCollection<MappedSkeletonBoneConfig> Create(SkeletonElement skeletonNode)
         {
-            var output = new ObservableCollection<MappableSkeletonBone>();
+            var output = new ObservableCollection<MappedSkeletonBoneConfig>();
             foreach (var bone in skeletonNode.ViewModel.Bones)
                 RecuseiveCreate(bone, output);
             return output;
         }
 
-        public static void SetDefaultBoneCopyMethod(MappableSkeletonBone node, BoneCopyMethod value)
+        public static void SetDefaultBoneCopyMethod(MappedSkeletonBoneConfig node, BoneCopyMethod value)
         {
             node.BoneCopyMethod = value;
             foreach (var child in node.Children)
                 SetDefaultBoneCopyMethod(child, value);
         }
 
-
-        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappableSkeletonBone> outputList)
+        static void RecuseiveCreate(SkeletonBoneNode bone, ObservableCollection<MappedSkeletonBoneConfig> outputList)
         {
             if (bone.ParentBoneIndex == -1)
             {
@@ -139,18 +107,18 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 RecuseiveCreate(item, outputList);
         }
 
-        static MappableSkeletonBone CreateNode(SkeletonBoneNode bone)
+        static MappedSkeletonBoneConfig CreateNode(SkeletonBoneNode bone)
         {
-            MappableSkeletonBone item = new MappableSkeletonBone()
+            MappedSkeletonBoneConfig item = new MappedSkeletonBoneConfig()
             {
                 OriginalBone = bone,
             };
             return item;
         }
 
-        static MappableSkeletonBone GetParent(ObservableCollection<MappableSkeletonBone> root, int parentBoneIndex)
+        static MappedSkeletonBoneConfig GetParent(ObservableCollection<MappedSkeletonBoneConfig> root, int parentBoneIndex)
         {
-            foreach (MappableSkeletonBone item in root)
+            foreach (MappedSkeletonBoneConfig item in root)
             {
                 if (item.OriginalBone.BoneIndex == parentBoneIndex)
                     return item;

@@ -68,7 +68,7 @@
     <Compile Include="ViewModels\Animation\AnimationSplicer\AnimationSplicerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />
-    <Compile Include="ViewModels\Animation\AnimationSplicer\MappableSkeletonBone.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\MappedSkeletonBoneConfig.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\Settings\AnimationSplicerSettings.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\SkeletonBoneGizmoItemWrapper.cs" />
     <Compile Include="ViewModels\Animation\FragmentExplorerViewModel.cs" />

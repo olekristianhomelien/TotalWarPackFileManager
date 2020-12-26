@@ -50,13 +50,13 @@ namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews
 
 
 
-        public MappableSkeletonBone SelectedBone
+        public MappedSkeletonBoneConfig SelectedBone
         {
-            get { return (MappableSkeletonBone)GetValue(SelectedBoneProperty); }
+            get { return (MappedSkeletonBoneConfig)GetValue(SelectedBoneProperty); }
             set { SetValue(SelectedBoneProperty, value); }
         }
 
         public static readonly DependencyProperty SelectedBoneProperty =
-            DependencyProperty.Register("SelectedBone", typeof(MappableSkeletonBone), typeof(SelectedBoneEditor), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedBone", typeof(MappedSkeletonBoneConfig), typeof(SelectedBoneEditor), new PropertyMetadata(null));
     }
 }

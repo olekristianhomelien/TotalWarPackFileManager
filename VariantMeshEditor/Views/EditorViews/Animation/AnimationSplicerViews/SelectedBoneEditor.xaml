@@ -131,28 +131,5 @@
             <Button Grid.Row="7" Grid.Column="3" Content="Reset to default" Margin="0,10,0,0" IsEnabled="False"/>
         </Grid>
 
-
-        <!-- Debug attributes -->
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition  Width="Auto" SharedSizeGroup="CheckBoxColumn" />
-                <ColumnDefinition  Width="Auto" SharedSizeGroup="HeaderColumn" />
-                <ColumnDefinition  Width="Auto" SharedSizeGroup="SubHeaderColumn" />
-                <ColumnDefinition  Width="300" SharedSizeGroup="ValueColumn" />
-                <ColumnDefinition  Width="Auto" SharedSizeGroup="ValueColumn2" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,5,0,0" Text="Debug"/>
-            <TextBlock   Grid.Row="1" Grid.Column="2"  Text="rotation" TextAlignment="Right" Margin="2,0,0,0" IsEnabled="False"/>
-            <mathviews:Vector4View Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="1" 
-                                        Vector4="{Binding SelectedBone.DebugVector4, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
-                                        FieldWidth="60"
-                                        NumbersMaxLength="80"
-                                        IsEnabled="False"/>
-        </Grid>
     </Grid>
 </UserControl>

@@ -44,8 +44,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         public ExternalSkeletonViewModel ExternalSkeletonVisualizationHelper { get; set; } = new ExternalSkeletonViewModel();
 
-        ObservableCollection<MappableSkeletonBone> _boneMapping;
-        public ObservableCollection<MappableSkeletonBone> BoneMapping { get { return _boneMapping; } set{ SetAndNotify(ref _boneMapping, value);}}
+        ObservableCollection<MappedSkeletonBoneConfig> _boneMapping;
+        public ObservableCollection<MappedSkeletonBoneConfig> BoneMapping { get { return _boneMapping; } set{ SetAndNotify(ref _boneMapping, value);}}
 
         MainAnimation _selectedMainAnimation = MainAnimation.Other;
         public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
@@ -63,8 +63,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ICommand LoadTestData_DancingDwarfCommand { get; set; }
 
 
-        public MappableSkeletonBone _selectedNode;
-        public MappableSkeletonBone SelectedNode {get { return _selectedNode; }set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
+        public MappedSkeletonBoneConfig _selectedNode;
+        public MappedSkeletonBoneConfig SelectedNode {get { return _selectedNode; }set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
 
 
         public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
@@ -77,7 +77,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public bool _useAttachmentPointFix = false;
         public bool UseAttachmentPointFix { get { return _useAttachmentPointFix; } set { SetAndNotify(ref _useAttachmentPointFix, value); } }
 
-        void OnItemSelected(MappableSkeletonBone bone)
+        void OnItemSelected(MappedSkeletonBoneConfig bone)
         {
             if (bone != null && bone.MappedBone != null)
             {
@@ -149,8 +149,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             ResetMappingBackToDefaultCommand = new RelayCommand(ResetAnimationMappingBackToDefault);
             ClearAllMappingsCommand = new RelayCommand(ResetAnimationMapping);
 
-            ClearBindingSelfCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelf);
-            ClearBindingSelfAndChildrenCommand = new RelayCommand<MappableSkeletonBone>(ClearBindingSelfAndChildren);
+            ClearBindingSelfCommand = new RelayCommand<MappedSkeletonBoneConfig>(ClearBindingSelf);
+            ClearBindingSelfAndChildrenCommand = new RelayCommand<MappedSkeletonBoneConfig>(ClearBindingSelfAndChildren);
         }
 
         void UpdateBoneCopyMethod(BoneCopyMethod value)
@@ -289,12 +289,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
 
 
-        void ClearBindingSelf(MappableSkeletonBone node)
+        void ClearBindingSelf(MappedSkeletonBoneConfig node)
         {
             node.MappedBone = null;
         }
 
-        void ClearBindingSelfAndChildren(MappableSkeletonBone node)
+        void ClearBindingSelfAndChildren(MappedSkeletonBoneConfig node)
         {
             node.MappedBone = null;
 
@@ -302,7 +302,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 ClearBindingSelfAndChildren(child);
         }
 
-        void PrefilBoneMappingBasedOnName(IEnumerable<MappableSkeletonBone> nodes, ObservableCollection<SkeletonBoneNode> externalBonesList)
+        void PrefilBoneMappingBasedOnName(IEnumerable<MappedSkeletonBoneConfig> nodes, ObservableCollection<SkeletonBoneNode> externalBonesList)
         {
             foreach(var node in nodes)
             {

@@ -54,7 +54,7 @@ namespace VariantMeshEditor.Services
 
             public PackedFile OtherAnimationFile { get; set; }   // ExternalAnimation.SelectedItem
 
-            public IEnumerable<MappableSkeletonBone> BoneSettings { get; set; }
+            public IEnumerable<MappedSkeletonBoneConfig> BoneSettings { get; set; }
 
             public MainAnimation SelectedMainAnimation { get; set; }
 
@@ -239,7 +239,7 @@ namespace VariantMeshEditor.Services
             out_position = skeleton.Translation[boneIndex];
         }
 
-        void ComputeMappedBoneAttributeContributions(MappableSkeletonBone bone, ref Quaternion out_rotation, ref Vector3 out_position)
+        void ComputeMappedBoneAttributeContributions(MappedSkeletonBoneConfig bone, ref Quaternion out_rotation, ref Vector3 out_position)
         {
             if (bone.UseConstantOffset)
             {
@@ -284,7 +284,7 @@ namespace VariantMeshEditor.Services
             }
         }
 
-        bool HasValidMapping(MappableSkeletonBone bone)
+        bool HasValidMapping(MappedSkeletonBoneConfig bone)
         {
             return bone.MappedBone != null && bone.UseMapping && bone.MappedBone.BoneIndex != -1;
         }
@@ -306,7 +306,7 @@ namespace VariantMeshEditor.Services
             throw new Exception("Unsupported value for MainAnimation provided");
         }
 
-        MappableSkeletonBone GetMappedBone(IEnumerable<MappableSkeletonBone> nodes, int boneIndex)
+        MappedSkeletonBoneConfig GetMappedBone(IEnumerable<MappedSkeletonBoneConfig> nodes, int boneIndex)
         {
             foreach (var node in nodes)
             {

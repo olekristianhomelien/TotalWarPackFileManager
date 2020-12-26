@@ -14,9 +14,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
     {
         GameSkeleton _skeleton;
         int _boneIndex;
-        MappableSkeletonBone _mappableSkeletonBone;
+        MappedSkeletonBoneConfig _mappableSkeletonBone;
 
-        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappableSkeletonBone mappableSkeletonBone)
+        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappedSkeletonBoneConfig mappableSkeletonBone)
         {
             _skeleton = skeleton;
             _boneIndex = boneIndex;

@@ -17,7 +17,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
         public MainAnimation SelectedMainAnimation;
         public BoneCopyMethod DefaultBoneCopyMethod;
 
-        public IEnumerable<MappableSkeletonBone> MappableBoneSettings;
+        public IEnumerable<MappedSkeletonBoneConfig> MappableBoneSettings;
     }
 
     public class FilterableAnimationSetttings
