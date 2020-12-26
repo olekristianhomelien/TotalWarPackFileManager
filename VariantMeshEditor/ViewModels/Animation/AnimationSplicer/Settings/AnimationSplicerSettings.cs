@@ -11,13 +11,19 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 {
     class AnimationSplicerSettings
     {
-        public FilterableAnimationSetttings Target;
-        public FilterableAnimationSetttings External;
+        public FilterableAnimationSetttings TargetAnimation { get; set; }
+        public FilterableAnimationSetttings ExternalAnimation { get; set; }
 
-        public MainAnimation SelectedMainAnimation;
-        public BoneCopyMethod DefaultBoneCopyMethod;
+        public MainAnimation SelectedMainAnimation { get; set; }
+        public BoneCopyMethod DefaultBoneCopyMethod { get; set; }
 
-        public IEnumerable<MappedSkeletonBoneConfig> MappableBoneSettings;
+        public IEnumerable<MappedSkeletonBoneConfig> MappableBoneSettings { get; set; }
+
+        public void PreperForSave()
+        {
+            TargetAnimation.PreperForSave();
+            ExternalAnimation.PreperForSave();
+        }
     }
 
     public class FilterableAnimationSetttings
@@ -34,5 +40,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
         public string SelectedSkeletonFileName { get; set; }
 
         public TimeMatchMethod MatchingMethod = TimeMatchMethod.TimeFit;
+
+        public void PreperForSave()
+        {
+            SelectedAnimationFileName = SelectedAnimation?.FullPath;
+            SelectedSkeletonFileName = SelectedSkeleton?.FullPath;
+        }
     }
 }

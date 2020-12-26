@@ -118,7 +118,7 @@ namespace VariantMeshEditor.Services
 
                     if (HasValidMapping(boneToGetAnimDataFrom))
                     {
-                        var mappedBondeIndex = boneToGetAnimDataFrom.MappedBone.BoneIndex;
+                        var mappedBondeIndex = boneToGetAnimDataFrom.ExternalBone.BoneIndex;
                         var otherBoneLength = GetBoneLength(otherSkeleton, mappedBondeIndex);
 
                         GetSkeletonTransform(sourceSkeleton, boneIndex, out Quaternion sourceSkeletonRotation, out Vector3 sourceSkeletonPosition);
@@ -286,7 +286,7 @@ namespace VariantMeshEditor.Services
 
         bool HasValidMapping(MappedSkeletonBoneConfig bone)
         {
-            return bone.MappedBone != null && bone.UseMapping && bone.MappedBone.BoneIndex != -1;
+            return bone.ExternalBone != null && bone.UseMapping && bone.ExternalBone.BoneIndex != -1;
         }
 
         int GetAnimationFrameCount(AnimationClip source, AnimationClip other, MainAnimation mainAnimationSetting)

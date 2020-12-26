@@ -24,7 +24,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
     {
         ILogger _logger = Logging.Create<FilterableAnimationsViewModel>();
 
-        FilterableAnimationSetttings _data = new FilterableAnimationSetttings();
+        public FilterableAnimationSetttings Data { get; private set; } = new FilterableAnimationSetttings();
 
         // Animation selection
         ObservableCollection<PackedFile> _animationList;
@@ -33,18 +33,18 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public string _currentSkeletonName;
         public string CurrentSkeletonName { get { return _currentSkeletonName; } set { SetAndNotify(ref _currentSkeletonName, value); } }
 
-        public string HeaderText { get { return _data.HeaderText; } set { SetAndNotify(ref _data.HeaderText, value); } }
+        public string HeaderText { get { return Data.HeaderText; } set { SetAndNotify(ref Data.HeaderText, value); } }
 
         public event ValueChangedDelegate<PackedFile> SelectedAnimationChanged;
-        public PackedFile SelectedAnimation { get { return _data.SelectedAnimation; } set { SetAndNotify(ref _data.SelectedAnimation, value, SelectedAnimationChanged); } }
+        public PackedFile SelectedAnimation { get { return Data.SelectedAnimation; } set { SetAndNotify(ref Data.SelectedAnimation, value, SelectedAnimationChanged); } }
 
         // Skeleton Selection
         public AnimationFile SkeletonFile { get; set; }
         public List<PackedFile> SkeletonList { get; set; } = new List<PackedFile>();
-        public PackedFile SelectedSkeleton { get { return _data.SelectedSkeleton; } set { SetAndNotify(ref _data.SelectedSkeleton, value); OnSkeletonSelected(_data.SelectedSkeleton); } }
+        public PackedFile SelectedSkeleton { get { return Data.SelectedSkeleton; } set { SetAndNotify(ref Data.SelectedSkeleton, value); OnSkeletonSelected(Data.SelectedSkeleton); } }
 
         public event ValueChangedDelegate<FilterableAnimationsViewModel> SelectedSkeletonChanged;
-        public bool EnableSkeltonBrowsing { get { return _data.EnableSkeltonBrowsing; } set { SetAndNotify(ref _data.EnableSkeltonBrowsing, value); } }
+        public bool EnableSkeltonBrowsing { get { return Data.EnableSkeltonBrowsing; } set { SetAndNotify(ref Data.EnableSkeltonBrowsing, value); } }
 
         // Misc
         public OnSeachDelegate FilterByFullPath { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
@@ -53,7 +53,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
 
         // Mapping settings
-        public TimeMatchMethod MatchingMethod { get { return _data.MatchingMethod; } set { SetAndNotify(ref _data.MatchingMethod, value); } }
+        public TimeMatchMethod MatchingMethod { get { return Data.MatchingMethod; } set { SetAndNotify(ref Data.MatchingMethod, value); } }
         public ObservableCollection<SkeletonBoneNode> SelectedSkeletonBonesFlattened { get; set; } = new ObservableCollection<SkeletonBoneNode>();
 
         void FindAllSkeletons(ResourceLibary resourceLibary)

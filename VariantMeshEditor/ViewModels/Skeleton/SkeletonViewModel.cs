@@ -114,7 +114,6 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             return null;
         }
 
-
         public class SkeletonBoneNode : NotifyPropertyChangedImpl
         {
             string _boneName;

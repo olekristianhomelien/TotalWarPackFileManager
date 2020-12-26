@@ -6,14 +6,17 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using VariantMeshEditor.Services;
 using VariantMeshEditor.Util;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings;
 using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Animation;
 using Viewer.Gizmo;
@@ -45,7 +48,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ExternalSkeletonViewModel ExternalSkeletonVisualizationHelper { get; set; } = new ExternalSkeletonViewModel();
 
         ObservableCollection<MappedSkeletonBoneConfig> _boneMapping;
-        public ObservableCollection<MappedSkeletonBoneConfig> BoneMapping { get { return _boneMapping; } set{ SetAndNotify(ref _boneMapping, value);}}
+        public ObservableCollection<MappedSkeletonBoneConfig> BoneMapping { get { return _boneMapping; } set { SetAndNotify(ref _boneMapping, value); } }
 
         MainAnimation _selectedMainAnimation = MainAnimation.Other;
         public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
@@ -55,6 +58,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
         public ICommand SaveAnimationCommand { get; set; }
         public ICommand ExportCommand { get; set; }
+        public ICommand ImportCommand { get; set; }
         public ICommand ResetMappingBackToDefaultCommand { get; set; }
         public ICommand ClearAllMappingsCommand { get; set; }
 
@@ -64,14 +68,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
 
         public MappedSkeletonBoneConfig _selectedNode;
-        public MappedSkeletonBoneConfig SelectedNode {get { return _selectedNode; }set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
+        public MappedSkeletonBoneConfig SelectedNode { get { return _selectedNode; } set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
 
 
         public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
-        public BoneCopyMethod DefaultBoneCopyMethod 
-        { 
-            get { return _boneCopyMethod; } 
-            set { SetAndNotify(ref _boneCopyMethod, value); UpdateBoneCopyMethod(value);}
+        public BoneCopyMethod DefaultBoneCopyMethod
+        {
+            get { return _boneCopyMethod; }
+            set { SetAndNotify(ref _boneCopyMethod, value); UpdateBoneCopyMethod(value); }
         }
 
         public bool _useAttachmentPointFix = false;
@@ -79,10 +83,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void OnItemSelected(MappedSkeletonBoneConfig bone)
         {
-            if (bone != null && bone.MappedBone != null)
+            if (bone != null && bone.ExternalBone != null)
             {
                 _targetSkeletonNode.ViewModel.SelectedBone = bone.OriginalBone;
-                ExternalSkeletonVisualizationHelper.SetSelectedBone(bone.MappedBone.BoneIndex);
+                ExternalSkeletonVisualizationHelper.SetSelectedBone(bone.ExternalBone.BoneIndex);
 
                 _currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.OriginalBone.BoneIndex, bone);
                 _selectionGizmo.SelectItem(_currentGizmoItem);
@@ -112,8 +116,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             BuildAnimation();
         }
 
-        
-
         public AnimationSplicerViewModel(ResourceLibary resourceLibary, SkeletonElement skeletonNode, AnimationPlayerViewModel animationPlayer, GizmoEditor selectionGizmo)
         {
             _selectionGizmo = selectionGizmo;
@@ -123,10 +125,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
             _animationToSkeletonTypeHelper.FindAllAnimations(_resourceLibary);
 
-            TargetAnimation  = new FilterableAnimationsViewModel("Source Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, false);
+            TargetAnimation = new FilterableAnimationsViewModel("Source Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, false);
             TargetAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, _targetSkeletonNode.FullPath);
 
-            ExternalAnimation  = new FilterableAnimationsViewModel("Target Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, true);
+            ExternalAnimation = new FilterableAnimationsViewModel("Target Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, true);
             ExternalAnimation.SelectedSkeletonChanged += SetExteralSkeleton;
             ExternalAnimation.SelectedAnimationChanged += SetExternalAnimation;
             CreateCommands();
@@ -146,6 +148,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
             SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
             ExportCommand = new RelayCommand(ExportCurrentConfiguration);
+            ImportCommand = new RelayCommand(LoadConfiguration);
             ResetMappingBackToDefaultCommand = new RelayCommand(ResetAnimationMappingBackToDefault);
             ClearAllMappingsCommand = new RelayCommand(ResetAnimationMapping);
 
@@ -155,7 +158,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void UpdateBoneCopyMethod(BoneCopyMethod value)
         {
-            if(BoneMapping != null)
+            if (BoneMapping != null)
                 MappableSkeletonBoneHelper.SetDefaultBoneCopyMethod(BoneMapping.FirstOrDefault(), value);
         }
 
@@ -169,13 +172,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             BoneMapping = MappableSkeletonBoneHelper.Create(_targetSkeletonNode);
             UpdateBoneCopyMethod(DefaultBoneCopyMethod);
-            if(ExternalAnimation != null)
+            if (ExternalAnimation != null)
                 PrefilBoneMappingBasedOnName(BoneMapping, ExternalAnimation.SelectedSkeletonBonesFlattened);
         }
 
         void LoadTestData_FloatingHuman()
         {
-            TargetAnimation.SelectedAnimation =  PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
+            TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\staff_and_sword\combat_idles\hu1_sfsw_combat_idle_07.anim");
             ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid01b.anim");
             ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01b\subset\spellsinger\sword\stand\hu1b_elf_spellsinger_sw_stand_idle_01.anim");
         }
@@ -227,6 +230,33 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         }
 
         void ExportCurrentConfiguration()
+        {
+            _logger.Here().Information("Starting to save config");
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                DefaultExt = ".splicCfg"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                AnimationSplicerSettings settings = new AnimationSplicerSettings
+                {
+                    ExternalAnimation = ExternalAnimation.Data,
+                    TargetAnimation = TargetAnimation.Data,
+                    DefaultBoneCopyMethod = DefaultBoneCopyMethod,
+                    SelectedMainAnimation = SelectedMainAnimation,
+                    MappableBoneSettings = BoneMapping
+                };
+                settings.PreperForSave();
+
+                var str = JsonConvert.SerializeObject(settings, Formatting.Indented);
+                File.WriteAllText(dialog.FileName, str);
+            }
+
+            _logger.Here().Information("Saving config completed");
+        }
+
+        void LoadConfiguration()
         { 
         
         }
@@ -291,12 +321,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void ClearBindingSelf(MappedSkeletonBoneConfig node)
         {
-            node.MappedBone = null;
+            node.ExternalBone = null;
         }
 
         void ClearBindingSelfAndChildren(MappedSkeletonBoneConfig node)
         {
-            node.MappedBone = null;
+            node.ExternalBone = null;
 
             foreach (var child in node.Children)
                 ClearBindingSelfAndChildren(child);
@@ -308,7 +338,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 if (node != null)
                 {
-                    node.MappedBone = externalBonesList.FirstOrDefault(x => x?.BoneName == node.OriginalBone.BoneName);
+                    node.ExternalBone = externalBonesList.FirstOrDefault(x => x?.BoneName == node.OriginalBone.BoneName);
                     PrefilBoneMappingBasedOnName(node.Children, externalBonesList);
                 }
             }
@@ -323,9 +353,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             ExternalSkeletonVisualizationHelper.UpdateNode(time);
             ExternalSkeletonVisualizationHelper.SetFrame(_animationPlayer.CurrentFrame);
-
-            if(_lastComputedAnimation != null)
-                BoneMapping.FirstOrDefault()?.Update(_animationPlayer.CurrentFrame, _lastComputedAnimation);
 
             if(_animationPlayer.IsPlaying() == false)
                 _currentGizmoItem?.Update();

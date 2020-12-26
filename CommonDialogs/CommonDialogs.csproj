@@ -143,6 +143,9 @@
     <PackageReference Include="AdamsLair.TreeViewAdv">
       <Version>1.7.7</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>

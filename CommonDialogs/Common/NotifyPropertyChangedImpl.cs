@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -6,6 +7,7 @@ namespace CommonDialogs.Common
 {
     public class NotifyPropertyChangedImpl : INotifyPropertyChanged
     {
+        [JsonIgnore]
         public bool DisableCallbacks { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;
         public delegate void ValueChangedDelegate<T>(T newSelectedSkeleton);
@@ -25,12 +27,10 @@ namespace CommonDialogs.Common
 
         protected virtual void SetAndNotify<T>(ref T variable, T newValue, ValueChangedDelegate<T> valueChangedDelegate = null, [CallerMemberName] String propertyName = "")
         {
-            
             variable = newValue;
             NotifyPropertyChanged(propertyName);
             if (DisableCallbacks == false)
                 valueChangedDelegate?.Invoke(newValue);
-            
         }
     }
 

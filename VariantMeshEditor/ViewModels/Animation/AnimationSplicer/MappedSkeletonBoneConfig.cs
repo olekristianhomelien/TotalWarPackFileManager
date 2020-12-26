@@ -1,18 +1,9 @@
 ﻿using CommonDialogs.Common;
 using CommonDialogs.MathViews;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 using VariantMeshEditor.ViewModels.Skeleton;
 using VariantMeshEditor.Services;
-using Viewer.Animation;
-using VariantMeshEditor.Util;
-using Microsoft.Xna.Framework;
-using Viewer.Gizmo;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -42,7 +33,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _contantRotationOffset, value); }
         }
 
-
         private bool _useMapping = true;
         public bool UseMapping
         {
@@ -50,9 +40,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _useMapping, value); }
         }
 
-        SkeletonBoneNode _mappedBone;
-        public SkeletonBoneNode MappedBone { get { return _mappedBone; } set { SetAndNotify(ref _mappedBone, value); } }
-
+        SkeletonBoneNode _externalBone;
+        public SkeletonBoneNode ExternalBone { get { return _externalBone; } set { SetAndNotify(ref _externalBone, value); } }
 
         private TransformTypes _transformTypesToCopy = TransformTypes.Both;
         public TransformTypes TransformTypesToCopy
@@ -67,10 +56,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             get { return _boneCopyMethod; }
             set { SetAndNotify(ref _boneCopyMethod, value); }
         }
-
-        public void Update(int frame, AnimationClip animationClip)
-        {
-        } 
     }
 
     public class MappableSkeletonBoneHelper

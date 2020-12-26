@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "/t91jsTueUcQ7kWAjbbRQm5gbgUZbJnC/RY9Hp3m92J9L59Ax9BKwvTJS8vQwY+jkCAY1Eqp3SIobZr3vMOwXA==",
+  "dgSpecHash": "yveYW+r4WgpxpGIU/1cm89S3srD6ksh8Uj6mPPyRvnzxlFF7dWrgK03+w2ADUi+Jfuiuio+7X8dipKXmtVwy5A==",
   "success": true,
   "projectFilePath": "C:\\Users\\ole_k\\source\\repos\\TotalWarPackFileManager\\CommonDialogs\\CommonDialogs.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ole_k\\.nuget\\packages\\adamslair.treeviewadv\\1.7.7\\adamslair.treeviewadv.1.7.7.nupkg.sha512",
+    "C:\\Users\\ole_k\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog\\2.9.0\\serilog.2.9.0.nupkg.sha512",
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog.enrichers.thread\\3.1.0\\serilog.enrichers.thread.3.1.0.nupkg.sha512",
     "C:\\Users\\ole_k\\.nuget\\packages\\serilog.sinks.console\\3.1.1\\serilog.sinks.console.3.1.1.nupkg.sha512",

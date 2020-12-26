@@ -73,7 +73,7 @@
             <ComboBox  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1"
                         ItemsSource="{Binding TargetBoneList, ElementName=self}"
                         DisplayMemberPath="{Binding TargetBoneListDisplayName, ElementName=self}"
-                        SelectedItem="{Binding SelectedBone.MappedBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"
+                        SelectedItem="{Binding SelectedBone.ExternalBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"
                         IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
             <Button Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="1" Content="Default"
                     IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
