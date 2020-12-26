@@ -214,7 +214,8 @@
 
                 <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
                       ItemsSource="{Binding BoneMapping}" 
-                      ItemContainerStyle="{StaticResource TreeViewItemStyle1}">
+                      ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
+                          PreviewMouseWheel="HandlePreviewMouseWheel">
 
                     <i:Interaction.Behaviors>
                         <editorviews:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />

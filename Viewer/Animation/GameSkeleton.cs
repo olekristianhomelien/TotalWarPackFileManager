@@ -14,6 +14,8 @@ namespace Viewer.Animation
         Matrix[] WorldTransform { get; set; }
         Matrix[] AnimatedWorldTransforms { get; set; }
         int[] ParentBoneId { get; set; }
+
+        public Quaternion[] TestRotation;
         
         public int BoneCount { get; set; }
         public string SkeletonName { get; set; }
@@ -31,6 +33,8 @@ namespace Viewer.Animation
             BoneNames = new string[BoneCount];
             SkeletonName = skeletonFile.Header.SkeletonName;
             AnimationPlayer = animationPlayer;
+
+            TestRotation = new Quaternion[BoneCount];
 
             for (int i = 0; i < BoneCount; i++)
             {
@@ -64,6 +68,7 @@ namespace Viewer.Animation
                 var rotationMatrix = Matrix.CreateFromQuaternion(Rotation[i]);
                 var transform = rotationMatrix * translationMatrix;
 
+                TestRotation[i] = Rotation[i];
                 WorldTransform[i] = transform;
             }
 
@@ -74,6 +79,7 @@ namespace Viewer.Animation
                     continue;
                 WorldTransform[i] = WorldTransform[i] * WorldTransform[parentIndex];
                 AnimatedWorldTransforms[i] = WorldTransform[i];
+                TestRotation[i] = TestRotation[i] * TestRotation[parentIndex];
             }
         }
 

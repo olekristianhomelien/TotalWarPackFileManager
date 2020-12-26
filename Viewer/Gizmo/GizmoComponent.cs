@@ -57,6 +57,11 @@ namespace Viewer.Gizmo
         private Vector3 _position = Vector3.Zero;
         private Matrix _rotationMatrix = Matrix.Identity;
 
+        public Matrix AxisMatrix
+        {
+            get { return _rotationMatrix; }
+        }
+
         private Vector3 _localForward = Vector3.Forward;
         private Vector3 _localUp = Vector3.Up;
         private Vector3 _localRight;
@@ -92,7 +97,8 @@ namespace Viewer.Gizmo
         // -- Modes & Selections -- //
         public GizmoAxis ActiveAxis = GizmoAxis.None;
         public GizmoMode ActiveMode = GizmoMode.Translate;
-        public TransformSpace ActiveSpace = TransformSpace.Local;
+        public TransformSpace GizmoDisplaySpace = TransformSpace.Local;
+        public TransformSpace GizmoValueSpace = TransformSpace.Local;
         public PivotType ActivePivot = PivotType.SelectionCenter;
 
         // -- BoundingBoxes -- //
@@ -399,7 +405,7 @@ namespace Viewer.Gizmo
                 Selection.Clear();
         }
 
-        protected void ResetDeltas()
+        public void ResetDeltas()
         {
             _tDelta = Vector3.Zero;
             _lastIntersectionPosition = Vector3.Zero;
@@ -533,6 +539,10 @@ namespace Viewer.Gizmo
 
                                 if (ActiveMode == GizmoMode.Translate)
                                 {
+                                    if (delta.Length() != 0)
+                                    { 
+                                    
+                                    }
                                     // transform (local or world)
                                     delta = Vector3.Transform(delta, _rotationMatrix);
                                     _translationDelta = delta;
@@ -576,7 +586,7 @@ namespace Viewer.Gizmo
                                 rot.Forward = SceneWorld.Forward;
                                 rot.Up = SceneWorld.Up;
                                 rot.Right = SceneWorld.Right;
-
+                                //delta = 0;
                                 switch (ActiveAxis)
                                 {
                                     case GizmoAxis.X:
@@ -664,7 +674,7 @@ namespace Viewer.Gizmo
             _axisAlignedWorld = _screenScaleMatrix * Matrix.CreateWorld(_position, SceneWorld.Forward, SceneWorld.Up);
 
             // Assign World
-            if (ActiveSpace == TransformSpace.World ||
+            if (GizmoDisplaySpace == TransformSpace.World ||
                 //ActiveMode == GizmoMode.Rotate ||
                 ActiveMode == GizmoMode.NonUniformScale ||
                 ActiveMode == GizmoMode.UniformScale)
@@ -1205,7 +1215,7 @@ namespace Viewer.Gizmo
         private string GetStatusInfo()
         {
             return "Mode: " + ActiveMode + 
-                " | Space: " + ActiveSpace + 
+                " | Space: " + GizmoDisplaySpace + 
                 " | Snapping:" +(SnapEnabled ? "ON" : "OFF") +
                 " | Precision:" + (PrecisionModeEnabled ? "ON" : "OFF") + 
                 " | Pivot: " + ActivePivot + " ";
@@ -1572,7 +1582,7 @@ namespace Viewer.Gizmo
 
         public void ToggleActiveSpace()
         {
-            ActiveSpace = ActiveSpace == TransformSpace.Local ? TransformSpace.World : TransformSpace.Local;
+            GizmoDisplaySpace = GizmoDisplaySpace == TransformSpace.Local ? TransformSpace.World : TransformSpace.Local;
         }
 
         #endregion

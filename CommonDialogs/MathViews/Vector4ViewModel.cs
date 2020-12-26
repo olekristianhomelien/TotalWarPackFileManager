@@ -17,6 +17,14 @@ namespace CommonDialogs.MathViews
             set { SetAndNotify(ref _w, value); OnValueChanged?.Invoke(this); }
         }
 
+        public Vector4ViewModel(double x = 0, double y = 0, double z = 0, double w = 1)
+        { 
+            X.Value = x;
+            Y.Value = y;
+            Z.Value = z;
+            W.Value = w;
+        }
+
         public void SetValue(double value)
         {
             X.Value = value;

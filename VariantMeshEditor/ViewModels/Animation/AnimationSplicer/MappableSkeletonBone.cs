@@ -36,8 +36,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             set { SetAndNotify(ref _contantTranslationOffset, value); }
         }
 
-        Vector3ViewModel _contantRotationOffset = new Vector3ViewModel();
-        public Vector3ViewModel ContantRotationOffset
+        Vector4ViewModel _contantRotationOffset = new Vector4ViewModel();
+        public Vector4ViewModel ContantRotationOffset
         {
             get { return _contantRotationOffset; }
             set { SetAndNotify(ref _contantRotationOffset, value); }

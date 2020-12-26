@@ -16,6 +16,9 @@ namespace Viewer.Gizmo
 {
     public class GizmoEditor
     {
+        public event TransformationEventHandler RotateEvent;
+        public event TransformationEventHandler TranslateEvent;
+
         GizmoComponent _gizmo;
         SpriteBatch _spriteBatch;
 
@@ -25,6 +28,9 @@ namespace Viewer.Gizmo
 
         Keyboard _keyboard;
         ArcBallCamera _camera;
+
+        public Matrix AxisMatrix { get { return _gizmo.AxisMatrix; } }
+
 
         public void Create(ResourceLibary resourceLibary, GraphicsDevice graphicsDevice, Keyboard keyboard, ArcBallCamera camera)
         {
@@ -69,6 +75,8 @@ namespace Viewer.Gizmo
             if (_keyboard.IsKeyReleased(Keys.Home))
                 _gizmo.ToggleActiveSpace();
 
+            //_gizmo.GizmoValueSpace = TransformSpace.World;
+
             _gizmo.Update(mouseState, time);
         }
 
@@ -82,17 +90,21 @@ namespace Viewer.Gizmo
         private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)
         {
             transformable.Position += (Vector3)e.Value;
+            TranslateEvent?.Invoke(transformable, e);
         }
 
         private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
         {
             transformable.Orientation = Quaternion.CreateFromRotationMatrix(Matrix.CreateFromQuaternion(transformable.Orientation) * (Matrix)e.Value);
+
+            RotateEvent?.Invoke(transformable, e);
         }
 
         public void SelectItem(ITransformable item)
         {
             _gizmo.Selection.Clear();
             _gizmo.Selection.Add(item);
+            _gizmo.ResetDeltas();
         }
 
         //private void GizmoScaleEvent(ITransformable transformable, TransformationEventArgs e)
@@ -122,17 +134,22 @@ namespace Viewer.Gizmo
 
         Quaternion _orientation = Quaternion.Identity;
         public Quaternion Orientation { get { return _orientation; } set { _orientation = value; OnTranformChanged?.Invoke(this); } }
+
+
+        public Matrix CurrentOriantati = Matrix.Identity;
         public Vector3 Forward
         {
             get
             {
-                return Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(Orientation));
+             //   return Vector3.Transform(Vector3.Forward, CurrentOriantati);
+               return Vector3.Transform(Vector3.Forward, Matrix.CreateFromQuaternion(Orientation));
             }
         }
         public Vector3 Up
         {
             get
             {
+               // return Vector3.Transform(Vector3.Up, CurrentOriantati);
                 return Vector3.Transform(Vector3.Up, Matrix.CreateFromQuaternion(Orientation));
             }
         }

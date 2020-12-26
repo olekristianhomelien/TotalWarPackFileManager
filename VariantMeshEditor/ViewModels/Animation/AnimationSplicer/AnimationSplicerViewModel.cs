@@ -19,6 +19,7 @@ using Viewer.Animation;
 using Viewer.Gizmo;
 using Viewer.Scene;
 using WpfTest.Scenes;
+
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
@@ -80,30 +81,93 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 ExternalSkeletonSettings.SetSelectedBone(bone.MappedBone.BoneIndex);
 
                 //SkeletonModel
-                _currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.OriginalBone.BoneIndex);
+                _currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.OriginalBone.BoneIndex, bone);
                 _selectionGizmo.SelectItem(_currentGizmoItem);
+
+                _selectionGizmo.RotateEvent -= GizmoRotateEvent;
+                _selectionGizmo.RotateEvent += GizmoRotateEvent;
+
+                _selectionGizmo.TranslateEvent -= GizmoTranslateEvent;
+                _selectionGizmo.TranslateEvent += GizmoTranslateEvent;
 
             }
             else
                 ExternalSkeletonSettings.SetSelectedBone(-1);
         }
 
+        private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
+        {
+            var t = transformable as SkeletonBoneGizmoItemWrapper;
+            t.OnRotate(e, _selectionGizmo.AxisMatrix);
+            BuildAnimation();
+        }
+
+        private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)
+        {
+            var t = transformable as SkeletonBoneGizmoItemWrapper;
+            t.OnTranslate(e, _selectionGizmo.AxisMatrix);
+            BuildAnimation();
+        }
+
         class SkeletonBoneGizmoItemWrapper : GizmoItemWrapper
         {
             GameSkeleton _skeleton;
             int _boneIndex;
+            MappableSkeletonBone _mappableSkeletonBone;
 
-            public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex)
+            public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappableSkeletonBone mappableSkeletonBone)
             {
                 _skeleton = skeleton;
                 _boneIndex = boneIndex;
+                _mappableSkeletonBone = mappableSkeletonBone;
             }
 
+            public void OnRotate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
+            {
+                var boneTransform = Matrix.CreateScale(-1, 1, 1) * _skeleton.GetAnimatedWorldTranform(_boneIndex);
+                boneTransform.Decompose(out Vector3 _, out Quaternion boneRot, out Vector3 _);
+                var invBoneRotation = Matrix.Invert(axisMatrix);
+     
+                Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
+                relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
+
+                currentBoneRotation.ToAxisAngle(out Vector3 rotationAxis, out float rotationAngle);
+                var boneLocalRotationAxis = Vector3.Transform(rotationAxis, invBoneRotation);
+                var boneLocalRotation = Quaternion.CreateFromAxisAngle(boneLocalRotationAxis, rotationAngle);
+
+                var currentStoredOffset = MathConverter.ToQuaternion(_mappableSkeletonBone.ContantRotationOffset);
+                var newOffset = currentStoredOffset * boneLocalRotation;
+
+                MathConverter.AssignFromQuaternion(_mappableSkeletonBone.ContantRotationOffset, newOffset);
+            }
+
+            public void OnTranslate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
+            {
+                var boneTransform = /*Matrix.CreateScale(-1, 1, 1) * */_skeleton.GetAnimatedWorldTranform(_boneIndex);
+                boneTransform.Decompose(out Vector3 _, out Quaternion boneRot, out Vector3 _);
+                var invBoneRotation = Matrix.Invert(axisMatrix);// Quaternion.Inverse(boneRot);
+
+                //Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
+                //relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
+                var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value;
+                gismoValue.X *= -1;
+                 var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
+                var current = MathConverter.ToVector(_mappableSkeletonBone.ContantTranslationOffset);
+                MathConverter.AssignFromVector3(_mappableSkeletonBone.ContantTranslationOffset, boneLocalRotation + current);
+
+            }
+
+            public bool isFIrstTime = true;
             public void Update()
             {
-                var transform = _skeleton.GetAnimatedWorldTranform(_boneIndex);
-                Orientation = Quaternion.CreateFromRotationMatrix(transform);
-                Position = transform.Translation;
+                if (isFIrstTime)
+                {
+                    var transform = Matrix.CreateScale(-1,1,1)* _skeleton.GetAnimatedWorldTranform(_boneIndex);
+                    transform.Decompose(out Vector3 _, out Quaternion rot, out Vector3 translation);
+                    Position = translation;
+                    Orientation = rot;
+                    isFIrstTime = false;
+                }
             }
         }
 

@@ -281,11 +281,11 @@ namespace VariantMeshEditor.Services
         {
             if (bone.UseConstantOffset)
             {
-                if (bone.RotationOffsetAlongPrimaryAxis.Value != 0)
-                {
-                    out_rotation.ToAxisAngle(out Vector3 axis, out float angle);
-                    out_rotation = Quaternion.CreateFromAxisAngle(axis, angle + MathHelper.ToRadians((float)bone.RotationOffsetAlongPrimaryAxis.Value));
-                }
+                //if (bone.RotationOffsetAlongPrimaryAxis.Value != 0)
+                //{
+                //    out_rotation.ToAxisAngle(out Vector3 axis, out float angle);
+                //    out_rotation = Quaternion.CreateFromAxisAngle(axis, angle + MathHelper.ToRadians((float)bone.RotationOffsetAlongPrimaryAxis.Value));
+                //}
 
 
 
