@@ -24,16 +24,13 @@ namespace VariantMeshEditor.ViewModels.Skeleton
         {
         }
 
-        public void Create(AnimationPlayer animationPlayer, ResourceLibary resourceLibary, string skeletonName)
+        public void Create(AnimationPlayer animationPlayer, ResourceLibary resourceLibary, PackedFile skeletonPackFile)
         {
-            string animationFolder = "animations\\skeletons\\";
-            var skeletonFilePath = animationFolder + skeletonName;
-            var file = PackFileLoadHelper.FindFile(resourceLibary.PackfileContent, skeletonFilePath);
-            if (file != null)
+            if (skeletonPackFile != null)
             {
-                SkeletonFile = AnimationFile.Create(file);
-                FullPath = skeletonFilePath;
-                FileName = Path.GetFileNameWithoutExtension(skeletonFilePath);
+                SkeletonFile = AnimationFile.Create(skeletonPackFile);
+                FullPath = skeletonPackFile.FullPath;
+                FileName = Path.GetFileNameWithoutExtension(FullPath);
                 GameSkeleton = new GameSkeleton(SkeletonFile, animationPlayer);
                 SkeletonRenderer = new SkeletonRender(resourceLibary.GetEffect(ShaderTypes.Line), GameSkeleton);
                 DisplayName = "Skeleton - " + FileName;

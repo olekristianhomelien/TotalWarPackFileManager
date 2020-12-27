@@ -1,0 +1,12 @@
+﻿<Window x:Class="VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.BoneMappingViews.BoneMappingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.BoneMappingViews"
+        mc:Ignorable="d"
+        Title="BoneMappingWindow" Height="450" Width="800">
+    <Grid>
+        <local:BoneMappingView></local:BoneMappingView>
+    </Grid>
+</Window>

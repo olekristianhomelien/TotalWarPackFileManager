@@ -115,7 +115,10 @@ namespace VariantMeshEditor.Util
                     throw new Exception("More the one skeleton for a veriant mesh");
                 if (skeletons.Count() == 1)
                 {
-                    skeletonElement.Create(animationElement.AnimationPlayer, _resourceLibary, skeletons.First() + ".anim");
+                    string animationFolder = "animations\\skeletons\\";
+                    var skeletonFilePath = animationFolder + skeletons.First() + ".anim";
+                    var skeletonFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, skeletonFilePath);
+                    skeletonElement.Create(animationElement.AnimationPlayer, _resourceLibary, skeletonFile);
                 }
                 else
                 {

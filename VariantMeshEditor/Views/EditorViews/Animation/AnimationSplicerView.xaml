@@ -132,7 +132,13 @@
 
     </UserControl.Resources>
 
-    <ScrollViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <ScrollViewer Grid.Row="0">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -235,7 +241,7 @@
                 <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
                       ItemsSource="{Binding BoneMapping}" 
                       ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
-                          PreviewMouseWheel="HandlePreviewMouseWheel">
+                      PreviewMouseWheel="HandlePreviewMouseWheel">
 
                     <i:Interaction.Behaviors>
                         <editorviews:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />
@@ -287,4 +293,6 @@
 
         </Grid>
     </ScrollViewer>
+        <Button Grid.Row="1" Content="Open Adanced mapping window" Command="{Binding OpenAdvanceMappingWindow}"/>
+    </Grid>
 </UserControl>

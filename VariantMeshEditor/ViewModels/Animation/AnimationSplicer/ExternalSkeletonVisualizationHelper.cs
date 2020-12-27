@@ -47,7 +47,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         SkeletonElement _externalElement;
         AnimationPlayer _animationPlayer;
-        public void Create(ResourceLibary resourceLibary, string skeletonName)
+        public void Create(ResourceLibary resourceLibary, PackedFile skeletonPackedFile)
         {
             if (_externalElement != null)
                 _externalElement.Dispose();
@@ -55,20 +55,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _externalElement = new SkeletonElement(null, "");
             _externalElement.IsChecked = true;
             _animationPlayer = new AnimationPlayer();
-            _externalElement.Create(_animationPlayer, resourceLibary, skeletonName);
+            _externalElement.Create(_animationPlayer, resourceLibary, skeletonPackedFile);
 
-            _externalElement.SkeletonRenderer.LineColour = new Vector3(1, 0, 0);
-            _externalElement.SkeletonRenderer.NodeColour = new Vector3(1, 1, 1);
+            //_externalElement.SkeletonRenderer.LineColour = new Vector3(1, 0, 0);
+            //_externalElement.SkeletonRenderer.NodeColour = new Vector3(1, 1, 1);
         }
 
-        public void SetSelectedBone(int index)
+        public SkeletonElement GetSkeletonElement()
         {
-            if (_externalElement != null)
-            {
-                _externalElement.ViewModel.SelectedBone = _externalElement.ViewModel.GetBoneFromIndex(index, _externalElement.ViewModel.Bones);
-            }
+            return _externalElement;
         }
-
 
         public void SetFrame(int currentFrame)
         {

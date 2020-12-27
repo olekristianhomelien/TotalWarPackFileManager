@@ -32,9 +32,13 @@ namespace Viewer.GraphicModels
                 if (parentIndex == -1)
                     continue;
 
+                Vector3 scale = Vector3.One;
                 Vector3 drawColour = NodeColour;
                 if (SelectedBoneIndex.HasValue && SelectedBoneIndex.Value == i)
+                {
                     drawColour = SelectedNodeColour;
+                    scale *= 1.5f;
+                }
 
                 var boneMatrix = _gameSkeleton.GetAnimatedWorldTranform(i);
                 var parentBoneMatrix = _gameSkeleton.GetAnimatedWorldTranform(parentIndex);
@@ -53,7 +57,7 @@ namespace Viewer.GraphicModels
                     device.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
 
-                DrawCube(device, commonShaderParameters, Matrix.CreateScale(0.05f) * boneMatrix * world, drawColour);
+                DrawCube(device, commonShaderParameters, Matrix.CreateScale(scale) * Matrix.CreateScale(0.05f) * boneMatrix * world, drawColour);
             }
         }
 

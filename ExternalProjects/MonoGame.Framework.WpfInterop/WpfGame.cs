@@ -48,7 +48,7 @@ namespace MonoGame.Framework.WpfInterop
         /// This applies to both <see cref="MonoGame.Framework.WpfInterop.Input.WpfMouse"/> and <see cref="MonoGame.Framework.WpfInterop.Input.WpfKeyboard"/> behaviour.
         /// Defaults to true.
         /// </summary>
-        public bool FocusOnMouseOver { get; set; } = true;
+        public bool FocusOnMouseOver { get; set; } = false;
 
         /// <summary>
         /// Mirrors the game component collection behaviour of monogame.

@@ -66,6 +66,7 @@
     <Compile Include="ViewModels\Animation\AnimationExplorerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationPlayerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\AnimationSplicerViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\BoneMapping\AdvBoneMappingViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonVisualizationHelper.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\MappedSkeletonBoneConfig.cs" />
@@ -96,6 +97,12 @@
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationPlayerView.xaml.cs">
       <DependentUpon>AnimationPlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingView.xaml.cs">
+      <DependentUpon>BoneMappingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingWindow.xaml.cs">
+      <DependentUpon>BoneMappingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\SelectedBoneEditor.xaml.cs">
       <DependentUpon>SelectedBoneEditor.xaml</DependentUpon>
@@ -167,6 +174,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

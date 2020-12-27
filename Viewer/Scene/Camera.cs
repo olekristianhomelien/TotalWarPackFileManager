@@ -184,17 +184,15 @@ namespace Viewer.Scene
             var moseSpeed = -0.5f;
             var speed = 0.01f;
 
-            if (keyboard.IsKeyDown(Keys.LeftAlt))
+            if (keyboard.IsKeyDown(Keys.LeftAlt) && mouseState.LeftButton == ButtonState.Pressed)
             {
                 if (_isMoveKeyPressed == false)
                 {
-
                     mouseX = mouseState.X;
                     mouseY = mouseState.Y;
                 }
                 else
                 {
-                    
                     var diffX = mouseX - mouseState.X;
                     var diffY = mouseY - mouseState.Y;
                     mouseX = mouseState.X;

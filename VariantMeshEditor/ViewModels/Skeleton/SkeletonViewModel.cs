@@ -63,6 +63,12 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             return null;
         }
 
+        public void SetSelectedBoneByIndex(int index)
+        {
+            var bone = GetBoneFromIndex(index, Bones);
+            SelectedBone = bone;
+        }
+
         void CreateBoneOverview()
         {
             SelectedBone = null;
