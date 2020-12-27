@@ -16,6 +16,7 @@ using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 using VariantMeshEditor.Util;
 using Newtonsoft.Json;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings;
+using Viewer.Animation;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -36,15 +37,17 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public string HeaderText { get { return Data.HeaderText; } set { SetAndNotify(ref Data.HeaderText, value); } }
 
         public event ValueChangedDelegate<PackedFile> SelectedAnimationChanged;
-        public PackedFile SelectedAnimation { get { return Data.SelectedAnimation; } set { SetAndNotify(ref Data.SelectedAnimation, value, SelectedAnimationChanged); } }
+        public PackedFile SelectedAnimation { get { return Data.SelectedAnimation; } set { SetAndNotify(ref Data.SelectedAnimation, value); OnAnimationChanged(Data.SelectedAnimation); } }
+
+        public AnimationClip SelectedAnimationClip { get; set; }
 
         // Skeleton Selection
-        public AnimationFile SkeletonFile { get; set; }
         public List<PackedFile> SkeletonList { get; set; } = new List<PackedFile>();
         public PackedFile SelectedSkeleton { get { return Data.SelectedSkeleton; } set { SetAndNotify(ref Data.SelectedSkeleton, value); OnSkeletonSelected(Data.SelectedSkeleton); } }
 
         public event ValueChangedDelegate<FilterableAnimationsViewModel> SelectedSkeletonChanged;
         public bool EnableSkeltonBrowsing { get { return Data.EnableSkeltonBrowsing; } set { SetAndNotify(ref Data.EnableSkeltonBrowsing, value); } }
+        public GameSkeleton SelectedGameSkeleton { get; set; }
 
         // Misc
         public OnSeachDelegate FilterByFullPath { get { return (item, expression) => { return expression.Match((item as PackedFile).FullPath).Success; }; } }
@@ -55,45 +58,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         // Mapping settings
         public TimeMatchMethod MatchingMethod { get { return Data.MatchingMethod; } set { SetAndNotify(ref Data.MatchingMethod, value); } }
         public ObservableCollection<SkeletonBoneNode> SelectedSkeletonBonesFlattened { get; set; } = new ObservableCollection<SkeletonBoneNode>();
-
-        void FindAllSkeletons(ResourceLibary resourceLibary)
-        {
-            if (!EnableSkeltonBrowsing)
-                return;
-            var allFilesInFolder = PackFileLoadHelper.GetAllFilesInDirectory(resourceLibary.PackfileContent, "animations\\skeletons");
-            SkeletonList = allFilesInFolder.Where(x => x.FileExtention == "anim").ToList();
-        }
-
-        void OnSkeletonSelected(PackedFile selectedSkeleton)
-        {
-            _logger.Here().Information($"Selecting a new skeleton: {selectedSkeleton}");
-
-            SelectedSkeletonBonesFlattened.Clear();
-            AnimationsForCurrentSkeleton.Clear();
-            SelectedAnimation = null;
-            CurrentSkeletonName = "";
-
-            if (selectedSkeleton != null)
-            {
-                // Create the skeleton
-                SkeletonFile = AnimationFile.Create(selectedSkeleton);
-                SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = -1, BoneName = "" });
-                foreach (var bone in SkeletonFile.Bones)
-                    SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = bone.Id, BoneName = bone.Name });
-
-                // Find all the animations for this skeleton
-                var animations = _skeletonAnimationLookUpHelper.GetAnimationsForSkeleton(SkeletonFile.Header.SkeletonName);
-                foreach (var animation in animations)
-                    AnimationsForCurrentSkeleton.Add(animation);
-
-                CurrentSkeletonName = SkeletonFile.Header.SkeletonName;
-            }
-
-            SelectedSkeletonChanged?.Invoke(this);
-            _logger.Here().Information("Selecting a new skeleton - Done");
-        }
-
-
         public FilterableAnimationsViewModel(string headerText, ResourceLibary resourceLibary, SkeletonAnimationLookUpHelper animationToSkeletonTypeHelper, bool enableSkeltonBrowsing)
         {
             HeaderText = headerText;
@@ -105,23 +69,61 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             FindAllSkeletons(_resourceLibary);
         }
 
-        //public void Serialize()
-        //{ 
-        //    
-        //}
-        //
-        //public void Load(FilterableAnimationSetttings settings)
-        //{
-        //    HeaderText = settings.HeaderText;
-        //    EnableSkeltonBrowsing = settings.EnableSkeltonBrowsing;
-        //    MatchingMethod = settings.MatchingMethod;
-        //    SelectedSkeleton = settings.SelectedSkeleton;
-        //    SelectedAnimation = settings.SelectedAnimation;
-        //
-        //    JsonConvert.SerializeObject()
-        //    JsonSerializer.ser
-        //    var con = JsonSerializer.CreateDefault();
-        //    con.Serialize()
-        //}
+        void OnSkeletonSelected(PackedFile selectedSkeleton)
+        {
+            _logger.Here().Information($"Selecting a new skeleton: {selectedSkeleton}");
+
+            SelectedSkeletonBonesFlattened.Clear();
+            AnimationsForCurrentSkeleton.Clear();
+            SelectedAnimation = null;
+            CurrentSkeletonName = "";
+            SelectedGameSkeleton = null;
+
+            if (selectedSkeleton != null)
+            {
+                // Create the skeleton
+                var skeletonFile = AnimationFile.Create(selectedSkeleton);
+                SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = -1, BoneName = "" });
+                foreach (var bone in skeletonFile.Bones)
+                    SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = bone.Id, BoneName = bone.Name });
+
+                // Find all the animations for this skeleton
+                var animations = _skeletonAnimationLookUpHelper.GetAnimationsForSkeleton(skeletonFile.Header.SkeletonName);
+                foreach (var animation in animations)
+                    AnimationsForCurrentSkeleton.Add(animation);
+
+                CurrentSkeletonName = skeletonFile.Header.SkeletonName;
+                SelectedGameSkeleton = new GameSkeleton(skeletonFile, null);
+            }
+
+            SelectedSkeletonChanged?.Invoke(this);
+            _logger.Here().Information("Selecting a new skeleton - Done");
+        }
+
+        void OnAnimationChanged(PackedFile selectedAnimation)
+        {
+            _logger.Here().Information($"Selecting a new animation: {selectedAnimation}");
+
+            if (selectedAnimation == null)
+            {
+                SelectedAnimationClip = null;
+            }
+            else
+            {
+                var anim = AnimationFile.Create(selectedAnimation);
+                SelectedAnimationClip = new AnimationClip(anim);
+            }
+
+            SelectedAnimationChanged?.Invoke(selectedAnimation);
+            _logger.Here().Information($"Selecting a new animation - Done");
+        }
+
+        void FindAllSkeletons(ResourceLibary resourceLibary)
+        {
+            if (!EnableSkeltonBrowsing)
+                return;
+            var allFilesInFolder = PackFileLoadHelper.GetAllFilesInDirectory(resourceLibary.PackfileContent, "animations\\skeletons");
+            SkeletonList = allFilesInFolder.Where(x => x.FileExtention == "anim").ToList();
+        }
     }
 }

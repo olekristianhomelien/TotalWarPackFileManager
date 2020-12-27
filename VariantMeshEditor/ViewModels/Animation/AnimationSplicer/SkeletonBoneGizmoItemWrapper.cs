@@ -10,17 +10,29 @@ using Viewer.Gizmo;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
-    public class SkeletonBoneGizmoItemWrapper : GizmoItemWrapper
+    public class SkeletonBoneGizmoItemWrapper : GizmoItemWrapper, IDisposable
     {
         GameSkeleton _skeleton;
         int _boneIndex;
         MappedSkeletonBoneConfig _mappableSkeletonBone;
+        GizmoEditor _gizmoEditor;
+        bool _hasBeenPositionBeenSet = false;
 
-        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappedSkeletonBoneConfig mappableSkeletonBone)
+        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappedSkeletonBoneConfig mappableSkeletonBone, GizmoEditor gizmoEditor)
         {
             _skeleton = skeleton;
             _boneIndex = boneIndex;
             _mappableSkeletonBone = mappableSkeletonBone;
+            _gizmoEditor = gizmoEditor;
+
+            _gizmoEditor.RotateEvent += GizmoRotateEvent;
+            _gizmoEditor.TranslateEvent += GizmoTranslateEvent;
+        }
+
+        public override void Dispose()
+        {
+            _gizmoEditor.TranslateEvent -= GizmoTranslateEvent;
+            _gizmoEditor.RotateEvent -= GizmoRotateEvent;
         }
 
         public void OnRotate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
@@ -50,30 +62,33 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             //relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
             var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value;
 
-            //gismoValue.X *= -1; 
-            var gismoValueCopy = gismoValue;
-            //gismoValue.X = gismoValueCopy.Y;
-            //gismoValue.Y = gismoValueCopy.Z;
-            //gismoValue.Z = gismoValueCopy.X;
-            //gismoValue.X *= -1;
-
             var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
             var current = MathConverter.ToVector3(_mappableSkeletonBone.ContantTranslationOffset);
             MathConverter.AssignFromVector3(_mappableSkeletonBone.ContantTranslationOffset, boneLocalRotation + current);
-
         }
 
-        public bool isFIrstTime = true;
-        public void Update(bool force = false)
+        public override void Update(bool force = false)
         {
-            if (isFIrstTime || force)
+            if (!_hasBeenPositionBeenSet || force)
             {
                 var transform = Matrix.CreateScale(-1, 1, 1) * _skeleton.GetAnimatedWorldTranform(_boneIndex);
                 transform.Decompose(out Vector3 _, out Quaternion rot, out Vector3 translation);
                 Position = translation;
                 Orientation = rot;
-                isFIrstTime = false;
+                _hasBeenPositionBeenSet = true;
             }
+        }
+
+        private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
+        {
+            var t = transformable as SkeletonBoneGizmoItemWrapper;
+            t.OnRotate(e, _gizmoEditor.AxisMatrix);    
+        }
+
+        private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)
+        {
+            var t = transformable as SkeletonBoneGizmoItemWrapper;
+            t.OnTranslate(e, _gizmoEditor.AxisMatrix);
         }
     }
 }

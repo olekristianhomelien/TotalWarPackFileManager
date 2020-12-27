@@ -11,6 +11,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 {
     class AnimationSplicerSettings
     {
+        public string RootMesh { get; set; }
+        public string MainSkeleton { get; set; }
         public FilterableAnimationSetttings TargetAnimation { get; set; }
         public FilterableAnimationSetttings ExternalAnimation { get; set; }
 
@@ -19,8 +21,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 
         public IEnumerable<MappedSkeletonBoneConfig> MappableBoneSettings { get; set; }
 
-        public void PreperForSave()
+        public void PreperForSave(FileSceneElement rootNode)
         {
+
             TargetAnimation.PreperForSave();
             ExternalAnimation.PreperForSave();
         }

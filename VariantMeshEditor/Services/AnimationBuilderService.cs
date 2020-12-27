@@ -46,18 +46,14 @@ namespace VariantMeshEditor.Services
     {
         public class AnimationBuilderSettings
         {
-
-            public PackedFile SourceAnimationFile { get; set; }   // ExternalSkeleton.SelectedItem
-            public GameSkeleton SourceSkeleton { get; set; }   //_targetSkeletonNode.Skeleton
-
-            public PackedFile OtherSkeletonFile { get; set; }   // ExternalSkeleton.SelectedItem
-
-            public PackedFile OtherAnimationFile { get; set; }   // ExternalAnimation.SelectedItem
+            public GameSkeleton SourceSkeleton { get; set; }   
+            public AnimationClip SourceAnimationClip { get; set; }
+            
+            public GameSkeleton OtherSkeletonFile { get; set; }
+            public AnimationClip OtherAnimationClip { get; set; } 
 
             public IEnumerable<MappedSkeletonBoneConfig> BoneSettings { get; set; }
-
             public MainAnimation SelectedMainAnimation { get; set; }
-
         }
 
         bool Validate(AnimationBuilderSettings settings)
@@ -68,7 +64,7 @@ namespace VariantMeshEditor.Services
             if (settings.OtherSkeletonFile == null)
                 return false;
 
-            if (settings.OtherAnimationFile == null)
+            if (settings.OtherAnimationClip == null)
                 return false;
 
             if (settings.BoneSettings == null || settings.BoneSettings.Count() == 0)
@@ -76,14 +72,7 @@ namespace VariantMeshEditor.Services
             return true;
         }
 
-        AnimationClip CreateAnimation(PackedFile file)
-        {
-            if (file == null)
-                return null;
-            var anim = AnimationFile.Create(file);
-            var animClip = new AnimationClip(anim);
-            return animClip;
-        }
+
 
         GameSkeleton CreateSkeleton(PackedFile file)
         {
@@ -100,10 +89,10 @@ namespace VariantMeshEditor.Services
             if (Validate(settings) == false)
                 return null;
 
-            var sourceAnimationClip = CreateAnimation(settings.SourceAnimationFile);
+            var sourceAnimationClip = settings.SourceAnimationClip;
             var sourceSkeleton = settings.SourceSkeleton;
-            var otherSkeleton = CreateSkeleton(settings.OtherSkeletonFile);
-            var otherAnimationClip = CreateAnimation(settings.OtherAnimationFile);
+            var otherSkeleton = settings.OtherSkeletonFile;
+            var otherAnimationClip = settings.OtherAnimationClip;
             var outputAnimationFile = CreateOutputAnimation(sourceSkeleton, otherAnimationClip);
 
             for (int frameIndex = 0; frameIndex < otherAnimationClip.DynamicFrames.Count(); frameIndex++)
@@ -204,15 +193,11 @@ namespace VariantMeshEditor.Services
 
             var remappedId = animation.RotationMappings[boneIndex].Id;
             if (remappedId != -1)
-            {
                 return true;
-            }
               
             remappedId = animation.TranslationMappings[boneIndex].Id;
             if (remappedId != -1)
-            {
                 return true;
-            }
 
             return true;
         }

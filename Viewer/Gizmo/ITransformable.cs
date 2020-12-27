@@ -17,20 +17,22 @@
 // -- uncomment the define statements below to choose your desired rotation method.
 
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Viewer.Gizmo
 {
     /// <summary>
     /// Interface describtion for any object in the world that is transformable by position, rotation and scale. 
     /// </summary>
-    public interface ITransformable
+    public interface ITransformable : IDisposable
     {
-
         Vector3 Position { get; set; }
         Vector3 Scale { get; set; }
         Quaternion Orientation { get; set; }
 
         Vector3 Forward { get; }
         Vector3 Up { get; }
+
+        void Update(bool force);
     }
 }

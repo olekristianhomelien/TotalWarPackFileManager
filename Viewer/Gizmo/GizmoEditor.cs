@@ -7,19 +7,20 @@ using Keyboard = Viewer.Input.Keyboard;
 
 namespace Viewer.Gizmo
 {
+    public delegate void GizmoUpdated();
+
     public class GizmoEditor
     {
         public event TransformationEventHandler RotateEvent;
         public event TransformationEventHandler TranslateEvent;
+        public event GizmoUpdated GizmoUpdatedEvent;
 
         GizmoComponent _gizmo;
         SpriteBatch _spriteBatch;
 
         Keyboard _keyboard;
         ArcBallCamera _camera;
-
         public Matrix AxisMatrix { get { return _gizmo.AxisMatrix; } }
-
 
         public void Create(ResourceLibary resourceLibary, GraphicsDevice graphicsDevice, Keyboard keyboard, ArcBallCamera camera)
         {
@@ -54,6 +55,11 @@ namespace Viewer.Gizmo
             _gizmo.Update(mouseState, time);
         }
 
+        public void UpdatePositionOfItems(bool force)
+        {
+            foreach (var item in _gizmo.Selection)
+                item.Update(force);
+        }
 
         public void Draw(GraphicsDevice device, Matrix world, CommonShaderParameters commonShaderParameters)
         {
@@ -63,20 +69,24 @@ namespace Viewer.Gizmo
         private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)
         {
             transformable.Position += (Vector3)e.Value;
-
             TranslateEvent?.Invoke(transformable, e);
+            GizmoUpdatedEvent?.Invoke();
         }
 
         private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
         {
             transformable.Orientation = Quaternion.CreateFromRotationMatrix(Matrix.CreateFromQuaternion(transformable.Orientation) * (Matrix)e.Value);
             RotateEvent?.Invoke(transformable, e);
+            GizmoUpdatedEvent?.Invoke();
         }
 
         public void SelectItem(ITransformable item)
         {
+            foreach (var itemToRemove in _gizmo.Selection)
+                itemToRemove.Dispose();
             _gizmo.Selection.Clear();
-            _gizmo.Selection.Add(item);
+            if(item != null)
+                _gizmo.Selection.Add(item);
             _gizmo.ResetDeltas();
         }
     }
@@ -113,6 +123,16 @@ namespace Viewer.Gizmo
                // return Vector3.Transform(Vector3.Up, CurrentOriantati);
                 return Vector3.Transform(Vector3.Up, Matrix.CreateFromQuaternion(Orientation));
             }
+        }
+
+        public virtual void Update(bool force)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
