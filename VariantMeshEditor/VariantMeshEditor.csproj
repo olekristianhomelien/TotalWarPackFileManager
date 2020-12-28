@@ -104,6 +104,12 @@
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingWindow.xaml.cs">
       <DependentUpon>BoneMappingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\CommonBoneMappingProperties.xaml.cs">
+      <DependentUpon>CommonBoneMappingProperties.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\DirectBoneMappingProperties.xaml.cs">
+      <DependentUpon>DirectBoneMappingProperties.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditorViews\Animation\AnimationSplicerViews\SelectedBoneEditor.xaml.cs">
       <DependentUpon>SelectedBoneEditor.xaml</DependentUpon>
     </Compile>
@@ -182,6 +188,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\BoneMappingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\CommonBoneMappingProperties.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditorViews\Animation\AnimationSplicerViews\BoneMappingViews\DirectBoneMappingProperties.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

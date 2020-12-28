@@ -29,6 +29,12 @@ namespace VariantMeshEditor.Services
         Absolute,
     }
 
+    public enum RatioScaleMethod
+    { 
+        Larger,
+        Smaller 
+    }
+
     // Whole animation configurations
     public enum TimeMatchMethod
     {
@@ -125,7 +131,7 @@ namespace VariantMeshEditor.Services
                             if (float.IsNaN(ratio))
                                 ratio = 1;
                    
-                            //otherAnimatedRotation.ToAxisAngle(out Vector3 axis, out float angle);
+                            //otherAnimatedRotation.ToAxisAngle(out Vector3 axis, out float angle); 
                             //otherAnimatedRotation = Quaternion.CreateFromAxisAngle(axis, angle * ratio);
 
                             Quaternion skeletonRotationDifference = sourceSkeletonRotation * Quaternion.Inverse(otherSkeletonRotation);
@@ -135,8 +141,7 @@ namespace VariantMeshEditor.Services
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Absolute)
                         {
-                            position = otherAnimatedPosition ;
-                            
+                            position = otherAnimatedPosition;
                             rotation = otherAnimatedRotation;
                         }
                         else if (boneToGetAnimDataFrom.BoneCopyMethod == BoneCopyMethod.Relative)

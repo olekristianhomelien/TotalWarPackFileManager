@@ -21,6 +21,7 @@ namespace Viewer.Gizmo
         Keyboard _keyboard;
         ArcBallCamera _camera;
         public Matrix AxisMatrix { get { return _gizmo.AxisMatrix; } }
+        public bool UpdateGizmo { get; set; } = false;
 
         public void Create(ResourceLibary resourceLibary, GraphicsDevice graphicsDevice, Keyboard keyboard, ArcBallCamera camera)
         {
@@ -39,6 +40,8 @@ namespace Viewer.Gizmo
 
         public void Update(GameTime time, MouseState mouseState)
         {
+            if (!UpdateGizmo)
+                return;
             _gizmo.UpdateCameraProperties(_camera.ViewMatrix, _camera.ProjectionMatrix, _camera.Position);
 
             // Toggle transform mode:
@@ -63,7 +66,8 @@ namespace Viewer.Gizmo
 
         public void Draw(GraphicsDevice device, Matrix world, CommonShaderParameters commonShaderParameters)
         {
-            _gizmo.Draw(false);
+            if(UpdateGizmo)
+                _gizmo.Draw(false);
         }
 
         private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)

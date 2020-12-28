@@ -359,7 +359,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             ExternalSkeletonVisualizationHelper.UpdateNode(time);
             ExternalSkeletonVisualizationHelper.SetFrame(_animationPlayer.CurrentFrame);
 
-            if(_animationPlayer.IsPlaying() == false)
+            _selectionGizmo.UpdateGizmo = !_animationPlayer.IsPlaying();
+            if (_animationPlayer.IsPlaying() == false)
                 _selectionGizmo.UpdatePositionOfItems(false);
         }
 
