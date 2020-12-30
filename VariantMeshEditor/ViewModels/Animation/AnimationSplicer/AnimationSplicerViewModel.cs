@@ -41,8 +41,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         GizmoEditor _selectionGizmo;
         Scene3d _virtualWorld;
         SkeletonAnimationLookUpHelper _animationToSkeletonTypeHelper = new SkeletonAnimationLookUpHelper();
+        AdvBoneMappingWindow _advanceBoneMappingWindow;
 
-        
+
+
         bool _isSelected;
         public bool IsSelected { get { return _isSelected; } set { SetAndNotify(ref _isSelected, value); IsInFocus(IsSelected); } }
 
@@ -149,16 +151,26 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             try
             {
-                BoneMappingWindow window = new BoneMappingWindow();
-                window.DataContext = new AdvBoneMappingViewModel(TargetAnimation.SelectedGameSkeleton, 
-                    ExternalAnimation.SelectedGameSkeleton, 
-                    _targetSkeletonNode.ViewModel,
-                    ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel);
-                ElementHost.EnableModelessKeyboardInterop(window);
-                window.Show();
+                if (_advanceBoneMappingWindow == null)
+                {
+                    _advanceBoneMappingWindow = new AdvBoneMappingWindow();
+                    //_advanceBoneMappingWindow.Deactivated += (sender, e) => { _advanceBoneMappingWindow.Topmost = true; _advanceBoneMappingWindow.Activate(); };
+                    _advanceBoneMappingWindow.Closed += (sender, e) => _advanceBoneMappingWindow = null;
+                    _advanceBoneMappingWindow.DataContext = new AdvBoneMappingViewModel(TargetAnimation.SelectedGameSkeleton,
+                        ExternalAnimation.SelectedGameSkeleton,
+                        _targetSkeletonNode.ViewModel,
+                        ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel);
+                    ElementHost.EnableModelessKeyboardInterop(_advanceBoneMappingWindow);
+                    _advanceBoneMappingWindow.Show();
+                }
+                else
+                {
+                    _advanceBoneMappingWindow.BringIntoView();
+                }
             }
             catch (Exception e)
             {
+                _advanceBoneMappingWindow = null;
                 _logger.Here().Error("BoneMappingWindow failed: " + e.ToString());
             }
         }

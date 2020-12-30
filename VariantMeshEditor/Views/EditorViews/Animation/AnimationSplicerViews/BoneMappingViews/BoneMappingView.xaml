@@ -8,12 +8,16 @@
              xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
              xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews"
              xmlns:BoneMapping="clr-namespace:VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping"
-              xmlns:System="clr-namespace:System;assembly=mscorlib"
+              xmlns:System="clr-namespace:System;assembly=mscorlib" 
+             xmlns:common="clr-namespace:CommonDialogs.Common;assembly=CommonDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+
+        <BoneMapping:HasBoneMappingClourConverter x:Key="ColourConverter"/>
         
+
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -161,6 +165,7 @@
                         <MenuItem Header ="Clear binding - Self and children"  
                                       Command="{Binding ClearBindingSelfAndChildrenCommand}" 
                                       CommandParameter="{Binding SelectedOriginalBone}"/>
+                        <Separator/>
                         <MenuItem Header ="Auto map based on name - Self and children"  
                                       Command="{Binding AutoMapSelfAndChildrenByNameCommand}" 
                                       CommandParameter="{Binding SelectedOriginalBone}"/>
@@ -186,7 +191,9 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
 
-                            <TextBlock  Grid.Column="0" Text="{Binding BoneName}"/>
+                            <TextBlock  Grid.Column="0" 
+                                        Text="{Binding BoneName}"
+                                        Foreground="{Binding MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
                             <TextBlock  Grid.Column="1" Text="{Binding MappingDisplayStr}"/>
 
                             <ComboBox  Width="60"  Grid.Column="2"  Margin="10,0,0,0"

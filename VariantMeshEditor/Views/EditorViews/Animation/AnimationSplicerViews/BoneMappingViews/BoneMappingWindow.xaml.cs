@@ -17,9 +17,9 @@ namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.Bo
     /// <summary>
     /// Interaction logic for BoneMappingWindow.xaml
     /// </summary>
-    public partial class BoneMappingWindow : Window
+    public partial class AdvBoneMappingWindow : Window
     {
-        public BoneMappingWindow()
+        public AdvBoneMappingWindow()
         {
             InitializeComponent();
         }

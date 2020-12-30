@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.BoneMappingViews"
              xmlns:services="clr-namespace:VariantMeshEditor.Services"
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:behaviors="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:mathviews="clr-namespace:CommonDialogs.MathViews;assembly=CommonDialogs" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:behaviors="clr-namespace:VariantMeshEditor.Views.EditorViews.AnimationViews" xmlns:BoneMapping="clr-namespace:VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -16,6 +16,8 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
+        <BoneMapping:IsRootNodeToBoolConverter x:Key="RootNodeConverter"/>
+        
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -29,7 +31,7 @@
             <RowDefinition Height="auto" ></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Common:" FontSize="16"/>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Common Settings:" FontSize="16"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Bone copy method"     VerticalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="1" Text=":"                    VerticalAlignment="Center"/>
@@ -37,11 +39,15 @@
                             ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
                             SelectedItem="{Binding SelectedOriginalBone.Settings.BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Skeleton scale"       VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" Text=":"                    VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Rot Skeleton scale"   
+                   VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="2" Grid.Column="1" Text=":"                    
+                   VerticalAlignment="Center"/>
         <TextBox Grid.Row="2" Grid.Column="2"
             Margin="3,0,3,0"
-            Text="{Binding SelectedOriginalBone.Settings.SkeletonScaleValue.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
+            Text="{Binding SelectedOriginalBone.Settings.SkeletonScaleValue.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            IsEnabled="{Binding SelectedOriginalBone, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource RootNodeConverter}}">
             <i:Interaction.Behaviors>
                 <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
             </i:Interaction.Behaviors>

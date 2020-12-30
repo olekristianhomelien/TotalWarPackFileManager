@@ -62,12 +62,15 @@ namespace Viewer.Gizmo
         {
             foreach (var item in _gizmo.Selection)
                 item.Update(force);
+
+            _gizmo.UpdateCameraProperties(_camera.ViewMatrix, _camera.ProjectionMatrix, _camera.Position);  // Hack, should not really be done here
         }
 
         public void Draw(GraphicsDevice device, Matrix world, CommonShaderParameters commonShaderParameters)
         {
-            if(UpdateGizmo)
-                _gizmo.Draw(false);
+            if (!UpdateGizmo)
+                return;
+            _gizmo.Draw(false);
         }
 
         private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)

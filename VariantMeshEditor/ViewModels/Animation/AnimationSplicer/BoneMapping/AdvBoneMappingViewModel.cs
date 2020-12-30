@@ -52,14 +52,24 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             AutoMapSelfAndChildrenByHierarchyCommand = new RelayCommand<AdvBoneMappingBone>((node) => { AutomapDirectBoneLinksBasedOnHierarchy(node, _allOtherBones); });
             ApplySettingsToAllChildNodesCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.OnApplySettingsToAllChildNodesCommand(node); });
 
+            ComputeBoneCount(_allOriginalBones);
+            ComputeBoneCount(_allOtherBones);
+        }
 
+        void ComputeBoneCount(IEnumerable<AdvBoneMappingBone> bones)
+        {
+            foreach (var bone in bones)
+            {
+                bone.ChildNodeCounts = bone.ComputeChildBones();
+                ComputeBoneCount(bone.Children);
+            }
         }
 
         void AutomapDirectBoneLinksBasedOnNames(AdvBoneMappingBone boneToGetMapping, IEnumerable<AdvBoneMappingBone> externalBonesList)
         {
             var otherBone = FindBoneBasedOnName(boneToGetMapping.BoneName, externalBonesList);
             if (otherBone != null)
-                boneToGetMapping.CreateMapping(BoneMappingType.Direct, otherBone);
+                boneToGetMapping.CreateDirectMapping(BoneMappingType.Direct, otherBone);
 
             foreach (var bone in boneToGetMapping.Children)
                 AutomapDirectBoneLinksBasedOnNames(bone, externalBonesList);
@@ -212,6 +222,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             }
 
             // This will remove the filter
+            SelectedOtherBone = null;
             OtherBoneFilterText = "";
 
             if (selectedSourceBone.MappingType == BoneMappingType.Direct)
@@ -227,129 +238,17 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             if (selectedTargetBone == null || _canSelectOtherBones == false)
                 return;
 
-            if (SelectedOriginalBone.MappingType  == BoneMappingType.None)
+            if (SelectedOriginalBone.MappingType  == BoneMappingType.None 
+                || SelectedOriginalBone.MappingType == BoneMappingType.Direct)
             {
-                SelectedOriginalBone.CreateMapping(BoneMappingType.Direct, selectedTargetBone);
+                SelectedOriginalBone.CreateDirectMapping(BoneMappingType.Direct, selectedTargetBone);
             }
 
             _otherViewModel.SetSelectedBoneByIndex(selectedTargetBone.BoneIndex);
         }
     }
 
-    class AdvBoneMappingBone : NotifyPropertyChangedImpl
-    {
-        string _boneName;
-        public string BoneName
-        {
-            get { return _boneName; }
-            set { SetAndNotify(ref _boneName, value); }
-        }
-
-        int _boneIndex;
-        public int BoneIndex
-        {
-            get { return _boneIndex; }
-            set { SetAndNotify(ref _boneIndex, value); }
-        }
-
-        int _parentBoneIndex;
-        public int ParentBoneIndex
-        {
-            get { return _parentBoneIndex; }
-            set { SetAndNotify(ref _parentBoneIndex, value); }
-        }
-
-        string _displayName;
-        public string DisplayName
-        {
-            get { return _displayName; }
-            set { SetAndNotify(ref _displayName, value); }
-        }
-
-
-        string _mappingDisplayStr;
-        public string MappingDisplayStr
-        {
-            get { return _mappingDisplayStr; }
-            set { SetAndNotify(ref _mappingDisplayStr, value); }
-        }
-
-        BoneMappingType _mappingType = BoneMappingType.None;
-        public BoneMappingType MappingType
-        {
-            get { return _mappingType; }
-            set 
-            { 
-                SetAndNotify(ref _mappingType, value);
-                if (MappingType == BoneMappingType.None)
-                    ClearMapping(false);
-            }
-        }
-
-        AdvBoneMappingBoneSettings _settings;
-        public AdvBoneMappingBoneSettings Settings
-        {
-            get { return _settings; }
-            set { SetAndNotify(ref _settings, value); }
-        }
-
-        public ObservableCollection<AdvBoneMappingBone> Children { get; set; } = new ObservableCollection<AdvBoneMappingBone>();
-
-
-        public void OnApplySettingsToAllChildNodesCommand(AdvBoneMappingBone settingsOwner)
-        { 
-            
-        
-        }
-
-        public void ClearMapping(bool applyToChildren = false)
-        {
-            Settings = null;
-
-            // Avoid stack overflow! 
-            if(MappingType != BoneMappingType.None)
-                MappingType = BoneMappingType.None;
-
-            MappingDisplayStr = string.Empty;
-
-            if (applyToChildren)
-            {
-                foreach (var child in Children)
-                    child.ClearMapping(applyToChildren);
-            }
-        }
-
-        public void CreateMapping(BoneMappingType mappingType, AdvBoneMappingBone source)
-        {
-            if(mappingType == BoneMappingType.Direct)
-                Settings = new DirectAdvBoneMappingBoneSettings();
-            Settings.HasMapping = true;
-            Settings.MappingBoneName = source.BoneName;
-            Settings.MappingBoneId = source.BoneIndex;
-
-            MappingType = mappingType;
-            MappingDisplayStr = $"[{source.BoneName} [{source.BoneIndex}]]";
-        }
-
-        public AdvBoneMappingBone Copy(bool includeChildren = false)
-        {
-            var newBone = new AdvBoneMappingBone()
-            {
-                BoneName = BoneName,
-                BoneIndex = BoneIndex,
-                ParentBoneIndex = ParentBoneIndex,
-                DisplayName = DisplayName,
-                MappingDisplayStr = MappingDisplayStr,
-
-                Settings = Settings?.Copy()
-            };
-
-            if (includeChildren)
-                throw new NotImplementedException();
-
-            return newBone;
-        }
-    }
+   
 
     abstract class AdvBoneMappingBoneSettings : NotifyPropertyChangedImpl
     {
@@ -374,14 +273,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             set { SetAndNotify(ref _mappingBoneName, value); }
         }
 
-        DoubleViewModel _skeletonScaleValue = new DoubleViewModel();
+        DoubleViewModel _skeletonScaleValue = new DoubleViewModel(1);
         public DoubleViewModel SkeletonScaleValue
         {
             get { return _skeletonScaleValue; }
             set { SetAndNotify(ref _skeletonScaleValue, value); }
         }
 
-        protected void CopyBaseValues(AdvBoneMappingBoneSettings other)
+        public void CopyBaseValues(AdvBoneMappingBoneSettings other)
         {
             other.HasMapping = HasMapping;
             other.MappingBoneId = MappingBoneId;

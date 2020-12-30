@@ -54,6 +54,7 @@
       <DependentUpon>CollapsableButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ComboBoxes\FilteredComboBox.cs" />
+    <Compile Include="Common\BoolToColourConverter.cs" />
     <Compile Include="Common\BoolToVisibilityConverter.cs" />
     <Compile Include="Common\IconToImageSourceConverter.cs" />
     <Compile Include="Common\NotifyPropertyChangedImpl.cs" />
