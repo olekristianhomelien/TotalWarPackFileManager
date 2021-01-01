@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VariantMeshEditor.Services;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 {
@@ -19,7 +20,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
         public MainAnimation SelectedMainAnimation { get; set; }
         public BoneCopyMethod DefaultBoneCopyMethod { get; set; }
 
-        public IEnumerable<MappedSkeletonBoneConfig> MappableBoneSettings { get; set; }
+        public IEnumerable<AdvBoneMappingBone> MappableBoneSettings { get; set; }
 
         public void PreperForSave(FileSceneElement rootNode)
         {

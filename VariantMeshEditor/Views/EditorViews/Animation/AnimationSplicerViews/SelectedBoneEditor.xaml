@@ -44,11 +44,17 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="0,5,0,5">
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="0,5,0,0">
                 <TextBlock FontSize="14" FontWeight="Bold"> Selected Bone:</TextBlock>
-                <TextBlock FontSize="14" Margin="5,0,0,0" Text="{Binding SelectedBone.OriginalBone.BoneName, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
+                <TextBlock FontSize="14" Margin="5,0,0,0" Text="{Binding SelectedBone.BoneName, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock FontSize="14" FontWeight="Bold"> Target Bone:</TextBlock>
+                <TextBlock FontSize="14" Margin="5,0,0,0" Text="{Binding SelectedBone.Settings.MappingBoneName, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
             </StackPanel>
 
         </Grid>
@@ -68,30 +74,18 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <CheckBox  Grid.Row="0" Grid.Column="0" Margin="3,0,3,0" IsChecked="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"   Text="Mapping Target"/>
-            <ComboBox  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1"
-                        ItemsSource="{Binding TargetBoneList, ElementName=self}"
-                        DisplayMemberPath="{Binding TargetBoneListDisplayName, ElementName=self}"
-                        SelectedItem="{Binding SelectedBone.ExternalBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"
-                        IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
-            <Button Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="1" Content="Default"
-                    IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
-
-
+            <CheckBox  Grid.Row="0" Grid.Column="0" Margin="3,0,3,0" VerticalContentAlignment="Center" IsChecked="{Binding SelectedBone.Settings.UseMapping, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"  VerticalAlignment="Center"  Text="Use mapping for bone"/>
+           
             <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"  Text="Transforms to copy"  />
             <ComboBox  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="1"
-                    ItemsSource="{Binding Source={StaticResource TransformTypeEnums}}"
-                    SelectedItem="{Binding SelectedBone.TransformTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self }"/>
+                        ItemsSource="{Binding Source={StaticResource TransformTypeEnums}}"
+                        IsEnabled="False"/>
+                        <!--SelectedItem="{Binding SelectedBone.Settings.TransformTypesToCopy, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self }"-->
+                       
             <Button Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="1" Content="Apply to children"
-                    IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
-
-            <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"  Text="Bone Copy Method"  />
-            <ComboBox  Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="1"
-                    ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
-                    SelectedItem="{Binding SelectedBone.BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self }"/>
-            <Button Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="1" Content="Apply to children"
-                    IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/>
+                    IsEnabled="False"/>
+            <!--IsEnabled="{Binding SelectedBone.UseMapping, UpdateSourceTrigger=PropertyChanged, ElementName=self}"/-->
         </Grid>
 
         <!-- Constant offset attributes -->
@@ -111,22 +105,22 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <CheckBox  Grid.Row="0" Grid.Column="0" VerticalContentAlignment="Center" Margin="3,5,3,0" IsChecked="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+            <CheckBox  Grid.Row="0" Grid.Column="0" VerticalContentAlignment="Center" Margin="3,5,3,0" IsChecked="{Binding SelectedBone.Settings.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,5,0,0" Text="Constant offset"/>
 
             <TextBlock  Grid.Row="1" Grid.Column="2"  Text="Trans local space " TextAlignment="Right" Margin="2,0,0,0"/>
             <mathviews:Vector3View Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="1" 
-                                    Vector3="{Binding SelectedBone.ContantTranslationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+                                    Vector3="{Binding SelectedBone.Settings.ContantTranslationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
                                     FieldWidth="60"
                                     NumbersMaxLength="80"
-                                    IsEnabled="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+                                    IsEnabled="{Binding SelectedBone.Settings.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
 
             <TextBlock   Grid.Row="2" Grid.Column="2"  Text="Rot local space " TextAlignment="Right" Margin="2,0,0,0"/>
             <mathviews:Vector3View Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="1" 
-                                    Vector3="{Binding SelectedBone.ContantRotationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
+                                    Vector3="{Binding SelectedBone.Settings.ContantRotationOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}" 
                                     FieldWidth="60"
                                     NumbersMaxLength="80"
-                                    IsEnabled="{Binding SelectedBone.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
+                                    IsEnabled="{Binding SelectedBone.Settings.UseConstantOffset, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ElementName=self}"/>
 
             <Button Grid.Row="7" Grid.Column="3" Content="Reset to default" Margin="0,10,0,0" IsEnabled="False"/>
         </Grid>

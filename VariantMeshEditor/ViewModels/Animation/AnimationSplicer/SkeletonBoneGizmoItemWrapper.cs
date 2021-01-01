@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VariantMeshEditor.Util;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
 using Viewer.Animation;
 using Viewer.Gizmo;
 
@@ -14,11 +15,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
     {
         GameSkeleton _skeleton;
         int _boneIndex;
-        MappedSkeletonBoneConfig _mappableSkeletonBone;
+        AdvBoneMappingBone _mappableSkeletonBone;
         GizmoEditor _gizmoEditor;
         bool _hasBeenPositionBeenSet = false;
 
-        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, MappedSkeletonBoneConfig mappableSkeletonBone, GizmoEditor gizmoEditor)
+        public SkeletonBoneGizmoItemWrapper(GameSkeleton skeleton, int boneIndex, AdvBoneMappingBone mappableSkeletonBone, GizmoEditor gizmoEditor)
         {
             _skeleton = skeleton;
             _boneIndex = boneIndex;
@@ -48,8 +49,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             var boneSpaceRotationAxis = Vector3.Transform(rotationAxis, invBoneRotation);
 
             var boneSpaceRotationVector = boneSpaceRotationAxis * MathHelper.ToDegrees(rotationAngle);
-            var oldRotationOffset = MathConverter.ToVector3(_mappableSkeletonBone.ContantRotationOffset);
-            MathConverter.AssignFromVector3(_mappableSkeletonBone.ContantRotationOffset, oldRotationOffset + boneSpaceRotationVector);
+            var oldRotationOffset = MathConverter.ToVector3(_mappableSkeletonBone.Settings.ContantRotationOffset);
+            MathConverter.AssignFromVector3(_mappableSkeletonBone.Settings.ContantRotationOffset, oldRotationOffset + boneSpaceRotationVector);
         }
 
         public void OnTranslate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
@@ -63,8 +64,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value;
 
             var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
-            var current = MathConverter.ToVector3(_mappableSkeletonBone.ContantTranslationOffset);
-            MathConverter.AssignFromVector3(_mappableSkeletonBone.ContantTranslationOffset, boneLocalRotation + current);
+            var current = MathConverter.ToVector3(_mappableSkeletonBone.Settings.ContantTranslationOffset);
+            MathConverter.AssignFromVector3(_mappableSkeletonBone.Settings.ContantTranslationOffset, boneLocalRotation + current);
         }
 
         public override void Update(bool force = false)

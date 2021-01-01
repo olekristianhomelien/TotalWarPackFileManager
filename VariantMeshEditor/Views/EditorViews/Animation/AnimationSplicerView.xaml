@@ -13,9 +13,13 @@
              xmlns:animationsplicerviews="clr-namespace:VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews"
              mc:Ignorable="d" 
              xmlns:services="clr-namespace:VariantMeshEditor.Services"
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:BoneMapping="clr-namespace:VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+
+        <BoneMapping:HasBoneMappingColourConverter x:Key="ColourConverter"/>
+        <BoneMapping:HasBoneMappingBoolConverter x:Key="HasBoneMappingConverter"/>
+
 
         <ObjectDataProvider x:Key="MainAnimationEnums" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -137,9 +141,9 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
         </Grid.RowDefinitions>
-        
-        <ScrollViewer Grid.Row="0">
-        <Grid>
+
+
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
@@ -162,7 +166,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-            
+
                 <animationsplicerviews:AnimationSelector 
                     Grid.Row="0"
                     DataContext="{Binding TargetAnimation, UpdateSourceTrigger=PropertyChanged}"/>
@@ -217,18 +221,8 @@
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
                     <Button Grid.Column="1" Command="{Binding SaveAnimationCommand}">Save animation</Button>
-                    <Button Grid.Column="2" Command="{Binding ExportCommand}">Export settings</Button>
-                    <Button Grid.Column="3" Command="{Binding ImportCommand}">Import settings</Button>
-                </Grid>
-
-                <!-- Rest buttons-->
-                <Grid Grid.Row="9">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Command="{Binding ClearAllMappingsCommand}">Clear all mappings</Button>
-                    <Button Grid.Column="1" Command="{Binding ResetMappingBackToDefaultCommand}">Reset to default</Button>
+                    <Button Grid.Column="2" Command="{Binding ExportCommand}">Export configuration</Button>
+                    <Button Grid.Column="3" Command="{Binding ImportCommand}">Import configuration</Button>
                 </Grid>
             </Grid>
 
@@ -238,61 +232,42 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
 
+
                 <TreeView Grid.Column="0" HorizontalContentAlignment="Stretch" 
                       ItemsSource="{Binding BoneMapping}" 
-                      ItemContainerStyle="{StaticResource TreeViewItemStyle1}"
-                      PreviewMouseWheel="HandlePreviewMouseWheel">
+                      ItemContainerStyle="{StaticResource TreeViewItemStyle1}">
 
                     <i:Interaction.Behaviors>
                         <editorviews:BindableSelectedItemBehavior SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />
                     </i:Interaction.Behaviors>
-                
-                    <TreeView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header ="Clear binding - Self"  
-                                      Command="{Binding ClearBindingSelfCommand}" 
-                                      CommandParameter="{Binding SelectedNode}"/>
-                            <MenuItem Header ="Clear binding - Self and children"  
-                                      Command="{Binding ClearBindingSelfAndChildrenCommand}" 
-                                      CommandParameter="{Binding SelectedNode}"/>
-                        </ContextMenu>
-                    </TreeView.ContextMenu>
 
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <Grid HorizontalAlignment="Stretch">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
 
+                            <Grid HorizontalAlignment="Stretch">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="PreviewMouseRightButtonDown">
                                         <ei:ChangePropertyAction PropertyName="SelectedNode" Value="{Binding}" TargetObject="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
-
-                                <TextBlock  Grid.Column="0" Text="{Binding OriginalBone.BoneName}"/>
-
-                                <ComboBox  Width="150"  Grid.Column="2"  Margin="10,0,0,0"
-                                       SelectedItem="{Binding ExternalBone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                       ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}, AncestorLevel=1}, Path=DataContext.ExternalAnimation.SelectedSkeletonBonesFlattened}"
-                                       DisplayMemberPath="BoneName">
-                                </ComboBox>
+                                <TextBlock  Text="{Binding BoneName}"
+                                                Foreground="{Binding MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
                             </Grid>
+
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
 
                 <animationsplicerviews:SelectedBoneEditor Grid.Column="1" Grid.Row="1" 
-                                                          TargetBoneList="{Binding ExternalAnimation.SelectedSkeletonBonesFlattened, UpdateSourceTrigger=PropertyChanged}"
+                                                          TargetBoneList="{Binding BoneMapping, UpdateSourceTrigger=PropertyChanged}"
                                                           TargetBoneListDisplayName="BoneName"
-                                                          SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"/>
+                                                          SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsEnabled="{Binding SelectedNode.Settings, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource HasBoneMappingConverter}}"/>
+
 
             </Grid>
-
         </Grid>
-    </ScrollViewer>
-        <Button Grid.Row="1" Content="Open Adanced mapping window" Command="{Binding OpenAdvanceMappingWindow}"/>
+
+        <Button Grid.Row="1" Content="Open Mapping window" Command="{Binding OpenAdvanceMappingWindow}"/>
     </Grid>
 </UserControl>

@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VariantMeshEditor.ViewModels.Animation;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
 using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
 
 namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews
@@ -50,13 +51,13 @@ namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews
 
 
 
-        public MappedSkeletonBoneConfig SelectedBone
+        public AdvBoneMappingBone SelectedBone
         {
-            get { return (MappedSkeletonBoneConfig)GetValue(SelectedBoneProperty); }
+            get { return (AdvBoneMappingBone)GetValue(SelectedBoneProperty); }
             set { SetValue(SelectedBoneProperty, value); }
         }
 
         public static readonly DependencyProperty SelectedBoneProperty =
-            DependencyProperty.Register("SelectedBone", typeof(MappedSkeletonBoneConfig), typeof(SelectedBoneEditor), new PropertyMetadata(null));
+            DependencyProperty.Register("SelectedBone", typeof(AdvBoneMappingBone), typeof(SelectedBoneEditor), new PropertyMetadata(null));
     }
 }

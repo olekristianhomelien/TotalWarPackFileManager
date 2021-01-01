@@ -14,10 +14,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-
-        <BoneMapping:HasBoneMappingClourConverter x:Key="ColourConverter"/>
+        <BoneMapping:HasBoneMappingColourConverter x:Key="ColourConverter"/>
         
-
         <Style x:Key="TreeViewItemFocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -137,17 +135,23 @@
         <Grid Grid.Column="0" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Row="0" BorderBrush="Black" Text="{Binding OriginalBoneFilterText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            <Button Grid.Row="0" Grid.Column ="1"  Content="Clear"/>
+            <TextBlock  Grid.Row="0" Text="Original Bones:" FontWeight="Bold" FontSize="16" TextDecorations="Underline"/>
+
+            <TextBox Grid.Row="1" BorderBrush="Black" Text="{Binding OriginalBoneFilterText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <Button Grid.Row="1" Grid.Column ="1"  Content="Clear" IsEnabled="False"/>
             <TreeView 
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.ColumnSpan="2"
                 HorizontalContentAlignment="Stretch" 
                 ItemsSource="{Binding VisibleOrigianBones}" 
@@ -203,12 +207,14 @@
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
+            <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Auto map based on name" Command="{Binding AutoMapSelfAndChildrenByNameCommand}" />
+            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Auto map based on hierarchy" Command="{Binding AutoMapSelfAndChildrenByHierarchyCommand}"/>
+            <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Clear all bindings" Command="{Binding ClearBindingSelfAndChildrenCommand}"/>
         </Grid>
-
-
 
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
@@ -218,11 +224,12 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-
-            <TextBox Grid.Row="0" BorderBrush="Black" Text="{Binding OtherBoneFilterText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-            <Button Grid.Row="0" Grid.Column ="1"  Content="Clear"/>
+            
+            <TextBlock  Grid.Row="0" Text="Other Bones:" FontWeight="Bold" FontSize="16" TextDecorations="Underline"/>
+            <TextBox Grid.Row="1" BorderBrush="Black" Text="{Binding OtherBoneFilterText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <Button Grid.Row="1" Grid.Column ="1"  Content="Clear" IsEnabled="False"/>
             <TreeView 
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.ColumnSpan="2"
                 HorizontalContentAlignment="Stretch" 
                 ItemsSource="{Binding VisibleOtherBones}" 
@@ -240,8 +247,8 @@
                 
             </TreeView>
 
-            <local:DirectBoneMappingProperties Grid.Row="2" Grid.ColumnSpan="2"/>
-            <Button Grid.Row="3" Grid.ColumnSpan="2" Content="Copy mapping settings to all children" Margin="30,10,30,10"
+            <local:DirectBoneMappingProperties Grid.Row="3" Grid.ColumnSpan="2"/>
+            <Button Grid.Row="4" Grid.ColumnSpan="2" Content="Copy mapping settings to all children" Margin="30,10,30,10"
                     Command="{Binding ApplySettingsToAllChildNodesCommand}" 
                     CommandParameter="{Binding SelectedOriginalBone}"/>
         </Grid>

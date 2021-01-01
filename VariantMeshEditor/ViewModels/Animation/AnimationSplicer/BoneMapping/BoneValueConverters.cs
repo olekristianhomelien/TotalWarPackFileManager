@@ -27,12 +27,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
 
     [ValueConversion(typeof(bool), typeof(BoneMappingType))]
-    public class HasBoneMappingClourConverter : IValueConverter
+    public class HasBoneMappingColourConverter : IValueConverter
     {
         SolidColorBrush TrueValue { get; set; }
         SolidColorBrush FalseValue { get; set; }
 
-        public HasBoneMappingClourConverter()
+        public HasBoneMappingColourConverter()
         {
             // set defaults
             TrueValue = new SolidColorBrush(Colors.Black); ;
@@ -49,6 +49,35 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                 return FalseValue;
 
             return TrueValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [ValueConversion(typeof(bool), typeof(BoneMappingType))]
+    public class HasBoneMappingBoolConverter : IValueConverter
+    {
+        bool TrueValue { get; set; }
+        bool FalseValue { get; set; }
+
+        public HasBoneMappingBoolConverter()
+        {
+            // set defaults
+            TrueValue = true;
+            FalseValue = false;
+        }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (!(value is DirectAdvBoneMappingBoneSettings))
+                return false;
+
+            var settings = value as DirectAdvBoneMappingBoneSettings;
+
+            return settings?.HasMapping; 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

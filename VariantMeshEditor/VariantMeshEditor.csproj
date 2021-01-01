@@ -68,6 +68,7 @@
     <Compile Include="ViewModels\Animation\AnimationSplicer\AnimationSplicerViewModel.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\BoneMapping\AdvBoneMappingBone.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\BoneMapping\AdvBoneMappingViewModel.cs" />
+    <Compile Include="ViewModels\Animation\AnimationSplicer\BoneMapping\BoneMappingHelper.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\BoneMapping\BoneValueConverters.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\ExternalSkeletonVisualizationHelper.cs" />
     <Compile Include="ViewModels\Animation\AnimationSplicer\FilterableAnimationsViewModel.cs" />

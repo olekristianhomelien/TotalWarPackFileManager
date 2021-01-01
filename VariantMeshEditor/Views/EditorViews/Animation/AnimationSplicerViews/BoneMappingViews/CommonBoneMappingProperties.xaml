@@ -39,15 +39,14 @@
                             ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
                             SelectedItem="{Binding SelectedOriginalBone.Settings.BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Rot Skeleton scale"   
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Skeleton scale"   
                    VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text=":"                    
                    VerticalAlignment="Center"/>
         <TextBox Grid.Row="2" Grid.Column="2"
             Margin="3,0,3,0"
-            Text="{Binding SelectedOriginalBone.Settings.SkeletonScaleValue.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-            IsEnabled="{Binding SelectedOriginalBone, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource RootNodeConverter}}">
+            Text="{Binding SelectedOriginalBone.Settings.SkeletonScaleValue.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
             <i:Interaction.Behaviors>
                 <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
             </i:Interaction.Behaviors>

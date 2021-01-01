@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using VariantMeshEditor.Services;
 using VariantMeshEditor.ViewModels.Skeleton;
@@ -23,8 +24,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         //Ik
     }
 
-    
-
     class AdvBoneMappingViewModel : NotifyPropertyChangedImpl
     {
         public ICommand ClearBindingSelfCommand { get; set; }
@@ -33,122 +32,61 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         public ICommand AutoMapSelfAndChildrenByHierarchyCommand { get; set; }
         public ICommand ApplySettingsToAllChildNodesCommand { get; set; }
 
-
         SkeletonViewModel _originalViewModel;
         SkeletonViewModel _otherViewModel;
 
-        public AdvBoneMappingViewModel(GameSkeleton original, GameSkeleton other, SkeletonViewModel originalViewMode, SkeletonViewModel otherViewModel)
+        public AdvBoneMappingViewModel(ObservableCollection<AdvBoneMappingBone> orgBoneMapping, GameSkeleton other, SkeletonViewModel originalViewMode, SkeletonViewModel otherViewModel)
         {
             _originalViewModel = originalViewMode;
             _otherViewModel = otherViewModel;
 
-            CreateSkeletonBoneList(original, out _allOriginalBones);
-            CreateSkeletonBoneList(other, out _allOtherBones);
+            _allOriginalBones = orgBoneMapping;
+            _allOtherBones = BoneMappingHelper.CreateSkeletonBoneList(other);
             VisibleOrigianBones = _allOriginalBones;
 
             ClearBindingSelfCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.ClearMapping(); });
-            ClearBindingSelfAndChildrenCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.ClearMapping(true); });
-            AutoMapSelfAndChildrenByNameCommand = new RelayCommand<AdvBoneMappingBone>((node) => { AutomapDirectBoneLinksBasedOnNames(node, _allOtherBones); });
-            AutoMapSelfAndChildrenByHierarchyCommand = new RelayCommand<AdvBoneMappingBone>((node) => { AutomapDirectBoneLinksBasedOnHierarchy(node, _allOtherBones); });
+            ClearBindingSelfAndChildrenCommand = new RelayCommand<AdvBoneMappingBone>((node) =>
+            {
+                if (node != null)
+                    node.ClearMapping(true);
+                else
+                    _allOriginalBones.FirstOrDefault().ClearMapping(true);
+            });
+
+            AutoMapSelfAndChildrenByNameCommand = new RelayCommand<AdvBoneMappingBone>((node) => 
+            { 
+                if(node != null)
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(node, _allOtherBones); 
+                else
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(_allOriginalBones.FirstOrDefault(), _allOtherBones);
+            });
+
+            AutoMapSelfAndChildrenByHierarchyCommand = new RelayCommand<AdvBoneMappingBone>((node) => 
+            {
+                if (node != null)
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(node, _allOtherBones);
+                else
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(_allOriginalBones.FirstOrDefault(), _allOtherBones); 
+            });
+
             ApplySettingsToAllChildNodesCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.OnApplySettingsToAllChildNodesCommand(node); });
 
             ComputeBoneCount(_allOriginalBones);
             ComputeBoneCount(_allOtherBones);
         }
 
+        public ObservableCollection<AdvBoneMappingBone> GetBoneMapping()
+        {
+            return _allOriginalBones;
+        }
+
         void ComputeBoneCount(IEnumerable<AdvBoneMappingBone> bones)
         {
             foreach (var bone in bones)
             {
-                bone.ChildNodeCounts = bone.ComputeChildBones();
+                bone.ChildNodeCounts = bone.ComputeChildBoneCount();
                 ComputeBoneCount(bone.Children);
             }
-        }
-
-        void AutomapDirectBoneLinksBasedOnNames(AdvBoneMappingBone boneToGetMapping, IEnumerable<AdvBoneMappingBone> externalBonesList)
-        {
-            var otherBone = FindBoneBasedOnName(boneToGetMapping.BoneName, externalBonesList);
-            if (otherBone != null)
-                boneToGetMapping.CreateDirectMapping(BoneMappingType.Direct, otherBone);
-
-            foreach (var bone in boneToGetMapping.Children)
-                AutomapDirectBoneLinksBasedOnNames(bone, externalBonesList);
-        }
-
-        void AutomapDirectBoneLinksBasedOnHierarchy(AdvBoneMappingBone boneToGetMapping, IEnumerable<AdvBoneMappingBone> externalBonesList)
-        {
-        }
-
-  
-
-        AdvBoneMappingBone FindBoneBasedOnName(string name, IEnumerable<AdvBoneMappingBone> boneList)
-        {
-            foreach (var bone in boneList)
-            {
-                if (bone.BoneName == name)
-                    return bone;
-
-                var result = FindBoneBasedOnName(name, bone.Children);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
-        }
-
-        static void CreateSkeletonBoneList(GameSkeleton skeleton, out ObservableCollection<AdvBoneMappingBone> outputList)
-        {
-            outputList = new ObservableCollection<AdvBoneMappingBone>();
-
-            for (int i = 0; i < skeleton.BoneCount; i++)
-            {
-                int boneId = i;
-                int parentBoneId = skeleton.GetParentBone(i);
-                string boneName = skeleton.BoneNames[i];
-
-                AdvBoneMappingBone node = new AdvBoneMappingBone
-                {
-                    BoneIndex = boneId,
-                    BoneName = boneName,
-                    ParentBoneIndex = parentBoneId,
-                    DisplayName = $"{boneName} [{boneId}]",
-                    MappingDisplayStr = string.Empty,
-                };
-
-                var treeParent = GetParent(outputList, parentBoneId);
-                if (treeParent == null)
-                    outputList.Add(node);
-                else
-                    treeParent.Children.Add(node);
-            }
-        }
-
-        static AdvBoneMappingBone GetParent(ObservableCollection<AdvBoneMappingBone> root, int parentBoneId)
-        {
-            foreach (var item in root)
-            {
-                if (item.BoneIndex == parentBoneId)
-                    return item;
-
-                var result = GetParent(item.Children, parentBoneId);
-                if (result != null)
-                    return result;
-            }
-            return null;
-        }
-
-        static AdvBoneMappingBone GetBoneFromIndex(IEnumerable<AdvBoneMappingBone> root, int index)
-        {
-            foreach (var item in root)
-            {
-                if (item.BoneIndex == index)
-                    return item;
-
-                var result = GetBoneFromIndex(item.Children, index);
-                if (result != null)
-                    return result;
-            }
-            return null;
         }
 
         ObservableCollection<AdvBoneMappingBone> _allOriginalBones;
@@ -226,7 +164,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             OtherBoneFilterText = "";
 
             if (selectedSourceBone.MappingType == BoneMappingType.Direct)
-                SelectedOtherBone = GetBoneFromIndex(VisibleOtherBones, selectedSourceBone.Settings.MappingBoneId);
+                SelectedOtherBone = BoneMappingHelper.GetBoneFromIndex(VisibleOtherBones, selectedSourceBone.Settings.MappingBoneId);
             else if (selectedSourceBone.MappingType == BoneMappingType.None)
                 SelectedOtherBone = null;
 
@@ -246,101 +184,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
             _otherViewModel.SetSelectedBoneByIndex(selectedTargetBone.BoneIndex);
         }
-    }
-
-   
-
-    abstract class AdvBoneMappingBoneSettings : NotifyPropertyChangedImpl
-    {
-        bool _hasMapping = false;
-        public bool HasMapping
-        {
-            get { return _hasMapping; }
-            set { SetAndNotify(ref _hasMapping, value); }
-        }
-
-        int _mappingBoneId = -1;
-        public int MappingBoneId
-        {
-            get { return _mappingBoneId; }
-            set { SetAndNotify(ref _mappingBoneId, value); }
-        }
-
-        string _mappingBoneName = string.Empty;
-        public string MappingBoneName
-        {
-            get { return _mappingBoneName; }
-            set { SetAndNotify(ref _mappingBoneName, value); }
-        }
-
-        DoubleViewModel _skeletonScaleValue = new DoubleViewModel(1);
-        public DoubleViewModel SkeletonScaleValue
-        {
-            get { return _skeletonScaleValue; }
-            set { SetAndNotify(ref _skeletonScaleValue, value); }
-        }
-
-        public void CopyBaseValues(AdvBoneMappingBoneSettings other)
-        {
-            other.HasMapping = HasMapping;
-            other.MappingBoneId = MappingBoneId;
-            other.MappingBoneName = MappingBoneName;
-            other.SkeletonScaleValue = other.SkeletonScaleValue;
-        }
-
-        public abstract AdvBoneMappingBoneSettings Copy();
-    }
-
-
-    class DirectAdvBoneMappingBoneSettings : AdvBoneMappingBoneSettings
-    {
-        BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
-        public BoneCopyMethod BoneCopyMethod
-        {
-            get { return _boneCopyMethod; }
-            set 
-            { 
-                SetAndNotify(ref _boneCopyMethod, value);
-                RatioSettingsAvailable = _boneCopyMethod == BoneCopyMethod.Ratio;
-            }
-        }
-
-        bool _ratioSettingsAvailable = true;
-        public bool RatioSettingsAvailable
-        {
-            get { return _ratioSettingsAvailable; }
-            set { SetAndNotify(ref _ratioSettingsAvailable, value); }
-        }
-
-        RatioScaleMethod _ratio_ScaleMethod = RatioScaleMethod.Larger;
-        public RatioScaleMethod Ratio_ScaleMethod
-        {
-            get { return _ratio_ScaleMethod; }
-            set { SetAndNotify(ref _ratio_ScaleMethod, value); }
-        }
-
-        bool _ratio_ScaleRotation = false;
-        public bool Ratio_ScaleRotation
-        {
-            get { return _ratio_ScaleRotation; }
-            set { SetAndNotify(ref _ratio_ScaleRotation, value); }
-        }
-
-
-        public override AdvBoneMappingBoneSettings Copy()
-        {
-            var setting = new DirectAdvBoneMappingBoneSettings()
-            {
-                BoneCopyMethod = BoneCopyMethod,
-                RatioSettingsAvailable = RatioSettingsAvailable,
-                Ratio_ScaleMethod = Ratio_ScaleMethod,
-                Ratio_ScaleRotation = Ratio_ScaleRotation
-            };
-
-            CopyBaseValues(setting);
-            return setting;
-        }
-
     }
 
 

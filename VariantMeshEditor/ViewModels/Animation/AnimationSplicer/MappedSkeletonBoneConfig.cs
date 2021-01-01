@@ -7,7 +7,7 @@ using VariantMeshEditor.Services;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
-    public class MappedSkeletonBoneConfig : NotifyPropertyChangedImpl
+   /* public class MappedSkeletonBoneConfig : NotifyPropertyChangedImpl
     {
         public SkeletonBoneNode OriginalBone { get; set; }
         public ObservableCollection<MappedSkeletonBoneConfig> Children { get; set; } = new ObservableCollection<MappedSkeletonBoneConfig>();
@@ -56,9 +56,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             get { return _boneCopyMethod; }
             set { SetAndNotify(ref _boneCopyMethod, value); }
         }
-    }
+    }*/
 
-    public class MappableSkeletonBoneHelper
+    /*public class MappableSkeletonBoneHelper
     {
         public static ObservableCollection<MappedSkeletonBoneConfig> Create(SkeletonElement skeletonNode)
         {
@@ -114,5 +114,5 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
             return null;
         }
-    }
+    }*/
 }

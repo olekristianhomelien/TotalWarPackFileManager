@@ -17,6 +17,7 @@ using VariantMeshEditor.Util;
 using Newtonsoft.Json;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings;
 using Viewer.Animation;
+using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
@@ -57,7 +58,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         // Mapping settings
         public TimeMatchMethod MatchingMethod { get { return Data.MatchingMethod; } set { SetAndNotify(ref Data.MatchingMethod, value); } }
-        public ObservableCollection<SkeletonBoneNode> SelectedSkeletonBonesFlattened { get; set; } = new ObservableCollection<SkeletonBoneNode>();
         public FilterableAnimationsViewModel(string headerText, ResourceLibary resourceLibary, SkeletonAnimationLookUpHelper animationToSkeletonTypeHelper, bool enableSkeltonBrowsing)
         {
             HeaderText = headerText;
@@ -73,7 +73,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             _logger.Here().Information($"Selecting a new skeleton: {selectedSkeleton}");
 
-            SelectedSkeletonBonesFlattened.Clear();
+   
             AnimationsForCurrentSkeleton.Clear();
             SelectedAnimation = null;
             CurrentSkeletonName = "";
@@ -83,9 +83,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 // Create the skeleton
                 var skeletonFile = AnimationFile.Create(selectedSkeleton);
-                SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = -1, BoneName = "" });
-                foreach (var bone in skeletonFile.Bones)
-                    SelectedSkeletonBonesFlattened.Add(new SkeletonBoneNode { BoneIndex = bone.Id, BoneName = bone.Name });
 
                 // Find all the animations for this skeleton
                 var animations = _skeletonAnimationLookUpHelper.GetAnimationsForSkeleton(skeletonFile.Header.SkeletonName);
