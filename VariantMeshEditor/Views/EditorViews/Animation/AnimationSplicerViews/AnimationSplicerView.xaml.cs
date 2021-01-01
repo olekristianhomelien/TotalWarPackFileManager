@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace VariantMeshEditor.Views.EditorViews.Animation
+namespace VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews
 {
     /// <summary>
     /// Interaction logic for AnimationSplicerEditorView.xaml

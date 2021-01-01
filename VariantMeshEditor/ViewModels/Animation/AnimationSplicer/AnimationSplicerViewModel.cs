@@ -314,7 +314,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
         }
 
-
         #region Real time stuff, needed to update the external skeleton if it is visible
         public void UpdateNode(GameTime time)
         {
