@@ -26,7 +26,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
     {
         ILogger _logger = Logging.Create<FilterableAnimationsViewModel>();
 
-        public FilterableAnimationSetttings Data { get; private set; } = new FilterableAnimationSetttings();
+        public FilterableAnimationSetttings Data { get; set; } = new FilterableAnimationSetttings();
 
         // Animation selection
         ObservableCollection<PackedFile> _animationList;
@@ -38,7 +38,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public string HeaderText { get { return Data.HeaderText; } set { SetAndNotify(ref Data.HeaderText, value); } }
 
         public event ValueChangedDelegate<PackedFile> SelectedAnimationChanged;
-        public PackedFile SelectedAnimation { get { return Data.SelectedAnimation; } set { SetAndNotify(ref Data.SelectedAnimation, value); OnAnimationChanged(Data.SelectedAnimation); } }
+        public PackedFile SelectedAnimation { get { return Data.SelectedAnimation; } set { SetAndNotify(ref Data.SelectedAnimation, value); OnAnimationSelected(Data.SelectedAnimation); } }
 
         public AnimationClip SelectedAnimationClip { get; set; }
 
@@ -97,7 +97,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _logger.Here().Information("Selecting a new skeleton - Done");
         }
 
-        void OnAnimationChanged(PackedFile selectedAnimation)
+        void OnAnimationSelected(PackedFile selectedAnimation)
         {
             _logger.Here().Information($"Selecting a new animation: {selectedAnimation}");
 
@@ -121,6 +121,19 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 return;
             var allFilesInFolder = PackFileLoadHelper.GetAllFilesInDirectory(resourceLibary.PackfileContent, "animations\\skeletons");
             SkeletonList = allFilesInFolder.Where(x => x.FileExtention == "anim").ToList();
+        }
+
+        public void ForceUpdate()
+        {
+            Data.AfterLoad(_resourceLibary);
+            var currentAnimation = Data.SelectedAnimation;  // Data.SelectedAnimation will be set to null by OnSkeletonSelected
+
+            SelectedSkeleton = Data.SelectedSkeleton;
+            FindAllSkeletons(_resourceLibary);
+            SelectedAnimation = currentAnimation;
+           // OnSkeletonSelected(Data.SelectedSkeleton);
+           
+           // OnAnimationSelected(currentAnimation);
         }
     }
 }

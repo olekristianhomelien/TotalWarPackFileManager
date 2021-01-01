@@ -20,6 +20,7 @@ using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings;
 using VariantMeshEditor.ViewModels.Skeleton;
+using VariantMeshEditor.ViewModels.VariantMesh;
 using VariantMeshEditor.Views.EditorViews.Animation.AnimationSplicerViews.BoneMappingViews;
 using Viewer.Animation;
 using Viewer.Gizmo;
@@ -37,19 +38,19 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         ResourceLibary _resourceLibary;
         SkeletonElement _targetSkeletonNode;
         AnimationPlayerViewModel _animationPlayer;
-        AnimationClip _lastComputedAnimation = null;
         GizmoEditor _selectionGizmo;
         Scene3d _virtualWorld;
         SkeletonAnimationLookUpHelper _animationToSkeletonTypeHelper = new SkeletonAnimationLookUpHelper();
         AdvBoneMappingWindow _advanceBoneMappingWindow;
 
+        public VariantMeshElement VariantMeshParent { get { return _targetSkeletonNode.Parent as VariantMeshElement; } }
 
         public FilterableAnimationsViewModel TargetAnimation { get; set; }
         public FilterableAnimationsViewModel ExternalAnimation { get; set; }
 
         public ExternalSkeletonVisualizationHelper ExternalSkeletonVisualizationHelper { get; set; } = new ExternalSkeletonVisualizationHelper();
 
- 
+
 
         MainAnimation _selectedMainAnimation = MainAnimation.Other;
         public MainAnimation SelectedMainAnimation { get { return _selectedMainAnimation; } set { SetAndNotify(ref _selectedMainAnimation, value); } }
@@ -66,21 +67,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
 
         ObservableCollection<AdvBoneMappingBone> _boneMapping = new ObservableCollection<AdvBoneMappingBone>();
-        public ObservableCollection<AdvBoneMappingBone> BoneMapping
-        {
-            get { return _boneMapping; }
-            set { SetAndNotify(ref _boneMapping, value); }
-        }
+        public ObservableCollection<AdvBoneMappingBone> BoneMapping{ get { return _boneMapping; } set { SetAndNotify(ref _boneMapping, value); } }
 
         public AdvBoneMappingBone _selectedNode;
         public AdvBoneMappingBone SelectedNode { get { return _selectedNode; } set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
 
-        public bool _useAttachmentPointFix = false;
-        public bool UseAttachmentPointFix { get { return _useAttachmentPointFix; } set { SetAndNotify(ref _useAttachmentPointFix, value); } }
-
         void OnItemSelected(AdvBoneMappingBone bone)
         {
-            if (bone != null && bone.Settings != null)
+            if (bone != null && bone.Settings.HasMapping)
             {
                 _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(bone.BoneIndex);
                 ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel.SetSelectedBoneByIndex(bone.Settings.MappingBoneId);
@@ -110,7 +104,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             TargetAnimation = new FilterableAnimationsViewModel("Source Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, false);
             TargetAnimation.SelectedSkeletonChanged += (arg) => OnTargetSkeletonChanged();
             TargetAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, _targetSkeletonNode.FullPath);
-            
+
             ExternalAnimation = new FilterableAnimationsViewModel("Target Animation: ", _resourceLibary, _animationToSkeletonTypeHelper, true);
             ExternalAnimation.SelectedSkeletonChanged += OnOtherSkeletonChanged;
             ExternalAnimation.SelectedAnimationChanged += OnOtherAnimationChanaged;
@@ -123,8 +117,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             LoadTestData_DancingDwarfCommand = new RelayCommand(() => LoadTestData(false, false, true));
 
             SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
-            ExportCommand = new RelayCommand(ExportCurrentConfiguration);
-            ImportCommand = new RelayCommand(LoadConfiguration);
+            ExportCommand = new RelayCommand(() => { AnimationSplicerSettings.ExportCurrentConfiguration(this); });
+            ImportCommand = new RelayCommand(() => { AnimationSplicerSettings.ImportConfiguration(this); });
 
             OpenAdvanceMappingWindow = new RelayCommand(OnOpenAdvanceMappingWindow);
         }
@@ -142,9 +136,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                         var context = _advanceBoneMappingWindow.DataContext as AdvBoneMappingViewModel;
                         BoneMapping = context.GetBoneMapping();
                         _advanceBoneMappingWindow = null;
-                    }; 
-                    
-                    _advanceBoneMappingWindow.DataContext = new AdvBoneMappingViewModel(BoneMapping, 
+                    };
+
+                    _advanceBoneMappingWindow.DataContext = new AdvBoneMappingViewModel(BoneMapping,
                         ExternalAnimation.SelectedGameSkeleton,
                         _targetSkeletonNode.ViewModel,
                         ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel);
@@ -163,14 +157,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 _logger.Here().Error("BoneMappingWindow failed: " + e.ToString());
             }
         }
-
-        
-        void OnTargetSkeletonChanged()
-        {
-            BoneMapping = BoneMappingHelper.CreateSkeletonBoneList(TargetAnimation.SelectedGameSkeleton);
-            SelectedNode = BoneMapping.FirstOrDefault();
-        }
-        
 
         void SaveAnimationToFile()
         {
@@ -204,38 +190,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _logger.Here().Information("Saving animation completed");
         }
 
-        void ExportCurrentConfiguration()
-        {
-            _logger.Here().Information("Starting to save config");
-            SaveFileDialog dialog = new SaveFileDialog
-            {
-                DefaultExt = ".splicCfg"
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                AnimationSplicerSettings settings = new AnimationSplicerSettings
-                {
-                    ExternalAnimation = ExternalAnimation.Data,
-                    TargetAnimation = TargetAnimation.Data,
-                    SelectedMainAnimation = SelectedMainAnimation,
-                    //MappableBoneSettings = BoneMapping
-                };
-                //settings.PreperForSave(SceneElementHelper.GetRoot(_targetSkeletonNode);
-
-                var str = JsonConvert.SerializeObject(settings, Formatting.Indented);
-                File.WriteAllText(dialog.FileName, str);
-            }
-
-            _logger.Here().Information("Saving config completed");
-        }
-
-        void LoadConfiguration()
-        { 
-        
-        }
-
-
         AnimationClip BuildAnimation()
         {
             try
@@ -244,18 +198,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 {
                     OtherAnimationClip = ExternalAnimation.SelectedAnimationClip,
                     OtherSkeletonFile = ExternalAnimation.SelectedGameSkeleton,
-
-                    //BoneSettings = BoneMapping,
+                    BoneSettings = BoneMapping,
                     SourceSkeleton = _targetSkeletonNode.GameSkeleton,
                     SourceAnimationClip = TargetAnimation.SelectedAnimationClip,
-
                     SelectedMainAnimation = SelectedMainAnimation
                 };
 
-                AnimationBuilderService builder = new AnimationBuilderService();
-                var animation = builder.CreateMergedAnimation(settings);
-                _lastComputedAnimation = animation;
-
+                var animation = AnimationBuilderService.CreateMergedAnimation(settings);
                 var currentFrame = _animationPlayer._animationNode.AnimationPlayer.CurrentFrame;
 
                 if (animation != null)
@@ -277,16 +226,24 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
         }
 
-       private void OnOtherAnimationChanaged(PackedFile externalAnimationClip)
-       {
-           ExternalSkeletonVisualizationHelper.SetAnimation(ExternalAnimation.SelectedAnimationClip);
-       }
+        void OnTargetSkeletonChanged()
+        {
+            BoneMapping = BoneMappingHelper.CreateSkeletonBoneList(TargetAnimation.SelectedGameSkeleton);
+            BoneMappingHelper.ComputeBoneCount(BoneMapping);
+            SelectedNode = BoneMapping.FirstOrDefault();
+        }
+
+        private void OnOtherAnimationChanaged(PackedFile externalAnimationClip)
+        {
+            ExternalSkeletonVisualizationHelper.SetAnimation(ExternalAnimation.SelectedAnimationClip);
+        }
 
         private void OnOtherSkeletonChanged(FilterableAnimationsViewModel newSelectedSkeleton)
         {
             if (newSelectedSkeleton.SelectedSkeleton != null)
             {
                 var otherBones = BoneMappingHelper.CreateSkeletonBoneList(newSelectedSkeleton.SelectedGameSkeleton);
+                BoneMapping.FirstOrDefault().ClearMapping(true);
                 BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(BoneMapping.FirstOrDefault(), otherBones);
                 ExternalSkeletonVisualizationHelper.Create(_resourceLibary, newSelectedSkeleton.SelectedSkeleton);
             }

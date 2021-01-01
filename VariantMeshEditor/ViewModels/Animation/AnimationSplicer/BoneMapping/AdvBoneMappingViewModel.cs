@@ -43,6 +43,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             _allOriginalBones = orgBoneMapping;
             _allOtherBones = BoneMappingHelper.CreateSkeletonBoneList(other);
             VisibleOrigianBones = _allOriginalBones;
+            VisibleOtherBones = _allOtherBones;
 
             ClearBindingSelfCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.ClearMapping(); });
             ClearBindingSelfAndChildrenCommand = new RelayCommand<AdvBoneMappingBone>((node) =>
@@ -71,8 +72,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
             ApplySettingsToAllChildNodesCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.OnApplySettingsToAllChildNodesCommand(node); });
 
-            ComputeBoneCount(_allOriginalBones);
-            ComputeBoneCount(_allOtherBones);
+            BoneMappingHelper.ComputeBoneCount(_allOtherBones);
         }
 
         public ObservableCollection<AdvBoneMappingBone> GetBoneMapping()
@@ -80,14 +80,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             return _allOriginalBones;
         }
 
-        void ComputeBoneCount(IEnumerable<AdvBoneMappingBone> bones)
-        {
-            foreach (var bone in bones)
-            {
-                bone.ChildNodeCounts = bone.ComputeChildBoneCount();
-                ComputeBoneCount(bone.Children);
-            }
-        }
 
         ObservableCollection<AdvBoneMappingBone> _allOriginalBones;
 
@@ -161,11 +153,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
             // This will remove the filter
             SelectedOtherBone = null;
-            OtherBoneFilterText = "";
+            if(!string.IsNullOrWhiteSpace(OtherBoneFilterText))
+                OtherBoneFilterText = "";
 
-            if (selectedSourceBone.MappingType == BoneMappingType.Direct)
+            if (selectedSourceBone.Settings.MappingType == BoneMappingType.Direct)
                 SelectedOtherBone = BoneMappingHelper.GetBoneFromIndex(VisibleOtherBones, selectedSourceBone.Settings.MappingBoneId);
-            else if (selectedSourceBone.MappingType == BoneMappingType.None)
+            else if (selectedSourceBone.Settings.MappingType == BoneMappingType.None)
                 SelectedOtherBone = null;
 
             _originalViewModel.SetSelectedBoneByIndex(selectedSourceBone.BoneIndex);
@@ -176,8 +169,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             if (selectedTargetBone == null || _canSelectOtherBones == false)
                 return;
 
-            if (SelectedOriginalBone.MappingType  == BoneMappingType.None 
-                || SelectedOriginalBone.MappingType == BoneMappingType.Direct)
+            if (SelectedOriginalBone.Settings.MappingType  == BoneMappingType.None 
+                || SelectedOriginalBone.Settings.MappingType == BoneMappingType.Direct)
             {
                 SelectedOriginalBone.CreateDirectMapping(BoneMappingType.Direct, selectedTargetBone);
             }

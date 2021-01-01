@@ -59,7 +59,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                         BoneName = boneName,
                         ParentBoneIndex = parentBoneId,
                         DisplayName = $"{boneName} [{boneId}]",
-                        MappingDisplayStr = string.Empty,
                     };
 
                     var treeParent = GetParent(outputList, parentBoneId);
@@ -99,6 +98,15 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                     return result;
             }
             return null;
+        }
+
+        public static void ComputeBoneCount(IEnumerable<AdvBoneMappingBone> bones)
+        {
+            foreach (var bone in bones)
+            {
+                bone.ChildNodeCounts = bone.ComputeChildBoneCount();
+                ComputeBoneCount(bone.Children);
+            }
         }
     }
 }

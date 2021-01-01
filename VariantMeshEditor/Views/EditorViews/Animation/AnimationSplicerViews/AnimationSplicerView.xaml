@@ -183,11 +183,6 @@
                             SelectedItem="{Binding SelectedMainAnimation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </DockPanel>
 
-                <DockPanel Grid.Row="3">
-                    <TextBlock Text="Attachment point Fix" Width="110" DockPanel.Dock="Left"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <CheckBox IsChecked="{Binding UseAttachmentPointFix, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="False"/>
-                </DockPanel>
  
                 <animationsplicerviews:VisualizationHelperView Grid.Row="6"/>
 
@@ -243,7 +238,7 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <TextBlock  Text="{Binding BoneName}"
-                                                Foreground="{Binding MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
+                                                Foreground="{Binding Settings.MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
                             </Grid>
 
                         </HierarchicalDataTemplate>

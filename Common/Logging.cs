@@ -24,6 +24,7 @@ namespace Common
     public class Logging
     {
         public static ILogger Create<T>() => Log.ForContext<T>();
+        public static ILogger CreateStatic(Type type) => Log.ForContext(type);
 
         static bool IsConfigure = false;
         public static string LogName { get; private set; }
