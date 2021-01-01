@@ -75,10 +75,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         public AdvBoneMappingBone _selectedNode;
         public AdvBoneMappingBone SelectedNode { get { return _selectedNode; } set { SetAndNotify(ref _selectedNode, value); OnItemSelected(_selectedNode); } }
 
-
-        public BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
-        public BoneCopyMethod DefaultBoneCopyMethod{get { return _boneCopyMethod; }set { SetAndNotify(ref _boneCopyMethod, value); }}
-
         public bool _useAttachmentPointFix = false;
         public bool UseAttachmentPointFix { get { return _useAttachmentPointFix; } set { SetAndNotify(ref _useAttachmentPointFix, value); } }
 
@@ -171,7 +167,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         
         void OnTargetSkeletonChanged()
         {
-            BoneMapping = AdvBoneMappingBoneHelper.CreateSkeletonBoneList(TargetAnimation.SelectedGameSkeleton);
+            BoneMapping = BoneMappingHelper.CreateSkeletonBoneList(TargetAnimation.SelectedGameSkeleton);
             SelectedNode = BoneMapping.FirstOrDefault();
         }
         
@@ -222,7 +218,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 {
                     ExternalAnimation = ExternalAnimation.Data,
                     TargetAnimation = TargetAnimation.Data,
-                    DefaultBoneCopyMethod = DefaultBoneCopyMethod,
                     SelectedMainAnimation = SelectedMainAnimation,
                     //MappableBoneSettings = BoneMapping
                 };
@@ -291,7 +286,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             if (newSelectedSkeleton.SelectedSkeleton != null)
             {
-                var otherBones = AdvBoneMappingBoneHelper.CreateSkeletonBoneList(newSelectedSkeleton.SelectedGameSkeleton);
+                var otherBones = BoneMappingHelper.CreateSkeletonBoneList(newSelectedSkeleton.SelectedGameSkeleton);
                 BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(BoneMapping.FirstOrDefault(), otherBones);
                 ExternalSkeletonVisualizationHelper.Create(_resourceLibary, newSelectedSkeleton.SelectedSkeleton);
             }

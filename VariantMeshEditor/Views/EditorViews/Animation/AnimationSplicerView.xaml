@@ -188,15 +188,7 @@
                     <TextBlock Text=" : " DockPanel.Dock="Left"/>
                     <CheckBox IsChecked="{Binding UseAttachmentPointFix, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="False"/>
                 </DockPanel>
-
-                <DockPanel Grid.Row="4">
-                    <TextBlock Text="Bone Copy Method" Width="110" DockPanel.Dock="Left"/>
-                    <TextBlock Text=" : " DockPanel.Dock="Left"/>
-                    <ComboBox DockPanel.Dock="Right" 
-                            ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
-                            SelectedItem="{Binding DefaultBoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </DockPanel>
-
+ 
                 <animationsplicerviews:VisualizationHelperView Grid.Row="6"/>
 
                 <!-- Test data buttons-->
