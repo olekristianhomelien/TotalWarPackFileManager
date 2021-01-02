@@ -43,7 +43,12 @@ namespace PackFileManager.PackedTreeView
             treeViewAdv1.Expanded += TreeViewAdv1_Expanded;
             treeViewAdv1.Expanding += TreeViewAdv1_Expanding;
 
-            var contextMenu = new ContextMenu();
+            treeViewAdv1.KeyDown += TreeViewAdv1_KeyDown;
+            treeViewAdv1.KeyPress += TreeViewAdv1_KeyPress;
+            treeViewAdv1.KeyUp += TreeViewAdv1_KeyUp;
+            treeViewAdv1.PreviewKeyDown += TreeViewAdv1_PreviewKeyDown;
+
+             var contextMenu = new ContextMenu();
             contextMenu.MenuItems.Add(new MenuItem("Copy", (s, ea) => _treeViewSearchBox.Copy(), Shortcut.CtrlC));
             contextMenu.MenuItems.Add(new MenuItem("Cut", (s, ea) => _treeViewSearchBox.Cut(), Shortcut.CtrlX));
             contextMenu.MenuItems.Add(new MenuItem("Paste", (s, ea) => _treeViewSearchBox.Paste(), Shortcut.CtrlV));
@@ -58,6 +63,26 @@ namespace PackFileManager.PackedTreeView
 
             nodeTextBox1.ToolTipProvider = new ToolTipProvider();
             nodeTextBox1.DrawText += new EventHandler<DrawTextEventArgs>(_nodeTextBox_DrawText);
+        }
+
+        private void TreeViewAdv1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            
+        }
+
+        private void TreeViewAdv1_KeyUp(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void TreeViewAdv1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void TreeViewAdv1_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
         }
 
         class NodeComparer : IComparer

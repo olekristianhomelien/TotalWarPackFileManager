@@ -21,9 +21,19 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                 AutomapDirectBoneLinksBasedOnNames(bone, externalBonesList);
         }
 
-        public static void AutomapDirectBoneLinksBasedOnHierarchy(AdvBoneMappingBone boneToGetMapping, IEnumerable<AdvBoneMappingBone> externalBonesList)
+        public static void AutomapDirectBoneLinksBasedOnHierarchy(AdvBoneMappingBone boneToGetMapping, AdvBoneMappingBone otherBoneToStartFrom)
         {
-            MessageBox.Show("Not implmented, soon...");
+            if (otherBoneToStartFrom == null)
+            {
+                MessageBox.Show("Error - No target selected");
+                return;
+            }
+            boneToGetMapping.CreateDirectMapping(BoneMappingType.Direct, otherBoneToStartFrom);
+            for (int i = 0; i < boneToGetMapping.Children.Count(); i++)
+            {
+                if (i < otherBoneToStartFrom.Children.Count())
+                    AutomapDirectBoneLinksBasedOnHierarchy(boneToGetMapping.Children[i], otherBoneToStartFrom.Children[i]);
+            }
         }
 
         public static AdvBoneMappingBone FindBoneBasedOnName(string name, IEnumerable<AdvBoneMappingBone> boneList)

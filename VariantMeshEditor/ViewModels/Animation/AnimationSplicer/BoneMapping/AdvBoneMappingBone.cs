@@ -95,6 +95,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             if (Settings as DirectAdvBoneMappingBoneSettings == null)
                 Settings = new DirectAdvBoneMappingBoneSettings();
             Settings.HasMapping = true;
+            Settings.UseMapping = true;
             Settings.MappingBoneName = source.BoneName;
             Settings.MappingBoneId = source.BoneIndex;
             Settings.MappingType = mappingType;
