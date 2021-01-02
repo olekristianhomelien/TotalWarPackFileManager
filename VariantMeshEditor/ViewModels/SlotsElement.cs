@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using CommonDialogs;
+using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Xna.Framework;
 using SharpDX.XAudio2;
 using System;
@@ -37,7 +38,8 @@ namespace VariantMeshEditor.ViewModels
 
     public class SlotElement : FileSceneElement
     {
-        AnimationElement _animation;
+        ResourceLibary _resourceLibary;
+        Scene3d _virtualWorld;
         SkeletonElement _skeleton;
 
         public string _slotName;
@@ -49,6 +51,7 @@ namespace VariantMeshEditor.ViewModels
 
         public ICommand PopulateAttachmentPointList { get; set; }
         public ICommand DeleteSlot { get; set; }
+        public ICommand AddNewMeshCommand { get; set; }
 
         public ObservableCollection<string> PossibleAttachmentPoints { get; set; } = new ObservableCollection<string>();
 
@@ -61,8 +64,18 @@ namespace VariantMeshEditor.ViewModels
 
             PopulateAttachmentPointList = new RelayCommand(OnPopulateAttachmentPointList);
             DeleteSlot = new RelayCommand<SlotElement>(OnDeleteSlot);
+            AddNewMeshCommand = new RelayCommand(OnAddMesh);
             OnPopulateAttachmentPointList();
+            
+            if (DisplayName.ToLower().Contains("stump"))
+            {
+                IsChecked = false;
+                IsExpanded = false;
+            }
         }
+
+
+
 
         void OnPopulateAttachmentPointList()
         {
@@ -71,6 +84,7 @@ namespace VariantMeshEditor.ViewModels
 
             var attachmentPoints = new List<string>();
             var allRigidModelElements = SceneElementHelper.GetAllOfTypeInSameVariantMesh<RigidModelElement>(this);
+            
             foreach (var rigidModelElement in allRigidModelElements)
             {
                 foreach (var header in rigidModelElement.Model.LodHeaders)
@@ -78,7 +92,6 @@ namespace VariantMeshEditor.ViewModels
                     foreach (var model in header.LodModels)
                     {
                         foreach (var attacmentPoint in model.AttachmentPoint)
-
                             attachmentPoints.Add(attacmentPoint.Name);
                     }
                 }
@@ -88,28 +101,57 @@ namespace VariantMeshEditor.ViewModels
             foreach (var item in possibleAttackmentPoints)
                 PossibleAttachmentPoints.Add(item);
         }
+
         void OnDeleteSlot(SlotElement slot)
         {
             Parent.Children.Remove(this);
         }
 
+        void OnAddMesh()
+        {
+            using (LoadedPackFileBrowser loadedPackFileBrowser = new LoadedPackFileBrowser(_resourceLibary.PackfileContent.First()))
+            {
+                var res = loadedPackFileBrowser.ShowDialog();
+                if (res == System.Windows.Forms.DialogResult.OK)
+                {
+
+                    var selectedFile = loadedPackFileBrowser.GetSelecteFile();
+                    SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+                    //var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
+                    //element.CreateContent(_virtualWorld, _resourceLibary);
+
+                    //var mesh = element.Children.First();
+                    //mesh.Parent = null;
+                    //_rootElement.AddChild(mesh);
+                }
+            }
+
+            ////def_armoured_cold_one.variantmeshdefinition
+            ////brt_pegasus.variantmeshdefinition
+            //SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+            //var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
+            //element.CreateContent(_virtualWorld, _resourceLibary);
+            //
+            //var mesh = element.Children.First();
+            //mesh.Parent = null;
+            //_rootElement.AddChild(mesh);
+            //
+            //CreateMeshList();
+
+        }
+
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
-            _animation = SceneElementHelper.GetAllOfTypeInSameVariantMesh<AnimationElement>(this).FirstOrDefault();
+            _resourceLibary = resourceLibary;
+            _virtualWorld = virtualWorld;
             _skeleton = SceneElementHelper.GetAllOfTypeInSameVariantMesh<SkeletonElement>(this).FirstOrDefault();
         }
 
         protected override void UpdateNode(GameTime time)
         {
             var boneIndex = -1;
-            for (int i = 0; i < _skeleton?.GameSkeleton?.BoneNames.Length; i++)
-            {
-                if (_skeleton.GameSkeleton.BoneNames[i] == AttachmentPoint)
-                {
-                    boneIndex = i;
-                    break;
-                }
-            }
+            if( _skeleton?.GameSkeleton != null)
+                boneIndex  = _skeleton.GameSkeleton.GetBoneIndex(AttachmentPoint);
 
             WorldTransform = Matrix.Identity;
             if (boneIndex != -1)

@@ -18,5 +18,15 @@ namespace CommonDialogs
             InitializeComponent();
             packedTreeView.BuildTreeFromPackFile(currentPackFile);
         }
+
+        public void SetExtentionFilter(List<string> filters)
+        {
+            packedTreeView.SetExtentionFilter(filters);
+        }
+
+        public PackedFile GetSelecteFile() 
+        {
+            return packedTreeView.GetSelectedNodeContent() as PackedFile;
+        }
     }
 }

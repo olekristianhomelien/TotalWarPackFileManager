@@ -12,7 +12,7 @@
             <editorviews:TreeItemDataTemplateSelector x:Key="TreeItemDataTemplateSelector"/>
             
             <Style x:Key="TreeViewItemStyle" TargetType="{x:Type TreeViewItem}">
-                <Setter Property="IsExpanded" Value="True" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
                 <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
             </Style>
  

@@ -37,10 +37,11 @@ namespace Viewer.ScreenComponents
                 DrawText(2, $"Camera Zoom", "Alt + mouse wheel");
                 DrawText(3, $"Camera Pan", "Alt + right mouse button");
                 DrawText(4, $"Camera Rotate", "Alt + left mouse button");
+                DrawText(5, $"Rotate lightmap", "PageUp/PageDown");
 
-                DrawText(6, $"Rotation Gizmo", "R");
-                DrawText(7, $"Translation Gizmo", "T");
-                DrawText(8, $"Toggle bone space", "Home");
+                DrawText(7, $"Rotation Gizmo", "R");
+                DrawText(8, $"Translation Gizmo", "T");
+                DrawText(9, $"Toggle bone space", "Home");
             }
             _spriteBatch.End();
         }

@@ -155,9 +155,6 @@
     <Compile Include="Views\EditorViews\RigidBodyEditor\RigidModelMeshEditorView.xaml.cs">
       <DependentUpon>RigidModelMeshEditorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\EditorViews\Util\UnknownDataView.xaml.cs">
-      <DependentUpon>UnknownDataView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\EditorViews\Util\Vector3View.xaml.cs">
       <DependentUpon>Vector3View.xaml</DependentUpon>
     </Compile>
@@ -255,10 +252,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorViews\RigidBodyEditor\RigidModelMeshEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\EditorViews\Util\UnknownDataView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

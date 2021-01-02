@@ -48,7 +48,21 @@ namespace VariantMeshEditor.ViewModels
             get { return _isChecked; }
             set
             {
-                _isChecked = value;
+                if (ApplyElementCheckboxVisability == Visibility.Visible)
+                {
+                    _isChecked = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        bool _isExpanded = true;
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set
+            {
+                _isExpanded = value;
                 NotifyPropertyChanged();
             }
         }

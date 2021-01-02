@@ -16,16 +16,25 @@
                 <ResourceDictionary Source="../Styles/TestStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-
             <DataTemplate DataType="{x:Type variantMesh:VariantMeshElement}">
-                <util:BrowsableItemView LabelName="Mesh:">
-
+                <util:BrowsableItemView 
+                    DisplayPreviewButton="False"
+                    LabelName="VarMesh:" 
+                    PathText="{Binding FullPath}"
+                    PathTextReadOnly="True"
+                    Browse="{Binding BrowseCommand}"
+                    Remove="{Binding RemoveCommand}">
                 </util:BrowsableItemView>
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type viewmodels:WsModelElement}">
-                <util:BrowsableItemView LabelName="Mesh:">
-
+                <util:BrowsableItemView 
+                    DisplayPreviewButton="False"
+                    LabelName="WsModel:" 
+                    PathText="{Binding FullPath}"
+                    PathTextReadOnly="True"
+                    Browse="{Binding BrowseCommand}"
+                    Remove="{Binding RemoveCommand}">
                 </util:BrowsableItemView>
             </DataTemplate>
 
@@ -49,7 +58,6 @@
             <TextBlock DockPanel.Dock="Top" Text="{Binding Path=SlotName, UpdateSourceTrigger=PropertyChanged}" FontSize="16" TextWrapping="Wrap" VerticalAlignment="Center"/>
         </StackPanel>
         
-        
         <ListView 
             HorizontalContentAlignment="Stretch"
             DockPanel.Dock="Top" 
@@ -57,9 +65,7 @@
             ItemContainerStyle="{StaticResource LvItemStyle}"
             Background="Transparent"
             BorderThickness="0"/>
-        
-        
-        <Button DockPanel.Dock="Top" x:Name="AddButton">Add new mesh</Button>
 
+        <Button DockPanel.Dock="Top"  Content="Add new mesh" Command="{Binding AddNewMeshCommand}"/>
     </DockPanel>
 </UserControl>

@@ -263,7 +263,10 @@ namespace PackFileManager.PackedTreeView
             }
         }
 
-        
+        public void SetExtentionFilter(IEnumerable<string> filters)
+        { 
+        }
+
 
         public void Dir_FileRemoved(PackEntry entry)
         {

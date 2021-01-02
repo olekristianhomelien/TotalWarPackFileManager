@@ -29,7 +29,7 @@ namespace VariantMeshEditor.Controls.EditorControllers
         void CreateUi()
         {
             //_viewModel.SlotName.Text = "Name:" + _slotElement.SlotName;
-            _viewModel.AddButton.Click += AddButton_Click;
+            //_viewModel.AddButton.Click += AddButton_Click;
 
             //_viewModel.AttachmentPointComboBox.Items.Add("");
             //_viewModel.AttachmentPointComboBox.SelectionChanged += AttachmentPointComboBox_SelectionChanged;

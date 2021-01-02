@@ -12,6 +12,7 @@ namespace VariantMeshEditor.ViewModels
         public WsModelElement(FileSceneElement parent, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
         {
             DisplayName = $"WsModel - {FileName}";
+            CheckBoxGroupingName = parent.CheckBoxGroupingName + "_wsModel_";
         }
         public override FileSceneElementEnum Type => FileSceneElementEnum.WsModel;
     }

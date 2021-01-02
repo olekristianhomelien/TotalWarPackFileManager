@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
 using Viewer.GraphicModels;
@@ -22,10 +23,18 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
         public RigidModelElement(FileSceneElement parent, Rmv2RigidModel model, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
         {
-            CheckBoxGroupingName = parent.CheckBoxGroupingName + "_RigidModel";
-
             Model = model;
             DisplayName = $"RigidModel - {FileName}";
+
+            if (parent is WsModelElement)
+            {
+                IsChecked = true;
+                ApplyElementCheckboxVisability = Visibility.Collapsed;
+            }
+            else
+            {
+                CheckBoxGroupingName = parent.CheckBoxGroupingName + "_RigidModel";
+            }
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
