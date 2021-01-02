@@ -13,11 +13,11 @@ namespace Viewer.Scene
     public class ArcBallCamera
     {
 
-        bool _isMoveKeyPressed = false;
+        bool _isFirstPress = false;
 
-        float mouseX;
-        float mouseY;
-
+        float _mouseX;
+        float _mouseY;
+        int _lastScrollWheelValue = 0;
         GraphicsDevice _graphicsDevice;
 
         public ArcBallCamera(float aspectRation, Vector3 lookAt, float currentZoom, GraphicsDevice graphicsDevice) 
@@ -178,55 +178,51 @@ namespace Viewer.Scene
         }
         #endregion
 
+        bool IsMouseMoveKeyDown(MouseState state)
+        {
+            if (state.LeftButton == ButtonState.Pressed)    // Rotate
+                return true;
+
+            if (state.RightButton == ButtonState.Pressed)    // Pan
+                return true;
+
+            return false;
+        }
+
         public void Update(MouseState mouseState, Viewer.Input.Keyboard keyboard)
         {
-
-            var moseSpeed = -0.5f;
-            var speed = 0.01f;
-
-            if (keyboard.IsKeyDown(Keys.LeftAlt) && mouseState.LeftButton == ButtonState.Pressed)
+            var deltaMouseX = _mouseX - mouseState.X;
+            var deltaMouseY = _mouseY - mouseState.Y;
+            var deltaMouseWheel = _lastScrollWheelValue - mouseState.ScrollWheelValue;
+    
+            if (keyboard.IsKeyReleased(Keys.F4))
             {
-                if (_isMoveKeyPressed == false)
+                Zoom = 10;
+                _lookAt = Vector3.Zero;
+            }
+
+            if (keyboard.IsKeyDown(Keys.LeftAlt))
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    mouseX = mouseState.X;
-                    mouseY = mouseState.Y;
+                    Yaw += deltaMouseX * 0.01f;
+                    Pitch += deltaMouseY * 0.01f;
                 }
-                else
+                else if (mouseState.RightButton == ButtonState.Pressed)
                 {
-                    var diffX = mouseX - mouseState.X;
-                    var diffY = mouseY - mouseState.Y;
-                    mouseX = mouseState.X;
-                    mouseY = mouseState.Y;
-                    Yaw += diffX * speed;
-                    Pitch += diffY * speed;
-                    
+                    MoveCameraRight(deltaMouseX * 0.005f);
+                    MoveCameraUp(-deltaMouseY * 0.005f);
                 }
-                _isMoveKeyPressed = true;
+                else if (deltaMouseWheel != 0)
+                {
+                    Zoom += deltaMouseWheel * 0.005f;
+                }
             }
 
-           if (keyboard.IsKeyUp(Keys.LeftAlt) && _isMoveKeyPressed)
-           {
-               _isMoveKeyPressed = false;
-           }
-
-            if (keyboard.IsKeyDown(Keys.W))
-            {
-                Zoom += moseSpeed * 0.5f;
-            }
-
-            if (keyboard.IsKeyDown(Keys.S))
-            {
-                Zoom -= moseSpeed * 0.5f;
-            }
-            if (keyboard.IsKeyDown(Keys.Q))
-            {
-                MoveCameraUp(moseSpeed * 0.5f);
-            }
-
-            if (keyboard.IsKeyDown(Keys.E))
-            {
-                MoveCameraUp(-moseSpeed * 0.5f);
-            }
+            // Update
+            _mouseX = mouseState.X;
+            _mouseY = mouseState.Y;
+            _lastScrollWheelValue = mouseState.ScrollWheelValue;
         }
 
 

@@ -74,18 +74,26 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         void OnItemSelected(AdvBoneMappingBone bone)
         {
-            if (bone != null && bone.Settings.HasMapping)
+            // If mapping select the other node.
+            if (bone?.Settings.HasMapping == true)
             {
                 _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(bone.BoneIndex);
                 ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel.SetSelectedBoneByIndex(bone.Settings.MappingBoneId);
-
-                var currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.BoneIndex, bone, _selectionGizmo);
-                _selectionGizmo.SelectItem(currentGizmoItem);
             }
             else
             {
                 _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(-1);
                 ExternalSkeletonVisualizationHelper.GetSkeletonElement()?.ViewModel?.SetSelectedBoneByIndex(-1);
+            }
+
+            // If bone, update gizmo
+            if (bone != null)
+            {
+                var currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.BoneIndex, bone, _selectionGizmo);
+                _selectionGizmo.SelectItem(currentGizmoItem);
+            }
+            else
+            {
                 _selectionGizmo.SelectItem(null);
             }
         }
@@ -129,6 +137,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 if (_advanceBoneMappingWindow == null)
                 {
+                    if (ExternalAnimation.SelectedGameSkeleton == null)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error - No Target skeleton selected");
+                        return;
+                    }
                     _advanceBoneMappingWindow = new AdvBoneMappingWindow();
                     _advanceBoneMappingWindow.Deactivated += (sender, e) => { _advanceBoneMappingWindow.Topmost = true; _advanceBoneMappingWindow.Activate(); };
                     _advanceBoneMappingWindow.Closed += (sender, e) =>

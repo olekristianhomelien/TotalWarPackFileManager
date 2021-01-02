@@ -54,8 +54,10 @@ namespace Viewer.Gizmo
             // Toggle space mode:
             if (_keyboard.IsKeyReleased(Keys.Home))
                 _gizmo.ToggleActiveSpace();
-
-            _gizmo.Update(mouseState, time);
+            
+            // Workaround
+            if(!_keyboard.IsKeyDown(Keys.LeftAlt))
+                _gizmo.Update(mouseState, time);
         }
 
         public void UpdatePositionOfItems(bool force)

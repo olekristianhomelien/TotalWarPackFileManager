@@ -248,8 +248,8 @@
                 <animationsplicerviews:SelectedBoneEditor Grid.Column="1" Grid.Row="1" 
                                                           TargetBoneList="{Binding BoneMapping, UpdateSourceTrigger=PropertyChanged}"
                                                           TargetBoneListDisplayName="BoneName"
-                                                          SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"
-                                                          IsEnabled="{Binding SelectedNode.Settings, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource HasBoneMappingConverter}}"/>
+                                                          SelectedBone="{Binding SelectedNode, UpdateSourceTrigger=PropertyChanged}"/>
+                                                            <!--IsEnabled="{Binding SelectedNode.Settings, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource HasBoneMappingConverter}}"-->
 
 
             </Grid>

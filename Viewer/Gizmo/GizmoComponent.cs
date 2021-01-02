@@ -1163,7 +1163,7 @@ namespace Viewer.Gizmo
             //if (_showLines)
             //  _lineRenderer.Draw(_gizmoWorld);
 
-            if(drawHelperText)
+            //if(drawHelperText)
                 Draw2D();
         }
 
@@ -1202,11 +1202,11 @@ namespace Viewer.Gizmo
             }
 
             // -- Draw StatusInfo -- //
-            string statusInfo = GetStatusInfo();
-            Vector2 stringDims = _font.MeasureString(statusInfo);
-            Vector2 position = new Vector2(_graphics.Viewport.Width - stringDims.X, _graphics.Viewport.Height - stringDims.Y);
-
-            _spriteBatch.DrawString(_font, statusInfo, position, Color.White);
+            //string statusInfo = GetStatusInfo();
+            //Vector2 stringDims = _font.MeasureString(statusInfo);
+            //Vector2 position = new Vector2(_graphics.Viewport.Width - stringDims.X, _graphics.Viewport.Height - stringDims.Y);
+            //
+            //_spriteBatch.DrawString(_font, statusInfo, position, Color.White);
             _spriteBatch.End();
         }
 

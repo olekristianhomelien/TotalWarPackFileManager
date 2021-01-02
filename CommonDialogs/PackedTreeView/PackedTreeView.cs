@@ -43,6 +43,13 @@ namespace PackFileManager.PackedTreeView
             treeViewAdv1.Expanded += TreeViewAdv1_Expanded;
             treeViewAdv1.Expanding += TreeViewAdv1_Expanding;
 
+            var contextMenu = new ContextMenu();
+            contextMenu.MenuItems.Add(new MenuItem("Copy", (s, ea) => _treeViewSearchBox.Copy(), Shortcut.CtrlC));
+            contextMenu.MenuItems.Add(new MenuItem("Cut", (s, ea) => _treeViewSearchBox.Cut(), Shortcut.CtrlX));
+            contextMenu.MenuItems.Add(new MenuItem("Paste", (s, ea) => _treeViewSearchBox.Paste(), Shortcut.CtrlV));
+            contextMenu.MenuItems.Add(new MenuItem("Select All", (s, ea) => _treeViewSearchBox.SelectAll(), Shortcut.CtrlA));
+            _treeViewSearchBox.ContextMenu = contextMenu;
+
             var sorted = new SortedTreeModel(_treeModel);
             sorted.Comparer = new NodeComparer();
             treeViewAdv1.Model = sorted;
@@ -107,7 +114,6 @@ namespace PackFileManager.PackedTreeView
         private void TreeViewAdv1_Expanding(object sender, TreeViewAdvEventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            
         }
 
         private void TreeViewAdv1_Expanded(object sender, TreeViewAdvEventArgs e)

@@ -45,13 +45,17 @@ namespace WpfTest.Scenes
         protected override void Initialize()
         {
             _disposed = false;
-            
-            new WpfGraphicsDeviceService(this);
-            Components.Add(new FpsComponent(this));
-            Components.Add(new ControlsComponent(this));
 
             _keyboard = new Keyboard(new WpfKeyboard(this));
             _mouse = new WpfMouse(this);
+            _mouse.CaptureMouseWithin = false;
+
+            new WpfGraphicsDeviceService(this);
+            Components.Add(new FpsComponent(this));
+            Components.Add(new ControlsComponent(this, _keyboard));
+
+           
+       
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             base.Initialize();

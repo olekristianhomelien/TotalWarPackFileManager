@@ -9,9 +9,13 @@ namespace Viewer.ScreenComponents
     {
         private SpriteBatch _spriteBatch;
         private SpriteFont _font;
+        Input.Keyboard _keyboard;
 
-        public ControlsComponent(WpfGame game) : base(game)
+        bool _displayExtraInfo = true;
+
+        public ControlsComponent(WpfGame game, Input.Keyboard keyboard) : base(game)
         {
+            _keyboard = keyboard;
         }
 
         protected override void LoadContent()
@@ -25,22 +29,37 @@ namespace Viewer.ScreenComponents
         {
             _spriteBatch.Begin();
             DrawText(0, $"Toggle Help", "F1");
-            DrawText(1, $"Toggle Shader", "F3");
-            DrawText(2, $"Camera Zoom", "Q || E");
-            DrawText(3, $"Camera Up/Down", "W || S");
-            DrawText(4, $"Rotate camera", "Left Alt + mouse");
-            DrawText(5, $"Reset  camera", "F4");
+
+            if (_displayExtraInfo)
+            {
+                // Camera controls
+                DrawText(1, $"Reset Camera", "F4");
+                DrawText(2, $"Camera Zoom", "Alt + mouse wheel");
+                DrawText(3, $"Camera Pan", "Alt + right mouse button");
+                DrawText(4, $"Camera Rotate", "Alt + left mouse button");
+
+                DrawText(6, $"Rotation Gizmo", "R");
+                DrawText(7, $"Translation Gizmo", "T");
+                DrawText(8, $"Toggle bone space", "Home");
+            }
             _spriteBatch.End();
         }
 
-        void DrawText(int index, string header, string value)
+        public override void Update(GameTime gameTime)
+        {
+            if (_keyboard.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F1))
+                _displayExtraInfo = !_displayExtraInfo;
+            base.Update(gameTime);
+        }
+
+        void DrawText(int lineIndex, string header, string value)
         {
             float headerLength = 140;
             float offset = 20;
             float spacing = 18;
-            _spriteBatch.DrawString(_font, header, new Vector2(5, offset + (spacing * index)), Color.White);
-            _spriteBatch.DrawString(_font, ":", new Vector2(5 + headerLength, offset + (spacing * index)), Color.White);
-            _spriteBatch.DrawString(_font, value, new Vector2(5 + headerLength + 5, offset + (spacing * index)), Color.White);
+            _spriteBatch.DrawString(_font, header, new Vector2(5, offset + (spacing * lineIndex)), Color.White);
+            _spriteBatch.DrawString(_font, ":", new Vector2(5 + headerLength, offset + (spacing * lineIndex)), Color.White);
+            _spriteBatch.DrawString(_font, value, new Vector2(5 + headerLength + 5, offset + (spacing * lineIndex)), Color.White);
         }
     }
 }

@@ -26,6 +26,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
     class AdvBoneMappingViewModel : NotifyPropertyChangedImpl
     {
+        bool _firstTimeSelectinOriginalBones = true;
+
         public ICommand ClearBindingSelfCommand { get; set; }
         public ICommand ClearBindingSelfAndChildrenCommand { get; set; }
         public ICommand AutoMapSelfAndChildrenByNameCommand { get; set; }
@@ -43,7 +45,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             _allOriginalBones = orgBoneMapping;
             _allOtherBones = BoneMappingHelper.CreateSkeletonBoneList(other);
             VisibleOrigianBones = _allOriginalBones;
-            VisibleOtherBones = _allOtherBones;
+            VisibleOtherBones = new ObservableCollection<AdvBoneMappingBone>();
 
             ClearBindingSelfCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.ClearMapping(); });
             ClearBindingSelfAndChildrenCommand = new RelayCommand<AdvBoneMappingBone>((node) =>
@@ -148,11 +150,17 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             {
                 SelectedOtherBone = null;
                 VisibleOtherBones = new ObservableCollection<AdvBoneMappingBone>();
+                _firstTimeSelectinOriginalBones = true;
                 return;
             }
 
             // This will remove the filter
             SelectedOtherBone = null;
+            if (_firstTimeSelectinOriginalBones)
+            {
+                VisibleOtherBones = _allOtherBones;
+                _firstTimeSelectinOriginalBones = false;
+            }
             if(!string.IsNullOrWhiteSpace(OtherBoneFilterText))
                 OtherBoneFilterText = "";
 
@@ -167,6 +175,9 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         void OnOtherBoneSelected(AdvBoneMappingBone selectedTargetBone)
         {
             if (selectedTargetBone == null || _canSelectOtherBones == false)
+                return;
+
+            if (SelectedOriginalBone == null)
                 return;
 
             if (SelectedOriginalBone.Settings.MappingType  == BoneMappingType.None 
