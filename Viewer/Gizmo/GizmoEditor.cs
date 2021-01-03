@@ -52,10 +52,10 @@ namespace Viewer.Gizmo
                 _gizmo.ActiveMode = GizmoMode.Translate;
 
             // Toggle space mode:
-            if (_keyboard.IsKeyReleased(Keys.Home))
-                _gizmo.ToggleActiveSpace();
+            //if (_keyboard.IsKeyReleased(Keys.Home))
+            //    _gizmo.ToggleActiveSpace();
             
-            // Workaround
+            // Workaround for camera roation causing movment
             if(!_keyboard.IsKeyDown(Keys.LeftAlt))
                 _gizmo.Update(mouseState, time);
         }

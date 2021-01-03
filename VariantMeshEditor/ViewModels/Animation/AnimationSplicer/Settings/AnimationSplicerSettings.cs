@@ -117,19 +117,18 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
             Type objectType, object existingValue, JsonSerializer serializer)
         {
             JObject jo = JObject.Load(reader);
+
+
             var ob = jo.ToObject<AdvBoneMappingBoneSettings>();
             AdvBoneMappingBoneSettings item;
-            if (ob.MappingType == BoneMappingType.Direct)
-            {
+            if (ob.BoneMappingForSerialization == BoneMappingType.Direct)
                 item = new DirectAdvBoneMappingBoneSettings();
-            }
+            else if (ob.BoneMappingForSerialization == BoneMappingType.AttachmentPoint)
+                item = new AttachmentPointAdvBoneMappingBoneSettings();
             else
-            {
                 item = new AdvBoneMappingBoneSettings();
-            }
 
             serializer.Populate(jo.CreateReader(), item);
-
             return item;
         }
 

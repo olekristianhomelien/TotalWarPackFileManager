@@ -15,7 +15,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         {
             var otherBone = FindBoneBasedOnName(boneToGetMapping.BoneName, externalBonesList);
             if (otherBone != null)
-                boneToGetMapping.CreateDirectMapping(BoneMappingType.Direct, otherBone);
+                boneToGetMapping.CreateDirectMapping(otherBone);
 
             foreach (var bone in boneToGetMapping.Children)
                 AutomapDirectBoneLinksBasedOnNames(bone, externalBonesList);
@@ -28,7 +28,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                 MessageBox.Show("Error - No target selected");
                 return;
             }
-            boneToGetMapping.CreateDirectMapping(BoneMappingType.Direct, otherBoneToStartFrom);
+            boneToGetMapping.CreateDirectMapping(otherBoneToStartFrom);
             for (int i = 0; i < boneToGetMapping.Children.Count(); i++)
             {
                 if (i < otherBoneToStartFrom.Children.Count())

@@ -197,11 +197,11 @@
 
                             <TextBlock  Grid.Column="0" 
                                         Text="{Binding BoneName}"
-                                        Foreground="{Binding Settings.MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
+                                        Foreground="{Binding MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
                             <TextBlock  Grid.Column="1" Text="{Binding Settings.MappingDisplayStr}"/>
 
                             <ComboBox  Width="60"  Grid.Column="2"  Margin="10,0,0,0"
-                                           SelectedItem="{Binding Settings.MappingType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                           SelectedItem="{Binding MappingType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                           ItemsSource="{Binding Source={StaticResource MappingMethodEnums}}"/>
                         </Grid>
                     </HierarchicalDataTemplate>

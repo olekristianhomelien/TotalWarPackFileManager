@@ -116,7 +116,7 @@ namespace VariantMeshEditor.Services
                         if (HasAnimationData(mappedBondeIndex, otherAnimationClip))
                             GetAnimationTransform(otherAnimationClip, frameIndex, otherSkeleton, mappedBondeIndex, out otherAnimatedRotation, out otherAnimatedPosition);
 
-                        if (boneToGetAnimDataFrom.Settings.MappingType == BoneMappingType.Direct)
+                        if (boneToGetAnimDataFrom.MappingType == BoneMappingType.Direct)
                         {
                             var mappingSettings = boneToGetAnimDataFrom.Settings as DirectAdvBoneMappingBoneSettings;
 
@@ -160,7 +160,7 @@ namespace VariantMeshEditor.Services
                         }
                         else
                         {
-                            throw new Exception($"Unsupported MappingType - { boneToGetAnimDataFrom.Settings.MappingType }");
+                            throw new Exception($"Unsupported MappingType - { boneToGetAnimDataFrom.MappingType }");
                         }
                     }
                     else

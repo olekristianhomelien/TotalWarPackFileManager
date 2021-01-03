@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
-             xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews"
+             xmlns:editorviews="clr-namespace:VariantMeshEditor.Views.EditorViews" xmlns:behaviors="clr-namespace:CommonDialogs.Behaviors;assembly=CommonDialogs"
              mc:Ignorable="d" 
              x:Name="Self"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -23,6 +23,18 @@
             <Label Width="90">Bone Count</Label>
             <Label>:</Label>
             <TextBlock TextWrapping="NoWrap"  VerticalAlignment="Center"  Text="{Binding Path=ViewModel.BoneCount, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="90">Scale</Label>
+            <Label>:</Label>
+            <TextBox 
+                Width="60"
+                Text="{Binding ViewModel.SkeletonScale.TextValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <i:Interaction.Behaviors>
+                    <behaviors:TextBoxInputBehavior InputMode="DecimalInput"/>
+                </i:Interaction.Behaviors>
+            </TextBox>
         </StackPanel>
 
 

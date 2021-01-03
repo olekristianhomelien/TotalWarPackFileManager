@@ -1,4 +1,5 @@
 ﻿using CommonDialogs.Common;
+using CommonDialogs.MathViews;
 using Filetypes.RigidModel;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,14 @@ namespace VariantMeshEditor.ViewModels.Skeleton
             set { SetAndNotify(ref _boneCount, value); }
         }
 
+
+
+        DoubleViewModel _skeletonScale = new DoubleViewModel(1);
+        public DoubleViewModel SkeletonScale
+        {
+            get { return _skeletonScale; }
+            set { SetAndNotify(ref _skeletonScale, value); }
+        }
 
         public ObservableCollection<SkeletonBoneNode> Bones { get; set; } = new ObservableCollection<SkeletonBoneNode>();
 

@@ -36,19 +36,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             _gizmoEditor.RotateEvent -= GizmoRotateEvent;
         }
 
-        public void OnRotate(TransformationEventArgs gizmoRelativeMovementMatrix, Matrix axisMatrix)
+        public void OnRotate(TransformationEventArgs gizmoRelativeMovementMatrix)
         {
-            //var boneTransform = Matrix.CreateScale(-1, 1, 1) * _skeleton.GetAnimatedWorldTranform(_boneIndex);
-            //boneTransform.Decompose(out Vector3 _, out Quaternion boneRot, out Vector3 _);
-            var invBoneRotation = Matrix.Invert(axisMatrix);
+            var m2 = (Matrix)gizmoRelativeMovementMatrix.Value2;
 
-            Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
-            relativeGizmoMovement.Decompose(out _, out Quaternion currentGizmoRotation, out _);
-
+            m2.Decompose(out _, out Quaternion currentGizmoRotation, out _);
             currentGizmoRotation.ToAxisAngle(out Vector3 rotationAxis, out float rotationAngle);
-            var boneSpaceRotationAxis = Vector3.Transform(rotationAxis, invBoneRotation);
 
-            var boneSpaceRotationVector = boneSpaceRotationAxis * MathHelper.ToDegrees(rotationAngle);
+            var boneSpaceRotationVector = rotationAxis * MathHelper.ToDegrees(rotationAngle);
             var oldRotationOffset = MathConverter.ToVector3(_mappableSkeletonBone.Settings.ContantRotationOffset);
             MathConverter.AssignFromVector3(_mappableSkeletonBone.Settings.ContantRotationOffset, oldRotationOffset + boneSpaceRotationVector);
         }
@@ -57,15 +52,15 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             //var boneTransform = /* Matrix.CreateScale(-1, 1, 1) **/_skeleton.GetAnimatedWorldTranform(_boneIndex);
             //boneTransform.Decompose(out _, out Quaternion boneRot, out _);
-            var invBoneRotation = Matrix.Invert(axisMatrix);// Quaternion.Inverse(boneRot);
+           // var invBoneRotation = Matrix.Invert(axisMatrix);// Quaternion.Inverse(boneRot);
 
             //Matrix relativeGizmoMovement = ((Matrix)gizmoRelativeMovementMatrix.Value);
             //relativeGizmoMovement.Decompose(out Vector3 _, out Quaternion currentBoneRotation, out Vector3 _);
-            var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value;
+            var gismoValue = (Vector3)gizmoRelativeMovementMatrix.Value2;
 
-            var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
+            //var boneLocalRotation = Vector3.Transform(gismoValue, invBoneRotation);
             var current = MathConverter.ToVector3(_mappableSkeletonBone.Settings.ContantTranslationOffset);
-            MathConverter.AssignFromVector3(_mappableSkeletonBone.Settings.ContantTranslationOffset, boneLocalRotation + current);
+            MathConverter.AssignFromVector3(_mappableSkeletonBone.Settings.ContantTranslationOffset, gismoValue + current);
         }
 
         public override void Update(bool force = false)
@@ -83,7 +78,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
         {
             var t = transformable as SkeletonBoneGizmoItemWrapper;
-            t.OnRotate(e, _gizmoEditor.AxisMatrix);    
+            t.OnRotate(e);    
         }
 
         private void GizmoTranslateEvent(ITransformable transformable, TransformationEventArgs e)

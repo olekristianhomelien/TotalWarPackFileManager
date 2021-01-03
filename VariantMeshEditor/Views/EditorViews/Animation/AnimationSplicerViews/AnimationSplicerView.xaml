@@ -238,7 +238,7 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                                 <TextBlock  Text="{Binding BoneName}"
-                                                Foreground="{Binding Settings.MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
+                                                Foreground="{Binding MappingType, UpdateSourceTrigger=PropertyChanged , Converter={StaticResource ColourConverter}}"/>
                             </Grid>
 
                         </HierarchicalDataTemplate>

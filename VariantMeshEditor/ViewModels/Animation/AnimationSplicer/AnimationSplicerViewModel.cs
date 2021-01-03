@@ -76,24 +76,20 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             // If mapping select the other node.
             if (bone?.Settings.HasMapping == true)
-            {
-                _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(bone.BoneIndex);
                 ExternalSkeletonVisualizationHelper.GetSkeletonElement().ViewModel.SetSelectedBoneByIndex(bone.Settings.MappingBoneId);
-            }
             else
-            {
-                _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(-1);
                 ExternalSkeletonVisualizationHelper.GetSkeletonElement()?.ViewModel?.SetSelectedBoneByIndex(-1);
-            }
 
             // If bone, update gizmo
             if (bone != null)
             {
+                _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(bone.BoneIndex);
                 var currentGizmoItem = new SkeletonBoneGizmoItemWrapper(_targetSkeletonNode.GameSkeleton, bone.BoneIndex, bone, _selectionGizmo);
                 _selectionGizmo.SelectItem(currentGizmoItem);
             }
             else
             {
+                _targetSkeletonNode.ViewModel.SetSelectedBoneByIndex(-1);
                 _selectionGizmo.SelectItem(null);
             }
         }

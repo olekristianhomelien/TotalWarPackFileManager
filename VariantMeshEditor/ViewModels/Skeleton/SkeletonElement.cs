@@ -48,6 +48,7 @@ namespace VariantMeshEditor.ViewModels.Skeleton
         protected override void DrawNode(GraphicsDevice device, Matrix parentTransform, CommonShaderParameters commonShaderParameters)
         {
             SkeletonRenderer.SelectedBoneIndex = ViewModel.SelectedBone?.BoneIndex;
+            SkeletonRenderer.SkeletonScale = (float)ViewModel.SkeletonScale.Value;
             SkeletonRenderer.Draw(device, parentTransform, commonShaderParameters);
         }
     }

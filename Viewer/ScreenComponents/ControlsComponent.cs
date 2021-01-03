@@ -41,7 +41,7 @@ namespace Viewer.ScreenComponents
 
                 DrawText(7, $"Rotation Gizmo", "R");
                 DrawText(8, $"Translation Gizmo", "T");
-                DrawText(9, $"Toggle bone space", "Home");
+                //DrawText(9, $"Toggle bone space", "Home");
             }
             _spriteBatch.End();
         }

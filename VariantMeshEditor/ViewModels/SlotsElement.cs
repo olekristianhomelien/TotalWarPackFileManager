@@ -146,30 +146,13 @@ namespace VariantMeshEditor.ViewModels
 
                         var mesh = element.Children.First();
                         AddChild(mesh);
-
-                        //
-                        //mesh.Parent = null;
-                        //_rootElement.AddChild(mesh);
                     }
                 }
             }
             catch (Exception e)
             {
-                _logger.Here().Error($"Error loading new file - {e.ToString()}");
+                _logger.Here().Error($"Error loading new file - {e}");
             }
-
-            ////def_armoured_cold_one.variantmeshdefinition
-            ////brt_pegasus.variantmeshdefinition
-            //SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-            //var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
-            //element.CreateContent(_virtualWorld, _resourceLibary);
-            //
-            //var mesh = element.Children.First();
-            //mesh.Parent = null;
-            //_rootElement.AddChild(mesh);
-            //
-            //CreateMeshList();
-
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)

@@ -424,7 +424,8 @@ namespace Viewer.Gizmo
             if (_isActive)
             {
                 _lastIntersectionPosition = _intersectPosition;
-
+                var rotationMatrixLocal = Matrix.Identity;
+                var translationVectorLocal = Vector3.Zero;
                 if (WasButtonHeld(MouseButtons.Left) && ActiveAxis != GizmoAxis.None)
                 {
                     switch (ActiveMode)
@@ -540,7 +541,9 @@ namespace Viewer.Gizmo
                                 if (ActiveMode == GizmoMode.Translate)
                                 {
                                     // transform (local or world)
-                                    delta = Vector3.Transform(delta, _rotationMatrix);
+                                    var tempDelta = Vector3.Transform(delta, _rotationMatrix);
+                                    translationVectorLocal = Vector3.Transform(delta, SceneWorld);
+                                    delta = tempDelta;
                                     _translationDelta = delta;
                                 }
                                 else if (ActiveMode == GizmoMode.NonUniformScale || ActiveMode == GizmoMode.UniformScale)
@@ -582,20 +585,29 @@ namespace Viewer.Gizmo
                                 rot.Forward = SceneWorld.Forward;
                                 rot.Up = SceneWorld.Up;
                                 rot.Right = SceneWorld.Right;
+
+                                Matrix rot2 = Matrix.Identity;
+                                rot2.Forward = SceneWorld.Forward;
+                                rot2.Up = SceneWorld.Up;
+                                rot2.Right = SceneWorld.Right;
                                 //delta = 0;
                                 switch (ActiveAxis)
                                 {
                                     case GizmoAxis.X:
                                         rot *= Matrix.CreateFromAxisAngle(_rotationMatrix.Right, delta);
+                                        rot2 *= Matrix.CreateFromAxisAngle(SceneWorld.Right, delta);
                                         break;
                                     case GizmoAxis.Y:
                                         rot *= Matrix.CreateFromAxisAngle(_rotationMatrix.Up, delta);
+                                        rot2 *= Matrix.CreateFromAxisAngle(SceneWorld.Up, delta);
                                         break;
                                     case GizmoAxis.Z:
                                         rot *= Matrix.CreateFromAxisAngle(_rotationMatrix.Forward, delta);
+                                        rot2 *= Matrix.CreateFromAxisAngle(SceneWorld.Forward, delta);
                                         break;
                                 }
                                 _rotationDelta = rot;
+                                rotationMatrixLocal = rot2;
 
                                 #endregion
                             }
@@ -622,13 +634,13 @@ namespace Viewer.Gizmo
                     if (_translationDelta != Vector3.Zero)
                     {
                         foreach (var entity in Selection)
-                            OnTranslateEvent(entity, _translationDelta);
+                            OnTranslateEvent(entity, _translationDelta, translationVectorLocal);
                         _translationDelta = Vector3.Zero;
                     }
                     if (_rotationDelta != Matrix.Identity)
                     {
                         foreach (var entity in Selection)
-                            OnRotateEvent(entity, _rotationDelta);
+                            OnRotateEvent(entity, _rotationDelta, rotationMatrixLocal);
                         _rotationDelta = Matrix.Identity;
                     }
                     if (_scaleDelta != Vector3.Zero)
@@ -1463,16 +1475,16 @@ namespace Viewer.Gizmo
         public event TransformationEventHandler RotateEvent;
         public event TransformationEventHandler ScaleEvent;
 
-        private void OnTranslateEvent(ITransformable transformable, Vector3 delta)
+        private void OnTranslateEvent(ITransformable transformable, Vector3 delta, Vector3 delta2)
         {
             if (TranslateEvent != null)
-                TranslateEvent(transformable, new TransformationEventArgs(delta));
+                TranslateEvent(transformable, new TransformationEventArgs(delta, delta2));
         }
 
-        private void OnRotateEvent(ITransformable transformable, Matrix delta)
+        private void OnRotateEvent(ITransformable transformable, Matrix delta, Matrix deleta2)
         {
             if (RotateEvent != null)
-                RotateEvent(transformable, new TransformationEventArgs(delta));
+                RotateEvent(transformable, new TransformationEventArgs(delta, deleta2));
         }
 
         private void OnScaleEvent(ITransformable transformable, Vector3 delta)
@@ -1598,10 +1610,11 @@ namespace Viewer.Gizmo
     public class TransformationEventArgs
     {
         public ValueType Value;
-
-        public TransformationEventArgs(ValueType value)
+        public ValueType Value2;
+        public TransformationEventArgs(ValueType value, ValueType value2 = null)
         {
             Value = value;
+            Value2 = value2;
         }
     }
     public delegate void TransformationEventHandler(ITransformable transformable, TransformationEventArgs e);

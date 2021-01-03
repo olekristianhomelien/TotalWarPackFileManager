@@ -15,6 +15,7 @@ namespace Viewer.GraphicModels
         public Vector3 LineColour = new Vector3(0, 0, 0);
 
         public int? SelectedBoneIndex { get; set; }
+        public float SkeletonScale { get; set; }  = 1;
         public SkeletonRender(Effect shader, GameSkeleton skeleton) : base(null, shader)
         {
             _lineBox = new LineBox();
@@ -32,7 +33,7 @@ namespace Viewer.GraphicModels
                 if (parentIndex == -1)
                     continue;
 
-                Vector3 scale = Vector3.One;
+                float scale = SkeletonScale;
                 Vector3 drawColour = NodeColour;
                 if (SelectedBoneIndex.HasValue && SelectedBoneIndex.Value == i)
                 {

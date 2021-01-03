@@ -30,8 +30,8 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         public AnimationElement(FileSceneElement parent) : base(parent, "", "", "Animation")
         {
-            ApplyElementCheckboxVisability = Visibility.Collapsed;
             IsChecked = true;   // Triggers update and render
+            ApplyElementCheckboxVisability = Visibility.Collapsed;
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
