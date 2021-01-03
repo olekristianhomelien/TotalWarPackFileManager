@@ -1,6 +1,8 @@
-﻿using CommonDialogs;
+﻿using Common;
+using CommonDialogs;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Xna.Framework;
+using Serilog;
 using SharpDX.XAudio2;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,11 @@ namespace VariantMeshEditor.ViewModels
 {
     public class SlotsElement : FileSceneElement
     {
+        ILogger _logger = Logging.Create<SlotsElement>();
+
+        ResourceLibary _resourceLibary;
+        Scene3d _virtualWorld;
+
         public override FileSceneElementEnum Type => FileSceneElementEnum.Slots;
 
         public ICommand AddSlotCommand { get; set; }
@@ -30,14 +37,25 @@ namespace VariantMeshEditor.ViewModels
             AddSlotCommand = new RelayCommand(AddSlot);
         }
 
+        protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
+        {
+            _resourceLibary = resourceLibary;
+            _virtualWorld = virtualWorld;
+        }
+
         void AddSlot()
         {
-            Children.Add(new SlotElement(this, "new slot", ""));
+            _logger.Here().Information("Creating new slot");
+            var newSlot = new SlotElement(this, "new slot", "");
+            newSlot.CreateContent(_virtualWorld, _resourceLibary);
+            Children.Add(newSlot);
         }
     }
 
     public class SlotElement : FileSceneElement
     {
+        ILogger _logger = Logging.Create<SlotElement>();
+
         ResourceLibary _resourceLibary;
         Scene3d _virtualWorld;
         SkeletonElement _skeleton;
@@ -50,7 +68,8 @@ namespace VariantMeshEditor.ViewModels
         public override FileSceneElementEnum Type => FileSceneElementEnum.Slot;
 
         public ICommand PopulateAttachmentPointList { get; set; }
-        public ICommand DeleteSlot { get; set; }
+        public ICommand DeleteSlotCommand { get; set; }
+        public ICommand GotoSlotCommand { get; set; }
         public ICommand AddNewMeshCommand { get; set; }
 
         public ObservableCollection<string> PossibleAttachmentPoints { get; set; } = new ObservableCollection<string>();
@@ -63,19 +82,15 @@ namespace VariantMeshEditor.ViewModels
             SetDisplayName(AttachmentPoint);
 
             PopulateAttachmentPointList = new RelayCommand(OnPopulateAttachmentPointList);
-            DeleteSlot = new RelayCommand<SlotElement>(OnDeleteSlot);
+            DeleteSlotCommand = new RelayCommand(OnDeleteSlot);
+            GotoSlotCommand = new RelayCommand(OnGotoSlot);
             AddNewMeshCommand = new RelayCommand(OnAddMesh);
             OnPopulateAttachmentPointList();
-            
-            if (DisplayName.ToLower().Contains("stump"))
-            {
-                IsChecked = false;
-                IsExpanded = false;
-            }
+
+            var enableNodeAsDefault = !DisplayName.ToLower().Contains("stump");
+            IsChecked = enableNodeAsDefault;
+            IsExpanded = enableNodeAsDefault;
         }
-
-
-
 
         void OnPopulateAttachmentPointList()
         {
@@ -102,28 +117,45 @@ namespace VariantMeshEditor.ViewModels
                 PossibleAttachmentPoints.Add(item);
         }
 
-        void OnDeleteSlot(SlotElement slot)
+        void OnDeleteSlot()
         {
             Parent.Children.Remove(this);
         }
 
+        void OnGotoSlot()
+        {
+            var root = SceneElementHelper.GetRoot(this) as RootElement;
+            if (root != null)
+                root.SelectNode(this);
+        }
+
         void OnAddMesh()
         {
-            using (LoadedPackFileBrowser loadedPackFileBrowser = new LoadedPackFileBrowser(_resourceLibary.PackfileContent.First()))
+            try
             {
-                var res = loadedPackFileBrowser.ShowDialog();
-                if (res == System.Windows.Forms.DialogResult.OK)
+                using (LoadedPackFileBrowser loadedPackFileBrowser = new LoadedPackFileBrowser(_resourceLibary.PackfileContent.First()))
                 {
+                    loadedPackFileBrowser.OnlyShowModelExtentions();
+                    var res = loadedPackFileBrowser.ShowDialog();
+                    if (res == System.Windows.Forms.DialogResult.OK)
+                    {
+                        var selectedFile = loadedPackFileBrowser.GetSelecteFile();
+                        SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+                        var element = sceneLoader.Load(selectedFile, new RootElement(null));
+                        element.CreateContent(_virtualWorld, _resourceLibary);
 
-                    var selectedFile = loadedPackFileBrowser.GetSelecteFile();
-                    SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-                    //var element = sceneLoader.Load("variantmeshes\\variantmeshdefinitions\\brt_royal_pegasus.variantmeshdefinition", new RootElement());
-                    //element.CreateContent(_virtualWorld, _resourceLibary);
+                        var mesh = element.Children.First();
+                        AddChild(mesh);
 
-                    //var mesh = element.Children.First();
-                    //mesh.Parent = null;
-                    //_rootElement.AddChild(mesh);
+                        //
+                        //mesh.Parent = null;
+                        //_rootElement.AddChild(mesh);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Here().Error($"Error loading new file - {e.ToString()}");
             }
 
             ////def_armoured_cold_one.variantmeshdefinition

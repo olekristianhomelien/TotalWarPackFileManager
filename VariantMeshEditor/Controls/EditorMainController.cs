@@ -110,7 +110,7 @@ namespace VariantMeshEditor.Controls
                 isFirstTime = false;
             }
 
-            var rootNode = new RootElement();
+            var rootNode = new RootElement(RootViewModel);
             rootNode.CreateContent(_scene3d, _resourceLibary);
             if (isFirstTime)
                 PaladinAndDragon(rootNode);

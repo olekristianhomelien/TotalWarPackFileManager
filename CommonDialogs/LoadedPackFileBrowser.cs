@@ -24,6 +24,11 @@ namespace CommonDialogs
             packedTreeView.SetExtentionFilter(filters);
         }
 
+        public void OnlyShowModelExtentions()
+        { 
+            SetExtentionFilter(new List<string>() { "rigid_model_v2", "wsmodel", "variantmeshdefinition" });
+        }
+
         public PackedFile GetSelecteFile() 
         {
             return packedTreeView.GetSelectedNodeContent() as PackedFile;

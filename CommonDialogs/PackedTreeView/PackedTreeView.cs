@@ -264,7 +264,20 @@ namespace PackFileManager.PackedTreeView
         }
 
         public void SetExtentionFilter(IEnumerable<string> filters)
-        { 
+        {
+            foreach (var filter in filters)
+            {
+                for (int i = 0; i < _extentionDropDown.Items.Count; i++)
+                {
+                    var extentionItem = _extentionDropDown.Items[i];
+                    if (filter.ToLower() == extentionItem?.ToString().ToLower())
+                    {
+                        _extentionDropDown.SetItemCheckState(i, CheckState.Checked);
+                    }
+
+                }
+            
+            }
         }
 
 

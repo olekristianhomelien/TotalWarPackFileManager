@@ -22,6 +22,7 @@
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="75"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Slot:" Margin="0,0,5,0" VerticalAlignment="Center"/>
@@ -38,7 +39,8 @@
                             </i:Interaction.Triggers>
                         </ComboBox>
 
-                        <Button Grid.Column="4" Content="Remove" VerticalAlignment="Center" Margin="0,0,5,0" Command="{Binding DeleteSlot}"/>
+                        <Button Grid.Column="4" Content="Goto" VerticalAlignment="Center" Margin="0,0,5,0" Command="{Binding GotoSlotCommand}"/>
+                        <Button Grid.Column="5" Content="Remove" VerticalAlignment="Center" Margin="0,0,5,0" Command="{Binding DeleteSlotCommand}"/>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

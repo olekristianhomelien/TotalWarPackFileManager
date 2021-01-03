@@ -19,6 +19,9 @@ namespace VariantMeshEditor.ViewModels
     {
         ILogger _logger = Logging.Create<RootElement>();
 
+
+        BaseViewModel _baseViewModel;
+
         public override FileSceneElementEnum Type => FileSceneElementEnum.Root;
 
         Scene3d _virtualWorld;
@@ -27,19 +30,24 @@ namespace VariantMeshEditor.ViewModels
         public ICommand LoadNewModelCommand { get; set; }
         public ICommand RemoveModelCommand { get; set; }
 
-        public RootElement() : base(null, "", "", "Root")
+        public RootElement(BaseViewModel baseViewModel) : base(null, "", "", "Root")
         {
             IsChecked = true;
+            _baseViewModel = baseViewModel;
 
             LoadNewModelCommand = new RelayCommand(OnLoadNewModel);
             RemoveModelCommand = new RelayCommand<FileSceneElement>(OnRemoveModel);
+        }
+
+        public void SelectNode(FileSceneElement node)
+        {
+            _baseViewModel.SceneGraph.SelectedNode = node;
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
        {
             _virtualWorld = virtualWorld;
             _resourceLibary = resourceLibary;
-
         }
 
         void OnLoadNewModel()

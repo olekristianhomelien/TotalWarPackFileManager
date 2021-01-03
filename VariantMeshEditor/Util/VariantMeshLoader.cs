@@ -87,7 +87,7 @@ namespace VariantMeshEditor.Util
             {
                 var slotElement = new SlotElement(slotsElement, slot.Name, slot.AttachPoint);
                 slotsElement.Children.Add(slotElement);
-                slotElement.IsChecked = true;
+                //slotElement.IsChecked = true;
 
                 foreach (var mesh in slot.VariantMeshes)
                 {
