@@ -15,13 +15,13 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 {
     public class RigidModelElement : FileSceneElement
     {
-        public Rmv2RigidModel Model { get; set; }
+        public RmvRigidModel Model { get; set; }
         public ObservableCollection<LodHeaderViewModel> Lods { get; set; } = new ObservableCollection<LodHeaderViewModel>();
 
         public override FileSceneElementEnum Type => FileSceneElementEnum.RigidModel;
 
 
-        public RigidModelElement(FileSceneElement parent, Rmv2RigidModel model, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
+        public RigidModelElement(FileSceneElement parent, RmvRigidModel model, string fullPath) : base(parent, Path.GetFileNameWithoutExtension(fullPath), fullPath, "")
         {
             Model = model;
             DisplayName = $"RigidModel - {FileName}";
@@ -42,14 +42,15 @@ namespace VariantMeshEditor.ViewModels.RigidModel
             var topNode = SceneElementHelper.GetTopNode(this);
             var parentAnimationNode = SceneElementHelper.GetFirstChild<AnimationElement>(topNode);
 
-            for (int lodIndex = 0; lodIndex < Model.LodHeaders.Count; lodIndex++)
+            for (int lodIndex = 0; lodIndex < Model.Header.LodCount; lodIndex++)
             {
-                var currentLoad = new LodHeaderViewModel(Model.LodHeaders[lodIndex], $"Lod {lodIndex + 1}", lodIndex == 0);
-                
-                foreach (var lodModel in Model.LodHeaders[lodIndex].LodModels)
-                {             
+                var currentLod = new LodHeaderViewModel(Model.LodHeaders[lodIndex], $"Lod {lodIndex + 1}", lodIndex == 0);
+
+                for (var modelIndex = 0; modelIndex < Model.LodHeaders[lodIndex].MeshCount; modelIndex++)
+                {
+                    var lodMesh = Model.MeshList[lodIndex][modelIndex];
                     Rmv2RenderModel meshModel = new Rmv2RenderModel();
-                    meshModel.Create(parentAnimationNode?.AnimationPlayer, virtualWorld.GraphicsDevice, lodModel);
+                    meshModel.Create(parentAnimationNode?.AnimationPlayer, virtualWorld.GraphicsDevice, lodMesh);
 
                     TextureMeshRenderItem meshRenderItem = new TextureMeshRenderItem(meshModel, resourceLibary.GetEffect(ShaderTypes.Phazer), resourceLibary)
                     {
@@ -57,11 +58,10 @@ namespace VariantMeshEditor.ViewModels.RigidModel
                         Textures = meshModel.ResolveTextures(resourceLibary, virtualWorld.GraphicsDevice)
                     };
 
-                    var model = new ModelViewModel(lodModel, meshRenderItem, virtualWorld, resourceLibary);
-                    currentLoad.Models.Add(model);
+                    var model = new ModelViewModel(lodMesh, meshRenderItem, virtualWorld, resourceLibary);
+                    currentLod.Models.Add(model);
                 }
-
-                Lods.Add(currentLoad);
+                Lods.Add(currentLod);
             }
         }
 

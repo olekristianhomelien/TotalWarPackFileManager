@@ -24,7 +24,7 @@ namespace Filetypes.RigidModel
         Cinematic = 4
     };
 
-    public class Transformation
+    /*public class Transformation
     {
         public FileVector3 Pivot { get; set; } = new FileVector3();
         public FileMatrix3x4[] Matrices { get; set; } = new FileMatrix3x4[] { new FileMatrix3x4(), new FileMatrix3x4(), new FileMatrix3x4() };
@@ -66,40 +66,6 @@ namespace Filetypes.RigidModel
 
     }
 
-    public class FileMatrix3x4
-    {
-        public FileVector4[] Matrix { get; set; } = new FileVector4[3] { new FileVector4(), new FileVector4(), new FileVector4() };
-
-        public bool IsIdentity()
-        {
-            var row0 = Matrix[0];
-            if (row0.X == 1 && row0.Y == 0 && row0.Z == 0 && row0.W == 0)
-            {
-                var row1 = Matrix[1];
-                if (row1.X == 0 && row1.Y == 1 && row1.Z == 0 && row1.W == 0)
-                {
-                    var row2 = Matrix[2];
-                    if (row2.X == 0 && row2.Y == 0 && row2.Z == 1 && row2.W == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public string GetAsDebugStr()
-        {
-            var str = "";
-            str += $"{Matrix[0].X},{Matrix[0].Y},{Matrix[0].Z},{Matrix[0].W} ";
-            str += $"{Matrix[1].X},{Matrix[1].Y},{Matrix[1].Z},{Matrix[1].W} ";
-            str += $"{Matrix[2].X},{Matrix[2].Y},{Matrix[2].Z},{Matrix[2].W} ";
-            return str;
-        }
-
-
-    }
 
     public class Rmv2LodModel
     {
@@ -410,6 +376,42 @@ namespace Filetypes.RigidModel
             vector.Z = ByteToNormal(chunk.ReadByte());
             return vector;
         }
+    }*/
+
+
+    public class FileMatrix3x4
+    {
+        public FileVector4[] Matrix { get; set; } = new FileVector4[3] { new FileVector4(), new FileVector4(), new FileVector4() };
+
+        public bool IsIdentity()
+        {
+            var row0 = Matrix[0];
+            if (row0.X == 1 && row0.Y == 0 && row0.Z == 0 && row0.W == 0)
+            {
+                var row1 = Matrix[1];
+                if (row1.X == 0 && row1.Y == 1 && row1.Z == 0 && row1.W == 0)
+                {
+                    var row2 = Matrix[2];
+                    if (row2.X == 0 && row2.Y == 0 && row2.Z == 1 && row2.W == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public string GetAsDebugStr()
+        {
+            var str = "";
+            str += $"{Matrix[0].X},{Matrix[0].Y},{Matrix[0].Z},{Matrix[0].W} ";
+            str += $"{Matrix[1].X},{Matrix[1].Y},{Matrix[1].Z},{Matrix[1].W} ";
+            str += $"{Matrix[2].X},{Matrix[2].Y},{Matrix[2].Z},{Matrix[2].W} ";
+            return str;
+        }
+
+
     }
 
 
@@ -458,7 +460,7 @@ namespace Filetypes.RigidModel
         }
     }
 
-    public class Vertex
+    /*public class Vertex
     {
         public class BoneInfo
         {
@@ -488,5 +490,5 @@ namespace Filetypes.RigidModel
         public float Uv1 { get; set; }
 
         public List<BoneInfo> BoneInfos { get; set; } = new List<BoneInfo>();
-    }
+    }*/
 }

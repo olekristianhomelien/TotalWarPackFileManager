@@ -9,68 +9,48 @@ namespace Viewer.GraphicModels
 {
     public class Rmv2RenderModel : MeshModel
     {
-        Rmv2LodModel _model;
+        RmvSubModel _model;
         VertexPositionNormalTextureCustom[] _bufferArray;
         public int WeightCount { get; set; } = 0;
 
-        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, Rmv2LodModel lodModel)
+        public void Create(AnimationPlayer animationPlayer, GraphicsDevice device, RmvSubModel lodModel)
         {
             _animationPlayer = animationPlayer;
             _model = lodModel;
-            
-            _bufferArray = new VertexPositionNormalTextureCustom[_model.VertexArray.Length];
-            for (int i = 0; i < _model.VertexArray.Length; i++)
+            _bufferArray = new VertexPositionNormalTextureCustom[_model.Mesh._vertexList.Length];
+            for (int i = 0; i < _model.Mesh._vertexList.Length; i++)
             {
-                var vertex = _model.VertexArray[i];
-                _bufferArray[i].Position = new Vector4(vertex.Position.X, vertex.Position.Y, vertex.Position.Z, 1);
+                var vertex = _model.Mesh._vertexList[i];
+                _bufferArray[i].Position = new Vector4(vertex.Postition.X, vertex.Postition.Y, vertex.Postition.Z, 1);
 
                 _bufferArray[i].Normal = new Vector3(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);
                 _bufferArray[i].BiNormal = new Vector3(vertex.BiNormal.X, vertex.BiNormal.Y, vertex.BiNormal.Z);
-                _bufferArray[i].Tangent = new Vector3(vertex.Tanget.X, vertex.Tanget.Y, vertex.Tanget.Z);
-                _bufferArray[i].TextureCoordinate = new Vector2(vertex.Uv0, vertex.Uv1);
+                _bufferArray[i].Tangent = new Vector3(vertex.Tangent.X, vertex.Tangent.Y, vertex.Tangent.Z);
+                _bufferArray[i].TextureCoordinate = new Vector2(vertex.Uv.X, vertex.Uv.Y);
 
                 _bufferArray[i].BlendIndices = Vector4.Zero;
                 _bufferArray[i].BlendWeights = Vector4.Zero;
                 
 
-                if (_model.VertexFormat == VertexFormat.Cinematic)
+                if (_model.Header.VertextType == VertexFormat.Cinematic)
                 {
-                    int b0 = vertex.BoneInfos[0].BoneIndex;
-                    int b1 = vertex.BoneInfos[1].BoneIndex;
-                    int b2 = vertex.BoneInfos[2].BoneIndex;
-                    int b3 = vertex.BoneInfos[3].BoneIndex;
+                    _bufferArray[i].BlendIndices.X = vertex.BoneIndex[0];
+                    _bufferArray[i].BlendIndices.Y = vertex.BoneIndex[1];
+                    _bufferArray[i].BlendIndices.Z = vertex.BoneIndex[2];
+                    _bufferArray[i].BlendIndices.W = vertex.BoneIndex[3];
 
-                    _bufferArray[i].BlendIndices.X = b0;
-                    _bufferArray[i].BlendIndices.Y = b1;
-                    _bufferArray[i].BlendIndices.Z = b2;
-                    _bufferArray[i].BlendIndices.W = b3;
-
-                    float w1 = vertex.BoneInfos[0].BoneWeight;
-                    float w2 = vertex.BoneInfos[1].BoneWeight;
-                    float w3 = vertex.BoneInfos[2].BoneWeight;
-                    float w4 = vertex.BoneInfos[3].BoneWeight;
-
-                    _bufferArray[i].BlendWeights.X = w1;
-                    _bufferArray[i].BlendWeights.Y = w2;
-                    _bufferArray[i].BlendWeights.Z = w3;
-                    _bufferArray[i].BlendWeights.W = w4;
+     
+                    _bufferArray[i].BlendWeights.X = vertex.BoneWeight[0];
+                    _bufferArray[i].BlendWeights.Y = vertex.BoneWeight[1];
+                    _bufferArray[i].BlendWeights.Z = vertex.BoneWeight[2];
+                    _bufferArray[i].BlendWeights.W = vertex.BoneWeight[3];
 
                     WeightCount = 4;
                 }
-                if (_model.VertexFormat == VertexFormat.Weighted)
+                if (_model.Header.VertextType == VertexFormat.Weighted)
                 {
-                    int b0 = vertex.BoneInfos[0].BoneIndex;
-
-
-                    _bufferArray[i].BlendIndices.X = b0;
-
-
-                    float w1 = vertex.BoneInfos[0].BoneWeight;
-
-
-                    _bufferArray[i].BlendWeights.X = w1;
-
-
+                    _bufferArray[i].BlendIndices.X = vertex.BoneIndex[0];
+                    _bufferArray[i].BlendWeights.X = vertex.BoneWeight[0];
                     WeightCount = 1;
                 }
                 else
@@ -79,16 +59,16 @@ namespace Viewer.GraphicModels
                    
             }
 
-            Pivot = new Vector3(_model.Transformation.Pivot.X, _model.Transformation.Pivot.Y, _model.Transformation.Pivot.Z);
-
-            Create(animationPlayer, device, _bufferArray, _model.IndicesBuffer);
+            Pivot = new Vector3(_model.Header.Transform.Pivot.X, _model.Header.Transform.Pivot.Y, _model.Header.Transform.Pivot.Z);
+    
+            Create(animationPlayer, device, _bufferArray, _model.Mesh._indexList);
         }
 
         public Dictionary<TexureType, Texture2D> ResolveTextures(ResourceLibary textureLibary, GraphicsDevice device)
         {
             var textures = new Dictionary<TexureType, Texture2D>();
             foreach (var material in _model.Textures)
-                textures[material.Type] = textureLibary.LoadTexture(material.Name, device);
+                textures[material.TexureType] = textureLibary.LoadTexture(material.Path, device);
             return textures;
         }
 

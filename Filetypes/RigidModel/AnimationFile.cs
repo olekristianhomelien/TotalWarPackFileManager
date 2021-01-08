@@ -269,6 +269,11 @@ namespace Filetypes.RigidModel
                         writer.Write((int)3);   // Frame count, why 3 when empty?
                     }
 
+
+                    var dir = Path.GetDirectoryName(path);
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+         
                     using (var fileStream = File.Create(path))
                     {
                         memoryStream.WriteTo(fileStream);

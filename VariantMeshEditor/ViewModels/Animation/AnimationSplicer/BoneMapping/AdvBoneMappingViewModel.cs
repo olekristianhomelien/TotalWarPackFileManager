@@ -20,6 +20,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
     {
         None,
         Direct,
+        Direct_smart,
         AttachmentPoint
         //Chain,
         //Ik
@@ -112,7 +113,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         public AdvBoneMappingBone SelectedOriginalBone
         {
             get { return _selectedOriginalBone; }
-            set { OnOrigianlBoneDeSelected(_selectedOriginalBone); SetAndNotify(ref _selectedOriginalBone, value);  OnOrigianlBoneSelected(SelectedOriginalBone); }
+            set 
+            {
+                if (_selectedOriginalBone == value)
+                    return;
+                OnOrigianlBoneDeSelected(_selectedOriginalBone); 
+                SetAndNotify(ref _selectedOriginalBone, value);  
+                OnOrigianlBoneSelected(SelectedOriginalBone); }
         }
 
 
@@ -120,7 +127,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         public AdvBoneMappingBone SelectedOtherBone
         {
             get { return _selectedOtherBone; }
-            set { SetAndNotify(ref _selectedOtherBone, value); OnOtherBoneSelected(SelectedOtherBone); }
+            set 
+            {
+                if (_selectedOtherBone == value)
+                    return;
+                SetAndNotify(ref _selectedOtherBone, value); OnOtherBoneSelected(SelectedOtherBone); 
+            }
         }
 
         string _originalBoneFilterText = string.Empty;
@@ -153,13 +165,34 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             }
         }
 
-       
-
-        private void SelectedSourceBone_OnBoneMappingTypeChanged(BoneMappingType newMatchingType)
+        private void SelectedSourceBone_OnBoneMappingTypeChanged(object sender, BoneMappingType newValue)
         {
-            if (newMatchingType == BoneMappingType.Direct)
+            var bone = sender as AdvBoneMappingBone;
+            if (bone != null)
+            {
+                var index = -1;
+                var name = string.Empty;
+                if (bone.Settings != null)
+                {
+                    index = bone.Settings.MappingBoneId;
+                    name = bone.Settings.MappingBoneName;
+                }
+
+                if (newValue == BoneMappingType.None)
+                    bone.ClearMapping();
+                else if (newValue == BoneMappingType.Direct)
+                    bone.CreateDirectMapping(name, index);
+                else if (newValue == BoneMappingType.Direct_smart)
+                    bone.CreateDirectSmartMapping(name, index);
+                else if (newValue == BoneMappingType.AttachmentPoint)
+                    bone.CreateAttachmentPointMapping(name, index);
+                else
+                    throw new Exception("Unkown bonemapping type");
+            }
+
+            if (newValue == BoneMappingType.Direct_smart || newValue == BoneMappingType.Direct)
                 SetOtherBonesList(CurrentOtherBoneListValue.Other, null);
-            else if (newMatchingType == BoneMappingType.AttachmentPoint)
+            else if (newValue == BoneMappingType.AttachmentPoint)
                 SetOtherBonesList(CurrentOtherBoneListValue.Original, null);
             else
                 SetOtherBonesList(CurrentOtherBoneListValue.None, null);
@@ -186,7 +219,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             if(!string.IsNullOrWhiteSpace(OtherBoneFilterText))
                 OtherBoneFilterText = "";
 
-            if(selectedSourceBone.MappingType == BoneMappingType.Direct)
+            if(selectedSourceBone.MappingType == BoneMappingType.Direct_smart)
                 SetOtherBonesList(CurrentOtherBoneListValue.Other, selectedSourceBone);
             else if (selectedSourceBone.MappingType == BoneMappingType.AttachmentPoint)
                 SetOtherBonesList(CurrentOtherBoneListValue.Original, selectedSourceBone);
@@ -231,14 +264,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             if (SelectedOriginalBone == null)
                 return;
 
-            if (SelectedOriginalBone.MappingType  == BoneMappingType.None 
-                || SelectedOriginalBone.MappingType == BoneMappingType.Direct)
+            if (SelectedOriginalBone.MappingType == BoneMappingType.None)
             {
-                SelectedOriginalBone.CreateDirectMapping(selectedTargetBone);
+                SelectedOriginalBone.CreateDirectMapping(selectedTargetBone.Settings.MappingBoneName, selectedTargetBone.Settings.MappingBoneId);
             }
-            else if(SelectedOriginalBone.MappingType == BoneMappingType.AttachmentPoint)
-                SelectedOriginalBone.CreateAttachmentPointMapping(selectedTargetBone);
-
+            else
+            {
+                SelectedOriginalBone.Settings.MappingBoneName = selectedTargetBone.BoneName;
+                SelectedOriginalBone.Settings.MappingBoneId = selectedTargetBone.BoneIndex;
+                SelectedOriginalBone.Settings.UpdateDisplayString();
+            }
             _otherViewModel.SetSelectedBoneByIndex(selectedTargetBone.BoneIndex);
         }
     }

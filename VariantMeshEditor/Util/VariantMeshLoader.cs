@@ -106,8 +106,8 @@ namespace VariantMeshEditor.Util
 
                 GetAllOfType<RigidModelElement>(parent, ref rigidModels);
                 var skeletons = rigidModels
-                    .Where(x => !string.IsNullOrEmpty(x.Model.BaseSkeleton))
-                    .Select(x => x.Model.BaseSkeleton)
+                    .Where(x => !string.IsNullOrEmpty(x.Model.Header.SkeletonName))
+                    .Select(x => x.Model.Header.SkeletonName)
                     .Distinct()
                     .ToList();
 
@@ -130,7 +130,7 @@ namespace VariantMeshEditor.Util
 
         void LoadRigidMesh(PackedFile file, ref FileSceneElement parent)
         {
-            var model3d = Rmv2RigidModel.Create(file);
+            var model3d = new RmvRigidModel(file.Data, file.FullPath);
             var model = new RigidModelElement(parent, model3d, file.FullPath);
             if (parent == null)
             {

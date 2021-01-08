@@ -73,8 +73,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
         {
             _logger.Here().Information($"Selecting a new skeleton: {selectedSkeleton}");
 
-   
-            AnimationsForCurrentSkeleton.Clear();
+            var animationList = new ObservableCollection<PackedFile>();
             SelectedAnimation = null;
             CurrentSkeletonName = "";
             SelectedGameSkeleton = null;
@@ -87,11 +86,13 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 // Find all the animations for this skeleton
                 var animations = _skeletonAnimationLookUpHelper.GetAnimationsForSkeleton(skeletonFile.Header.SkeletonName);
                 foreach (var animation in animations)
-                    AnimationsForCurrentSkeleton.Add(animation);
+                    animationList.Add(animation);
 
                 CurrentSkeletonName = skeletonFile.Header.SkeletonName;
                 SelectedGameSkeleton = new GameSkeleton(skeletonFile, null);
             }
+
+            AnimationsForCurrentSkeleton = animationList;
 
             SelectedSkeletonChanged?.Invoke(this);
             _logger.Here().Information("Selecting a new skeleton - Done");
@@ -109,6 +110,11 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             {
                 var anim = AnimationFile.Create(selectedAnimation);
                 SelectedAnimationClip = new AnimationClip(anim);
+
+
+               //var back = SelectedAnimationClip.ConvertToFileFormat(SelectedGameSkeleton);
+               //
+               //AnimationFile.Write(back, $"c:\temp\an2.test");
             }
 
             SelectedAnimationChanged?.Invoke(selectedAnimation);

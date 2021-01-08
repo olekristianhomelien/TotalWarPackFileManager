@@ -95,17 +95,15 @@ namespace VariantMeshEditor.Util
         {
             try
             {
-                var model3d = Rmv2RigidModel.Create(file);
+                var model3d = new RmvRigidModel(file.Data, file.FullPath);
                 if (model3d == null)
                     return (false, "");
 
-                foreach (var lod in model3d.LodHeaders)
+                for (int lodIndex = 0; lodIndex < model3d.Header.LodCount; lodIndex++)
                 {
-                    int modelId = 0;
-                    foreach (var model in lod.LodModels)
+                    for (int meshIndex = 0; meshIndex  < model3d.LodHeaders[lodIndex].MeshCount; meshIndex++)
                     {
-                        Serialize(stream, model, file.FullPath, modelId, (int)lod.LodLevel);
-                        modelId++;
+                        //Serialize(stream, model, file.FullPath, meshIndex, (int)lod.LodLevel);
                     }
                 }
 
@@ -176,7 +174,7 @@ namespace VariantMeshEditor.Util
             WriteNewLine(fileStream);
         }
 
-        void Serialize(FileStream fileStream, Rmv2LodModel model, string fillPath, int groupId, int lodLvl)
+       /* void Serialize(FileStream fileStream, Rmv2LodModel model, string fillPath, int groupId, int lodLvl)
         {
             WriteString(fileStream, fillPath);                                              //WriteString(fileStream, "Path");
             WriteString(fileStream, model.ModelName);                                       //WriteString(fileStream, "ModelName");
@@ -235,7 +233,7 @@ namespace VariantMeshEditor.Util
             WriteString(fileStream, model.Flag_alwaysOne.ToString());               //WriteString(fileStream, "Flag_alwaysOne");
 
             WriteNewLine(fileStream);
-        }
+        }*/
         #endregion
     }
 

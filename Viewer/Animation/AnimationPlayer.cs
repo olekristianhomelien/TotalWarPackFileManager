@@ -122,9 +122,7 @@ namespace Viewer.Animation
         float GetAnimationLengthMs()
         {
             if (_animationClips != null && _animationClips.Any())
-            {
                 return _animationClips[0].DynamicFrames.Count() * (1f / 20f) * 1000;
-            }
             return 0;
         }
 

@@ -84,13 +84,25 @@
     <Compile Include="PackedFileEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RigidModel\AnimationFile.cs" />
-    <Compile Include="RigidModel\BoundingBox.cs" />
-    <Compile Include="RigidModel\Rmv2RigidModel.cs" />
+    <Compile Include="RigidModel\RmvMesh.cs" />
+    <Compile Include="RigidModel\LodHeader\RmvLodHeader.cs" />
+    <Compile Include="RigidModel\LodHeader\Rmv2LodHeader_V6.cs" />
+    <Compile Include="RigidModel\LodHeader\Rmv2LodHeader_V7.cs" />
+    <Compile Include="RigidModel\RmvRigidModel.cs" />
     <Compile Include="RigidModel\GroupTypeEnum.cs" />
-    <Compile Include="RigidModel\LodHeader.cs" />
-    <Compile Include="RigidModel\Rmv2LodModel.cs" />
-    <Compile Include="RigidModel\RigidModelAttachmentPoint.cs" />
-    <Compile Include="RigidModel\RigidModelTexture.cs" />
+    <Compile Include="RigidModel\Transforms\RmvMatrix3x4.cs" />
+    <Compile Include="RigidModel\Transforms\RmvTransform.cs" />
+    <Compile Include="RigidModel\Transforms\RmvVector2.cs" />
+    <Compile Include="RigidModel\Transforms\RmvVector3.cs" />
+    <Compile Include="RigidModel\Transforms\RmvVector4.cs" />
+    <Compile Include="RigidModel\Transforms\RvmBoundingBox.cs" />
+    <Compile Include="RigidModel\Vertex\BaseVertex.cs" />
+    <Compile Include="RigidModel\Vertex\CinematicVertex.cs" />
+    <Compile Include="RigidModel\Vertex\DefaultVertex.cs" />
+    <Compile Include="RigidModel\Vertex\WeightedVertex.cs" />
+    <Compile Include="RigidModel\zz_old_Rmv2LodModel.cs" />
+    <Compile Include="RigidModel\RmvAttachmentPoint.cs" />
+    <Compile Include="RigidModel\RmvTexture.cs" />
     <Compile Include="RigidModel\VariantMeshDefinition.cs" />
     <Compile Include="UnitVariant\UnitVariantFile.cs" />
     <Compile Include="UnitVariant\UnitVariantObject.cs" />
@@ -125,4 +137,5 @@
       <Version>19.0.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
 </Project>

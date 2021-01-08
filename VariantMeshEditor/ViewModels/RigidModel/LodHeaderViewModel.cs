@@ -1,5 +1,6 @@
 ﻿using CommonDialogs.Common;
 using Filetypes.RigidModel;
+using Filetypes.RigidModel.LodHeader;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,14 +12,14 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 {
     public class LodHeaderViewModel : NotifyPropertyChangedImpl, IDisposable
     {
-        public LodHeaderViewModel(LodHeader header, string name, bool isVisible)
+        public LodHeaderViewModel(RmvLodHeader header, string name, bool isVisible)
         {
             LodHeader = header;
             LodName = name;
             IsVisible = isVisible;
         }
 
-        public LodHeader LodHeader { get; private set; }
+        public RmvLodHeader LodHeader { get; private set; }
         public string LodName { get; private set; }
 
 

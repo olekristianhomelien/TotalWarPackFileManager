@@ -72,10 +72,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is DirectAdvBoneMappingBoneSettings))
+            if (!(value is DirectSmartAdvBoneMappingBoneSettings))
                 return false;
 
-            var settings = value as DirectAdvBoneMappingBoneSettings;
+            var settings = value as DirectSmartAdvBoneMappingBoneSettings;
 
             return settings?.HasMapping; 
         }

@@ -121,8 +121,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 
             var ob = jo.ToObject<AdvBoneMappingBoneSettings>();
             AdvBoneMappingBoneSettings item;
-            if (ob.BoneMappingForSerialization == BoneMappingType.Direct)
-                item = new DirectAdvBoneMappingBoneSettings();
+            if (ob.BoneMappingForSerialization == BoneMappingType.Direct_smart)
+                item = new DirectSmartAdvBoneMappingBoneSettings();
             else if (ob.BoneMappingForSerialization == BoneMappingType.AttachmentPoint)
                 item = new AttachmentPointAdvBoneMappingBoneSettings();
             else

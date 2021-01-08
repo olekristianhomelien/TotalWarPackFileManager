@@ -21,7 +21,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
         // Actual data
         // ------------------------
-        Rmv2LodModel LodModelInstance { get; set; }
+        RmvSubModel LodModelInstance { get; set; }
         public TextureMeshRenderItem RenderInstance { get; set; }
 
         // Commands
@@ -35,7 +35,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         // ------------------------
 
 
-        public GroupTypeEnum MaterialId { get { return LodModelInstance.MaterialId; } }
+        public GroupTypeEnum MaterialId { get { return LodModelInstance.Header.MaterialId; } }
 
         bool _renderBB = false;
         public bool RenderBoundngBox
@@ -51,65 +51,76 @@ namespace VariantMeshEditor.ViewModels.RigidModel
         public FileMatrix3x4ViewData[] TransformMatrix { get { return _transformMatrix; } }
 
 
-        public bool TransformHasPivot { get { return !LodModelInstance.Transformation.IsIdentityPivot(); } }
-        public bool TransformHasIdentityMatrices { get { return LodModelInstance.Transformation.IsIdentityMatrices(); } }
+        public bool TransformHasPivot { get { return !LodModelInstance.Header.Transform.IsIdentityPivot(); } }
+        public bool TransformHasIdentityMatrices { get { return LodModelInstance.Header.Transform.IsIdentityMatrices(); } }
 
+        public VertexFormat VertexFormat { get { return LodModelInstance.Header.VertextType; } }
 
+        public int VertexCount { get { return (int)LodModelInstance.Header.VertexCount; } }
+        public int IndexCount { get { return (int)LodModelInstance.Header.FaceCount; } }
 
-
-
-        public Dictionary<TexureType, string> TextureTest { get; set; } = new Dictionary<TexureType, string>();
-
-
-        public VertexFormat VertexFormat { get { return LodModelInstance.VertexFormat; } }
-
-        public int VertexCount { get { return (int)LodModelInstance.VertexCount; } }
-        public int IndexCount { get { return (int)LodModelInstance.FaceCount; } }
-
-        ObservableCollection<RigidModelAttachmentPoint> _attachmentPoints;
-        public ObservableCollection<RigidModelAttachmentPoint> AttachmentPoints { get { return _attachmentPoints; } set { SetAndNotify(ref _attachmentPoints, value); } }
+        ObservableCollection<RmvAttachmentPoint> _attachmentPoints;
+        public ObservableCollection<RmvAttachmentPoint> AttachmentPoints { get { return _attachmentPoints; } set { SetAndNotify(ref _attachmentPoints, value); } }
 
 
         public List<AlphaMode> PossibleAlphaModes { get { return new List<AlphaMode> { AlphaMode.Alpha_Blend, AlphaMode.Alpha_Test, AlphaMode.Opaque }; } }
-        public AlphaMode SelectedAlphaMode { get { return LodModelInstance.AlphaMode; } set { LodModelInstance.AlphaMode = value; RenderInstance.AlphaMode = (int)value; NotifyPropertyChanged();  } }
+        public AlphaMode SelectedAlphaMode 
+        { 
+            get { return LodModelInstance.Mesh.AlphaSettings.Mode; } 
+            set 
+            {
+                var settings = LodModelInstance.Mesh.AlphaSettings;
+                settings.Mode = value; RenderInstance.AlphaMode = (int)value; 
+                NotifyPropertyChanged();  
+            } 
+        }
 
-        public string ShaderName { get { return LodModelInstance.ShaderName; } }
+        public string ShaderName { get { return LodModelInstance.Header.ShaderParams.ShaderName; } }
 
-        public string TextureDirectory { get { return LodModelInstance.TextureDirectory; } set { LodModelInstance.TextureDirectory = value; NotifyPropertyChanged(); } }
+        public string TextureDirectory 
+        { 
+            get { return LodModelInstance.Header.TextureDirectory; } 
+            set 
+            {
+                var item = LodModelInstance.Header;
+                item.TextureDirectory = value; 
+                NotifyPropertyChanged(); 
+            } 
+        }
 
 
         public Dictionary<TexureType, FileTextureViewModel> Textures { get; set; } = new Dictionary<TexureType, FileTextureViewModel>();
 
-        public string ModelName { get { return LodModelInstance.ModelName; } }
+        public string ModelName { get { return LodModelInstance.Header.ModelName; } }
 
 
         bool _isVisible = true;
         public bool IsVisible { get { return _isVisible; } set { SetAndNotify(ref _isVisible, value); } }
 
 
-        public int LinkDirectlyToBoneIndex { get { return LodModelInstance.LinkDirectlyToBoneIndex; } }
+        public int LinkDirectlyToBoneIndex { get { return LodModelInstance.Header.LinkDirectlyToBoneIndex; } }
 
 
         Scene3d _virtualWorld;
         ResourceLibary _resourceLibary;
 
-        public ModelViewModel(Rmv2LodModel lodModelInstance, TextureMeshRenderItem renderInstance, Scene3d virtualWorld, ResourceLibary resourceLibary)
+        public ModelViewModel(RmvSubModel lodModelInstance, TextureMeshRenderItem renderInstance, Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
             _virtualWorld = virtualWorld;
             _resourceLibary = resourceLibary;
 
             LodModelInstance = lodModelInstance;
             RenderInstance = renderInstance;
-            Pivot = new Vector3ViewData(LodModelInstance.Transformation.Pivot, "Pivot");
-            TransformMatrix[0] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[0], "Matrix A");
-            TransformMatrix[1] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[1], "Matrix B");
-            TransformMatrix[2] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[2], "Matrix C");
-            AttachmentPoints = new ObservableCollection<RigidModelAttachmentPoint>(LodModelInstance.AttachmentPoint);
-
+            //Pivot = new Vector3ViewData(LodModelInstance.Transformation.Pivot, "Pivot");
+            //TransformMatrix[0] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[0], "Matrix A");
+            //TransformMatrix[1] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[1], "Matrix B");
+            //TransformMatrix[2] = new FileMatrix3x4ViewData(LodModelInstance.Transformation.Matrices[2], "Matrix C");
+            AttachmentPoints = new ObservableCollection<RmvAttachmentPoint>(LodModelInstance.AttachmentPoints);
+            //
             foreach (var texture in LodModelInstance.Textures)
-                Textures.Add(texture.Type, new FileTextureViewModel() { Path = texture.Name, RenderInstance = renderInstance });
-
-            SelectedAlphaMode = LodModelInstance.AlphaMode;
+                Textures.Add(texture.TexureType, new FileTextureViewModel() { Path = texture.Path, RenderInstance = renderInstance });
+            //
+            SelectedAlphaMode = LodModelInstance.Mesh.AlphaSettings.Mode;
 
             BrowseCommand = new RelayCommand<FileTextureViewModel>(OnBrowseCommand);
             BrowseTextureDirCommand = new RelayCommand<FileTextureViewModel>(OnBrowseTextureDirCommand);

@@ -42,16 +42,16 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
         public int ChildNodeCounts { get; set; } = -99; // -99 just to indicate something is wrong, should always be calculated.
 
-        public event ValueChangedDelegate<BoneMappingType> OnBoneMappingTypeChanged;
+        public event ValueAndSenderChangedDelegate<BoneMappingType> OnBoneMappingTypeChanged;
         BoneMappingType _mappingType = BoneMappingType.None;
         public BoneMappingType MappingType
         {
             get { return _mappingType; }
             set
             {
-                SetAndNotify(ref _mappingType, value, OnBoneMappingTypeChanged);
-                if (MappingType == BoneMappingType.None)
-                    ClearMapping();
+                if (_mappingType == value)
+                    return;
+                SetAndNotifyWithSender(ref _mappingType, value, OnBoneMappingTypeChanged);
             }
         }
 
@@ -67,17 +67,17 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
         public void OnApplySettingsToAllChildNodesCommand(AdvBoneMappingBone settingsOwner)
         {
-            var directSettingsOwner = settingsOwner.Settings as DirectAdvBoneMappingBoneSettings;
+            var directSettingsOwner = settingsOwner.Settings as DirectSmartAdvBoneMappingBoneSettings;
             if (directSettingsOwner == null)
                 return;
 
             if (Settings.HasMapping == true && settingsOwner != this)
             {
-                var directSettings = Settings as DirectAdvBoneMappingBoneSettings;
+                var directSettings = Settings as DirectSmartAdvBoneMappingBoneSettings;
                 if (directSettings == null)
                 {
                     var oldSettings = Settings;
-                    directSettings = new DirectAdvBoneMappingBoneSettings();
+                    directSettings = new DirectSmartAdvBoneMappingBoneSettings();
                     directSettings.CopyBaseValues(oldSettings);
                 }
 
@@ -104,29 +104,44 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             }
         }
 
-        public void CreateDirectMapping(AdvBoneMappingBone target)
+        public void CreateDirectSmartMapping(string name, int index)
+        {
+            if (Settings as DirectSmartAdvBoneMappingBoneSettings == null)
+                Settings = new DirectSmartAdvBoneMappingBoneSettings();
+            Settings.BoneMappingForSerialization = BoneMappingType.Direct_smart;
+            MappingType = BoneMappingType.Direct_smart;
+            Settings.HasMapping = true;
+            Settings.UseMapping = true;
+            Settings.MappingBoneName = name;
+            Settings.MappingBoneId = index;
+     
+            Settings.UpdateDisplayString();
+        }
+
+        public void CreateDirectMapping(string name, int index)
         {
             if (Settings as DirectAdvBoneMappingBoneSettings == null)
                 Settings = new DirectAdvBoneMappingBoneSettings();
+            MappingType = BoneMappingType.Direct;
+            Settings.BoneMappingForSerialization = BoneMappingType.Direct;
             Settings.HasMapping = true;
             Settings.UseMapping = true;
-            Settings.MappingBoneName = target.BoneName;
-            Settings.MappingBoneId = target.BoneIndex;
-            Settings.BoneMappingForSerialization = BoneMappingType.Direct;
-            MappingType = BoneMappingType.Direct;
-            Settings.MappingDisplayStr = $"[{target.BoneName} [{target.BoneIndex}]]";
+            Settings.MappingBoneName = name;
+            Settings.MappingBoneId = index;
+            Settings.UpdateDisplayString();
         }
 
-        public void CreateAttachmentPointMapping(AdvBoneMappingBone target)
+        public void CreateAttachmentPointMapping(string name, int index)
         {
-            Settings = new AttachmentPointAdvBoneMappingBoneSettings();
-            Settings.HasMapping = true;
-            Settings.UseMapping = true;
-            Settings.MappingBoneName = target.BoneName;
-            Settings.MappingBoneId = target.BoneIndex;
+            if (Settings as AttachmentPointAdvBoneMappingBoneSettings == null)
+                Settings = new AttachmentPointAdvBoneMappingBoneSettings();
             Settings.BoneMappingForSerialization = BoneMappingType.AttachmentPoint;
             MappingType = BoneMappingType.AttachmentPoint;
-            Settings.MappingDisplayStr = $"[{target.BoneName} [{target.BoneIndex}]]";
+            Settings.HasMapping = true;
+            Settings.UseMapping = true;
+            Settings.MappingBoneName = name;
+            Settings.MappingBoneId = index;
+            Settings.UpdateDisplayString();
         }
 
         public AdvBoneMappingBone Copy(bool includeChildren = false)
@@ -260,6 +275,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             CopyBaseValues(newValue);
             return newValue;
         }
+
+        public void UpdateDisplayString()
+        {
+            if (BoneMappingForSerialization != BoneMappingType.None)
+                MappingDisplayStr = $"[{MappingBoneName} [{MappingBoneId}]]";
+            else
+                MappingDisplayStr = "";
+        }
     }
 
     public class AttachmentPointAdvBoneMappingBoneSettings : AdvBoneMappingBoneSettings
@@ -274,6 +297,28 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
 
     public class DirectAdvBoneMappingBoneSettings : AdvBoneMappingBoneSettings
+    {
+        bool _scaleSkeletonBasedOnBoneLength = true;
+        public bool ScaleSkeletonBasedOnBoneLength
+        {
+            get { return _scaleSkeletonBasedOnBoneLength; }
+            set { SetAndNotify(ref _scaleSkeletonBasedOnBoneLength, value); }
+        }
+
+        public override AdvBoneMappingBoneSettings CreateCopy()
+        {
+            var setting = new DirectAdvBoneMappingBoneSettings()
+            {
+                ScaleSkeletonBasedOnBoneLength = ScaleSkeletonBasedOnBoneLength
+            };
+
+            CopyBaseValues(setting);
+            return setting;
+        }
+    }
+
+
+    public class DirectSmartAdvBoneMappingBoneSettings : AdvBoneMappingBoneSettings
     {
         BoneCopyMethod _boneCopyMethod = BoneCopyMethod.Ratio;
         public BoneCopyMethod BoneCopyMethod
@@ -309,7 +354,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
         public override AdvBoneMappingBoneSettings CreateCopy()
         {
-            var setting = new DirectAdvBoneMappingBoneSettings()
+            var setting = new DirectSmartAdvBoneMappingBoneSettings()
             {
                 BoneCopyMethod = BoneCopyMethod,
                 RatioSettingsAvailable = RatioSettingsAvailable,

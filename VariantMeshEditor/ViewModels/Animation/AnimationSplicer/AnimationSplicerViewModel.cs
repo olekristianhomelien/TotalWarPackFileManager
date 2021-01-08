@@ -27,8 +27,6 @@ using Viewer.Gizmo;
 using Viewer.Scene;
 using WpfTest.Scenes;
 
-using static VariantMeshEditor.ViewModels.Skeleton.SkeletonViewModel;
-
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 {
     public class AnimationSplicerViewModel : NotifyPropertyChangedImpl
@@ -57,6 +55,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
         public ICommand ForceComputeCommand { get; set; }
         public ICommand SaveAnimationCommand { get; set; }
+        public ICommand SaveAllAnimationCommand { get; set; }
         public ICommand ExportCommand { get; set; }
         public ICommand ImportCommand { get; set; }
         public ICommand OpenAdvanceMappingWindow { get; set; }
@@ -121,6 +120,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             LoadTestData_DancingDwarfCommand = new RelayCommand(() => LoadTestData(false, false, true));
 
             SaveAnimationCommand = new RelayCommand(SaveAnimationToFile);
+            SaveAllAnimationCommand = new RelayCommand(SaveAllAnimationsToFile);
             ExportCommand = new RelayCommand(() => { AnimationSplicerSettings.ExportCurrentConfiguration(this); });
             ImportCommand = new RelayCommand(() => { AnimationSplicerSettings.ImportConfiguration(this); });
 
@@ -197,6 +197,46 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
                 }
             }
             _logger.Here().Information("Saving animation completed");
+        }
+
+        void SaveAllAnimationsToFile()
+        {
+            _logger.Here().Information("Starting to SaveAllAnimationsToFile");
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                foreach (var animationPackFile in ExternalAnimation.AnimationsForCurrentSkeleton)
+                {
+                    try
+                    {
+                        var animationFile = AnimationFile.Create(animationPackFile);
+                        var animationClip = new AnimationClip(animationFile);
+
+                        AnimationBuilderService.AnimationBuilderSettings settings = new AnimationBuilderService.AnimationBuilderSettings()
+                        {
+                            OtherAnimationClip = animationClip,
+                            OtherSkeletonFile = ExternalAnimation.SelectedGameSkeleton,
+                            BoneSettings = BoneMapping,
+                            SourceSkeleton = _targetSkeletonNode.GameSkeleton,
+                            SourceAnimationClip = TargetAnimation.SelectedAnimationClip,
+                            SelectedMainAnimation = SelectedMainAnimation
+                        };
+
+                        var clip = AnimationBuilderService.CreateMergedAnimation(settings);
+                        var fileFormat = clip.ConvertToFileFormat(_targetSkeletonNode.GameSkeleton);
+                        var outputFileName = dialog.SelectedPath + "\\"+ animationPackFile.FullPath;
+                        AnimationFile.Write(fileFormat, outputFileName);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Here().Error("Animation saving failed: " + e.ToString());
+                        System.Windows.MessageBox.Show("Error - Unable to save animation");
+                        break;
+                    }
+                }
+            }
+
+            _logger.Here().Information("SaveAllAnimationsToFile completed");
         }
 
         AnimationClip BuildAnimation()

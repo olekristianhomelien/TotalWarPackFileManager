@@ -10,17 +10,14 @@ using static Filetypes.RigidModel.AnimationFile;
 
 namespace Viewer.Animation
 {
-    class AnimationSampler
+    public class AnimationSampler
     {
-        public static AnimationFrame Sample(float t, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
+        public static AnimationFrame Sample(int frameIndex, float frameIterpolation, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
         {
             try
             {
                 if (skeleton == null)
                     return null;
-
-                // Make sure it its in the 0-1 range
-                t = EnsureRange(t, 0, 1);
 
                 var currentFrame = new AnimationFrame();
                 for (int i = 0; i < skeleton.BoneCount; i++)
@@ -47,12 +44,6 @@ namespace Viewer.Animation
 
                     if (applyDynamicFrames)
                     {
-                        int maxFrames = animationClips[0].DynamicFrames.Count() - 1;
-                        float frame = maxFrames * t;
-
-                        int frameIndex = (int)(frame);
-                        float frameIterpolation = frame - frameIndex;
-
                         if (animationClips.Any() && animationClips[0].UseDynamicFames)
                         {
                             if (animationClips[0].DynamicFrames.Count > frameIndex)
@@ -88,6 +79,40 @@ namespace Viewer.Animation
                     currentFrame.BoneTransforms[i].WorldTransform = Matrix.Multiply(inv, currentFrame.BoneTransforms[i].WorldTransform);
                 }
                 return currentFrame;
+            }
+            catch (Exception e)
+            {
+                ILogger logger = Logging.Create<AnimationSampler>();
+                logger.Error(e.Message);
+                throw;
+            }
+        }
+
+        public static AnimationFrame Sample(float t, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
+        {
+            try
+            {
+                if (skeleton == null)
+                    return null;
+
+                // Make sure it its in the 0-1 range
+                t = EnsureRange(t, 0, 1);
+
+                int frameIndex = 0;
+                float frameIterpolation = 0;
+                if (animationClips != null)
+                {
+                    if (applyDynamicFrames)
+                    {
+                        int maxFrames = animationClips[0].DynamicFrames.Count() - 1;
+                        float frame = maxFrames * t;
+
+                        frameIndex = (int)(frame);
+                        frameIterpolation = frame - frameIndex;
+                    }
+                }
+
+                return Sample(frameIndex, frameIterpolation, skeleton, animationClips, applyStaticFrame, applyDynamicFrames);
             }
             catch (Exception e)
             {

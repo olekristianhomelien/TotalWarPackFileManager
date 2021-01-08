@@ -57,7 +57,7 @@ namespace Viewer.Animation
         {
             AnimationFile output = new AnimationFile();
             output.Header.AnimationType = 7;
-            output.Header.AnimationTotalPlayTimeInSec = DynamicFrames.Count() / output.Header.FrameRate;
+            output.Header.AnimationTotalPlayTimeInSec = (DynamicFrames.Count() -1) / output.Header.FrameRate;
             output.Header.SkeletonName = skeleton.SkeletonName;
 
             output.Bones = new BoneInfo[skeleton.BoneCount];

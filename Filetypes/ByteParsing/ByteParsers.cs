@@ -474,6 +474,8 @@ namespace Filetypes.ByteParsing
         public int BytesLeft => _buffer.Length - _currentIndex;
         public int Index { get { return _currentIndex; } set { _currentIndex = value;} }
 
+        public byte[] Buffer { get { return _buffer; } }
+
         T Read<T>(SpesificByteParser<T> parser)
         {
             if (!parser.TryDecodeValue(_buffer, _currentIndex, out T value, out int bytesRead, out string error))

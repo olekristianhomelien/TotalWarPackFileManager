@@ -102,14 +102,15 @@ namespace VariantMeshEditor.ViewModels
             
             foreach (var rigidModelElement in allRigidModelElements)
             {
-                foreach (var header in rigidModelElement.Model.LodHeaders)
+                for (int lodIndex = 0; lodIndex < rigidModelElement.Model.Header.LodCount; lodIndex++)
                 {
-                    foreach (var model in header.LodModels)
+                    for (var modelIndex = 0; modelIndex < rigidModelElement.Model.LodHeaders[lodIndex].MeshCount; modelIndex++)
                     {
-                        foreach (var attacmentPoint in model.AttachmentPoint)
-                            attachmentPoints.Add(attacmentPoint.Name);
+                        foreach (var attachmentPoint in rigidModelElement.Model.MeshList[lodIndex][modelIndex].AttachmentPoints)
+                            attachmentPoints.Add(attachmentPoint.Name);
                     }
                 }
+  
             }
 
             var possibleAttackmentPoints = attachmentPoints.Distinct().ToList();
@@ -166,7 +167,7 @@ namespace VariantMeshEditor.ViewModels
         {
             var boneIndex = -1;
             if( _skeleton?.GameSkeleton != null)
-                boneIndex  = _skeleton.GameSkeleton.GetBoneIndex(AttachmentPoint);
+                boneIndex  = _skeleton.GameSkeleton.GetBoneIndexByName(AttachmentPoint);
 
             WorldTransform = Matrix.Identity;
             if (boneIndex != -1)

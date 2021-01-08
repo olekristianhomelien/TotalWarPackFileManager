@@ -205,11 +205,13 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" Command="{Binding ForceComputeCommand}">Rebuild animation</Button>
                     <Button Grid.Column="1" Command="{Binding SaveAnimationCommand}">Save animation</Button>
-                    <Button Grid.Column="2" Command="{Binding ExportCommand}">Export configuration</Button>
-                    <Button Grid.Column="3" Command="{Binding ImportCommand}">Import configuration</Button>
+                    <Button Grid.Column="2" Command="{Binding SaveAllAnimationCommand}">Save all animations</Button>
+                    <Button Grid.Column="3" Command="{Binding ExportCommand}">Export configuration</Button>
+                    <Button Grid.Column="4" Command="{Binding ImportCommand}">Import configuration</Button>
                 </Grid>
             </Grid>
 

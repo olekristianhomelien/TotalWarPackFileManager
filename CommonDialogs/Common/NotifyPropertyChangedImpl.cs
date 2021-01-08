@@ -10,7 +10,8 @@ namespace CommonDialogs.Common
         [JsonIgnore]
         public bool DisableCallbacks { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;
-        public delegate void ValueChangedDelegate<T>(T newSelectedSkeleton);
+        public delegate void ValueChangedDelegate<T>(T newValue);
+        public delegate void ValueAndSenderChangedDelegate<T>(object sender, T newValue);
 
         protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
@@ -31,6 +32,21 @@ namespace CommonDialogs.Common
             NotifyPropertyChanged(propertyName);
             if (DisableCallbacks == false)
                 valueChangedDelegate?.Invoke(newValue);
+        }
+
+        protected virtual void SetAndNotifyWithSender<T>(T value, ValueAndSenderChangedDelegate<T> valueChangedDelegate, [CallerMemberName] String propertyName = "")
+        {
+            NotifyPropertyChanged(propertyName);
+            if (DisableCallbacks == false)
+                valueChangedDelegate?.Invoke(this, value);
+        }
+
+        protected virtual void SetAndNotifyWithSender<T>(ref T variable, T newValue, ValueAndSenderChangedDelegate<T> valueChangedDelegate = null, [CallerMemberName] String propertyName = "")
+        {
+            variable = newValue;
+            NotifyPropertyChanged(propertyName);
+            if (DisableCallbacks == false)
+                valueChangedDelegate?.Invoke(this, newValue);
         }
     }
 

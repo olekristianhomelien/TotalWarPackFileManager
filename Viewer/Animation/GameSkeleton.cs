@@ -87,25 +87,29 @@ namespace Viewer.Animation
         {
             if (AnimationPlayer != null)
             {
-                AnimationFrame frame = AnimationPlayer.GetCurrentFrame();
+                var frame = AnimationPlayer.GetCurrentFrame();
+                SetAnimationFrame(frame);
+            }
+        }
 
-                for (int i = 0; i < BoneCount; i++)
+        public void SetAnimationFrame(AnimationFrame frame)
+        {
+            for (int i = 0; i < BoneCount; i++)
+            {
+                //var   = GetParentBone(i);
+                //if (parentIndex == -1)
+                //    continue;
+
+                AnimatedWorldTransforms[i] = GetWorldTransform(i);
+                if (frame != null)
                 {
-                    var parentIndex = GetParentBone(i);
-                    if (parentIndex == -1)
-                        continue;
-
-                    AnimatedWorldTransforms[i] = GetWorldTransform(i);
-                    if (frame != null)
-                    {
-                        var currentBoneAnimationoffset = frame.BoneTransforms[i].WorldTransform;
-                        AnimatedWorldTransforms[i] = AnimatedWorldTransforms[i] * currentBoneAnimationoffset;
-                    }
+                    var currentBoneAnimationoffset = frame.BoneTransforms[i].WorldTransform;
+                    AnimatedWorldTransforms[i] = AnimatedWorldTransforms[i] * currentBoneAnimationoffset;
                 }
             }
         }
 
-        public int GetBoneIndex(string name)
+        public int GetBoneIndexByName(string name)
         {
             for (int i = 0; i < BoneNames.Count(); i++)
             {
