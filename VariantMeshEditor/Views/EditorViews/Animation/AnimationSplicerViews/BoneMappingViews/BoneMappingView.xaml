@@ -132,7 +132,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type boneSettings:AttachmentPointAdvBoneMappingBoneSettings}">
-            <TextBlock>AttachmentPointAdvBoneMappingBoneSettings</TextBlock>
+            <TextBlock>Select a bone, the origina bone will attach to this point</TextBlock>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type boneSettings:DirectAdvBoneMappingBoneSettings}">
@@ -300,7 +300,8 @@
 
             <local:CommonBoneMappingProperties Grid.Row="3" Grid.ColumnSpan="2"/>
     
-            <ContentControl Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding Path=SelectedOriginalBone.Settings, UpdateSourceTrigger=PropertyChanged}" />
+            <ContentControl Grid.Row="4" Grid.ColumnSpan="2" Content="{Binding Path=SelectedOriginalBone.Settings, UpdateSourceTrigger=PropertyChanged}" 
+                            Margin="0,0,0,20"/>
             
 
         </Grid>

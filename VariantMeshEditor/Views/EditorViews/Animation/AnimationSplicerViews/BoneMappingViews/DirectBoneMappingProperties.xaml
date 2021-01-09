@@ -35,17 +35,26 @@
             <RowDefinition Height="auto" ></RowDefinition>
         </Grid.RowDefinitions>
 
+
+
         <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="Ratio Settings:" FontSize="16" Margin="0,10,0,0"/>
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Rotation correction"  VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Bone copy method"     VerticalAlignment="Center"/>
         <TextBlock Grid.Row="1" Grid.Column="1" Text=":"                    VerticalAlignment="Center"/>
-        <ComboBox  Grid.Row="1" Grid.Column="2"  Grid.ColumnSpan="4"
+        <ComboBox  Grid.Row="1" Grid.Column="2"
+                            ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
+                            SelectedItem="{Binding SelectedOriginalBone.Settings.BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="Rotation correction"  VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Text=":"                    VerticalAlignment="Center"/>
+        <ComboBox  Grid.Row="2" Grid.Column="2"  Grid.ColumnSpan="4"
                    IsEnabled="{Binding RatioSettingsAvailable, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                    ItemsSource="{Binding Source={StaticResource RatioScaleMethodEnums}}"
                    SelectedItem="{Binding Ratio_ScaleMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="Scale rotation"   VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" Text=":"                VerticalAlignment="Center"/>
-        <CheckBox  Grid.Row="2" Grid.Column="2"  Grid.ColumnSpan="4"
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Scale rotation"   VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text=":"                VerticalAlignment="Center"/>
+        <CheckBox  Grid.Row="3" Grid.Column="2"  Grid.ColumnSpan="4"
                    IsEnabled="{Binding RatioSettingsAvailable, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                    IsChecked="{Binding Ratio_ScaleRotation, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
     </Grid>

@@ -55,11 +55,7 @@
 
         <TextBlock Grid.Row="2" Grid.ColumnSpan="3" Text="Common Settings:" FontSize="16"/>
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="Bone copy method"     VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="3" Grid.Column="1" Text=":"                    VerticalAlignment="Center"/>
-        <ComboBox  Grid.Row="3" Grid.Column="2"
-                            ItemsSource="{Binding Source={StaticResource BoneCopyMethodEnums}}"
-                            SelectedItem="{Binding SelectedOriginalBone.Settings.BoneCopyMethod, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Skeleton scale"   
                    VerticalAlignment="Center"/>

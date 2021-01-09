@@ -67,25 +67,82 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
         public void OnApplySettingsToAllChildNodesCommand(AdvBoneMappingBone settingsOwner)
         {
-            var directSettingsOwner = settingsOwner.Settings as DirectSmartAdvBoneMappingBoneSettings;
-            if (directSettingsOwner == null)
-                return;
+            var targetType = settingsOwner.MappingType;
+            bool isSameMapping = MappingType == targetType;
+            bool isSameNode = settingsOwner == this;
+            bool hasMapping = Settings.HasMapping;
 
-            if (Settings.HasMapping == true && settingsOwner != this)
+            if (!isSameMapping && !isSameNode && hasMapping)
             {
-                var directSettings = Settings as DirectSmartAdvBoneMappingBoneSettings;
-                if (directSettings == null)
+                if (targetType == BoneMappingType.Direct)
                 {
-                    var oldSettings = Settings;
-                    directSettings = new DirectSmartAdvBoneMappingBoneSettings();
-                    directSettings.CopyBaseValues(oldSettings);
-                }
+                    var directSettingsOwner = settingsOwner.Settings as DirectAdvBoneMappingBoneSettings;
+                    var directSettings = Settings as DirectAdvBoneMappingBoneSettings;
+                    if (directSettings == null)
+                    {
+                        var oldSettings = Settings;
+                        directSettings = new DirectAdvBoneMappingBoneSettings();
+                        oldSettings.CopyBaseValues(directSettings);
+                        Settings = directSettings;
+                    }
 
-                directSettings.SkeletonScaleValue.Value = directSettingsOwner.SkeletonScaleValue.Value;
-                directSettings.BoneCopyMethod = directSettingsOwner.BoneCopyMethod;
-                directSettings.Ratio_ScaleMethod = directSettingsOwner.Ratio_ScaleMethod;
-                directSettings.Ratio_ScaleRotation = directSettingsOwner.Ratio_ScaleRotation;
+                    directSettings.SkeletonScaleValue.Value = directSettingsOwner.SkeletonScaleValue.Value;
+                    directSettings.ScaleSkeletonBasedOnBoneLength = directSettingsOwner.ScaleSkeletonBasedOnBoneLength;
+
+                    MappingType = targetType;
+                    Settings.BoneMappingForSerialization = targetType;
+                    Settings.UpdateDisplayString();
+                }
+                else if (targetType == BoneMappingType.Direct_smart)
+                {
+                    var directSettingsOwner = settingsOwner.Settings as DirectSmartAdvBoneMappingBoneSettings;
+                    var directSettings = Settings as DirectSmartAdvBoneMappingBoneSettings;
+                    if (directSettings == null)
+                    {
+                        var oldSettings = Settings;
+                        directSettings = new DirectSmartAdvBoneMappingBoneSettings();
+                        oldSettings.CopyBaseValues(directSettings);
+                        Settings = directSettings;
+                    }
+
+                    directSettings.SkeletonScaleValue.Value = directSettingsOwner.SkeletonScaleValue.Value;
+                    directSettings.BoneCopyMethod = directSettingsOwner.BoneCopyMethod;
+                    directSettings.Ratio_ScaleMethod = directSettingsOwner.Ratio_ScaleMethod;
+                    directSettings.Ratio_ScaleRotation = directSettingsOwner.Ratio_ScaleRotation;
+                    
+                    MappingType = targetType;
+                    Settings.BoneMappingForSerialization = targetType;
+                    Settings.UpdateDisplayString();
+                }
+                else if (targetType == BoneMappingType.AttachmentPoint || targetType == BoneMappingType.None)
+                {
+                    // Do nothing, but dont throw exception.
+                }
+                else
+                {
+                    throw new Exception($"Unkown mapping type {targetType}");
+                }
             }
+
+           //var directSettingsOwner = settingsOwner.Settings as DirectSmartAdvBoneMappingBoneSettings;
+           //if (directSettingsOwner == null)
+           //    return;
+           //
+           //if (Settings.HasMapping == true && settingsOwner != this)
+           //{
+           //    var directSettings = Settings as DirectSmartAdvBoneMappingBoneSettings;
+           //    if (directSettings == null)
+           //    {
+           //        var oldSettings = Settings;
+           //        directSettings = new DirectSmartAdvBoneMappingBoneSettings();
+           //        directSettings.CopyBaseValues(oldSettings);
+           //    }
+           //
+           //    directSettings.SkeletonScaleValue.Value = directSettingsOwner.SkeletonScaleValue.Value;
+           //    directSettings.BoneCopyMethod = directSettingsOwner.BoneCopyMethod;
+           //    directSettings.Ratio_ScaleMethod = directSettingsOwner.Ratio_ScaleMethod;
+           //    directSettings.Ratio_ScaleRotation = directSettingsOwner.Ratio_ScaleRotation;
+           //}
 
             foreach (var child in Children)
                 child.OnApplySettingsToAllChildNodesCommand(settingsOwner);

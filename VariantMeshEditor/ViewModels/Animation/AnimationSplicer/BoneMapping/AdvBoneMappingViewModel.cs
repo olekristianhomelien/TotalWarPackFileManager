@@ -61,6 +61,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             {
                 if (node != null)
                     node.ClearMapping(true);
+                if (SelectedOriginalBone != null)
+                    SelectedOriginalBone.ClearMapping(true);
                 else
                     _allOriginalBones.FirstOrDefault().ClearMapping(true);
             });
@@ -69,6 +71,8 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             { 
                 if(node != null)
                     BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(node, _allOtherBones); 
+                if(SelectedOriginalBone != null)
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(SelectedOriginalBone, _allOtherBones);
                 else
                     BoneMappingHelper.AutomapDirectBoneLinksBasedOnNames(_allOriginalBones.FirstOrDefault(), _allOtherBones);
             });
@@ -77,11 +81,15 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             {
                 if (node != null)
                     BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(node, SelectedOtherBone);
-                //else
-                //    BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(_allOriginalBones.FirstOrDefault(), _allOtherBones); 
+                else
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(_allOriginalBones.FirstOrDefault(), _allOtherBones.FirstOrDefault()); 
             });
 
-            ApplySettingsToAllChildNodesCommand = new RelayCommand<AdvBoneMappingBone>((node) => { node.OnApplySettingsToAllChildNodesCommand(node); });
+            ApplySettingsToAllChildNodesCommand = new RelayCommand<AdvBoneMappingBone>((node) => 
+            { 
+                if(node != null)
+                    node.OnApplySettingsToAllChildNodesCommand(node); 
+            });
 
             BoneMappingHelper.ComputeBoneCount(_allOtherBones);
         }
@@ -215,6 +223,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             selectedSourceBone.OnBoneMappingTypeChanged += SelectedSourceBone_OnBoneMappingTypeChanged;
 
             // This will remove the filter
+            var oldOtherBone = SelectedOtherBone;
             SelectedOtherBone = null;
             if(!string.IsNullOrWhiteSpace(OtherBoneFilterText))
                 OtherBoneFilterText = "";
@@ -227,6 +236,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                 SetOtherBonesList(CurrentOtherBoneListValue.Other, selectedSourceBone);
 
             _originalViewModel.SetSelectedBoneByIndex(selectedSourceBone.BoneIndex);
+            SelectedOtherBone = oldOtherBone;
         }
 
         void SetOtherBonesList(CurrentOtherBoneListValue value, AdvBoneMappingBone selectedBone, bool force = false)

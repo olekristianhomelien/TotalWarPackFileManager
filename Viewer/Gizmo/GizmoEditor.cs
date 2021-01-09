@@ -80,7 +80,7 @@ namespace Viewer.Gizmo
             transformable.Position += (Vector3)e.Value;
             TranslateEvent?.Invoke(transformable, e);
             GizmoUpdatedEvent?.Invoke();
-        }
+        }  
 
         private void GizmoRotateEvent(ITransformable transformable, TransformationEventArgs e)
         {
