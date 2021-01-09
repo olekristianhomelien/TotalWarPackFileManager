@@ -50,6 +50,21 @@ namespace VariantMeshEditor.ViewModels
             newSlot.CreateContent(_virtualWorld, _resourceLibary);
             Children.Add(newSlot);
         }
+
+        public SlotElement GetSlotByName(string name)
+        {
+            foreach (var child in Children)
+            {
+                var slot = child as SlotElement;
+                if (slot != null)
+                {
+                    if (slot.SlotName == name)
+                        return slot;
+                }
+            }
+
+            return null;
+        }
     }
 
     public class SlotElement : FileSceneElement
@@ -141,12 +156,7 @@ namespace VariantMeshEditor.ViewModels
                     if (res == System.Windows.Forms.DialogResult.OK)
                     {
                         var selectedFile = loadedPackFileBrowser.GetSelecteFile();
-                        SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-                        var element = sceneLoader.Load(selectedFile, new RootElement(null));
-                        element.CreateContent(_virtualWorld, _resourceLibary);
-
-                        var mesh = element.Children.First();
-                        AddChild(mesh);
+                        AddMeshToSlot(selectedFile);
                     }
                 }
             }
@@ -154,6 +164,16 @@ namespace VariantMeshEditor.ViewModels
             {
                 _logger.Here().Error($"Error loading new file - {e}");
             }
+        }
+
+        public void AddMeshToSlot(PackedFile meshFile)
+        {
+            SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
+            var element = sceneLoader.Load(meshFile, new RootElement(null));
+            element.CreateContent(_virtualWorld, _resourceLibary);
+
+            var mesh = element.Children.First();
+            AddChild(mesh);
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)

@@ -33,7 +33,7 @@ namespace VariantMeshEditor.ViewModels.RigidModel
             }
             else
             {
-                CheckBoxGroupingName = parent.CheckBoxGroupingName + "_RigidModel";
+                CheckBoxGroupingName = parent?.CheckBoxGroupingName + "_RigidModel";
             }
         }
 

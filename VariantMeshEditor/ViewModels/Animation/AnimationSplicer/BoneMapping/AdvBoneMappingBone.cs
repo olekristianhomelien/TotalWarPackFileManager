@@ -72,7 +72,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             bool isSameNode = settingsOwner == this;
             bool hasMapping = Settings.HasMapping;
 
-            if (!isSameMapping && !isSameNode && hasMapping)
+            if ( !isSameNode && hasMapping)
             {
                 if (targetType == BoneMappingType.Direct)
                 {

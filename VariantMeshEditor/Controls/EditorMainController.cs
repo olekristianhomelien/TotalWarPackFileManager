@@ -81,7 +81,6 @@ namespace VariantMeshEditor.Controls
         {
             _logger.Here().Information("start");
 
-
             _modelToLoad = model;
             if(_is3dWorldCreated)
                 LoadModelAfterWorldCreated();
@@ -117,43 +116,11 @@ namespace VariantMeshEditor.Controls
             else
                 rootNode.LoadModel(_modelToLoad, _resourceLibary, _scene3d);
 
-            // SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
-            //var rootElement = sceneLoader.Load(_modelToLoad, );
-            //rootElement.CreateContent(_scene3d, _resourceLibary);
-
             _scene3d.SceneGraphRootNode = rootNode;
             RootViewModel.SceneGraph.SceneGraphRootNodes.Add(rootNode);
             _logger.Here().Information("end");
         }
 
-
-        void CreateTestWorldA(RootElement rootNode)
-        {
-           //var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-           //    @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
-           //
-           //var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
-           //var anim = SceneElementHelper.GetFirstChild<AnimationElement>(paladinMesh);
-           //
-           //
-           //bool loadDebugData = true;
-           //if (loadDebugData)
-           //{
-           //    var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
-           //    AnimationList[0].SelectedAnimationPackFile = mainAnim;
-           //
-           //    AddNewAnimationNode();
-           //    var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
-           //    AnimationList[1].SelectedAnimationPackFile = handAnim;
-           //}
-           //
-           //var pegasusFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-           //    @"variantmeshes\variantmeshdefinitions\brt_royal_pegasus.variantmeshdefinition");
-           //var pegaMesh = rootNode.LoadModel(pegasusFile, _resourceLibary, _scene3d);
-
-
-
-        }
 
         void PaladinAndDragon(RootElement rootNode,
             bool loadPaladin = true,
@@ -164,8 +131,7 @@ namespace VariantMeshEditor.Controls
             _logger.Here().Information("start");
             if (loadPaladin)
             {
-                var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-                    @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
+                var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,@"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
                 //chs_mirror_guard
                 //brt_paladin
                 var paladinMesh = rootNode.LoadModel(paladinFile, _resourceLibary, _scene3d);
@@ -173,22 +139,6 @@ namespace VariantMeshEditor.Controls
                 var skeleton = SceneElementHelper.GetFirstChild<SkeletonElement>(paladinMesh);
                 var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
 
-              
-           
-       //        var testAnim = AnimationFile.Create(new Filetypes.ByteParsing.ByteChunk(mainAnim.Data));
-       //    try
-       //    {
-       //           var file = new Viewer.Animation.AnimationClip(testAnim);
-       //           var fileToSave = file.ConvertToFileFormat(skeleton.Skeleton);
-       //           AnimationFile.Write(testAnim, @"C:\temp\Animation\animationFileTest2.anim");
-       //    }
-       //    catch (Exception e)
-       //    { 
-       //    
-       //    }
-           
-          //
-          //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\rider\horse01\lancer\attacks\hu1_hr1_lancer_rider1_attack_02.anim");
                 var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
 
 
@@ -197,12 +147,16 @@ namespace VariantMeshEditor.Controls
                 //var clip = new Viewer.Animation.AnimationClip(file);
                 //paladinAnim.AnimationPlayer.SetAnimation(clip, skeleton.Skeleton);
 
-             paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
-             var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
-             secondAnimNode.SelectedAnimationPackFile = handAnim;
+                 paladinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+                 var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
+                 secondAnimNode.SelectedAnimationPackFile = handAnim;
 
-               // paladinAnim.AnimationPlayer.Settings.FreezeAnimationRoot = true;
-                //paladinAnim.AnimationPlayer.Pause();
+                // Add a new slot
+                //var slots = SceneElementHelper.GetFirstChild<SlotsElement>(paladinMesh);
+                //var princessHeadFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\wh_variantmodels\hu1b\hef\hef_princess\hef_princess_head_01.rigid_model_v2");
+                //
+                //var headSlot = slots.GetSlotByName("head");
+                //headSlot.AddMeshToSlot(princessHeadFile);
             }
 
             if (loadDragon)
