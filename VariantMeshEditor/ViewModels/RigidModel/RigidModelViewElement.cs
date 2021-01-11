@@ -1,12 +1,14 @@
 ﻿using Filetypes.RigidModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.GraphicModels;
 using Viewer.Scene;
 using WpfTest.Scenes;
@@ -26,21 +28,16 @@ namespace VariantMeshEditor.ViewModels.RigidModel
             Model = model;
             DisplayName = $"RigidModel - {FileName}";
 
-            if (parent is WsModelElement)
-            {
-                IsChecked = true;
-                ApplyElementCheckboxVisability = Visibility.Collapsed;
-            }
-            else
-            {
-                CheckBoxGroupingName = parent?.CheckBoxGroupingName + "_RigidModel";
-            }
+      
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)
         {
             var topNode = SceneElementHelper.GetTopNode(this);
+            if (topNode == null)
+                throw new Exception("This should not be null");
             var parentAnimationNode = SceneElementHelper.GetFirstChild<AnimationElement>(topNode);
+            var parentSkeletonNode = SceneElementHelper.GetFirstChild<SkeletonElement>(topNode);
 
             for (int lodIndex = 0; lodIndex < Model.Header.LodCount; lodIndex++)
             {
@@ -48,20 +45,20 @@ namespace VariantMeshEditor.ViewModels.RigidModel
 
                 for (var modelIndex = 0; modelIndex < Model.LodHeaders[lodIndex].MeshCount; modelIndex++)
                 {
-                    var lodMesh = Model.MeshList[lodIndex][modelIndex];
-                    Rmv2RenderModel meshModel = new Rmv2RenderModel();
-                    meshModel.Create(parentAnimationNode?.AnimationPlayer, virtualWorld.GraphicsDevice, lodMesh);
-
-                    TextureMeshRenderItem meshRenderItem = new TextureMeshRenderItem(meshModel, resourceLibary.GetEffect(ShaderTypes.Phazer), resourceLibary)
-                    {
-                        Visible = true,
-                        Textures = meshModel.ResolveTextures(resourceLibary, virtualWorld.GraphicsDevice)
-                    };
-
-                    var model = new ModelViewModel(lodMesh, meshRenderItem, virtualWorld, resourceLibary);
+                    var model = new ModelViewModel(parentSkeletonNode, parentAnimationNode, Model, lodIndex, modelIndex, virtualWorld, resourceLibary);
                     currentLod.Models.Add(model);
                 }
                 Lods.Add(currentLod);
+            }
+
+            if (Parent is WsModelElement)
+            {
+                IsChecked = true;
+                ApplyElementCheckboxVisability = Visibility.Collapsed;
+            }
+            else
+            {
+                CheckBoxGroupingName = Parent?.CheckBoxGroupingName + "_RigidModel";
             }
         }
 

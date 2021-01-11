@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Pfim;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,8 @@ namespace Viewer.Scene
 
     public class ResourceLibary
     {
+        ILogger _logger = Logging.Create<ResourceLibary>();
+
         Dictionary<string, Texture2D> _textureMap = new Dictionary<string, Texture2D>();
         Dictionary<ShaderTypes, Effect> _shaders = new Dictionary<ShaderTypes, Effect>();
 
@@ -61,7 +64,10 @@ namespace Viewer.Scene
                 //r content = File.ReadAllBytes(@"C:\Users\ole_k\Desktop\New folder\rad_rustig.dds");
                 var file = PackFileLoadHelper.FindFile(_loadedContent, fileName);
                 if (file == null)
+                {
+                    _logger.Here().Error($"Unable to find texture: {fileName}");
                     return null;
+                }
                 
                 var content = file.Data;
                 using (MemoryStream stream = new MemoryStream(content))
@@ -93,8 +99,8 @@ namespace Viewer.Scene
                 }
             }
             catch (Exception e)
-            { 
-            
+            {
+                _logger.Here().Error($"Error loading texture: {e}");
             }
             return null;
         }

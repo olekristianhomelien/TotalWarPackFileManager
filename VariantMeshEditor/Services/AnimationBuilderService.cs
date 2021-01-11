@@ -77,7 +77,114 @@ namespace VariantMeshEditor.Services
                 return false;
             return true;
         }
+/*
+        class ProcssConfiguration
+        {
+            public GameSkeleton SourceSkeleton { get; set; }
+            public AnimationClip SourceAnimation { get; set; }
+            public GameSkeleton OtherSkeleton { get; set; }
+            public AnimationClip OtherAnimationClip { get; set; }
+            public AdvBoneMappingBone MappingInfo { get; set; }
+        }
 
+        static float ComputeBoneRatio(ProcssConfiguration settings)
+        {
+            var sourceBoneLength = GetBoneLength(settings.SourceSkeleton, settings.MappingInfo.BoneIndex);
+            var otherBoneLength = GetBoneLength(settings.OtherSkeleton, settings.MappingInfo.Settings.MappingBoneId);
+            float boneRatio = sourceBoneLength / otherBoneLength;
+            if (float.IsNaN(boneRatio))
+                boneRatio = 1;
+            return boneRatio;
+        }
+
+
+        static void GetSkeletonAndAnimationTransform(ProcssConfiguration configuration, out Quaternion skeletonRotation, out Vector3 skeletonPosition, out Quaternion animatedRotation, out Vector3 animatedPosition, int frameIndex)
+        {
+            var mappedBondeIndex = configuration.MappingInfo.Settings.MappingBoneId;
+
+            GetSkeletonTransform(configuration.OtherSkeleton, mappedBondeIndex, out skeletonRotation, out skeletonPosition);
+
+            animatedPosition = skeletonPosition;
+            animatedRotation = skeletonRotation;
+
+            if (HasAnimationData(mappedBondeIndex, configuration.OtherAnimationClip))
+                GetAnimationTransform(configuration.OtherAnimationClip, frameIndex, configuration.OtherSkeleton, mappedBondeIndex, out animatedRotation, out animatedPosition);
+        }
+
+        static void ProcessSmartDirect(ProcssConfiguration configuration, float interpolationValue, ref AnimationClip outputAnimation, int outputAnimationFrameIndex, int outputAnimationBoneIndex)
+        {
+            GetSkeletonTransform(configuration.SourceSkeleton, configuration.MappingInfo.BoneIndex, out var sourceSkeletonRotation, out var sourceSkeletonPosition);
+            GetSkeletonAndAnimationTransform(configuration, out var otherSkeletonRotation, out _, out var otherAnimatedRotation, out var otherAnimatedPosition, outputAnimationBoneIndex); // Change to interplate
+            var boneRatio = ComputeBoneRatio(configuration);
+
+            //------------------
+            var mappingSettings = configuration.MappingInfo.Settings as DirectSmartAdvBoneMappingBoneSettings;
+            if (mappingSettings.Ratio_ScaleRotation)
+            {
+                otherAnimatedRotation.ToAxisAngle(out Vector3 axis, out float angle);
+                otherAnimatedRotation = Quaternion.CreateFromAxisAngle(axis, angle * boneRatio);
+            }
+
+            var skeletonRotationDifference = Quaternion.Identity;
+            if (mappingSettings.Ratio_ScaleMethod == RatioScaleMethod.Larger)
+                skeletonRotationDifference = otherSkeletonRotation * Quaternion.Inverse(sourceSkeletonRotation);
+            else
+                skeletonRotationDifference = sourceSkeletonRotation * Quaternion.Inverse(otherSkeletonRotation);
+
+            var rotation = (otherAnimatedRotation * skeletonRotationDifference);
+            rotation.Normalize();
+
+            outputAnimation.DynamicFrames[outputAnimationFrameIndex].Rotation[outputAnimationBoneIndex] = rotation;
+            outputAnimation.DynamicFrames[outputAnimationFrameIndex].Position[outputAnimationBoneIndex] = otherAnimatedPosition * boneRatio;
+        }
+
+        static void Loop(GameSkeleton sourceSkeleton, AnimationClip sourceAnimation, GameSkeleton otherSkeleton, AnimationClip otherAnimationClip, IEnumerable<AdvBoneMappingBone> boneSettings, int outputFrameCount, Dictionary<BoneMappingType, BoneProcessFunc> processMap, ref AnimationClip outputAnimation)
+        {
+            for (int frameIndex = 0; frameIndex < outputFrameCount; frameIndex++)
+            {
+                for (int boneIndex = 0; boneIndex < sourceSkeleton.BoneCount; boneIndex++)
+                {
+                    var boneToGetAnimDataFrom = GetMappedBone(boneSettings, boneIndex);
+
+                    if (HasValidMapping(boneToGetAnimDataFrom))
+                    {
+                        float t = frameIndex / (float)outputFrameCount;
+
+                        ProcssConfiguration configuration = new ProcssConfiguration()
+                        {
+                            SourceSkeleton = sourceSkeleton,
+                            SourceAnimation = sourceAnimation,
+                            OtherSkeleton = otherSkeleton,
+                            OtherAnimationClip = otherAnimationClip,
+                            MappingInfo = boneToGetAnimDataFrom,
+                        };
+
+                        if (processMap.ContainsKey(boneToGetAnimDataFrom.MappingType))
+                            processMap[boneToGetAnimDataFrom.MappingType](configuration, t, ref outputAnimation, frameIndex, boneIndex);
+                    }
+                }
+            }
+        }
+
+        delegate void BoneProcessFunc(ProcssConfiguration configuration, float interpolationValue, ref AnimationClip outputAnimation, int outputAnimationFrameIndex, int outputAnimationBoneIndex);
+
+
+        static AnimationClip NewAnimationProcessor(GameSkeleton sourceSkeleton, AnimationClip sourceAnimation, GameSkeleton otherSkeleton, AnimationClip otherAnimationClip, IEnumerable<AdvBoneMappingBone> boneSettings)
+        {
+            var outputAnimationFrameCount = 20;
+            var outputAnimation = CreateOutputAnimation(sourceSkeleton, outputAnimationFrameCount);
+
+            var normalMappings = new Dictionary<BoneMappingType, BoneProcessFunc>();
+            normalMappings.Add(BoneMappingType.Direct, null);
+            normalMappings.Add(BoneMappingType.Direct_smart, ProcessSmartDirect);
+            Loop(sourceSkeleton, sourceAnimation, otherSkeleton, otherAnimationClip, boneSettings, outputAnimationFrameCount, normalMappings, ref outputAnimation);
+
+            var postProcessingMappings = new Dictionary<BoneMappingType, BoneProcessFunc>();
+            postProcessingMappings.Add(BoneMappingType.AttachmentPoint, null);
+            Loop(sourceSkeleton, sourceAnimation, otherSkeleton, otherAnimationClip, boneSettings, outputAnimationFrameCount, postProcessingMappings, ref outputAnimation);
+
+            return outputAnimation;
+        }*/
 
         public static AnimationClip CreateMergedAnimation(AnimationBuilderSettings settings)
         {
@@ -89,7 +196,9 @@ namespace VariantMeshEditor.Services
             var sourceSkeleton = settings.SourceSkeleton;
             var otherSkeleton = settings.OtherSkeletonFile;
             var otherAnimationClip = settings.OtherAnimationClip;
-            var outputAnimationFile = CreateOutputAnimation(sourceSkeleton, otherAnimationClip);
+            var outputAnimationFile = CreateOutputAnimation(sourceSkeleton, otherAnimationClip.DynamicFrames.Count());
+
+            //NewAnimationProcessor(sourceSkeleton, sourceAnimationClip, otherSkeleton, otherAnimationClip, settings.BoneSettings);
 
             for (int frameIndex = 0; frameIndex < otherAnimationClip.DynamicFrames.Count(); frameIndex++)
             {
@@ -203,20 +312,74 @@ namespace VariantMeshEditor.Services
                         {
                             var mappingSettings = boneToGetAnimDataFrom.Settings as AttachmentPointAdvBoneMappingBoneSettings;
                         
-                            var frame = AnimationSampler.Sample(frameIndex, 0, sourceSkeleton, new List<AnimationClip>() { outputAnimationFile }, true, true);
-                            sourceSkeleton.SetAnimationFrame(frame);
+                            var newAnimationClipFrame = AnimationSampler.Sample(frameIndex, 0, sourceSkeleton, new List<AnimationClip>() { outputAnimationFile }, true, true);
+                            sourceSkeleton.SetAnimationFrame(newAnimationClipFrame);
 
                             var animRootTransform = sourceSkeleton.GetAnimatedWorldTranform(0);
-                            var targetTransform = sourceSkeleton.GetAnimatedWorldTranform(boneToGetAnimDataFrom.Settings.MappingBoneId);
+                            var targetBoneTransfrom = sourceSkeleton.GetAnimatedWorldTranform(boneToGetAnimDataFrom.Settings.MappingBoneId);
 
-                            var finalTransform = targetTransform * Matrix.Invert(animRootTransform);
+                            var finalTransform = targetBoneTransfrom * Matrix.Invert(animRootTransform);
                             finalTransform.Decompose(out _, out var rotation, out var position);
 
-                            ComputeMappedBoneAttributeContributions(boneToGetAnimDataFrom, ref rotation, ref position);
-                            rotation.Normalize();
+                            
+
+                            // Transform
+                            //if (mappingSettings.ComputeRelativeDistance)
+                            /*{
+                                //var oldAnimationClipFrame = AnimationSampler.Sample(frameIndex, 0, sourceSkeleton, new List<AnimationClip>() { sourceAnimationClip }, true, true);
+                                //sourceSkeleton.SetAnimationFrame(oldAnimationClipFrame);
+                                //var originalBoneTransfrom = sourceSkeleton.GetAnimatedWorldTranform(boneToGetAnimDataFrom.BoneIndex);
+                                //var targetBoneTransform = sourceSkeleton.GetAnimatedWorldTranform(boneToGetAnimDataFrom.Settings.MappingBoneId);
+                                //
+                                //var diff = originalBoneTransfrom * Matrix.Invert(targetBoneTransform);
+                                //diff.Decompose(out _, out  _, out var diffPosition);
+                                //position += diffPosition;
+
+
+                                var orgBoneClip = AnimationSampler.Sample(frameIndex, 0, otherSkeleton, new List<AnimationClip>() { otherAnimationClip }, true, true);
+                                otherSkeleton.SetAnimationFrame(orgBoneClip);
+
+                                var idHand = otherSkeleton.GetBoneIndexByName("hand_right");
+                                var idPoint = otherSkeleton.GetBoneIndexByName("be_prop_0");
+
+                                var rootTrans = otherSkeleton.GetAnimatedWorldTranform(0);
+                                var handTransform = otherSkeleton.GetAnimatedWorldTranform(idHand);
+                                var pointTransform = otherSkeleton.GetAnimatedWorldTranform(idPoint);
+
+                                rootTrans.Decompose(out _, out _, out var rootPos);
+                                handTransform.Decompose(out _, out _, out var handPos);
+                                pointTransform.Decompose(out _, out _, out var pointPos);
+
+                           
+                                //position +=  (handPos - rootPos) - (pointPos - rootPos);
+                                position -= ((handPos - rootPos) -(pointPos - rootPos)) *0.7f;
+                            }*/
+
+                            // Rotation
+                            if (!mappingSettings.KeepOriginalRotation)
+                            {
+                                var orgBoneClip = AnimationSampler.Sample(frameIndex, 0, otherSkeleton, new List<AnimationClip>() { otherAnimationClip }, true, true);
+                                otherSkeleton.SetAnimationFrame(orgBoneClip);
+
+                          
+                                var orgBoneTransform = sourceSkeleton.GetAnimatedWorldTranform(boneToGetAnimDataFrom.Settings.MappingBoneId);
+
+                                var finalTransform2 = orgBoneTransform * Matrix.Invert(animRootTransform);
+                                finalTransform.Decompose(out _, out var rotation2, out var position2);
+
+
+                                rotation.Normalize();
+                                rotation = rotation2;
+                                outputAnimationFile.DynamicFrames[frameIndex].Rotation[boneToGetAnimDataFrom.BoneIndex] = rotation2;
+                            }
+
+                            var tempVector = Vector3.Zero;
+                            ComputeMappedBoneAttributeContributions(boneToGetAnimDataFrom, ref rotation, ref tempVector);
+
+                            var posOffset = Vector3.Transform(tempVector, rotation);
 
                             outputAnimationFile.DynamicFrames[frameIndex].Rotation[boneToGetAnimDataFrom.BoneIndex] = rotation;
-                            outputAnimationFile.DynamicFrames[frameIndex].Position[boneToGetAnimDataFrom.BoneIndex] = position;
+                            outputAnimationFile.DynamicFrames[frameIndex].Position[boneToGetAnimDataFrom.BoneIndex] = position + posOffset;
                         }
                     }
                 }
@@ -224,9 +387,9 @@ namespace VariantMeshEditor.Services
 
             return outputAnimationFile;
         }
+ 
 
-
-        static AnimationClip CreateOutputAnimation(GameSkeleton sourceSkeleton, AnimationClip otherAnimationClip)
+        static AnimationClip CreateOutputAnimation(GameSkeleton sourceSkeleton, int outputAnimationFrameCount)
         {
             var outputAnimationFile = new AnimationClip();
             for (int i = 0; i < sourceSkeleton.BoneCount; i++)
@@ -235,7 +398,7 @@ namespace VariantMeshEditor.Services
                 outputAnimationFile.TranslationMappings.Add(new AnimationFile.AnimationBoneMapping(i));
             }
 
-            for (int frameIndex = 0; frameIndex < otherAnimationClip.DynamicFrames.Count(); frameIndex++)
+            for (int frameIndex = 0; frameIndex < outputAnimationFrameCount; frameIndex++)
                 outputAnimationFile.DynamicFrames.Add(new AnimationClip.KeyFrame());
 
             return outputAnimationFile;

@@ -84,9 +84,20 @@
                             <GridViewColumn Header="BoneIndex" DisplayMemberBinding="{Binding BoneIndex}"/>
                         </GridView>
                     </ListView.View>
-
                     
                 </ListView>
+            </Expander>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Label Width="100">Bone information</Label>
+            <Label>:</Label>
+            <Expander>
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding FixBoneCommand}">Fix bone shit</Button>
+                    
+                </StackPanel>
+
             </Expander>
         </StackPanel>
 

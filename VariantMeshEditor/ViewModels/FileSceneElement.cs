@@ -138,8 +138,8 @@ namespace VariantMeshEditor.ViewModels
 
         public FileSceneElement AddChild(FileSceneElement child)
         {
-            child.Parent = child;
-            Children.Add(child);
+            child.Parent = this;
+            this.Children.Add(child);
             return child;
         }
 

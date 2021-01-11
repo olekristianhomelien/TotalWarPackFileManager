@@ -156,7 +156,7 @@ namespace VariantMeshEditor.ViewModels
                     if (res == System.Windows.Forms.DialogResult.OK)
                     {
                         var selectedFile = loadedPackFileBrowser.GetSelecteFile();
-                        AddMeshToSlot(selectedFile);
+                        AddMesh(selectedFile);
                     }
                 }
             }
@@ -166,14 +166,12 @@ namespace VariantMeshEditor.ViewModels
             }
         }
 
-        public void AddMeshToSlot(PackedFile meshFile)
+        public void AddMesh(PackedFile meshFile)
         {
             SceneLoader sceneLoader = new SceneLoader(_resourceLibary);
             var element = sceneLoader.Load(meshFile, new RootElement(null));
-            element.CreateContent(_virtualWorld, _resourceLibary);
-
-            var mesh = element.Children.First();
-            AddChild(mesh);
+            var meshNode = AddChild(element.Children.First());
+            meshNode.CreateContent(_virtualWorld, _resourceLibary);
         }
 
         protected override void CreateEditor(Scene3d virtualWorld, ResourceLibary resourceLibary)

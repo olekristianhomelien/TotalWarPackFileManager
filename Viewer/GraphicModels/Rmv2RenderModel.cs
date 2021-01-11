@@ -17,10 +17,10 @@ namespace Viewer.GraphicModels
         {
             _animationPlayer = animationPlayer;
             _model = lodModel;
-            _bufferArray = new VertexPositionNormalTextureCustom[_model.Mesh._vertexList.Length];
-            for (int i = 0; i < _model.Mesh._vertexList.Length; i++)
+            _bufferArray = new VertexPositionNormalTextureCustom[_model.Mesh.VertexList.Length];
+            for (int i = 0; i < _model.Mesh.VertexList.Length; i++)
             {
-                var vertex = _model.Mesh._vertexList[i];
+                var vertex = _model.Mesh.VertexList[i];
                 _bufferArray[i].Position = new Vector4(vertex.Postition.X, vertex.Postition.Y, vertex.Postition.Z, 1);
 
                 _bufferArray[i].Normal = new Vector3(vertex.Normal.X, vertex.Normal.Y, vertex.Normal.Z);

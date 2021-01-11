@@ -160,7 +160,7 @@ namespace Filetypes.RigidModel
 
     public class RmvMesh
     {
-        public BaseVertex[] _vertexList;
+        public BaseVertex[] VertexList { get; private set; }
         public ushort[] _indexList;
         public MeshAlphaSettings AlphaSettings { get; private set; }
 
@@ -186,23 +186,23 @@ namespace Filetypes.RigidModel
             AlphaSettings = ByteHelper.ByteArrayToStructure<MeshAlphaSettings>(data, vertexStart - 8);
             var vertexSize = GetVertexSize(vertexFormat);
 
-            _vertexList = new BaseVertex[vertexCount];
+            VertexList = new BaseVertex[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
                 if (vertexFormat == VertexFormat.Default)
                 {
                     var vertexData = ByteHelper.ByteArrayToStructure<DefaultVertex.Data>(data, vertexStart + i * vertexSize);
-                    _vertexList[i] = new DefaultVertex(vertexData);
+                    VertexList[i] = new DefaultVertex(vertexData);
                 }
                 else if (vertexFormat == VertexFormat.Cinematic)
                 {
                     var vertexData = ByteHelper.ByteArrayToStructure<CinematicVertex.Data>(data, vertexStart + i * vertexSize);
-                    _vertexList[i] = new CinematicVertex(vertexData);
+                    VertexList[i] = new CinematicVertex(vertexData);
                 }
                 else if (vertexFormat == VertexFormat.Weighted)
                 {
                     var vertexData = ByteHelper.ByteArrayToStructure<WeightedVertex.Data>(data, vertexStart + i * vertexSize);
-                    _vertexList[i] = new WeightedVertex(vertexData);
+                    VertexList[i] = new WeightedVertex(vertexData);
                 }
                 else
                 {

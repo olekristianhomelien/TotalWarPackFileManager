@@ -100,7 +100,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
             catch (Exception e)
             {
                 _logger.Here().Error(e.ToString());
-                MessageBox.Show("Import failed");
+                MessageBox.Show($"Import failed - {e}");
             }
             _logger.Here().Information("Import config completed");
         }
@@ -123,10 +123,14 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
             AdvBoneMappingBoneSettings item;
             if (ob.BoneMappingForSerialization == BoneMappingType.Direct_smart)
                 item = new DirectSmartAdvBoneMappingBoneSettings();
+            if (ob.BoneMappingForSerialization == BoneMappingType.Direct)
+                item = new DirectAdvBoneMappingBoneSettings();
             else if (ob.BoneMappingForSerialization == BoneMappingType.AttachmentPoint)
                 item = new AttachmentPointAdvBoneMappingBoneSettings();
-            else
+            else if (ob.BoneMappingForSerialization == BoneMappingType.None)
                 item = new AdvBoneMappingBoneSettings();
+            else
+                throw new Exception("Unknown type");
 
             serializer.Populate(jo.CreateReader(), item);
             return item;
@@ -167,8 +171,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings
 
         public void AfterLoad(ResourceLibary lib)
         {
-            SelectedSkeleton = PackFileLoadHelper.FindFile(lib.PackfileContent, SelectedSkeletonFileName);
-            SelectedAnimation = PackFileLoadHelper.FindFile(lib.PackfileContent, SelectedAnimationFileName);
+            if (!string.IsNullOrWhiteSpace(SelectedSkeletonFileName))
+                SelectedSkeleton = PackFileLoadHelper.FindFile(lib.PackfileContent, SelectedSkeletonFileName);
+            if(!string.IsNullOrWhiteSpace(SelectedAnimationFileName))
+                SelectedAnimation = PackFileLoadHelper.FindFile(lib.PackfileContent, SelectedAnimationFileName);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Text;
 using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels;
 using VariantMeshEditor.ViewModels.Animation;
+using VariantMeshEditor.ViewModels.RigidModel;
 using VariantMeshEditor.ViewModels.Skeleton;
 using Viewer.Scene;
 using WpfTest.Scenes;
@@ -123,12 +124,38 @@ namespace VariantMeshEditor.Controls
 
 
         void PaladinAndDragon(RootElement rootNode,
-            bool loadPaladin = true,
+            bool loadPaladin = false,
             bool loadDragon = false, 
-            bool loadGoblin = false,
-            bool loadArkan = false)
+            bool loadGoblin = true,
+            bool loadArkan = false,
+            bool dwarfWithGoboHead = false)
         {
             _logger.Here().Information("start");
+
+            if (dwarfWithGoboHead)
+            {
+                var mainModelFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\variantmeshdefinitions\dwf_hammerers.variantmeshdefinition");
+                var mainMesh = rootNode.LoadModel(mainModelFile, _resourceLibary, _scene3d);
+                var animationElement = SceneElementHelper.GetFirstChild<AnimationElement>(mainMesh);
+                var skeletonElement = SceneElementHelper.GetFirstChild<SkeletonElement>(mainMesh);
+                
+                //var mainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\sword_and_shield\combat_idles\hu1_sws_combat_idle_02.anim");
+                //var handAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid01\hands\hu1_hand_pose_clench.anim");
+                //animationElement.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = mainAnim;
+                //var secondAnimNode = animationElement.AnimationExplorerViewModel.AddNewAnimationNode();
+                //secondAnimNode.SelectedAnimationPackFile = handAnim;
+
+                // Add a mesh to a slot
+                var slots = SceneElementHelper.GetFirstChild<SlotsElement>(mainMesh);
+                var newHeadFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\wh_variantmodels\hu5\grn\grn_goblin\head\grn_goblin_head_02.rigid_model_v2");
+
+                var headSlot = slots.GetSlotByName("head");
+                headSlot.AddMesh(newHeadFile);
+                var headModel = headSlot.Children.Last() as RigidModelElement;
+                headModel.Lods.First().Models.FirstOrDefault().OnFixBoneCommand();
+            }
+        
+
             if (loadPaladin)
             {
                 var paladinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,@"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
@@ -151,12 +178,14 @@ namespace VariantMeshEditor.Controls
                  var secondAnimNode = paladinAnim.AnimationExplorerViewModel.AddNewAnimationNode();
                  secondAnimNode.SelectedAnimationPackFile = handAnim;
 
-                // Add a new slot
-                //var slots = SceneElementHelper.GetFirstChild<SlotsElement>(paladinMesh);
-                //var princessHeadFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\wh_variantmodels\hu1b\hef\hef_princess\hef_princess_head_01.rigid_model_v2");
-                //
-                //var headSlot = slots.GetSlotByName("head");
-                //headSlot.AddMeshToSlot(princessHeadFile);
+                // Add a mesh to a slot
+                var slots = SceneElementHelper.GetFirstChild<SlotsElement>(paladinMesh);
+                var princessHeadFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\wh_variantmodels\hu1b\hef\hef_princess\hef_princess_head_01.rigid_model_v2");
+                
+                var headSlot = slots.GetSlotByName("head");
+                headSlot.AddMesh(princessHeadFile);
+                var headModel = headSlot.Children.Last() as RigidModelElement;
+                headModel.Lods.First().Models.FirstOrDefault().OnFixBoneCommand();
             }
 
             if (loadDragon)
@@ -174,8 +203,7 @@ namespace VariantMeshEditor.Controls
 
             if (loadGoblin)
             {
-                var goblinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent,
-                 @"variantmeshes\variantmeshdefinitions\grn_forest_goblins_base.variantmeshdefinition");
+                var goblinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\variantmeshdefinitions\grn_goblin_spearmen.variantmeshdefinition");
                 var goblinMesh = rootNode.LoadModel(goblinFile, _resourceLibary, _scene3d);
 
                 var goblinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(goblinMesh);

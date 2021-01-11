@@ -223,7 +223,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
             selectedSourceBone.OnBoneMappingTypeChanged += SelectedSourceBone_OnBoneMappingTypeChanged;
 
             // This will remove the filter
-            var oldOtherBone = SelectedOtherBone;
             SelectedOtherBone = null;
             if(!string.IsNullOrWhiteSpace(OtherBoneFilterText))
                 OtherBoneFilterText = "";
@@ -236,7 +235,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                 SetOtherBonesList(CurrentOtherBoneListValue.Other, selectedSourceBone);
 
             _originalViewModel.SetSelectedBoneByIndex(selectedSourceBone.BoneIndex);
-            SelectedOtherBone = oldOtherBone;
         }
 
         void SetOtherBonesList(CurrentOtherBoneListValue value, AdvBoneMappingBone selectedBone, bool force = false)
@@ -276,7 +274,7 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
             if (SelectedOriginalBone.MappingType == BoneMappingType.None)
             {
-                SelectedOriginalBone.CreateDirectMapping(selectedTargetBone.Settings.MappingBoneName, selectedTargetBone.Settings.MappingBoneId);
+                SelectedOriginalBone.CreateDirectMapping(selectedTargetBone.BoneName, selectedTargetBone.BoneIndex);
             }
             else
             {

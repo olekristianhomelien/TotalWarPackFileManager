@@ -1,6 +1,7 @@
 ﻿using Common;
 using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,10 @@ namespace VariantMeshEditor.Util
 {
     class SceneLoader
     {
+        ILogger _logger = Logging.Create<SceneLoader>();
+
         ResourceLibary _resourceLibary;
+
 
         public SceneLoader( ResourceLibary resourceLibary)
         {
@@ -27,6 +31,10 @@ namespace VariantMeshEditor.Util
 
         public FileSceneElement Load(PackedFile file, FileSceneElement parent)
         {
+            if (file == null)
+                throw new Exception("File is null in SceneLoader::Load");
+            _logger.Here().Information($"Attempting to load file {file.FullPath}");
+
             switch (file.FileExtention)
             {
                 case "variantmeshdefinition":
@@ -130,17 +138,17 @@ namespace VariantMeshEditor.Util
 
         void LoadRigidMesh(PackedFile file, ref FileSceneElement parent)
         {
-            var model3d = new RmvRigidModel(file.Data, file.FullPath);
-            var model = new RigidModelElement(parent, model3d, file.FullPath);
+            var rmvModel = new RmvRigidModel(file.Data, file.FullPath);
+            var element = new RigidModelElement(parent, rmvModel, file.FullPath);
             if (parent == null)
             {
-                parent = model;
+                parent = element;
             }
             else
             {
                 if (parent.Children.Count == 0)
-                    model.IsChecked = true;
-                parent.Children.Add(model);
+                    element.IsChecked = true;
+                parent.Children.Add(element);
             }
         }
 

@@ -68,7 +68,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         public void OnApplySettingsToAllChildNodesCommand(AdvBoneMappingBone settingsOwner)
         {
             var targetType = settingsOwner.MappingType;
-            bool isSameMapping = MappingType == targetType;
             bool isSameNode = settingsOwner == this;
             bool hasMapping = Settings.HasMapping;
 
@@ -123,26 +122,6 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
                     throw new Exception($"Unkown mapping type {targetType}");
                 }
             }
-
-           //var directSettingsOwner = settingsOwner.Settings as DirectSmartAdvBoneMappingBoneSettings;
-           //if (directSettingsOwner == null)
-           //    return;
-           //
-           //if (Settings.HasMapping == true && settingsOwner != this)
-           //{
-           //    var directSettings = Settings as DirectSmartAdvBoneMappingBoneSettings;
-           //    if (directSettings == null)
-           //    {
-           //        var oldSettings = Settings;
-           //        directSettings = new DirectSmartAdvBoneMappingBoneSettings();
-           //        directSettings.CopyBaseValues(oldSettings);
-           //    }
-           //
-           //    directSettings.SkeletonScaleValue.Value = directSettingsOwner.SkeletonScaleValue.Value;
-           //    directSettings.BoneCopyMethod = directSettingsOwner.BoneCopyMethod;
-           //    directSettings.Ratio_ScaleMethod = directSettingsOwner.Ratio_ScaleMethod;
-           //    directSettings.Ratio_ScaleRotation = directSettingsOwner.Ratio_ScaleRotation;
-           //}
 
             foreach (var child in Children)
                 child.OnApplySettingsToAllChildNodesCommand(settingsOwner);
@@ -348,7 +327,23 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
         {
             var setting = new AttachmentPointAdvBoneMappingBoneSettings();
             CopyBaseValues(setting);
+            setting.KeepOriginalRotation = KeepOriginalRotation;
+            setting.ComputeRelativeDistance = ComputeRelativeDistance;
             return setting;
+        }
+
+        bool _keepOriginalRotation = true;
+        public bool KeepOriginalRotation
+        {
+            get { return _keepOriginalRotation; }
+            set { SetAndNotify(ref _keepOriginalRotation, value); }
+        }
+
+        bool _computeRelativeDistance = true;
+        public bool ComputeRelativeDistance
+        {
+            get { return _computeRelativeDistance; }
+            set { SetAndNotify(ref _computeRelativeDistance, value); }
         }
     }
 
