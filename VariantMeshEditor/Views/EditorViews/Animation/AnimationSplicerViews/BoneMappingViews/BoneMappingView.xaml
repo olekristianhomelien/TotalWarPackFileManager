@@ -252,8 +252,8 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="0" Content="Auto map based on name" Command="{Binding AutoMapSelfAndChildrenByNameCommand}" />
-                <Button Grid.Row="0" Grid.Column="1" Content="Auto map based on hierarchy" Command="{Binding AutoMapSelfAndChildrenByHierarchyCommand}"/>
+                <Button Grid.Row="0" Grid.Column="0" Content="Auto map based on name" Command="{Binding AutoMapSelfAndChildrenByNameCommand}" CommandParameter="{Binding SelectedOriginalBone}"/>
+                <Button Grid.Row="0" Grid.Column="1" Content="Auto map based on hierarchy" Command="{Binding AutoMapSelfAndChildrenByHierarchyCommand}" CommandParameter="{Binding SelectedOriginalBone}"/>
                 <Button Grid.Row="1" Grid.Column="0" Content="Clear all bindings" Command="{Binding ClearBindingSelfAndChildrenCommand}"/>
                 <Button Grid.Row="1" Grid.Column="1" Content="Copy Setting To Children" Command="{Binding ApplySettingsToAllChildNodesCommand}"  CommandParameter="{Binding SelectedOriginalBone}"/>
             </Grid>

@@ -7,14 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using VariantMeshEditor.Services;
-using VariantMeshEditor.Util;
 using VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping;
-using VariantMeshEditor.ViewModels.VariantMesh;
 using Viewer.Scene;
 
 namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.Settings

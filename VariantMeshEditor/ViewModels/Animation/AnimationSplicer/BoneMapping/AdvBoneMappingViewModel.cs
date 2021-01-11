@@ -79,8 +79,10 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer.BoneMapping
 
             AutoMapSelfAndChildrenByHierarchyCommand = new RelayCommand<AdvBoneMappingBone>((node) => 
             {
-                if (node != null)
+                if (node != null && SelectedOtherBone != null)
                     BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(node, SelectedOtherBone);
+                if (SelectedOriginalBone != null && SelectedOtherBone != null)
+                    BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(SelectedOriginalBone, SelectedOtherBone);
                 else
                     BoneMappingHelper.AutomapDirectBoneLinksBasedOnHierarchy(_allOriginalBones.FirstOrDefault(), _allOtherBones.FirstOrDefault()); 
             });
