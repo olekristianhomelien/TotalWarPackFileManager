@@ -94,13 +94,13 @@ namespace Viewer.Scene
                     }
                     else
                     {
-                        throw new Exception("Unknow texture format: " + image.ToString());
+                        throw new Exception("Unknow texture format: " + image.ToString() + " Path = " + fileName);
                     }
                 }
             }
             catch (Exception e)
             {
-                _logger.Here().Error($"Error loading texture: {e}");
+                _logger.Here().Error($"Error loading texture ({fileName}): {e}");
             }
             return null;
         }

@@ -17,7 +17,7 @@ namespace Filetypes.RigidModel
             ILogger logger = Logging.Create<RmvRigidModel>();
             logger.Here().Information($"Loading Rmv2RigidModel: {fileName}");
             if (data.Length == 0)
-                throw new Exception("Trying to load Rmv2RigidModel with no data, chunk size = 0");
+                throw new Exception("Trying to load Rmv2RigidModel with no data, data size = 0");
 
             FileName = fileName;
             Header = LoadModelHeader(data);

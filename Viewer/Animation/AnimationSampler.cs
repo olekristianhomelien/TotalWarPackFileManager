@@ -12,7 +12,9 @@ namespace Viewer.Animation
 {
     public class AnimationSampler
     {
-        public static AnimationFrame Sample(int frameIndex, float frameIterpolation, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame, bool applyDynamicFrames)
+     
+
+        public static AnimationFrame Sample(int frameIndex, float frameIterpolation, GameSkeleton skeleton, List<AnimationClip> animationClips, bool applyStaticFrame = true, bool applyDynamicFrames = true)
         {
             try
             {
@@ -120,6 +122,11 @@ namespace Viewer.Animation
                 logger.Error(e.Message);
                 throw;
             }
+        }
+
+        public static AnimationFrame Sample(int frameIndex, float frameIterpolation, GameSkeleton skeleton, AnimationClip animationClip, bool applyStaticFrame = true, bool applyDynamicFrames = true)
+        {
+            return Sample(frameIndex, frameIterpolation, skeleton, new List<AnimationClip>() { animationClip }, applyStaticFrame, applyDynamicFrames);
         }
 
         static float EnsureRange(float value, float min, float max)

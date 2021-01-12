@@ -10,9 +10,7 @@ namespace Viewer.Animation
         public Quaternion[] Rotation { get; private set; }
         public string[] BoneNames { get; private set; }
 
-
-        Matrix[] WorldTransform { get; set; }
-        Matrix[] AnimatedWorldTransforms { get; set; }
+        Matrix[] _worldTransform { get; set; }
         int[] ParentBoneId { get; set; }
 
         public Quaternion[] TestRotation;
@@ -27,8 +25,7 @@ namespace Viewer.Animation
             BoneCount = skeletonFile.Bones.Count();
             Translation = new Vector3[BoneCount];
             Rotation = new Quaternion[BoneCount];
-            WorldTransform = new Matrix[BoneCount];
-            AnimatedWorldTransforms = new Matrix[BoneCount];
+            _worldTransform = new Matrix[BoneCount];
             ParentBoneId = new int[BoneCount];
             BoneNames = new string[BoneCount];
             SkeletonName = skeletonFile.Header.SkeletonName;
@@ -69,7 +66,7 @@ namespace Viewer.Animation
                 var transform = rotationMatrix * translationMatrix;
 
                 TestRotation[i] = Rotation[i];
-                WorldTransform[i] = transform;
+                _worldTransform[i] = transform;
             }
 
             for (int i = 0; i < BoneCount; i++)
@@ -77,8 +74,7 @@ namespace Viewer.Animation
                 var parentIndex = skeletonFile.Bones[i].ParentId;
                 if (parentIndex == -1)
                     continue;
-                WorldTransform[i] = WorldTransform[i] * WorldTransform[parentIndex];
-                AnimatedWorldTransforms[i] = WorldTransform[i];
+                _worldTransform[i] = _worldTransform[i] * _worldTransform[parentIndex];
                 TestRotation[i] = TestRotation[i] * TestRotation[parentIndex];
             }
         }
@@ -92,21 +88,10 @@ namespace Viewer.Animation
             }
         }
 
+        AnimationFrame _frame;
         public void SetAnimationFrame(AnimationFrame frame)
         {
-            for (int i = 0; i < BoneCount; i++)
-            {
-                //var   = GetParentBone(i);
-                //if (parentIndex == -1)
-                //    continue;
-
-                AnimatedWorldTransforms[i] = GetWorldTransform(i);
-                if (frame != null)
-                {
-                    var currentBoneAnimationoffset = frame.BoneTransforms[i].WorldTransform;
-                    AnimatedWorldTransforms[i] = AnimatedWorldTransforms[i] * currentBoneAnimationoffset;
-                }
-            }
+            _frame = frame;
         }
 
         public int GetBoneIndexByName(string name)
@@ -122,12 +107,15 @@ namespace Viewer.Animation
 
         public Matrix GetWorldTransform(int boneIndex)
         {
-            return WorldTransform[boneIndex];
+            return _worldTransform[boneIndex];
         }
 
         public Matrix GetAnimatedWorldTranform(int boneIndex)
         {
-            return AnimatedWorldTransforms[boneIndex];
+            if (_frame != null)
+                return _frame.GetSkeletonAnimatedWorld(this, boneIndex);
+
+            return GetWorldTransform(boneIndex); ;
         }
 
         public int GetParentBone(int boneIndex)

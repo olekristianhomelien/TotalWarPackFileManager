@@ -44,6 +44,20 @@ namespace Viewer.Animation
         }
 
         public List<BoneKeyFrame> BoneTransforms = new List<BoneKeyFrame>();
+
+        public Matrix GetSkeletonAnimatedWorld(GameSkeleton gameSkeleton, int boneIndex)
+        {
+            Matrix output = gameSkeleton.GetWorldTransform(boneIndex) * BoneTransforms[boneIndex].WorldTransform;
+            return output;
+        }
+
+        public Matrix GetSkeletonAnimatedWorldDiff(GameSkeleton gameSkeleton, int boneIndex0, int boneIndex1)
+        {
+            var bone0Transform = GetSkeletonAnimatedWorld(gameSkeleton, boneIndex0);
+            var bone1Transform = GetSkeletonAnimatedWorld(gameSkeleton, boneIndex1);
+
+            return bone1Transform * Matrix.Invert(bone0Transform);
+        }
     }
 
     public class AnimationPlayerSettings
