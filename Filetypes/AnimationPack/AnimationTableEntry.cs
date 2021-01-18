@@ -12,7 +12,7 @@ namespace Filetypes.AnimationPack
 
             public override string ToString()
             {
-                return $"{Name} - {Unknown}";
+                return $"{Name}, Unk = {Unknown}";
             }
         }
 
@@ -47,6 +47,15 @@ namespace Filetypes.AnimationPack
                 AnimationSets.Add(animationSet);
             }
             Unknown1 = data.ReadShort();
+        }
+
+        public override string ToString()
+        {
+            var str = $"{Name}, Skeleton = {SkeletonName}";
+            if (MountName.Length != 0)
+                str += $", Mount = {MountName}";
+            str += $", AnimationSets = {AnimationSets.Count}";
+            return str;
         }
     }
 }

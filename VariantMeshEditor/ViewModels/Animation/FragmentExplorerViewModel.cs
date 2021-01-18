@@ -145,54 +145,54 @@ namespace VariantMeshEditor.ViewModels.Animation
 
         void OnAnimationSetSelected(string animationSet)
         {
-            var item = _animationPackData.AnimationTableEntries.FirstOrDefault(x => x.Name == animationSet);
-
-            if (item != null)
-            {
-                List<AnimationFragmentCollection> fragmentCollections = new List<AnimationFragmentCollection>();
-                foreach (var entry in item.AnimationSets)
-                {
-                    var foundFragments = _animationPackData.AnimationFragments.Where(x => x.FileName.Contains(entry.Name));
-                    foreach (var fragment in foundFragments)
-                        fragmentCollections.Add(fragment);
-
-                }
-
-                var fragmentList = new Dictionary<int, Dictionary<string, List<AnimationFragmentItem>>>();
-                foreach (var collction in fragmentCollections)
-                {
-                    foreach (var fragment in collction.AnimationFragments)
-                    {
-                        if (!fragmentList.ContainsKey(fragment.Slot))
-                            fragmentList.Add(fragment.Slot, new Dictionary<string, List<AnimationFragmentItem>>());
-
-                        if (!fragmentList[fragment.Slot].ContainsKey(collction.FileName))
-                            fragmentList[fragment.Slot].Add(collction.FileName, new List<AnimationFragmentItem>());
-
-                        fragmentList[fragment.Slot][collction.FileName].Add(fragment);
-                    }
-                }
-
-                foreach (var collection in FragmentCollectionList)
-                    collection.SelectionChanged -= OnChanged;
-
-                FragmentCollectionList.Clear();
-                foreach (var collection in fragmentCollections)
-                    FragmentCollectionList.Add(new FragmentCollectionViewItem(collection));
-
-                foreach (var collection in FragmentCollectionList)
-                    collection.SelectionChanged += OnChanged;
-
-                var finalFragList = new List<AnimationFragmentItem>();
-                foreach (var fragment in fragmentList)
-                {
-                    var currentSlot = fragment.Key;
-                    var allOptions = fragment.Value;
-                    var selectedValue = allOptions.Last();
-                    foreach (var value in selectedValue.Value)
-                        finalFragList.Add(value);
-                }
-            }
+            //var item = _animationPackData.AnimationTableEntries.FirstOrDefault(x => x.Name == animationSet);
+            //
+            //if (item != null)
+            //{
+            //    List<AnimationFragmentCollection> fragmentCollections = new List<AnimationFragmentCollection>();
+            //    foreach (var entry in item.AnimationSets)
+            //    {
+            //        var foundFragments = _animationPackData.AnimationFragments.Where(x => x.FileName.Contains(entry.Name));
+            //        foreach (var fragment in foundFragments)
+            //            fragmentCollections.Add(fragment);
+            //
+            //    }
+            //
+            //    var fragmentList = new Dictionary<int, Dictionary<string, List<AnimationFragmentItem>>>();
+            //    foreach (var collction in fragmentCollections)
+            //    {
+            //        foreach (var fragment in collction.AnimationFragments)
+            //        {
+            //            if (!fragmentList.ContainsKey(fragment.Slot))
+            //                fragmentList.Add(fragment.Slot, new Dictionary<string, List<AnimationFragmentItem>>());
+            //
+            //            if (!fragmentList[fragment.Slot].ContainsKey(collction.FileName))
+            //                fragmentList[fragment.Slot].Add(collction.FileName, new List<AnimationFragmentItem>());
+            //
+            //            fragmentList[fragment.Slot][collction.FileName].Add(fragment);
+            //        }
+            //    }
+            //
+            //    foreach (var collection in FragmentCollectionList)
+            //        collection.SelectionChanged -= OnChanged;
+            //
+            //    FragmentCollectionList.Clear();
+            //    foreach (var collection in fragmentCollections)
+            //        FragmentCollectionList.Add(new FragmentCollectionViewItem(collection));
+            //
+            //    foreach (var collection in FragmentCollectionList)
+            //        collection.SelectionChanged += OnChanged;
+            //
+            //    var finalFragList = new List<AnimationFragmentItem>();
+            //    foreach (var fragment in fragmentList)
+            //    {
+            //        var currentSlot = fragment.Key;
+            //        var allOptions = fragment.Value;
+            //        var selectedValue = allOptions.Last();
+            //        foreach (var value in selectedValue.Value)
+            //            finalFragList.Add(value);
+            //    }
+            //}
         }
 
         void OnChanged(bool value)

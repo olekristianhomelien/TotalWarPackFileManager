@@ -1,10 +1,13 @@
 ﻿
 using Common;
+using Filetypes.AnimationPack;
+using Filetypes.ByteParsing;
 using Filetypes.RigidModel;
 using Microsoft.Xna.Framework.Graphics;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using VariantMeshEditor.Util;
@@ -19,6 +22,7 @@ using Game = Common.Game;
 
 namespace VariantMeshEditor.Controls
 {
+
     class EditorMainController
     {
         ILogger _logger = Logging.Create<EditorMainController>();
@@ -40,41 +44,89 @@ namespace VariantMeshEditor.Controls
             _scene3d.On3dWorldReady += Create3dWorld;
 
 
+            var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+            var animationPackData = new AnimationPackLoader();
+
+            var animationTables = AnimationPackLoader.GetAnimationTables(file);
+            var animationFragments = AnimationPackLoader.GetFragmentCollections(file).ToList();
+            var orc2HandTable = animationTables.FirstOrDefault(x => x.Name == "hu2_orc_2handed_axe");
+
+            // Find all animations
+
+
+
+
+            var fragmentCollections = new List<AnimationFragmentCollection>();
+            foreach (var animSet in orc2HandTable.AnimationSets)
+            {
+
+                var fragment = animationFragments.FirstOrDefault(x => x.FileName.Contains(animSet.Name + ".frg"));
+                if (fragment != null)
+                {
+                    fragment.Write(@"C:\temp\fragExport.frg");
+                    fragmentCollections.Add(fragment);
+                }
+                else
+                {
+                    var oldFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations/animation_fragments/" + animSet.Name + ".txt");
+                    var t = AnimationPackLoader.GetOldFragmentCollection(oldFile);
+                    fragmentCollections.Add(t);
+                }
+            }
+
+            var masterFragment = fragmentCollections.Last();
+            foreach (var item in fragmentCollections.Take(fragmentCollections.Count - 1))
+                masterFragment.AddFragmentCollection(item);
+
+            masterFragment.ChangeAnimationFileName("test_");
+            masterFragment.SetSkeleton("humanoid02");
+            masterFragment.ChangeSkeleton("humanoid05");
+            masterFragment.Write(@"C:\temp\fragExport.frg");
+            //animationPackData.Load(new ByteChunk(file.Data));
+
+
+
+            //animations/animation_fragments/hu2_orc_2handed_axe.txt
+
+
+            return;
+            //hu2_orc_2handed_axe.frg
+
 
             //DumpRmv2Files dumper = new DumpRmv2Files();
             //dumper.Dump(_resourceLibary, @"C:\temp\DataDump\");
 
-           //Dictionary<string, List<string>> slots = new Dictionary<string, List<string>>();
-           //
-           //var files = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "variantmeshdefinition");
-           //foreach (var file in files)
-           //{
-           //    var content = file.Data;
-           //    var fileContent = Encoding.Default.GetString(content);
-           //    try
-           //    {
-           //        VariantMeshFile meshFile = VariantMeshDefinition.Create(fileContent);
-           //
-           //        foreach (var slot in meshFile.VARIANT_MESH.SLOT)
-           //        {
-           //            var key = slot.Name;
-           //            if(slot.AttachPoint.Length != 0)
-           //                key = slot.Name + " " + slot.AttachPoint;
-           //
-           //            key = key.ToLower();
-           //            if (!slots.ContainsKey(key))
-           //                slots.Add(key, new List<string>());
-           //            slots[key].Add(file.FullPath);
-           //        }
-           //    }
-           //    catch(Exception e)
-           //    { 
-           //    }
-           //}
-           //
-           //
-           //var without = slots.Where(x => x.Key.Contains(" ") == false).ToList();
-           //var with = slots.Where(x => x.Key.Contains(" ") == true).ToList();
+            //Dictionary<string, List<string>> slots = new Dictionary<string, List<string>>();
+            //
+            //var files = PackFileLoadHelper.GetAllWithExtention(_resourceLibary.PackfileContent, "variantmeshdefinition");
+            //foreach (var file in files)
+            //{
+            //    var content = file.Data;
+            //    var fileContent = Encoding.Default.GetString(content);
+            //    try
+            //    {
+            //        VariantMeshFile meshFile = VariantMeshDefinition.Create(fileContent);
+            //
+            //        foreach (var slot in meshFile.VARIANT_MESH.SLOT)
+            //        {
+            //            var key = slot.Name;
+            //            if(slot.AttachPoint.Length != 0)
+            //                key = slot.Name + " " + slot.AttachPoint;
+            //
+            //            key = key.ToLower();
+            //            if (!slots.ContainsKey(key))
+            //                slots.Add(key, new List<string>());
+            //            slots[key].Add(file.FullPath);
+            //        }
+            //    }
+            //    catch(Exception e)
+            //    { 
+            //    }
+            //}
+            //
+            //
+            //var without = slots.Where(x => x.Key.Contains(" ") == false).ToList();
+            //var with = slots.Where(x => x.Key.Contains(" ") == true).ToList();
 
         }
 
@@ -206,8 +258,9 @@ namespace VariantMeshEditor.Controls
                 var goblinFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"variantmeshes\variantmeshdefinitions\grn_goblin_spearmen.variantmeshdefinition");
                 var goblinMesh = rootNode.LoadModel(goblinFile, _resourceLibary, _scene3d);
 
+                //var bytes = File.ReadAllBytes(@"C:\Users\ole_k\Desktop\SatticTest.anim");
+
                 var goblinAnim = SceneElementHelper.GetFirstChild<AnimationElement>(goblinMesh);
-                //var dragonMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\dragon01\combat_idles\dr1_combat_idle_02.anim");
                 var goblinMainAnim = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
 
                 goblinAnim.AnimationExplorerViewModel.AnimationList[0].SelectedAnimationPackFile = goblinMainAnim;

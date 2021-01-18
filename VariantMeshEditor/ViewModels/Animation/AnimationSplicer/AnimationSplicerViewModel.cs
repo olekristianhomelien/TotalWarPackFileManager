@@ -224,7 +224,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
 
                         var clip = AnimationBuilderService.CreateMergedAnimation(settings);
                         var fileFormat = clip.ConvertToFileFormat(_targetSkeletonNode.GameSkeleton);
-                        var outputFileName = dialog.SelectedPath + "\\"+ animationPackFile.FullPath;
+
+                        var fName =Path.GetFileNameWithoutExtension(animationPackFile.FullPath);
+                        var ext = Path.GetExtension(animationPackFile.FullPath);
+                        var path = Path.GetDirectoryName(animationPackFile.FullPath);
+
+                        var outputFileName = dialog.SelectedPath + "\\"+ path + "\\" + "test_" + fName + ext;
                         AnimationFile.Write(fileFormat, outputFileName);
                     }
                     catch (Exception e)
@@ -308,9 +313,12 @@ namespace VariantMeshEditor.ViewModels.Animation.AnimationSplicer
             }
             else if (goblin)
             {
-                TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
-                ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
-                ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+                //TargetAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid05\dual_sword\stand\hu5_ds_stand_idle_01.anim");
+                //ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid07.anim");
+                //ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid07\club_and_blowpipe\missile_actions\hu7_clbp_aim_idle_01.anim");
+
+                ExternalAnimation.SelectedSkeleton = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\skeletons\humanoid02.anim");
+                ExternalAnimation.SelectedAnimation = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\battle\humanoid02\docking\hu2_dock_2h_axe_right_hand_2.anim");
             }
             else if (dancingDwarf)
             {

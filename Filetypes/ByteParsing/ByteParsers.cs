@@ -225,6 +225,14 @@ namespace Filetypes.ByteParsing
                 value = (buffer[index] == 1);
             return canDecode;
         }
+
+        public byte[] Write(bool value)
+        {
+            if (value)
+                return new byte[1] { 1 };
+            else
+                return new byte[1] { 0 };
+        }
     }
 
     public class StringParser : SpesificByteParser<string>
@@ -351,6 +359,22 @@ namespace Filetypes.ByteParsing
 
             value = BitConverter.ToString(buffer, index, bytesRead);
             return true;
+        }
+
+        public byte[] WriteCaString(string value)
+        {
+            if (IsOptStr)
+                throw new NotImplementedException();
+            if(StringEncoding != Encoding.UTF8)
+                throw new NotImplementedException();
+
+            if (string.IsNullOrWhiteSpace(value))
+                return BitConverter.GetBytes((Int16)0);
+
+            var byteLength = BitConverter.GetBytes((Int16)value.Length);
+            var byteStr = StringEncoding.GetBytes(value);
+
+            return byteLength.Concat(byteStr).ToArray();
         }
     }
 

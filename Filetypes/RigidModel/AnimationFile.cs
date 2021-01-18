@@ -128,6 +128,14 @@ namespace Filetypes.RigidModel
             }
 
             public int FileWriteValue { get { return _value; } }
+
+            public override string ToString()
+            {
+                var outputStr =  $"{MappingType}";
+                if (MappingType != AnimationBoneMappingType.None)
+                    outputStr += $" - {Id}";
+                return outputStr;
+            }
         }
 
 
@@ -143,7 +151,7 @@ namespace Filetypes.RigidModel
         static AnimationFile Create(ByteChunk chunk)
         {
             if (chunk.BytesLeft == 0)
-                throw new System.Exception("Trying to load animation with no data, chunk size = 0");
+                throw new Exception("Trying to load animation with no data, chunk size = 0");
             var output = new AnimationFile();
             chunk.Reset();
             output.Header = GetAnimationHeader(chunk);
@@ -197,7 +205,7 @@ namespace Filetypes.RigidModel
                 }
             }
             // ----------------------
-
+            
             return output;
         }
 

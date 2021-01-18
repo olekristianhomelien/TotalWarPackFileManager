@@ -15,6 +15,11 @@ namespace Viewer.Animation
         {
             public List<Vector3> Position { get; set; } = new List<Vector3>();
             public List<Quaternion> Rotation { get; set; } = new List<Quaternion>();
+
+            public override string ToString()
+            {
+                return $"PosCount = {Position.Count}, RotCount = {Rotation.Count}";
+            }
         }
 
 
@@ -96,6 +101,13 @@ namespace Viewer.Animation
                 frame.Quaternion.Add(new FileVector4(rot.X, rot.Y, rot.Z, rot.W));
 
             return frame;
+        }
+
+        public bool IsPoseClip()
+        {
+            var hasDynamicRoation = RotationMappings.Count(x => x.IsDynamic);
+            var hasDynamicTranslation = TranslationMappings.Count(x => x.IsDynamic);
+            return hasDynamicRoation == 0 && hasDynamicTranslation == 0;
         }
 
 
