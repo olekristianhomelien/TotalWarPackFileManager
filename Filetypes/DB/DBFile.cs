@@ -129,7 +129,6 @@ namespace Filetypes {
 
         [JsonConverter(typeof(StringEnumConverter))]
         public DbTypesEnum Type { get; set; }
-
         public object Clone()
         {
             return MemberwiseClone();

@@ -239,6 +239,10 @@
       <Project>{2419C2AF-48A3-40D2-980B-36AB2D81DC74}</Project>
       <Name>Filetypes</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MetaFileEditor\MetaFileEditor.csproj">
+      <Project>{e5bd0503-eb25-48be-ab10-2925393f7b58}</Project>
+      <Name>MetaFileEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VariantMeshEditor\VariantMeshEditor.csproj">
       <Project>{ba94d15f-2a64-4802-a0c3-86fb6c7333f2}</Project>
       <Name>VariantMeshEditor</Name>

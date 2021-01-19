@@ -17,6 +17,7 @@ using System.Linq;
 using PackFileManager.Dialogs.Settings;
 using Filetypes.DB;
 using Serilog;
+using MetaFileEditor;
 
 namespace PackFileManager
 {
@@ -195,10 +196,30 @@ namespace PackFileManager
             }
 
 
+
+
             if(CurrentPackFile == null)
                 _logger.Here().Error($"Pack files loaded - Pack file is null");
             else
                 _logger.Here().Information($"Pack files loaded - {CurrentPackFile.Files.Count()} files found");
+
+
+            var metaDataFile = PackFileLoadHelper.FindFile(loadedContent, @"animations/battle/humanoid02/2handed_axe/attacks/hu2_2ha_attack_01.anm.meta");
+            MetaFileEditorController.CreateEditor(metaDataFile);
+
+            var editor = MetaFileEditorController.CreateDecoder(loadedContent);
+            var containerForm = new Form()
+            {
+                Width = 1600,
+                Height = 1000
+            };
+
+            var wpfWindow = WpfPackedFileEditorHost.Create(editor);
+            containerForm.Controls.Add(wpfWindow);
+            containerForm.Show();
+
+            return;
+
 
             var file = PackFileLoadHelper.FindFile(loadedContent, @"variantmeshes\variantmeshdefinitions\brt_paladin.variantmeshdefinition");
 
@@ -1525,15 +1546,15 @@ namespace PackFileManager
                 Height = 1000
             };
 
-            //var dbDecoder = new Viewer.Scene.SceneView();
-            //dbDecoder.Show();
-            
             var dbDecoder = new DbSchemaDecoder.DbSchemaDecoder(GameManager.Instance.CurrentGame);
-         
             var wpfWindow = WpfPackedFileEditorHost.Create(dbDecoder);
-            //splitContainer1.Panel2.Controls.Add(wpfWindow);
             containerForm.Controls.Add(wpfWindow);
             containerForm.Show();
+
+            //var wpfWindow = WpfPackedFileEditorHost.Create(new MetaFileEditor.UserControl1());
+            //containerForm.Controls.Add(wpfWindow);
+            //containerForm.Show();
+
         }
     }
 }

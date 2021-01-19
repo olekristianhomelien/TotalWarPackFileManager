@@ -261,7 +261,7 @@ namespace Common {
 
         public static List<PackedFile> GetAllWithExtention(List<PackFile> loadedPackFiles, string extention)
         {
-            var res = loadedPackFiles.SelectMany(x => x.Files.Where(file => file.FileExtention == extention)).ToList();
+            var res = loadedPackFiles.SelectMany(x => x.Files.Where(file =>file.FileExtention == extention)).ToList();
             return res;
         }
     }
