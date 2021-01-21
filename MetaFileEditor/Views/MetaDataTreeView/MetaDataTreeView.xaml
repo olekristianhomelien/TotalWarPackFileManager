@@ -29,9 +29,9 @@
         
         <ListView 
             Grid.Row="2" 
-            ItemsSource="{Binding File.TagItems, UpdateSourceTrigger=PropertyChanged}" 
+            ItemsSource="{Binding ActiveMentaDataContent.File.TagItems, UpdateSourceTrigger=PropertyChanged}" 
             DisplayMemberPath="DisplayName" 
-            SelectedItem="{Binding SelectedMetaTagItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            SelectedItem="{Binding ActiveMentaDataContent.SelectedTagType, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
 
 

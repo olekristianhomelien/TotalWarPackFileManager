@@ -48,11 +48,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\DataTableViewModel.cs" />
-    <Compile Include="ViewModels\FieldExplorerController.cs" />
+    <Compile Include="ViewModels\MetaDataTable.cs" />
+    <Compile Include="ViewModels\Data\ActiveMetaDataContentModel.cs" />
+    <Compile Include="ViewModels\Data\TableDefinitionModel.cs" />
+    <Compile Include="ViewModels\FieldExplorer.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ViewModels\TableDefinitionEditorModel.cs" />
-    <Compile Include="ViewModels\TreeViewModel.cs" />
+    <Compile Include="ViewModels\TableDefinitionEditor.cs" />
     <Compile Include="Views\DecoderViews\ErrorView.xaml.cs">
       <DependentUpon>ErrorView.xaml</DependentUpon>
     </Compile>
@@ -83,18 +84,10 @@
     <Compile Include="Views\MetaDataMainView.xaml.cs">
       <DependentUpon>MetaDataMainView.xaml</DependentUpon>
     </Compile>
-    <Page Include="UserControl1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="DataType\MetaDataFile.cs" />
     <Compile Include="DataType\MetaDataFileParser.cs" />
     <Compile Include="DataType\MetaDataTagItem.cs" />
     <Compile Include="MetaFileEditorController.cs" />
-    <Compile Include="UserControl1.xaml.cs">
-      <DependentUpon>UserControl1.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Page Include="Views\DecoderViews\ErrorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

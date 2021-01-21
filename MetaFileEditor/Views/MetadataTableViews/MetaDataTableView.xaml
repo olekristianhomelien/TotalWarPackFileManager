@@ -6,24 +6,29 @@
              xmlns:local="clr-namespace:MetaFileEditor.Views.MetadataTableViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
- 
 
 
-        <DataGrid 
-            
-            SelectedItem="{Binding DataTable.SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+
+    <DataGrid 
+            x:Name="DataGrid" 
+            SelectedItem="{Binding DataTable.SelectedRow, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
             VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
             ScrollViewer.CanContentScroll="true"
             
-            x:Name="DataGrid" 
+            
              DataContextChanged="StackPanel_DataContextChanged"
-            ItemsSource="{Binding DataTable.DataList, UpdateSourceTrigger=PropertyChanged}"  
             AutoGenerateColumns="false" 
             CanUserAddRows="False" 
-            CanUserResizeRows="False" 
-            AutoGeneratingColumn="DataGrid_AutoGeneratingColumn">
-            
-            <DataGrid.RowValidationRules>
+            CanUserResizeRows="False" >
+
+        <DataGrid.InputBindings>
+            <MouseBinding
+            MouseAction="LeftDoubleClick"
+            Command="{Binding DataTable.ItemDoubleClickedCommand}"
+            CommandParameter="{Binding DataTable.SelectedRow}"/>
+        </DataGrid.InputBindings>
+
+        <DataGrid.RowValidationRules>
             <local:RowDataValidationRule ValidationStep="UpdatedValue" ValidatesOnTargetUpdated="True"/>
             </DataGrid.RowValidationRules>
 

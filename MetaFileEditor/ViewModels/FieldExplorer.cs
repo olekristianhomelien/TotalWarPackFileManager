@@ -2,6 +2,7 @@
 using Filetypes.ByteParsing;
 using GalaSoft.MvvmLight.CommandWpf;
 using MetaFileEditor.DataType;
+using MetaFileEditor.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -64,11 +65,12 @@ namespace MetaFileEditor.ViewModels
 
     }
 
-    class FieldExplorerController : NotifyPropertyChangedImpl
+    class FieldExplorer : NotifyPropertyChangedImpl
     {
 
-        DbTableDefinitionViewModel _tableDefinition;
-        //DataTableViewModel _dataTableView;
+        TableDefinitionModel _tableDefinition;
+        ActiveMetaDataContentModel _activeMetaDataContent;
+        TableDefinitionEditor _tableDefEditor;
 
         string _helperText;
         public string HelperText
@@ -104,10 +106,8 @@ namespace MetaFileEditor.ViewModels
         public bool HasUniformByteSize { get { return _hasUniformByteSize; } set { SetAndNotify(ref _hasUniformByteSize, value); } }
 
         //
-        public FieldExplorerController(DataTableViewModel dataTableView, DbTableDefinitionViewModel tableDefinition)
+        public FieldExplorer(TableDefinitionEditor tableDefEditor, ActiveMetaDataContentModel activeMetaDataContent, TableDefinitionModel tableDefinition)
         {
-            dataTableView.SelectedRowChanged += DataTableView_SelectedRowChanged;
-
             Create(DbTypesEnum.String_ascii);
             Create(DbTypesEnum.Optstring_ascii);
             Create(DbTypesEnum.String);
@@ -120,45 +120,22 @@ namespace MetaFileEditor.ViewModels
             Create(DbTypesEnum.Byte);
             Create(DbTypesEnum.Boolean);
 
-           // _dataTableView = dataTableView;
+            _tableDefEditor = tableDefEditor;
             _tableDefinition = tableDefinition;
-            tableDefinition.DefinitionChanged += TableDefinition_DefinitionChanged;
+            _activeMetaDataContent = activeMetaDataContent;
+
+            _tableDefinition.DefinitionChanged += OnTableDefinitionChanged;
+            _activeMetaDataContent.SelectedTagItemChanged += OnSelectedTagItemChanged;
         }
 
-        private void TableDefinition_DefinitionChanged(Filetypes.DB.DbTableDefinition newValue)
+        private void OnTableDefinitionChanged(Filetypes.DB.DbTableDefinition newValue)
         {
-            TriggerUpdate();
+            Update(_activeMetaDataContent.SelectedTagItem, _tableDefinition);
         }
 
-        MetaDataTagItem _selectedTag;
-
-        private void DataTableView_SelectedRowChanged(DataTableRow newValue)
+        private void OnSelectedTagItemChanged(MetaDataTagItem.Data newValue)
         {
-            if (newValue == null)
-                return;
-
-            var file = _selectedTag;
-            HasUniformByteSize = file.DataItems.Select(x => x.Size).Distinct().Count() == 1;
-
-            Update(newValue.DataItem, _tableDefinition);
-        }
-
-        public void SetSelectedFile(MetaDataTagItem file)
-        {
-            _selectedTag = file;
-        }
-
-        public void TriggerUpdate()
-        {
-            if (_selectedTag == null)
-                return;
-            var item = _selectedTag.DataItems.FirstOrDefault();
-            //var item = _dataTableView.Rows.FirstOrDefault();
-            if (item != null)
-            {
-                HasUniformByteSize = _selectedTag.DataItems.Select(x => x.Size).Distinct().Count() == 1;
-                Update(item, _tableDefinition);
-            }
+            Update(newValue, _tableDefinition);
         }
 
         void Create(DbTypesEnum enumValue)
@@ -168,16 +145,36 @@ namespace MetaFileEditor.ViewModels
             newItem.EnumValue = enumValue;
             newItem.CustomDisplayText = type.TypeName;
             newItem.ButtonText = "Add";
-            //newItem.CustomButtonPressedCommand = new RelayCommand<SingleFieldExplporer>(OnButtonPressed);
+            newItem.CustomButtonPressedCommand = new RelayCommand<SingleFieldExplporer>(OnButtonPressed);
             Fields.Add(newItem);
         }
 
-        public void Update(MetaDataTagItem.Data data, DbTableDefinitionViewModel tableDef)
+        void OnButtonPressed(SingleFieldExplporer explporer)
         {
+            _tableDefEditor.AddNewDefinitionItem(explporer.EnumValue);
+        }
+
+        public void Update(MetaDataTagItem.Data data, TableDefinitionModel tableDef)
+        {
+            if (data == null)
+            {
+                SelectedItemSize = 0;
+                ByteStream = null;
+                SelectedItemBytesLeft = 0;
+                HasUniformByteSize = false;
+                BackgroundBlocks.Clear();
+
+                for (int i = 0; i < Fields.Count; i++)
+                    UpdateViewModel(Fields[i], new byte[0], 0);
+
+                return;
+            }
+
+            HasUniformByteSize = _activeMetaDataContent.SelectedTagType.DataItems.Select(x => x.Size).Distinct().Count() == 1;
             SelectedItemSize = data.Size;
 
-            var tBackgroundBlocks = new List<CustomBackgroundBlock>();
             ByteStream = new MemoryStream(data.Bytes, data.Start, data.Size);
+            BackgroundBlocks.Clear();
 
             int counter = 0;
             var endIndex = tableDef.Definition.ColumnDefinitions.Count();
@@ -191,7 +188,6 @@ namespace MetaFileEditor.ViewModels
                     parser.TryDecode(data.Bytes, index, out _, out var bytesRead, out _);
                     index += bytesRead;
 
-
                     var block = new CustomBackgroundBlock()
                     {
                         Description = tableDef.Definition.ColumnDefinitions[i].Name,
@@ -200,16 +196,13 @@ namespace MetaFileEditor.ViewModels
                         StartOffset = index - bytesRead - data.Start,
                         
                     };
-                    tBackgroundBlocks.Add(block);
+                    BackgroundBlocks.Add(block);
 
                     counter++;
-
                 }
             }
 
             SelectedItemBytesLeft = SelectedItemSize - (index - data.Start);
-            BackgroundBlocks = tBackgroundBlocks;
-
 
             for (int i = 0; i < Fields.Count; i++)
                 UpdateViewModel(Fields[i], data.Bytes, index);
@@ -229,46 +222,6 @@ namespace MetaFileEditor.ViewModels
                 viewModelRef.ValueText = value;
                 viewModelRef.BackgroundColour = new SolidColorBrush(Colors.White);
             }
-
-            if (value == null)
-                return;
         }
-
-        void Update()
-        {
-            //if (_windowState.DbSchemaFields == null || _windowState.SelectedFile == null)
-            //    return;
-            //
-            //if (_windowState.SelectedDbSchemaRow != null)
-            //{
-            //    HelperText = $"Update type for field '{_windowState.SelectedDbSchemaRow.Name}' at Index '{_windowState.SelectedDbSchemaRow.Index}'";
-            //    Items.ForEach(x => x.ButtonText = "Update");
-            //}
-            //else
-            //{
-            //    HelperText = "Create a new field";
-            //    Items.ForEach(x => x.ButtonText = "Add");
-            //}
-            //
-            //DBFileHeader header = PackedFileDbCodec.readHeader(_windowState.SelectedFile.DbFile);
-            //int index = header.Length;
-            //var endIndex = _windowState.DbSchemaFields.Count();
-            //if (_windowState.SelectedDbSchemaRow != null)
-            //    endIndex = _windowState.SelectedDbSchemaRow.Index - 1;
-            //for (int i = 0; i < endIndex; i++)
-            //{
-            //    if (i < _windowState.DbSchemaFields.Count)
-            //    {
-            //        var byteParserType = _windowState.DbSchemaFields[i].Type;
-            //        var parser = ByteParserFactory.Create(byteParserType);
-            //        parser.TryDecode(_windowState.SelectedFile.DbFile.Data, index, out _, out var bytesRead, out _);
-            //        index += bytesRead;
-            //    }
-            //}
-            //
-            //for (int i = 0; i < Items.Count; i++)
-            //    UpdateViewModel(Items[i], _windowState.SelectedFile.DbFile.Data, index);
-        }   //
-
     }
 }

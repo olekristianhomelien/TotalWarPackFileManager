@@ -10,6 +10,7 @@ namespace CommonDialogs.Common
         [JsonIgnore]
         public bool DisableCallbacks { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;
+        public delegate void ValueChangedDelegate();
         public delegate void ValueChangedDelegate<T>(T newValue);
         public delegate void ValueAndSenderChangedDelegate<T>(object sender, T newValue);
 

@@ -22,9 +22,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Grid.Column="0" Content="Show helper coloumns" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
-            <Label Grid.Column="1" Content="Filter:" Margin="10,0,0,0"/>
-            <TextBox Grid.Column="2"  VerticalContentAlignment="Center"/>
+            <CheckBox Grid.Column="0" Content="Show helper coloumns" VerticalAlignment="Center" VerticalContentAlignment="Center"   IsChecked="{Binding DataTable.ShowHelperColoums, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Column="1" Content="Filter by fileName:" Margin="10,0,0,0" />
+            <TextBox Grid.Column="2"  VerticalContentAlignment="Center" Text="{Binding DataTable.FilterText, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
     </Grid>
 </UserControl>

@@ -29,13 +29,6 @@ namespace MetaFileEditor.Views.MetadataTableViews
             InitializeComponent();
         }
 
-        private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
-        {
-            var style = new Style(typeof(DataGridColumnHeader));
-            style.Setters.Add(new Setter(ToolTipService.ToolTipProperty, "Your tool tip here"));
-            e.Column.HeaderStyle = style;
-        }
-
         private void StackPanel_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var obj = sender as DataGrid;

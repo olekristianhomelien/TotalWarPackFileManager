@@ -64,11 +64,7 @@ namespace MetaFileEditor
 
 
             var view = new MetaDataMainView();
-            view.DataContext = new MainViewModel()
-            {
-                File = master
-            };
-
+            view.DataContext = new MainViewModel(master, packFiles);
             return view;
         }
 
