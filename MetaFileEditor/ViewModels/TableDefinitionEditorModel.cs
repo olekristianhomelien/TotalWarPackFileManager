@@ -71,9 +71,20 @@ namespace MetaFileEditor.ViewModels
 
         void Update()
         {
+            foreach(var row in Rows)
+                row.PropertyChanged -= Row_PropertyChanged;
             Rows.Clear();
             foreach (var coloumDef in _tableDefinitionViewModel.Definition.ColumnDefinitions)
                 Rows.Add(new FieldInfoViewModel(coloumDef));
+
+            foreach (var row in Rows)
+                row.PropertyChanged += Row_PropertyChanged;
+        }
+
+        private void Row_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            _tableDefinitionViewModel.TriggerUpdates();
+            Update();
         }
     }
 

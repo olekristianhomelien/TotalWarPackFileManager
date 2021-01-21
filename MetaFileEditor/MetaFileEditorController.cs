@@ -59,6 +59,8 @@ namespace MetaFileEditor
                 var size = item.DataItems.Select(x => x.Size).Distinct().ToList();
             }
 
+            master.TagItems = master.TagItems.OrderBy(x => x.DisplayName).ToList();
+
 
 
             var view = new MetaDataMainView();

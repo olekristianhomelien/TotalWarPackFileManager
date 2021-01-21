@@ -10,6 +10,7 @@
 
 
         <DataGrid 
+            
             SelectedItem="{Binding DataTable.SelectedItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
             VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
             ScrollViewer.CanContentScroll="true"

@@ -20,14 +20,14 @@
         
         <TextBlock Grid.Column="0" Grid.Row="0" Text="Is Constant size"/>
         <TextBlock Grid.Column="1" Grid.Row="0" Text=":"/>
-        <TextBlock Grid.Column="2" Grid.Row="0" Text="True"/>
+        <TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding FieldExplorer.HasUniformByteSize, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Current item size"/>
         <TextBlock Grid.Column="1" Grid.Row="1" Text=":"/>
-        <TextBlock Grid.Column="2" Grid.Row="1" Text="1323"/>
+        <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding FieldExplorer.SelectedItemSize, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Grid.Column="0" Grid.Row="2" Text="Bytes left"/>
         <TextBlock Grid.Column="1" Grid.Row="2" Text=":"/>
-        <TextBlock Grid.Column="2" Grid.Row="2" Text="0"/>
+        <TextBlock Grid.Column="2" Grid.Row="2" Text="{Binding FieldExplorer.SelectedItemBytesLeft, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

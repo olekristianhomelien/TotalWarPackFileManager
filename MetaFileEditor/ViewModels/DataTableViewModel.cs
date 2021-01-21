@@ -6,6 +6,7 @@ using MetaFileEditor.DataType;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,9 @@ namespace MetaFileEditor.ViewModels
     {
         public List<ItemWrapper> Values { get; set; } = new List<ItemWrapper>();
 
+
+        public string FileName { get { return DataItem.ParentFileName; } }
+        public int ByteSize { get { return DataItem.Size; } }
 
         List<DbColumnDefinition> _fieldInfos;
         public MetaDataTagItem.Data DataItem { get; private set; }
@@ -110,6 +114,7 @@ namespace MetaFileEditor.ViewModels
         public void SetDataGridRef(DataGrid dataGirdRef)
         {
             _dataGirdRef = dataGirdRef;
+    
         }
 
 
@@ -119,11 +124,10 @@ namespace MetaFileEditor.ViewModels
         public DataTableRow SelectedItem { get { return _selectedItem; } set { SetAndNotify(ref _selectedItem, value, SelectedRowChanged); } }
 
 
-        ObservableCollection<DataTableRow> _rows = new ObservableCollection<DataTableRow>();
-        public ObservableCollection<DataTableRow> Rows { get { return _rows; } set { SetAndNotify(ref _rows, value); } }
+        ICollectionView _rows;
 
         DbTableDefinitionViewModel _dbTableDefinition;
-        MetaDataTagItem _currentFile;
+        public MetaDataTagItem CurrentFile { get; private set; }
 
 
         public DataTableViewModel(DbTableDefinitionViewModel dbTableDefinition)
@@ -139,7 +143,7 @@ namespace MetaFileEditor.ViewModels
 
         public void SetCurrentFile(MetaDataTagItem file)
         {
-            _currentFile = file;
+            CurrentFile = file;
         }
 
         void Update()
@@ -147,9 +151,20 @@ namespace MetaFileEditor.ViewModels
             if (_dataGirdRef == null)
                 return;
 
-
+           
 
             _dataGirdRef.Columns.Clear();
+
+
+            var sizeColoumn = new DataGridTextColumn() { Header = "ByteSize"};
+            sizeColoumn.Binding = new Binding("ByteSize");
+            _dataGirdRef.Columns.Add(sizeColoumn);
+
+
+            var fileNameColoumn = new DataGridTextColumn() { Header = "FileName" };
+            fileNameColoumn.Binding = new Binding("FileName");
+            _dataGirdRef.Columns.Add(fileNameColoumn);
+
 
             var index = 0;
             foreach (var columnDefinition in _dbTableDefinition.Definition.ColumnDefinitions)
@@ -165,15 +180,16 @@ namespace MetaFileEditor.ViewModels
             }
 
 
-            Rows = new ObservableCollection<DataTableRow>();
+            var tableRows = new ObservableCollection<DataTableRow>();
 
             int counter = 0;
-            foreach (var item in _currentFile.DataItems)
+            foreach (var item in CurrentFile.DataItems)
             {
-                Rows.Add(new DataTableRow(counter++, _dbTableDefinition.Definition.ColumnDefinitions, item));
+                tableRows.Add(new DataTableRow(counter++, _dbTableDefinition.Definition.ColumnDefinitions, item));
             }
 
-            _dataGirdRef.ItemsSource = Rows;
+            _rows = CollectionViewSource.GetDefaultView(tableRows);
+            _dataGirdRef.ItemsSource = _rows;
         }
 
 

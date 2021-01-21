@@ -33,6 +33,7 @@ namespace PackFileManager
                 MainForm = new PackFileManagerForm(args);
                 Application.Run(MainForm);
             }
+
             catch (Exception exception)
             {
                 logger.Here().Fatal(exception.ToString());

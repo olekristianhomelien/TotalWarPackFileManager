@@ -448,6 +448,9 @@ namespace Filetypes.ByteParsing
                 case DbTypesEnum.Short:
                     return ByteParsers.Short;
 
+                case DbTypesEnum.UShort:
+                    return ByteParsers.UShort;
+
                 case DbTypesEnum.Single:
                     return ByteParsers.Single;
 

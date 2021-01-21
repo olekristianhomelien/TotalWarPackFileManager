@@ -86,7 +86,7 @@ namespace Viewer.Animation
             {
                 ILogger logger = Logging.Create<AnimationSampler>();
                 logger.Error(e.Message);
-                throw;
+                 throw;
             }
         }
 

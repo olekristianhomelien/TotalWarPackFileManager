@@ -68,7 +68,7 @@ namespace MetaFileEditor.ViewModels
     {
 
         DbTableDefinitionViewModel _tableDefinition;
-        DataTableViewModel _dataTableView;
+        //DataTableViewModel _dataTableView;
 
         string _helperText;
         public string HelperText
@@ -79,22 +79,12 @@ namespace MetaFileEditor.ViewModels
 
         public ObservableCollection<SingleFieldExplporer> Fields { get; set; } = new ObservableCollection<SingleFieldExplporer>();
 
-        //HexEdit.Stream = new MemoryStream(selectedFile.DbFile.Data);
         MemoryStream _byteStream;
         public MemoryStream ByteStream
         {
             get { return _byteStream; }
             set { SetAndNotify(ref _byteStream, value); }
         }
-
-        //int _byteSelectionEnd;
-        //public int ByteSelectionEnd
-        //{
-        //    get { return _byteSelectionEnd; }
-        //    set { SetAndNotify(ref _byteSelectionEnd, value); }
-        //
-        //}
-
 
         List<CustomBackgroundBlock> _backgroundBlocks = new List<CustomBackgroundBlock>();
         public List<CustomBackgroundBlock> BackgroundBlocks
@@ -103,13 +93,20 @@ namespace MetaFileEditor.ViewModels
             set { SetAndNotify(ref _backgroundBlocks, value); }
         }
 
+
+        int _selectedItemByteSize = 0;
+        public int SelectedItemSize { get { return _selectedItemByteSize; } set { SetAndNotify(ref _selectedItemByteSize, value); } }
+
+        int _selectedItemBytesLeft = 0;
+        public int SelectedItemBytesLeft { get { return _selectedItemBytesLeft; } set { SetAndNotify(ref _selectedItemBytesLeft, value); } }
+
+        bool _hasUniformByteSize = false;
+        public bool HasUniformByteSize { get { return _hasUniformByteSize; } set { SetAndNotify(ref _hasUniformByteSize, value); } }
+
         //
         public FieldExplorerController(DataTableViewModel dataTableView, DbTableDefinitionViewModel tableDefinition)
         {
             dataTableView.SelectedRowChanged += DataTableView_SelectedRowChanged;
-
-
-
 
             Create(DbTypesEnum.String_ascii);
             Create(DbTypesEnum.Optstring_ascii);
@@ -123,23 +120,45 @@ namespace MetaFileEditor.ViewModels
             Create(DbTypesEnum.Byte);
             Create(DbTypesEnum.Boolean);
 
-            _dataTableView = dataTableView;
+           // _dataTableView = dataTableView;
             _tableDefinition = tableDefinition;
-
+            tableDefinition.DefinitionChanged += TableDefinition_DefinitionChanged;
         }
+
+        private void TableDefinition_DefinitionChanged(Filetypes.DB.DbTableDefinition newValue)
+        {
+            TriggerUpdate();
+        }
+
+        MetaDataTagItem _selectedTag;
 
         private void DataTableView_SelectedRowChanged(DataTableRow newValue)
         {
             if (newValue == null)
                 return;
+
+            var file = _selectedTag;
+            HasUniformByteSize = file.DataItems.Select(x => x.Size).Distinct().Count() == 1;
+
             Update(newValue.DataItem, _tableDefinition);
+        }
+
+        public void SetSelectedFile(MetaDataTagItem file)
+        {
+            _selectedTag = file;
         }
 
         public void TriggerUpdate()
         {
-            var item = _dataTableView.Rows.FirstOrDefault();
+            if (_selectedTag == null)
+                return;
+            var item = _selectedTag.DataItems.FirstOrDefault();
+            //var item = _dataTableView.Rows.FirstOrDefault();
             if (item != null)
-                Update(item.DataItem, _tableDefinition);
+            {
+                HasUniformByteSize = _selectedTag.DataItems.Select(x => x.Size).Distinct().Count() == 1;
+                Update(item, _tableDefinition);
+            }
         }
 
         void Create(DbTypesEnum enumValue)
@@ -155,6 +174,7 @@ namespace MetaFileEditor.ViewModels
 
         public void Update(MetaDataTagItem.Data data, DbTableDefinitionViewModel tableDef)
         {
+            SelectedItemSize = data.Size;
 
             var tBackgroundBlocks = new List<CustomBackgroundBlock>();
             ByteStream = new MemoryStream(data.Bytes, data.Start, data.Size);
@@ -187,6 +207,7 @@ namespace MetaFileEditor.ViewModels
                 }
             }
 
+            SelectedItemBytesLeft = SelectedItemSize - (index - data.Start);
             BackgroundBlocks = tBackgroundBlocks;
 
 

@@ -10,9 +10,21 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <local:MetaDataInformationView Grid.Row="0"/>
         <local:MetaDataTableView Grid.Row="1"/>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox Grid.Column="0" Content="Show helper coloumns" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+            <Label Grid.Column="1" Content="Filter:" Margin="10,0,0,0"/>
+            <TextBox Grid.Column="2"  VerticalContentAlignment="Center"/>
+        </Grid>
     </Grid>
 </UserControl>

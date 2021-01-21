@@ -106,7 +106,7 @@ namespace MetaFileEditor.ViewModels
             ActiveTableDefinition.DisableCallbacks = false;
             ActiveTableDefinition.TriggerUpdates();
 
-            
+            FieldExplorer.SetSelectedFile(file);
             FieldExplorer.TriggerUpdate();
         }
     }
