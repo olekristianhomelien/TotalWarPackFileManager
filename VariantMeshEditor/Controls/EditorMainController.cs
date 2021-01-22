@@ -44,44 +44,44 @@ namespace VariantMeshEditor.Controls
             _scene3d.On3dWorldReady += Create3dWorld;
 
 
-            var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
-            var animationPackData = new AnimationPackLoader();
-
-            var animationTables = AnimationPackLoader.GetAnimationTables(file);
-            var animationFragments = AnimationPackLoader.GetFragmentCollections(file).ToList();
-            var orc2HandTable = animationTables.FirstOrDefault(x => x.Name == "hu2_orc_2handed_axe");
-
-            // Find all animations
-
-
-
-
-            var fragmentCollections = new List<AnimationFragmentCollection>();
-            foreach (var animSet in orc2HandTable.AnimationSets)
-            {
-
-                var fragment = animationFragments.FirstOrDefault(x => x.FileName.Contains(animSet.Name + ".frg"));
-                if (fragment != null)
-                {
-                    fragment.Write(@"C:\temp\fragExport.frg");
-                    fragmentCollections.Add(fragment);
-                }
-                else
-                {
-                    var oldFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations/animation_fragments/" + animSet.Name + ".txt");
-                    var t = AnimationPackLoader.GetOldFragmentCollection(oldFile);
-                    fragmentCollections.Add(t);
-                }
-            }
-
-            var masterFragment = fragmentCollections.Last();
-            foreach (var item in fragmentCollections.Take(fragmentCollections.Count - 1))
-                masterFragment.AddFragmentCollection(item);
-
-            masterFragment.ChangeAnimationFileName("test_");
-            masterFragment.SetSkeleton("humanoid02");
-            masterFragment.ChangeSkeleton("humanoid05");
-            masterFragment.Write(@"C:\temp\fragExport.frg");
+            //var file = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations\animation_tables\animation_tables.animpack");
+            //var animationPackData = new AnimationPackLoader();
+            //
+            //var animationTables = AnimationPackLoader.GetAnimationTables(file);
+            //var animationFragments = AnimationPackLoader.GetFragmentCollections(file).ToList();
+            //var orc2HandTable = animationTables.FirstOrDefault(x => x.Name == "hu2_orc_2handed_axe");
+            //
+            //// Find all animations
+            //
+            //
+            //
+            //
+            //var fragmentCollections = new List<AnimationFragmentCollection>();
+            //foreach (var animSet in orc2HandTable.AnimationSets)
+            //{
+            //
+            //    var fragment = animationFragments.FirstOrDefault(x => x.FileName.Contains(animSet.Name + ".frg"));
+            //    if (fragment != null)
+            //    {
+            //        fragment.Write(@"C:\temp\fragExport.frg");
+            //        fragmentCollections.Add(fragment);
+            //    }
+            //    else
+            //    {
+            //        var oldFile = PackFileLoadHelper.FindFile(_resourceLibary.PackfileContent, @"animations/animation_fragments/" + animSet.Name + ".txt");
+            //        var t = AnimationPackLoader.GetOldFragmentCollection(oldFile);
+            //        fragmentCollections.Add(t);
+            //    }
+            //}
+            //
+            //var masterFragment = fragmentCollections.Last();
+            //foreach (var item in fragmentCollections.Take(fragmentCollections.Count - 1))
+            //    masterFragment.AddFragmentCollection(item);
+            //
+            //masterFragment.ChangeAnimationFileName("test_");
+            //masterFragment.SetSkeleton("humanoid02");
+            //masterFragment.ChangeSkeleton("humanoid05");
+            //masterFragment.Write(@"C:\temp\fragExport.frg");
             //animationPackData.Load(new ByteChunk(file.Data));
 
 
