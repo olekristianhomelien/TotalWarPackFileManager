@@ -9,12 +9,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="5"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
 
@@ -33,21 +30,14 @@
         </GridSplitter>
 
 
-        <local:FieldExplorer Grid.Row="3"/>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-
-        <GridSplitter Grid.Row="4"  HorizontalAlignment="Stretch">
-            <GridSplitter.Template>
-                <ControlTemplate TargetType="{x:Type GridSplitter}">
-                    <Grid>
-                        <Button Content="⋯" />
-                        <Rectangle Fill="#00FFFFFF" />
-                    </Grid>
-                </ControlTemplate>
-            </GridSplitter.Template>
-        </GridSplitter>
-
-        <control:HexEditor Grid.Row="5"
+			<local:FieldExplorer Grid.Row="0"/>
+            <control:HexEditor Grid.Row="1"
                     Stream="{Binding FieldExplorer.ByteStream, UpdateSourceTrigger=PropertyChanged}"
                    
                     
@@ -71,8 +61,11 @@
                     AllowContextMenu="false"
                     AllowAutoHighLightSelectionByte="False"/>
 
-        
-        <local:ErrorView Grid.Row="6"/>
+
+        </Grid>
+  
+
+
 
     </Grid>
 </UserControl>

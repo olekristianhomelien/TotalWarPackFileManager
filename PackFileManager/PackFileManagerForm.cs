@@ -204,19 +204,6 @@ namespace PackFileManager
                 _logger.Here().Information($"Pack files loaded - {CurrentPackFile.Files.Count()} files found");
 
 
-            var metaDataFile = PackFileLoadHelper.FindFile(loadedContent, @"animations/battle/humanoid02/2handed_axe/attacks/hu2_2ha_attack_01.anm.meta");
-            MetaFileEditorController.CreateEditor(metaDataFile);
-
-            var editor = MetaFileEditorController.CreateDecoder(loadedContent);
-            var containerForm = new Form()
-            {
-                Width = 1600,
-                Height = 1000
-            };
-
-            var wpfWindow = WpfPackedFileEditorHost.Create(editor);
-            containerForm.Controls.Add(wpfWindow);
-            containerForm.Show();
 
             return;
 
@@ -1555,6 +1542,25 @@ namespace PackFileManager
             //containerForm.Controls.Add(wpfWindow);
             //containerForm.Show();
 
+        }
+
+        private void animMetaDecoderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _logger.Here().Information($"Starting anim decoder");
+
+            //var metaDataFile = PackFileLoadHelper.FindFile(loadedContent, @"animations/battle/humanoid02/2handed_axe/attacks/hu2_2ha_attack_01.anm.meta");
+            //MetaFileEditorController.CreateEditor(metaDataFile);
+
+            var editor = MetaFileEditorController.CreateDecoder(new List<PackFile>() { CurrentPackFile });
+            var containerForm = new Form()
+            {
+                Width = 1600,
+                Height = 1000
+            };
+
+            var wpfWindow = WpfPackedFileEditorHost.Create(editor);
+            containerForm.Controls.Add(wpfWindow);
+            containerForm.Show();
         }
     }
 }

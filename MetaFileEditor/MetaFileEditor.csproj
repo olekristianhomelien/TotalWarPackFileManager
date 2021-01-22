@@ -69,12 +69,6 @@
     <Compile Include="Views\DecoderViews\TableDefinitionView.xaml.cs">
       <DependentUpon>TableDefinitionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MetadataTableViews\MetaDataInformationView.xaml.cs">
-      <DependentUpon>MetaDataInformationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\MetadataTableViews\MetaDataTableView.xaml.cs">
-      <DependentUpon>MetaDataTableView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MetadataTableViews\MetaDataView.xaml.cs">
       <DependentUpon>MetaDataView.xaml</DependentUpon>
     </Compile>
@@ -105,14 +99,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DecoderViews\TableDefinitionView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MetadataTableViews\MetaDataInformationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\MetadataTableViews\MetaDataTableView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

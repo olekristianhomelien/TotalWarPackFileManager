@@ -13,8 +13,59 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <local:MetaDataInformationView Grid.Row="0"/>
-        <local:MetaDataTableView Grid.Row="1"/>
+        <Grid Grid.Row="0"> 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" DockPanel.Dock="Top">Name</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" DockPanel.Dock="Top">:</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="2" DockPanel.Dock="Top" Text="{Binding DataTable.TagName, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" DockPanel.Dock="Top">Version</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" DockPanel.Dock="Top">:</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="2" DockPanel.Dock="Top" Text="{Binding DataTable.TagVersion, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+
+
+        <DataGrid Grid.Row="1"
+            x:Name="DataGrid" 
+            SelectedItem="{Binding DataTable.SelectedRow, UpdateSourceTrigger=PropertyChanged, Mode=OneWayToSource}"
+            VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
+            ScrollViewer.CanContentScroll="true"
+             DataContextChanged="StackPanel_DataContextChanged"
+            AutoGenerateColumns="false" 
+            CanUserAddRows="False" 
+            CanUserResizeRows="False" >
+
+            <DataGrid.InputBindings>
+                <MouseBinding
+                    MouseAction="LeftDoubleClick"
+                    Command="{Binding DataTable.ItemDoubleClickedCommand}"
+                    CommandParameter="{Binding DataTable.SelectedRow}">
+                </MouseBinding>
+            </DataGrid.InputBindings>
+
+            <DataGrid.RowValidationRules>
+                <local:RowDataValidationRule ValidationStep="UpdatedValue" ValidatesOnTargetUpdated="True"/>
+            </DataGrid.RowValidationRules>
+
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2" ToolTip="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGridRow}}, Path=(Validation.Errors)[0].ErrorContent}">
+                        <Ellipse StrokeThickness="0" Fill="Red"  Width="{TemplateBinding FontSize}" Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"  />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+        </DataGrid>
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>

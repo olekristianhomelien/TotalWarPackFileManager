@@ -11,20 +11,6 @@ using System.Threading.Tasks;
 
 namespace MetaFileEditor.ViewModels.Data
 {
-    //class TableDefinitionModel : NotifyPropertyChangedImpl
-    //{
-    //    public event ValueChangedDelegate<FieldInfoViewModel> SelectedItemChanged;
-    //    public event ValueChangedDelegate DefinitionChanged;
-    //
-    //
-    //    ObservableCollection<FieldInfoViewModel> _rows = new ObservableCollection<FieldInfoViewModel>();
-    //    public ObservableCollection<FieldInfoViewModel> Rows { get { return _rows; } set { SetAndNotify(ref _rows, value); } }
-    //
-    //
-    //    FieldInfoViewModel _selectedItem;
-    //    public FieldInfoViewModel SelectedItem { get { return _selectedItem; } set { SetAndNotify(ref _selectedItem, value, SelectedItemChanged); } }
-    //}
-
     class TableDefinitionModel : NotifyPropertyChangedImpl
     {
         public event ValueChangedDelegate<DbColumnDefinition> SelectedItemChanged;

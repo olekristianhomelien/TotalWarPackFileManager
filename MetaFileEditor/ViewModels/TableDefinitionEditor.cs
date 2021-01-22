@@ -6,11 +6,9 @@ using GalaSoft.MvvmLight.CommandWpf;
 using MetaFileEditor.DataType;
 using MetaFileEditor.ViewModels.Data;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MetaFileEditor.ViewModels
@@ -18,9 +16,11 @@ namespace MetaFileEditor.ViewModels
     class TableDefinitionEditor : NotifyPropertyChangedImpl
     {
         public ICommand RemoveDefinitionCommand { get; set; }
+        public ICommand RemoveAllDefinitionCommand { get; set; }
         public ICommand AddDefinitionCommand { get; set; }
         public ICommand MoveUpDefinitionCommand { get; set; }
         public ICommand MoveDownDefinitionCommand { get; set; }
+        public ICommand SaveDefinitionCommand { get; set; }
 
         public ObservableCollection<FieldInfoViewModel> Rows { get; set; } = new ObservableCollection<FieldInfoViewModel>();
 
@@ -31,64 +31,57 @@ namespace MetaFileEditor.ViewModels
         TableDefinitionModel _tableDefinitionModel;
         ActiveMetaDataContentModel _activeMetaDataContentModel;
 
-        public TableDefinitionEditor(ActiveMetaDataContentModel activeMetaDataContentModel, TableDefinitionModel tableDefinitionViewModel)
+        public TableDefinitionEditor(ActiveMetaDataContentModel activeMetaDataContentModel, TableDefinitionModel tableDefinitionModel)
         {
             AddDefinitionCommand = new RelayCommand(() => AddNewDefinitionItem());
             RemoveDefinitionCommand = new RelayCommand(OnRemoveSelected);
+            RemoveAllDefinitionCommand = new RelayCommand(OnRemoveAll);
+            SaveDefinitionCommand = new RelayCommand(OnSaveDefinition);
+            MoveUpDefinitionCommand = new RelayCommand(() => MoveSelectedRow(-1));
+            MoveDownDefinitionCommand = new RelayCommand(() => MoveSelectedRow(1));
+
             _activeMetaDataContentModel = activeMetaDataContentModel;
-            _tableDefinitionModel = tableDefinitionViewModel;
+            _tableDefinitionModel = tableDefinitionModel;
 
             _activeMetaDataContentModel.SelectedTagTypeChanged += OnSelectedTagTypeChanged;
         }
 
-
-        void LoadDefintion(MetaDataTagItem newValue)
+        void OnSaveDefinition()
         {
-            //SchemaManager.Instance.GetTableDefinitionsForTable("", 123);
+            SchemaManager.Instance.UpdateMetaTableDefinition(_tableDefinitionModel.Definition);
+            MessageBox.Show("Table definition saved!");
+        }
 
-            _tableDefinitionModel.Definition.TableName = newValue.Name;
-            _tableDefinitionModel.Definition.Version = newValue.Version;
+        void MoveSelectedRow(int stepDir)
+        {
+            if (SelectedItem == null)
+            {
+                MessageBox.Show("No item selected.");
+                return;
+            }
 
-            _tableDefinitionModel.DisableCallbacks = true;
-            _tableDefinitionModel.Definition.ColumnDefinitions.Clear();
-            _tableDefinitionModel.Definition.ColumnDefinitions.Add(
-                new DbColumnDefinition()
-                {
-                    Name = "Version",
-                    Description = "This is the version",
-                    Type = DbTypesEnum.Integer
-                });
+            var currentIndex = Rows.IndexOf(SelectedItem);
+            if (stepDir == -1 && currentIndex == 0)
+                return;
+            if (stepDir == 1 && currentIndex == Rows.Count() - 1)
+                return;
 
-            _tableDefinitionModel.Definition.ColumnDefinitions.Add(
-                new DbColumnDefinition()
-                {
-                    Name = "PropBone",
-                    Description = "This is a test PropBone",
-                    Type = DbTypesEnum.Single
-                });
 
-            _tableDefinitionModel.Definition.ColumnDefinitions.Add(
-                new DbColumnDefinition()
-                {
-                    Name = "OffsetX",
-                    Description = "This is a test OffsetX",
-                    Type = DbTypesEnum.Integer
-                });
+            var item = SelectedItem.GetFieldInfo();
+            _tableDefinitionModel.Definition.ColumnDefinitions.Remove(item);
+            _tableDefinitionModel.Definition.ColumnDefinitions.Insert(currentIndex + stepDir, item);
+            Update();
 
-            _tableDefinitionModel.Definition.ColumnDefinitions.Add(
-                new DbColumnDefinition()
-                {
-                    Name = "BoneName",
-                    Description = "This is a test BoneName",
-                    Type = DbTypesEnum.Integer
-                });
+            SelectedItem = Rows[currentIndex + stepDir];
 
-            _tableDefinitionModel.DisableCallbacks = false;
+            _tableDefinitionModel.TriggerUpdates();
         }
 
         private void OnSelectedTagTypeChanged(MetaDataTagItem newValue)
         {
-            LoadDefintion(newValue);
+            var tableDef = SchemaManager.Instance.GetMetaDataDefinition(newValue.Name, newValue.Version);
+            _tableDefinitionModel.Definition = tableDef;
+
             Update();
 
             _tableDefinitionModel.TriggerUpdates();
@@ -99,7 +92,7 @@ namespace MetaFileEditor.ViewModels
             if (_tableDefinitionModel.Definition == null)
                 return;
 
-            _tableDefinitionModel.Definition.ColumnDefinitions.Add(new DbColumnDefinition() { Name = "New Field", Type = type});
+            _tableDefinitionModel.Definition.ColumnDefinitions.Add(new DbColumnDefinition() { Name = "Unknown Field", Type = type});
             _tableDefinitionModel.TriggerUpdates();
             Update();
         }
@@ -116,6 +109,16 @@ namespace MetaFileEditor.ViewModels
             _tableDefinitionModel.Definition.ColumnDefinitions.Remove(selectedViewModel.GetFieldInfo());
             _tableDefinitionModel.TriggerUpdates();
             Update();
+        }
+
+        void OnRemoveAll()
+        {
+            if (MessageBox.Show("Are you sure?", "", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                _tableDefinitionModel.Definition.ColumnDefinitions.Clear();
+                _tableDefinitionModel.TriggerUpdates();
+                Update();
+            }
         }
 
         void Update()

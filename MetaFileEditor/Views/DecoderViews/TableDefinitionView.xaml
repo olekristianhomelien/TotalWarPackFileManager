@@ -23,18 +23,26 @@
 
         <Grid Grid.Row="1" Margin="0,5,0,10" HorizontalAlignment="Center">
 
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Width="100" Grid.Column="0" Command="{Binding TableDefinitionEditor.AddDefinitionCommand}" Content="Add new" Margin="3,0,3,0"/>
-            <Button Width="100" Grid.Column="1" Command="{Binding TableDefinitionEditor.RemoveDefinitionCommand}" Content="Remove Selected" Margin="3,0,3,0"/>
-            <Button Width="100" Grid.Column="2" Command="{Binding TableDefinitionEditor.MoveUpDefinitionCommand}" Content="Selected Up" Margin="3,0,3,0"/>
-            <Button Width="100" Grid.Column="3" Command="{Binding TableDefinitionEditor.MoveDownDefinitionCommand}" Content="Selected Down" Margin="3,0,3,0"/>
+            <Button Width="100" Grid.Row="0" Grid.Column="0" Command="{Binding TableDefinitionEditor.AddDefinitionCommand}" Content="Add new" Margin="3,0,3,0"/>
+            <Button Width="100" Grid.Row="0" Grid.Column="1" Command="{Binding TableDefinitionEditor.RemoveDefinitionCommand}" Content="Remove Selected" Margin="3,0,3,0"/>
+            <Button Width="100" Grid.Row="0" Grid.Column="2" Command="{Binding TableDefinitionEditor.RemoveAllDefinitionCommand}" Content="Remove All" Margin="3,0,3,0"/>
+            <Button Width="100" Grid.Row="0" Grid.Column="3" Command="{Binding TableDefinitionEditor.MoveUpDefinitionCommand}" Content="Selected Up" Margin="3,0,3,0"/>
+            <Button Width="100" Grid.Row="0" Grid.Column="4" Command="{Binding TableDefinitionEditor.MoveDownDefinitionCommand}" Content="Selected Down" Margin="3,0,3,0"/>
 
+            <Button Width="200" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Command="{Binding TableDefinitionEditor.SaveDefinitionCommand}" Content="Save" Margin="3,3,3,3"/>
         </Grid>
       
 

@@ -36,6 +36,7 @@ namespace Filetypes.DB
         public static string LocTableName { get { return "LocTable"; } }
 
         Dictionary<GameTypeEnum, SchemaFile> _gameTableDefinitions = new Dictionary<GameTypeEnum, SchemaFile>();
+        Dictionary<GameTypeEnum, SchemaFile> _gameAnimMetaDefinitions = new Dictionary<GameTypeEnum, SchemaFile>();
 
         public GameTypeEnum CurrentGame { get; set; }
 
@@ -63,7 +64,7 @@ namespace Filetypes.DB
         public void UpdateCurrentTableDefinitions(SchemaFile schemaFile)
         {
             _gameTableDefinitions[CurrentGame] = schemaFile;
-            Save();
+            SaveDbSchema();
         }
 
         public void UpdateCurrentTableDefinition(DbTableDefinition newTableDefinition)
@@ -90,14 +91,7 @@ namespace Filetypes.DB
                 _gameTableDefinitions[CurrentGame].TableDefinitions.Add(newTableDefinition.TableName, new List<DbTableDefinition>());
                 _gameTableDefinitions[CurrentGame].TableDefinitions[newTableDefinition.TableName].Add(newTableDefinition);
             }
-            Save();
-        }
-
-        public Dictionary<string, List<DbTableDefinition>> GetTableDefinitions(GameTypeEnum gameType)
-        {
-            if (!_gameTableDefinitions.ContainsKey(gameType))
-                return null;
-            return _gameTableDefinitions[gameType].TableDefinitions;
+            SaveDbSchema();
         }
 
         public bool IsSupported(string tableName)
@@ -126,7 +120,74 @@ namespace Filetypes.DB
             return new  DbTableDefinition();
         }
 
-        public bool Save()
+        public DbTableDefinition GetMetaDataDefinition(string tableName, int version)
+        {
+            if (_gameAnimMetaDefinitions.ContainsKey(CurrentGame))
+            {
+                var allDefs = _gameAnimMetaDefinitions[CurrentGame].TableDefinitions.Where(x => x.Key == tableName).SelectMany(x=>x.Value);
+                var bestDef = allDefs.FirstOrDefault(x => x.Version == version);
+                if (bestDef != null)
+                    return bestDef;
+            }
+
+            return new DbTableDefinition()
+            {
+                TableName = tableName,
+                Version = version
+            };
+        }
+
+        public void UpdateMetaTableDefinition(DbTableDefinition newTableDefinition)
+        {
+            if (!_gameAnimMetaDefinitions.ContainsKey(CurrentGame))
+                _gameAnimMetaDefinitions.Add(CurrentGame, new SchemaFile() { GameEnum = CurrentGame});
+
+            if (_gameAnimMetaDefinitions[CurrentGame].TableDefinitions.ContainsKey(newTableDefinition.TableName))
+            {
+                var added = false;
+                var defs = _gameAnimMetaDefinitions[CurrentGame].TableDefinitions[newTableDefinition.TableName];
+                for (int i = 0; i < defs.Count; i++)
+                {
+                    if (defs[i].Version == newTableDefinition.Version)
+                    {
+                        defs[i].ColumnDefinitions = newTableDefinition.ColumnDefinitions;
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (added == false)
+                    _gameAnimMetaDefinitions[CurrentGame].TableDefinitions[newTableDefinition.TableName].Add(newTableDefinition);
+            }
+            else
+            {
+                _gameAnimMetaDefinitions[CurrentGame].TableDefinitions.Add(newTableDefinition.TableName, new List<DbTableDefinition>());
+                _gameAnimMetaDefinitions[CurrentGame].TableDefinitions[newTableDefinition.TableName].Add(newTableDefinition);
+            }
+            SaveMetaDataSchema();
+        }
+
+
+        public bool SaveMetaDataSchema()
+        {
+            _logger.Information("Trying to metadat schema");
+            try
+            {
+                if (!_gameAnimMetaDefinitions.ContainsKey(CurrentGame))
+                    return false;
+                string path = DirectoryHelper.SchemaDirectory + "\\" + Game.GetByEnum(CurrentGame).Id + "_AnimMetaDataSchema.json";
+                var content = JsonConvert.SerializeObject(_gameAnimMetaDefinitions[CurrentGame], Formatting.Indented);
+                File.WriteAllText(path, content);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.Fatal(e.Message);
+                throw e;
+            }
+        }
+
+        public bool SaveDbSchema()
         {
             _logger.Information("Trying to save file");
             try
@@ -154,6 +215,11 @@ namespace Filetypes.DB
             var content = LoadSchemaFile(path);
             if (content != null)
                 _gameTableDefinitions.Add(game, content);
+
+            path = DirectoryHelper.SchemaDirectory + "\\" + Game.GetByEnum(game).Id + "_AnimMetaDataSchema.json";
+            content = LoadSchemaFile(path);
+            if (content != null)
+                _gameAnimMetaDefinitions.Add(game, content);
         }
 
         SchemaFile LoadSchemaFile(string path)

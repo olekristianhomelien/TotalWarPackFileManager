@@ -35,23 +35,33 @@ namespace MetaFileEditor.ViewModels
         public MetaDataTagItem.Data DataItem { get; private set; }
 
         public int Index { get; private set; }
-        public DataTableRow(int index, List<DbColumnDefinition> fieldInfos, MetaDataTagItem.Data dataItem)
+        public string TagName { get; set; }
+
+        int _bytesLeft;
+
+
+        public DataTableRow(string tagName, int index, List<DbColumnDefinition> fieldInfos, MetaDataTagItem.Data dataItem)
         {
             _fieldInfos = fieldInfos;
             DataItem = dataItem;
+            TagName = tagName;
             Index = index;
             Rebuild();
         }
 
         public string GetError()
         {
+            string output = "";
+            if (_bytesLeft != 0)
+                output = $"{_bytesLeft} bytes left after definition is applied." + "\n";
+
             for (int i = 0; i < Values.Count(); i++)
             {
-                if (Values[i].Error != "")
-                    return Values[i].Error;
+                if (!string.IsNullOrWhiteSpace(Values[i].Error))
+                    output += $"Field[{i+1}] :  {Values[i].Error}" + "\n";
             }
 
-            return "";
+            return output;
         }
 
         public void Rebuild()
@@ -65,6 +75,8 @@ namespace MetaFileEditor.ViewModels
                 Values.Add(new ItemWrapper(this, value, Error));
                 offset += bytesRead;
             }
+
+            _bytesLeft = DataItem.Size - offset;
         }
     }
 
@@ -115,7 +127,7 @@ namespace MetaFileEditor.ViewModels
         List<PackFile> _packFiles;
         TableDefinitionModel _dbTableDefinition;
         ActiveMetaDataContentModel _activeMetaDataContent;
-
+        bool _allTablesReadOnly;
 
         DataTableRow _selectedRow;
         public DataTableRow SelectedRow
@@ -150,27 +162,55 @@ namespace MetaFileEditor.ViewModels
 
       
 
-        public MetaDataTable(TableDefinitionModel dbTableDefinition, ActiveMetaDataContentModel activeMetaDataContent, List<PackFile> packFiles)
+        public MetaDataTable(TableDefinitionModel dbTableDefinition, ActiveMetaDataContentModel activeMetaDataContent, List<PackFile> packFiles,  bool allTablesReadOnly)
         {
             ItemDoubleClickedCommand = new RelayCommand<DataTableRow>(OnItemDoubleClicked);
 
             _packFiles = packFiles;
             _dbTableDefinition = dbTableDefinition;
             _activeMetaDataContent = activeMetaDataContent;
+            _allTablesReadOnly = allTablesReadOnly;
 
-            _dbTableDefinition.DefinitionChanged += OnTableDefinitionChanged;
+            _dbTableDefinition.DefinitionChanged += (v) => Update();
             _activeMetaDataContent.SelectedTagItemChanged += ActiveMetaDataContent_SelectedTagItemChanged;
         }
 
 
         void OnItemDoubleClicked(DataTableRow row)
         {
-            var file = PackFileLoadHelper.FindFile(_packFiles ,row.FileName);
+            if (row == null)
+                return;
+
+            var file = PackFileLoadHelper.FindFile(_packFiles, row.FileName);
+            var nameSize = row.TagName.Length + 2;
             using (var stream = new MemoryStream(file.Data))
             {
                 var editor = new WpfHexaEditor.HexEditor
                 {
-                    Stream = stream
+                    Stream = stream,
+                    ReadOnlyMode = true,
+
+                    ByteGrouping = WpfHexaEditor.Core.ByteSpacerGroup.FourByte,
+                    ByteSpacerPositioning = WpfHexaEditor.Core.ByteSpacerPosition.HexBytePanel,
+                    ByteSpacerVisualStyle = WpfHexaEditor.Core.ByteSpacerVisual.Dash,
+                    ByteSpacerWidthTickness = WpfHexaEditor.Core.ByteSpacerWidth.Normal,
+                    DataStringVisual = WpfHexaEditor.Core.DataVisualType.Decimal,
+                    OffSetStringVisual = WpfHexaEditor.Core.DataVisualType.Decimal,
+                    CustomBackgroundBlockItems = new List<WpfHexaEditor.Core.CustomBackgroundBlock>()
+                    { 
+                        new WpfHexaEditor.Core.CustomBackgroundBlock()
+                        { 
+                            Color = new SolidColorBrush(Colors.LightGreen),
+                            StartOffset = row.DataItem.Start,
+                            Length = row.DataItem.Size
+                        },
+                        new WpfHexaEditor.Core.CustomBackgroundBlock()
+                        {
+                            Color = new SolidColorBrush(Colors.LightBlue),
+                            StartOffset = row.DataItem.Start - nameSize,
+                            Length = nameSize
+                        }
+                    }
                 };
 
                 var form = new Window
@@ -196,10 +236,6 @@ namespace MetaFileEditor.ViewModels
             }
         }
 
-        private void OnTableDefinitionChanged(DbTableDefinition newValue)
-        {
-            Update();
-        }
 
         void Update()
         {
@@ -231,6 +267,7 @@ namespace MetaFileEditor.ViewModels
                 var style = new Style(typeof(DataGridColumnHeader));
                 style.Setters.Add(new Setter(ToolTipService.ToolTipProperty, columnDefinition.Description));
                 header.HeaderStyle = style;
+                header.IsReadOnly = _allTablesReadOnly;
                 header.Binding = new Binding("Values[" + index + "].Value");
                 DataGridReference.Columns.Add(header);
                 index++;
@@ -241,7 +278,7 @@ namespace MetaFileEditor.ViewModels
             int counter = 0;
             foreach (var item in _activeMetaDataContent.SelectedTagType.DataItems)
             {
-                _allRows.Add(new DataTableRow(counter++, _dbTableDefinition.Definition.ColumnDefinitions, item));
+                _allRows.Add(new DataTableRow(_activeMetaDataContent.SelectedTagType.Name, counter++, _dbTableDefinition.Definition.ColumnDefinitions, item));
             }
 
             _filteredRows = CollectionViewSource.GetDefaultView(_allRows);

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MetaFileEditor.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,29 @@ namespace MetaFileEditor.Views.MetadataTableViews
         public MetaDataView()
         {
             InitializeComponent();
+        }
+
+        private void StackPanel_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var obj = sender as DataGrid;
+            var cont = obj.DataContext as MainViewModel;
+            cont.DataTable.DataGridReference = obj;
+        }
+    }
+
+    public class RowDataValidationRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            var drv = (value as BindingGroup).Items[0] as DataTableRow;
+            if (!string.IsNullOrEmpty(drv.GetError()))
+            {
+                return new ValidationResult(false, drv.GetError());
+            }
+            else
+            {
+                return ValidationResult.ValidResult;
+            }
         }
     }
 }

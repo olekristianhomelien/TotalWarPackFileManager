@@ -151,6 +151,7 @@ namespace PackFileManager
             this.packStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.packActionProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.packTreeViewToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.animMetaDecoderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packActionMenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -1021,7 +1022,8 @@ namespace PackFileManager
             this.reloadToolStripMenuItem,
             this.saveToDirectoryToolStripMenuItem,
             this.updateDBFilesToolStripMenuItem,
-            this.dBDecoderToolStripMenuItem});
+            this.dBDecoderToolStripMenuItem,
+            this.animMetaDecoderToolStripMenuItem});
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
             this.updateToolStripMenuItem.Size = new System.Drawing.Size(102, 20);
             this.updateToolStripMenuItem.Text = "DB Descriptions";
@@ -1029,14 +1031,14 @@ namespace PackFileManager
             // reloadToolStripMenuItem
             // 
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.reloadToolStripMenuItem.Text = "Load from File";
             this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
             // saveToDirectoryToolStripMenuItem
             // 
             this.saveToDirectoryToolStripMenuItem.Name = "saveToDirectoryToolStripMenuItem";
-            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.saveToDirectoryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToDirectoryToolStripMenuItem.Text = "Save to Directory";
             this.saveToDirectoryToolStripMenuItem.Click += new System.EventHandler(this.saveToDirectoryToolStripMenuItem_Click);
             // 
@@ -1046,7 +1048,7 @@ namespace PackFileManager
             this.updateCurrentToolStripMenuItem,
             this.updateAllToolStripMenuItem});
             this.updateDBFilesToolStripMenuItem.Name = "updateDBFilesToolStripMenuItem";
-            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.updateDBFilesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.updateDBFilesToolStripMenuItem.Text = "Update DB Files";
             // 
             // updateCurrentToolStripMenuItem
@@ -1066,7 +1068,7 @@ namespace PackFileManager
             // dBDecoderToolStripMenuItem
             // 
             this.dBDecoderToolStripMenuItem.Name = "dBDecoderToolStripMenuItem";
-            this.dBDecoderToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.dBDecoderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dBDecoderToolStripMenuItem.Text = "DB Decoder";
             this.dBDecoderToolStripMenuItem.Click += new System.EventHandler(this.dBDecoderToolStripMenuItem_Click);
             // 
@@ -1147,6 +1149,13 @@ namespace PackFileManager
             // 
             this.packActionProgressBar.Name = "packActionProgressBar";
             this.packActionProgressBar.Size = new System.Drawing.Size(120, 16);
+            // 
+            // animMetaDecoderToolStripMenuItem
+            // 
+            this.animMetaDecoderToolStripMenuItem.Name = "animMetaDecoderToolStripMenuItem";
+            this.animMetaDecoderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.animMetaDecoderToolStripMenuItem.Text = "AnimMeta Decoder";
+            this.animMetaDecoderToolStripMenuItem.Click += new System.EventHandler(this.animMetaDecoderToolStripMenuItem_Click);
             // 
             // PackFileManagerForm
             // 
@@ -1302,5 +1311,6 @@ namespace PackFileManager
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem dBDecoderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem animMetaDecoderToolStripMenuItem;
     }
 }

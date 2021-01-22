@@ -17,30 +17,16 @@ namespace MetaFileEditor.ViewModels
     class MainViewModel : NotifyPropertyChangedImpl
     {
         public ActiveMetaDataContentModel ActiveMentaDataContent { get; set; } = new ActiveMetaDataContentModel();
+        public TableDefinitionModel ActiveTableDefinition = new TableDefinitionModel();
 
-        public TagBrowser MetaTagsView { get; set; }
-
-
-
-        MetaDataTable _dataTable;
-        public MetaDataTable DataTable { get { return _dataTable; } set { SetAndNotify(ref _dataTable, value); } }
-
-
-        TableDefinitionEditor _tableDefinitionEditor;
-        public TableDefinitionEditor TableDefinitionEditor { get { return _tableDefinitionEditor; } set { SetAndNotify(ref _tableDefinitionEditor, value); } }
-
-
-        TableDefinitionModel _activeTableDefinition = new TableDefinitionModel();
-        public TableDefinitionModel ActiveTableDefinition { get { return _activeTableDefinition; } set { SetAndNotify(ref _activeTableDefinition, value); } }
-
-
+        public MetaDataTable DataTable { get; set; }
+        public TableDefinitionEditor TableDefinitionEditor { get; set; }
         public FieldExplorer FieldExplorer { get; set; }
 
-        public MainViewModel(MetaDataFile metaDataFile, List<PackFile> packFiles)
+        public MainViewModel(MetaDataFile metaDataFile, List<PackFile> packFiles, bool allTablesReadOnly)
         {
-            MetaTagsView = new TagBrowser(ActiveMentaDataContent);
             TableDefinitionEditor = new TableDefinitionEditor(ActiveMentaDataContent, ActiveTableDefinition);
-            DataTable = new MetaDataTable(ActiveTableDefinition, ActiveMentaDataContent, packFiles);
+            DataTable = new MetaDataTable(ActiveTableDefinition, ActiveMentaDataContent, packFiles, allTablesReadOnly);
             FieldExplorer = new FieldExplorer(TableDefinitionEditor, ActiveMentaDataContent, ActiveTableDefinition);
 
             ActiveMentaDataContent.File = metaDataFile;
